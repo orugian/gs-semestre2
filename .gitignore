@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+historico.csv
+leituras.csv
+08_Estatistica/figuras/
