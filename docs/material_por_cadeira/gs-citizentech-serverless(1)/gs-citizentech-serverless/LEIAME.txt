@@ -1,0 +1,38 @@
+GLOBAL SOLUTION - CITIZENTECH
+Ingestao Serverless de Dados de Campo (AWS Lambda + RDS PostgreSQL + IA)
+Disciplina: Plataformas, Servicos Cognitivos & Cloud Computing
+
+CONTEUDO
+  enunciado_gs_citizentech.md ... enunciado completo (mesmo texto da ficha FIAP)
+  tabela_ocorrencias.sql ........ criacao da tabela + consultas para os prints
+  lambda_function.py ............ funcao Lambda (rotas /health e /ocorrencias)
+  simulador_dispositivo.py ...... simulador do ESP32/drone enviando leituras
+  esp32_citizentech.ino ......... firmware real, para quem tiver a placa
+  log_exemplo_cloudwatch.txt .... exemplo do log gerado pela funcao
+  teste_local.py ................ roda a Lambda na sua maquina (banco e IA fingidos)
+  servidor_local.py ............. expoe a Lambda local em http://127.0.0.1:8099
+
+DEMONSTRAR SEM AWS (2 terminais)
+  1) python3 servidor_local.py
+  2) FUNCTION_URL=http://127.0.0.1:8099 python3 simulador_dispositivo.py \
+         --cenario enchente --leituras 5 --intervalo 1
+     O log aparece no terminal 1, igual ao que sai no CloudWatch.
+
+PUBLICAR NA AWS
+  1) psql -h SEU-RDS -U postgres -d citizentech -f tabela_ocorrencias.sql
+  2) pip install pg8000 -t pacote/ && cp lambda_function.py pacote/
+     cd pacote && zip -r ../funcao.zip . && cd ..
+  3) aws lambda update-function-code --function-name challenge-api \
+         --zip-file fileb://funcao.zip
+  4) Variaveis de ambiente: DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD HF_TOKEN
+     Timeout: 30 segundos. Funcao FORA de VPC (precisa de saida para a internet).
+  5) export FUNCTION_URL="https://xxxx.lambda-url.us-east-1.on.aws"
+     python3 simulador_dispositivo.py --cenario enchente
+
+CENARIOS DO SIMULADOR
+  normal | enchente (nivel_rio_cm) | queimada (fumaca_ppm) | seca (umidade_solo_pct)
+  Tipos: --tipo esp32 | drone | app        Sem texto para a IA: --sem-relato
+
+ATENCAO
+  O endpoint antigo api-inference.huggingface.co foi desativado (erro 410).
+  Use https://router.huggingface.co/hf-inference/models/{modelo}

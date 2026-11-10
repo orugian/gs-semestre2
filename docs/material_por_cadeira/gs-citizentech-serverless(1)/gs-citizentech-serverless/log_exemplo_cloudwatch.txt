@@ -1,0 +1,36 @@
+
+===== GET /health =====
+INFO	REQUISICAO GET /health
+RESPOSTA 200 {"status": "ok", "modelo": "cardiffnlp/twitter-xlm-roberta-base-sentiment", "ia_ativa": true}
+
+===== POST /ocorrencias =====
+INFO	REQUISICAO POST /ocorrencias
+INFO	PAYLOAD RECEBIDO: {"dispositivo_id": "esp32-ponte-sul-01", "tipo_dispositivo": "esp32", "latitude": -23.189612, "longitude": -45.884073, "metrica": "nivel_rio_cm", "valor": 118.4, "medido_em": "2026-11-05T19:58:10+00:00"}
+INFO	DISPOSITIVO=esp32-ponte-sul-01 TIPO=esp32 GPS=(-23.189612, -45.884073) nivel_rio_cm=118.4
+INFO	CLASSIFICACAO risco=normal sentimento=None confianca=None
+INFO	GRAVADO NO RDS id=101 em 2026-11-05 19:58:12.441+00
+RESPOSTA 201 {"id": 101, "dispositivo_id": "esp32-ponte-sul-01", "metrica": "nivel_rio_cm", "valor": 118.4, "nivel_risco": "normal", "sentimento": null, "confianca": null, "alerta": false}
+
+===== POST /ocorrencias =====
+INFO	REQUISICAO POST /ocorrencias
+INFO	PAYLOAD RECEBIDO: {"dispositivo_id": "esp32-ponte-sul-01", "tipo_dispositivo": "esp32", "latitude": -23.189588, "longitude": -45.88412, "metrica": "nivel_rio_cm", "valor": 268.9, "relato": "A agua subiu muito rapido, ja cobriu a calcada", "medido_em": "2026-11-05T20:04:10+00:00"}
+INFO	DISPOSITIVO=esp32-ponte-sul-01 TIPO=esp32 GPS=(-23.189588, -45.88412) nivel_rio_cm=268.9
+INFO	CLASSIFICACAO risco=critico sentimento=negative confianca=0.9471
+WARNING	ALERTA CIDADAO: nivel_rio_cm em esp32-ponte-sul-01 atingiu 268.9 (critico)
+INFO	GRAVADO NO RDS id=102 em 2026-11-05 19:58:12.441+00
+RESPOSTA 201 {"id": 102, "dispositivo_id": "esp32-ponte-sul-01", "metrica": "nivel_rio_cm", "valor": 268.9, "nivel_risco": "critico", "sentimento": "negative", "confianca": 0.9471, "alerta": true}
+
+===== POST /ocorrencias =====
+INFO	REQUISICAO POST /ocorrencias
+INFO	PAYLOAD RECEBIDO: {"dispositivo_id": "drone-vale-01", "tipo_dispositivo": "drone", "metrica": "fumaca_ppm", "valor": 640.0, "relato": "O ar esta irrespiravel, criancas tossindo na escola"}
+INFO	DISPOSITIVO=drone-vale-01 TIPO=drone GPS=(None, None) fumaca_ppm=640.0
+INFO	CLASSIFICACAO risco=critico sentimento=negative confianca=0.9471
+WARNING	ALERTA CIDADAO: fumaca_ppm em drone-vale-01 atingiu 640.0 (critico)
+INFO	GRAVADO NO RDS id=103 em 2026-11-05 19:58:12.441+00
+RESPOSTA 201 {"id": 103, "dispositivo_id": "drone-vale-01", "metrica": "fumaca_ppm", "valor": 640.0, "nivel_risco": "critico", "sentimento": "negative", "confianca": 0.9471, "alerta": true}
+
+===== POST /ocorrencias =====
+INFO	REQUISICAO POST /ocorrencias
+INFO	PAYLOAD RECEBIDO: {"dispositivo_id": "esp32-sitio-norte-07"}
+WARNING	LEITURA DESCARTADA - campos ausentes: ['metrica', 'valor']
+RESPOSTA 400 {"erro": "campos obrigatorios ausentes", "campos": ["metrica", "valor"]}
