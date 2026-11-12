@@ -22,15 +22,17 @@
 
 - [ ] Aprovar o plano v1.1 e o CLAUDE.md.
 - [ ] `gh auth refresh -s project,read:project`.
-- [ ] Preencher `app/.env` depois de S0 (OPENROUTER, ADZUNA, HF_TOKEN, MONGODB_URI, DEVICE_KEY, RDS).
-- [ ] Nomes/RMs, tamanho do grupo (Estatística aceita até trio), ideia da live, quem grava cada vídeo.
+- [ ] Preencher em `app/.env` as variáveis marcadas [USUÁRIO]: OPENROUTER_API_KEY, ADZUNA_APP_ID/KEY, HF_TOKEN, MONGODB_URI, ORACLE_FIAP_*, e depois do deploy FUNCTION_URL/DB_HOST/DB_PASSWORD. As [GERADO] já estão preenchidas.
+- [ ] Ideia da live (AIC) e quem grava cada vídeo.
 - [ ] Decidir sobre a AWS CLI (instalar ou fazer o deploy pelo console).
 
 **Disco livre em 12/11:** 10,1 GB.
 
 ## Decisões tomadas fora do plano
 
-- (nenhuma)
+- **Equipe (12/11):** Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725). Trio, dentro do limite da Estatística (resolve R09). Registrado em `00_projeto/README.md`; usar em todas as capas.
+- **LLM fallback (D06a):** `openai/gpt-4o-mini` (structured_outputs verificado no OpenRouter em 12/11).
+- **`app/.env` criado (12/11)** a partir de `app/.env.example`, com os segredos locais gerados aleatoriamente (Oracle, Postgres/Mongo de teste, JWT, DEVICE_KEY). O `.gitignore` protege `.env*`, exceto `.env.example`.
 
 ## Próximo passo exato
 

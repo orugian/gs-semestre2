@@ -3,3 +3,8 @@ __pycache__/
 historico.csv
 leituras.csv
 08_Estatistica/figuras/
+
+# segredos (CLAUDE.md §15.3)
+.env
+.env.*
+!.env.example

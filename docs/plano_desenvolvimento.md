@@ -285,14 +285,14 @@ Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delega
 
 ## 10. Pendências [HUMANO] (não bloqueiam a Fase 1)
 
-- [ ] Nomes completos e RMs de todos os integrantes.
+- [x] Nomes completos e RMs: Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725).
 - [ ] Ideia efetivamente extraída da live de 04/11 (para AIC).
 - [ ] Quem grava cada vídeo e quem entrega cada disciplina no Portal.
 - [ ] Preencher o `.env`: `OPENROUTER_API_KEY`, `ADZUNA_APP_ID/KEY`, `HF_TOKEN`, `MONGODB_URI`, `DEVICE_KEY`, credenciais do RDS.
 - [ ] Revisar as rubricas dos 6 exercícios no **D3 até 18h** (registrado como revisor).
 - [ ] **Data Modeler** no D4 (obrigatório, R11); confirmar o campo de envio do vídeo de RNA.
 - [ ] `gh auth refresh -s project,read:project` (R28).
-- [ ] **Tamanho do grupo:** Estatística aceita só individual, dupla ou trio (R09).
+- [x] **Tamanho do grupo:** trio, compatível com a Estatística (R09).
 - [ ] Ligar o Docker Desktop antes do D1 (R26).
 - [ ] (Opcional) Comunicar ao professor de Cloud a exceção de rede do RDS.
 

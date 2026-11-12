@@ -1,6 +1,8 @@
 # CitizenTech — GS 2026.2
 **Integrantes (nome completo + RM):**
-- TODO
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 Prazo de todas as entregas: **19/11/2026 às 23h55** (Portal do Aluno).
 
