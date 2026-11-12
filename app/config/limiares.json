@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "descricao": "Fonte unica dos limiares de risco (plano 3.1, D20). Consumido pela API, pela Lambda (copia no empacotamento) e pelo firmware (header gerado). Nao duplique estes valores em codigo.",
+  "classes": ["normal", "atencao", "critico"],
+  "metricas": {
+    "temperatura_c": {
+      "unidade": "C",
+      "direcao": "maior_pior",
+      "atencao": 35.0,
+      "critico": 45.0,
+      "regra": "normal: v < 35; atencao: 35 <= v < 45; critico: v >= 45"
+    },
+    "distancia_cm": {
+      "unidade": "cm",
+      "direcao": "menor_pior",
+      "atencao": 15.0,
+      "critico": 8.0,
+      "valor_minimo": 0.0,
+      "regra": "normal: v > 15; atencao: 8 < v <= 15; critico: 0 <= v <= 8"
+    }
+  },
+  "status_firmware": {
+    "normal": "OK",
+    "atencao": "ALERTA",
+    "critico": "ALERTA"
+  },
+  "atuadores": {
+    "normal": {"led": false, "buzzer": false},
+    "atencao": {"led": true, "buzzer": false},
+    "critico": {"led": true, "buzzer": true}
+  },
+  "cenarios_demonstracao": [
+    {"nome": "normal", "temperatura_c": 25.0, "distancia_cm": 25.0, "classe_esperada": "normal"},
+    {"nome": "atencao", "temperatura_c": 38.0, "distancia_cm": 12.0, "classe_esperada": "atencao"},
+    {"nome": "critico", "temperatura_c": 48.0, "distancia_cm": 5.0, "classe_esperada": "critico"}
+  ]
+}

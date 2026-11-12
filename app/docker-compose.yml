@@ -1,0 +1,63 @@
+# CitizenTech - servicos locais (CLAUDE.md 14.2).
+# Subir os servicos de teste, sempre a partir do repositorio principal:
+#   docker compose -f app\docker-compose.yml --profile teste up -d
+# As senhas vem de app/.env (lido pelo compose; nunca versionado).
+# Somente volumes nomeados: nenhum bind mount relativo ao worktree.
+name: citizentech
+
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim
+    profiles: ["teste"]
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_ADMIN_PASSWORD:?defina ORACLE_ADMIN_PASSWORD em app/.env}
+      APP_USER: ${ORACLE_USER:-citizentech}
+      APP_USER_PASSWORD: ${ORACLE_PASSWORD:?defina ORACLE_PASSWORD em app/.env}
+    ports:
+      - "127.0.0.1:1521:1521"
+    volumes:
+      - oracle_dados:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  postgres:
+    image: postgres:17
+    profiles: ["teste"]
+    environment:
+      POSTGRES_USER: citizentech_teste
+      POSTGRES_DB: citizentech_teste
+      POSTGRES_PASSWORD: ${POSTGRES_TESTE_PASSWORD:?defina POSTGRES_TESTE_PASSWORD em app/.env}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_teste_dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citizentech_teste -d citizentech_teste"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mongo:
+    image: mongo:8.0
+    profiles: ["teste"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: citizentech_teste
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_TESTE_PASSWORD:?defina MONGO_TESTE_PASSWORD em app/.env}
+    ports:
+      - "127.0.0.1:27018:27017"
+    volumes:
+      - mongo_teste_dados:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  oracle_dados:
+  postgres_teste_dados:
+  mongo_teste_dados:
