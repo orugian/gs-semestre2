@@ -386,6 +386,7 @@ AMBIENTE (Windows 11, verificado em 12/11/2026):
   - `gh` na conta orugian, com push liberado em `insonia999/GS2_26` (privado) e **sem escopo `project`**.
 - **Recursos:** 12 threads, 31,8 GB de RAM, 10,1 GB livres em disco (o fator limitante).
 - **Sistema:** fuso E. South America (UTC−3), ExecutionPolicy RemoteSigned. **A porta 8080 está em uso.**
+- **Credenciais (validadas em 12/11, sem expor valores):** OpenRouter ok (limite US$ 7; saída JSON do modelo padrão ok) · Adzuna ok (1 chamada de smoke usada; o contador fica em `DADOS\adzuna\contador_chamadas.json`) · HF token válido, mas **inferência retorna 402 (sem créditos)** · **Lambda reaproveitada** (`cp2-hello-world`, us-east-1) responde 200 'Hello World' em qualquer rota, então é preciso subir o código novo · **RDS reaproveitado** (us-east-1, banco `cp1-cloud`, usuário master `postgres`): **porta 5432 inacessível** desta máquina (timeout) · **Oracle FIAP: ORA-01017** (credencial recusada) · **Mongo Atlas: `MONGODB_URI` sem senha** (o `.env` tem só o usuário). O usuário **autorizou alterar a Lambda e o RDS reaproveitados** (12/11). Para revalidar: `.kaiser\tmp\validar_env.py` (só imprime status, nunca valores).
 - **Ausentes:** **AWS CLI** (deploy pelo console feito por humano, ou instalação mediante aprovação), pandoc, LibreOffice, arduino-cli e PlatformIO.
 - **Fontes externas:**
   - Novo Caged 202001–202609 no FTP do MTE: MOV/FOR/EXC em `.7z`, com MOV entre 35 e 50 MB.

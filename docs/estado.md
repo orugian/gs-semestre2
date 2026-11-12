@@ -28,10 +28,25 @@
 
 **Disco livre em 12/11:** 10,1 GB.
 
+## Validação das credenciais (12/11, sem expor valores)
+
+| Serviço | Resultado | Ação |
+|---|---|---|
+| OpenRouter | ok: chave ativa (limite US$ 7); `deepseek-v4.1-flash-1017` devolveu JSON válido via json_schema | — |
+| Adzuna | ok: 200 (1 de 25 chamadas usada como smoke, registrada no contador) | snapshot só na S6/D1 |
+| Hugging Face | token válido, mas a inferência do modelo do enunciado retorna **402 (sem créditos)** | **decidir:** comprar créditos HF ou usar o caminho B (Amazon Comprehend, `pt`), previsto no enunciado de Cloud |
+| Lambda (reaproveitada) | 200, mas é `cp2-hello-world`, que responde 'Hello World' em toda rota | subir o código de ingestão na S4 (alteração autorizada pelo usuário) |
+| RDS (reaproveitado) | **TCP 5432 com timeout** a partir do IP público desta máquina; DNS público ok | abrir a sessão do Learner Lab e confirmar que o RDS está *available*; liberar o SG (D09); criar `app_ingest` |
+| Oracle FIAP | **ORA-01017** (usuário/senha recusados) | corrigir `ORACLE_FIAP_PASSWORD` (e confirmar o serviço `ORCL`); não bloqueia o D1 |
+| Mongo Atlas | **`MONGODB_URI` contém só o nome de usuário**; `CONECTION_STRING` é um comando `mongosh` sem senha | preencher `MONGODB_URI=mongodb+srv://<usuario>:<senha>@cluster0.uwow7nl.mongodb.net/?appName=...` e liberar o IP no Network Access |
+
+Variáveis extras no `.env` (`CONECTION_STRING`, `PROJECT_ID`) são ignoradas pelo app.
+
 ## Decisões tomadas fora do plano
 
 - **Equipe (12/11):** Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725). Trio, dentro do limite da Estatística (resolve R09). Registrado em `00_projeto/README.md`; usar em todas as capas.
 - **LLM fallback (D06a):** `openai/gpt-4o-mini` (structured_outputs verificado no OpenRouter em 12/11).
+- **AWS reaproveitada (12/11):** por restrição da conta AWS Academy, o grupo reutiliza a Lambda `cp2-hello-world` e o RDS `cp1-cloud` já existentes. O usuário **autorizou quaisquer alterações** neles (código da Lambda, tabelas, usuários e SG), usando as credenciais do `.env`. Continuam valendo os controles D09/D09a.
 - **`app/.env` criado (12/11)** a partir de `app/.env.example`, com os segredos locais gerados aleatoriamente (Oracle, Postgres/Mongo de teste, JWT, DEVICE_KEY). O `.gitignore` protege `.env*`, exceto `.env.example`.
 
 ## Próximo passo exato
