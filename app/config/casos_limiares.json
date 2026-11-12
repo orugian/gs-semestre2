@@ -1,0 +1,240 @@
+{
+  "schema_version": "1.0",
+  "descricao": "Tabela compartilhada de casos de classificacao de risco (S1). Lida pelos testes da API e da Lambda: os dois lados precisam concordar com ela. Valores nao representaveis em JSON usam {\"especial\": \"nan\" | \"inf\" | \"-inf\"}.",
+  "casos_validos": [
+    {
+      "metrica": "temperatura_c",
+      "valor": 25.0,
+      "classe": "normal"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 38.0,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 48.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 34.9,
+      "classe": "normal"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 34.999,
+      "classe": "normal"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 35.0,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 35,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 44.9,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 44.999,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 45.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 45,
+      "classe": "critico"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 1000.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": 0.0,
+      "classe": "normal"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": -10.0,
+      "classe": "normal"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 25.0,
+      "classe": "normal"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 12.0,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 5.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 400.0,
+      "classe": "normal"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 15.1,
+      "classe": "normal"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 15.001,
+      "classe": "normal"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 15.0,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 15,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 8.1,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 8.001,
+      "classe": "atencao"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 8.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 8,
+      "classe": "critico"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 0.0,
+      "classe": "critico"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": 0,
+      "classe": "critico"
+    }
+  ],
+  "casos_invalidos": [
+    {
+      "metrica": "umidade_pct",
+      "valor": 10.0,
+      "erro": "metrica_desconhecida"
+    },
+    {
+      "metrica": "",
+      "valor": 10.0,
+      "erro": "metrica_desconhecida"
+    },
+    {
+      "metrica": "Temperatura_C",
+      "valor": 25.0,
+      "erro": "metrica_desconhecida"
+    },
+    {
+      "metrica": "umidade_pct",
+      "valor": {
+        "especial": "nan"
+      },
+      "erro": "metrica_desconhecida"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": {
+        "especial": "nan"
+      },
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": {
+        "especial": "inf"
+      },
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": {
+        "especial": "-inf"
+      },
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": true,
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": false,
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": "38",
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": null,
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "temperatura_c",
+      "valor": [
+        38.0
+      ],
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": -1.0,
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": -0.01,
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": {
+        "especial": "nan"
+      },
+      "erro": "valor_invalido"
+    },
+    {
+      "metrica": "distancia_cm",
+      "valor": true,
+      "erro": "valor_invalido"
+    }
+  ]
+}
