@@ -45,7 +45,7 @@ Variáveis extras no `.env` (`CONECTION_STRING`, `PROJECT_ID`) são ignoradas pe
 ## Decisões tomadas fora do plano
 
 - **Equipe (12/11):** Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725). Trio, dentro do limite da Estatística (resolve R09). Registrado em `00_projeto/README.md`; usar em todas as capas.
-- **LLM fallback (D06a):** `openai/gpt-4o-mini` (structured_outputs verificado no OpenRouter em 12/11).
+- **LLM fallback (D06a):** `xiaomi/mimo-v2.6-flash`, escolha do usuário em 12/11, substituindo o `openai/gpt-4o-mini`. structured_outputs verificado; chamada real com json_schema devolveu JSON válido, sem raciocínio, 18 tokens; US$ 0,14/0,28 por milhão de tokens.
 - **AWS reaproveitada (12/11):** por restrição da conta AWS Academy, o grupo reutiliza a Lambda `cp2-hello-world` e o RDS `cp1-cloud` já existentes. O usuário **autorizou quaisquer alterações** neles (código da Lambda, tabelas, usuários e SG), usando as credenciais do `.env`. Continuam valendo os controles D09/D09a.
 - **`app/.env` criado (12/11)** a partir de `app/.env.example`, com os segredos locais gerados aleatoriamente (Oracle, Postgres/Mongo de teste, JWT, DEVICE_KEY). O `.gitignore` protege `.env*`, exceto `.env.example`.
 
