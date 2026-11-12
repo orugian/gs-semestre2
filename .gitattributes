@@ -1,0 +1,29 @@
+# Normalizacao de fim de linha (CLAUDE.md 14.2)
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binarios
+*.pdf -text
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.gif -text
+*.webp -text
+*.ico -text
+*.xlsx -text
+*.docx -text
+*.pptx -text
+*.parquet -text
+*.7z -text
+*.zip -text
+*.db -text
+*.pt -text
+*.joblib -text
+*.pkl -text
+*.woff -text
+*.woff2 -text
+
+# Material de referencia do professor: bytes preservados como vieram
+docs/material_por_cadeira/GS22026_enunciadosOG.txt -text

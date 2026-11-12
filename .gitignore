@@ -4,7 +4,43 @@ historico.csv
 leituras.csv
 08_Estatistica/figuras/
 
-# segredos (CLAUDE.md §15.3)
+# segredos (CLAUDE.md 15.3)
 .env
 .env.*
 !.env.example
+
+# cache e build regeneravel (CLAUDE.md 15.3)
+.venv/
+node_modules/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+dist/
+build/
+htmlcov/
+.coverage
+coverage/
+test-results/
+playwright-report/
+*.egg-info/
+*.tsbuildinfo
+.vite/
+
+# dados e artefatos grandes: ficam em CITIZENTECH_DADOS, fora do repositorio
+*.db
+*.sqlite
+*.sqlite3
+*.parquet
+*.7z
+*.zip
+
+# trilha de orquestracao e temporarios (nunca dentro do repositorio)
+.kaiser/
+*.log
+
+# editor e sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
