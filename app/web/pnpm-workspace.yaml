@@ -1,0 +1,3 @@
+# O postinstall do Astryx apenas sugere rodar o CLI; nao e necessario para o build.
+allowBuilds:
+  '@astryxdesign/core': false
