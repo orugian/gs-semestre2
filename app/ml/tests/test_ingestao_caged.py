@@ -718,3 +718,409 @@ def test_coluna_nova_desconhecida_no_cabecalho_vai_para_colunas_ignoradas(tmp_pa
     df = pd.read_parquet(tmp_path / "caged" / "parquet" / "CAGEDMOV202609.parquet")
     assert "coluna_futura_mte" not in df.columns
     assert list(df.columns) == ESQUEMA_COLUNAS_ESPERADO
+
+
+# ---------------------------------------------------------------------------
+# 14. A1: BaixadorCurl lança RuntimeError em erro de curl e ingerir_periodo trata
+# ---------------------------------------------------------------------------
+def test_baixador_curl_lanca_erro_quando_o_curl_falha(monkeypatch):
+    """A1: BaixadorCurl.listar_arquivos lança RuntimeError quando curl.exe retorna != 0."""
+    import subprocess
+
+    from citizentech_ml.ingestao.baixador import BaixadorCurl
+
+    def mock_run(*args, **kwargs):
+        return subprocess.CompletedProcess(
+            args=args[0],
+            returncode=6,
+            stdout="",
+            stderr="curl: (6) Could not resolve host: host-inexistente.invalid",
+        )
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    baixador = BaixadorCurl(url_base="ftp://host-inexistente.invalid/pdet/")
+
+    with pytest.raises(RuntimeError, match="código 6"):
+        baixador.listar_arquivos("202609")
+
+
+def test_falha_na_listagem_registra_falha_e_nunca_ausente_na_fonte(tmp_path: Path):
+    """A1: falha na listagem de uma competência registra 'falha' e continua para a próxima."""
+    cbo = "212405"
+    linha = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    bytes_mov = criar_7z_em_bytes("CAGEDMOV202609.txt", f"{CABECALHO_MOV}\r\n{linha}\r\n")
+
+    class BaixadorComFalhaListagem(BaixadorFalso):
+        def listar_arquivos(self, competencia: str) -> list[str]:
+            self.chamadas_listar.append(competencia)
+            if competencia == "202608":
+                raise RuntimeError("Falha de rede ao conectar no FTP (código 6)")
+            return super().listar_arquivos(competencia)
+
+    baixador = BaixadorComFalhaListagem(
+        arquivos={("MOV", "202609"): bytes_mov},
+        listar_map={"202609": ["CAGEDMOV202609.7z"]},
+    )
+    ocupacoes = _obter_ocupacoes_teste([cbo])
+
+    resumo = ingerir_periodo("202608", "202609", ocupacoes, tmp_path, baixador=baixador)
+
+    assert resumo.sucesso is False
+    assert resumo.total_falhas == 3  # MOV, FOR, EXC de 202608
+    assert resumo.total_ingeridos == 1  # MOV de 202609
+    assert resumo.total_ausentes == 2  # FOR, EXC de 202609
+
+    manifesto_txt = (tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8")
+    regs = json.loads(manifesto_txt)
+    regs_202608 = [r for r in regs if r["competencia_arquivo"] == "202608"]
+    assert len(regs_202608) == 3
+    for r in regs_202608:
+        assert r["situacao"] == "falha"
+        assert r["erro"].startswith("Falha ao listar")
+        assert "ausente_na_fonte" != r["situacao"]
+
+
+# ---------------------------------------------------------------------------
+# 15. A2: Troca da lista de ocupações reprocessa o arquivo
+# ---------------------------------------------------------------------------
+def test_troca_da_lista_de_ocupacoes_reprocessa_o_arquivo(tmp_path: Path):
+    """A2: reexecução com hash de ocupações diferente rebaixa, reprocessa e atualiza Parquet."""
+    cbo_a = "212405"
+    cbo_b = "212410"
+
+    linha_a = (
+        f"202609;3;33;330455;P;8513900;1;{cbo_a};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    linha_b = (
+        f"202609;3;33;330455;P;8513900;1;{cbo_b};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "3000,00;99;0;1;202609;0;5;3000,00"
+    )
+    conteudo_csv = f"{CABECALHO_MOV}\r\n{linha_a}\r\n{linha_b}\r\n"
+    bytes_mov = criar_7z_em_bytes("CAGEDMOV202609.txt", conteudo_csv)
+
+    baixador = BaixadorFalso(
+        arquivos={("MOV", "202609"): bytes_mov},
+        listar_map={"202609": ["CAGEDMOV202609.7z"]},
+    )
+
+    ocupacoes_a = Ocupacoes(
+        versao="v_a",
+        destinos={"dev": {"nome": "Dev", "cbo6": [cbo_a]}},
+        cbo6_reserva=[],
+        codigos_ingestao={cbo_a},
+        hash="hash_lista_A",
+    )
+    ocupacoes_b = Ocupacoes(
+        versao="v_b",
+        destinos={"dev": {"nome": "Dev", "cbo6": [cbo_a, cbo_b]}},
+        cbo6_reserva=[],
+        codigos_ingestao={cbo_a, cbo_b},
+        hash="hash_lista_B",
+    )
+
+    # 1ª execução com lista A
+    resumo_a = ingerir_periodo("202609", "202609", ocupacoes_a, tmp_path, baixador=baixador)
+    assert resumo_a.total_ingeridos == 1
+    assert len(baixador.chamadas_download) == 1
+
+    df_parquet_a = pd.read_parquet(tmp_path / "caged" / "parquet" / "CAGEDMOV202609.parquet")
+    assert len(df_parquet_a) == 1
+    assert set(df_parquet_a["cbo2002_ocupacao"]) == {cbo_a}
+
+    manifesto_a = json.loads((tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8"))
+    reg_mov_a = next(r for r in manifesto_a if r["tipo"] == "MOV")
+    assert reg_mov_a["hash_ocupacoes"] == "hash_lista_A"
+    assert reg_mov_a.get("hash_ocupacoes_anterior") is None
+
+    # 2ª execução com lista B (sem reprocessar=True)
+    resumo_b = ingerir_periodo("202609", "202609", ocupacoes_b, tmp_path, baixador=baixador)
+    assert resumo_b.total_ingeridos == 1
+    # Houve novo download porque a lista mudou
+    assert len(baixador.chamadas_download) == 2
+
+    # Parquet foi substituído e agora contém os 2 CBOs
+    df_parquet_b = pd.read_parquet(tmp_path / "caged" / "parquet" / "CAGEDMOV202609.parquet")
+    assert len(df_parquet_b) == 2
+    assert set(df_parquet_b["cbo2002_ocupacao"]) == {cbo_a, cbo_b}
+
+    manifesto_b = json.loads((tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8"))
+    reg_mov_b = next(r for r in manifesto_b if r["tipo"] == "MOV")
+    assert reg_mov_b["hash_ocupacoes"] == "hash_lista_B"
+    assert reg_mov_b["hash_ocupacoes_anterior"] == "hash_lista_A"
+
+
+# ---------------------------------------------------------------------------
+# 16. A3: Retomada não consulta a fonte nem rebaixa registro ingerido
+# ---------------------------------------------------------------------------
+def test_retomada_nao_consulta_a_fonte_nem_rebaixa_registro_ingerido(tmp_path: Path):
+    """A3: competência com todos os tipos ingeridos faz 0 chamadas de listagem e download."""
+    cbo = "212405"
+    linha_mov = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    linha_for = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;1;5;2000,00"
+    )
+    linha_exc = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;202609;1;0;5;2000,00"
+    )
+
+    bytes_mov = criar_7z_em_bytes("CAGEDMOV202609.txt", f"{CABECALHO_MOV}\r\n{linha_mov}\r\n")
+    bytes_for = criar_7z_em_bytes("CAGEDFOR202609.txt", f"{CABECALHO_MOV}\r\n{linha_for}\r\n")
+    bytes_exc = criar_7z_em_bytes("CAGEDEXC202609.txt", f"{CABECALHO_EXC}\r\n{linha_exc}\r\n")
+
+    baixador1 = BaixadorFalso(
+        arquivos={
+            ("MOV", "202609"): bytes_mov,
+            ("FOR", "202609"): bytes_for,
+            ("EXC", "202609"): bytes_exc,
+        },
+        listar_map={"202609": ["CAGEDMOV202609.7z", "CAGEDFOR202609.7z", "CAGEDEXC202609.7z"]},
+    )
+    ocupacoes = _obter_ocupacoes_teste([cbo])
+
+    # 1ª execução completa
+    resumo1 = ingerir_periodo("202609", "202609", ocupacoes, tmp_path, baixador=baixador1)
+    assert resumo1.total_ingeridos == 3
+    assert len(baixador1.chamadas_download) == 3
+
+    # 2ª execução com baixador cuja listagem devolve lista vazia []
+    baixador2 = BaixadorFalso(listar_map={"202609": []})
+    resumo2 = ingerir_periodo("202609", "202609", ocupacoes, tmp_path, baixador=baixador2)
+
+    # Nenhuma chamada de listagem e nenhuma chamada de download
+    assert len(baixador2.chamadas_listar) == 0
+    assert len(baixador2.chamadas_download) == 0
+    assert resumo2.total_ingeridos == 3
+
+    # Manifesto continua com os 3 registros como 'ingerido' (não foram sobrescritos)
+    manifesto_txt = (tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8")
+    regs = json.loads(manifesto_txt)
+    assert len(regs) == 3
+    for r in regs:
+        assert r["situacao"] == "ingerido"
+
+    # Caso B: reprocessar=True mas arquivo sumiu da listagem remota ->
+    # não sobrescreve registro ingerido, mantém no manifesto e sinaliza falha no resumo
+    baixador3 = BaixadorFalso(listar_map={"202609": []})
+    resumo3 = ingerir_periodo(
+        "202609", "202609", ocupacoes, tmp_path, baixador=baixador3, reprocessar=True
+    )
+    assert resumo3.sucesso is False
+    assert resumo3.total_falhas == 3
+
+    manifesto_txt3 = (tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8")
+    regs3 = json.loads(manifesto_txt3)
+    for r in regs3:
+        assert r["situacao"] == "ingerido"
+
+
+# ---------------------------------------------------------------------------
+# 17. A4: Arquivo corrompido vira falha no período e a execução continua
+# ---------------------------------------------------------------------------
+def test_arquivo_corrompido_vira_falha_e_o_periodo_continua(tmp_path: Path):
+    """A4: arquivo corrompido em uma competência vira falha e competência seguinte é processada."""
+    cbo = "212405"
+    bytes_corrompidos = b"BYTES_CORROMPIDOS_QUE_NAO_SAO_7Z"
+
+    linha = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    bytes_bom = criar_7z_em_bytes("CAGEDMOV202609.txt", f"{CABECALHO_MOV}\r\n{linha}\r\n")
+
+    baixador = BaixadorFalso(
+        arquivos={
+            ("MOV", "202608"): bytes_corrompidos,
+            ("MOV", "202609"): bytes_bom,
+        },
+        listar_map={
+            "202608": ["CAGEDMOV202608.7z"],
+            "202609": ["CAGEDMOV202609.7z"],
+        },
+    )
+    ocupacoes = _obter_ocupacoes_teste([cbo])
+
+    resumo = ingerir_periodo("202608", "202609", ocupacoes, tmp_path, baixador=baixador)
+
+    assert resumo.sucesso is False
+    assert resumo.total_falhas >= 1
+    assert resumo.total_ingeridos >= 1
+
+    # Parquet de 202608 não deve existir em disco
+    parquet_202608 = tmp_path / "caged" / "parquet" / "CAGEDMOV202608.parquet"
+    assert not parquet_202608.exists()
+
+    # Parquet de 202609 deve existir e estar correto
+    parquet_202609 = tmp_path / "caged" / "parquet" / "CAGEDMOV202609.parquet"
+    assert parquet_202609.exists()
+    df_202609 = pd.read_parquet(parquet_202609)
+    assert len(df_202609) == 1
+
+    # Bruto deve permanecer rigorosamente vazio
+    bruto_dir = tmp_path / "caged" / "bruto"
+    assert len(list(bruto_dir.iterdir())) == 0
+
+    # Manifesto registra 'falha' em 202608 com tipo e mensagem da exceção
+    manifesto_txt = (tmp_path / "caged" / "procedencia.json").read_text(encoding="utf-8")
+    regs = json.loads(manifesto_txt)
+    reg_202608_mov = next(
+        r for r in regs if r["competencia_arquivo"] == "202608" and r["tipo"] == "MOV"
+    )
+    assert reg_202608_mov["situacao"] == "falha"
+    assert "Bad7zFile" in reg_202608_mov["erro"] or "Error" in reg_202608_mov["erro"]
+    assert reg_202608_mov["linhas_lidas"] == 0
+    assert reg_202608_mov["linhas_gravadas"] == 0
+
+
+# ---------------------------------------------------------------------------
+# 18. A5: Gravação atômica de Parquet preserva arquivo anterior e limpa .tmp
+# ---------------------------------------------------------------------------
+def test_falha_ao_gravar_parquet_preserva_o_parquet_anterior(tmp_path: Path, monkeypatch):
+    """A5: falha ao gravar Parquet preserva o Parquet anterior intacto e não deixa .tmp."""
+    cbo = "212405"
+    linha = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    bytes_mov = criar_7z_em_bytes("CAGEDMOV202609.txt", f"{CABECALHO_MOV}\r\n{linha}\r\n")
+    baixador = BaixadorFalso(
+        arquivos={("MOV", "202609"): bytes_mov},
+        listar_map={"202609": ["CAGEDMOV202609.7z"]},
+    )
+    ocupacoes = _obter_ocupacoes_teste([cbo])
+
+    # 1. Ingestão inicial bem-sucedida
+    reg1 = ingerir_arquivo("MOV", "202609", ocupacoes, tmp_path, baixador=baixador)
+    assert reg1.situacao == "ingerido"
+    caminho_parquet = tmp_path / "caged" / "parquet" / "CAGEDMOV202609.parquet"
+    assert caminho_parquet.exists()
+    df_anterior = pd.read_parquet(caminho_parquet)
+    assert len(df_anterior) == 1
+
+    # 2. Mock de to_parquet que escreve dados corrompidos e lança erro
+    def mock_to_parquet_falho(self, path, *args, **kwargs):
+        Path(path).write_bytes(b"DADOS_CORROMPIDOS_TRUNCADOS")
+        raise OSError("Falha simulada durante escrita em disco")
+
+    monkeypatch.setattr(pd.DataFrame, "to_parquet", mock_to_parquet_falho)
+
+    # 3. Reprocessamento que falha
+    with pytest.raises(OSError, match="Falha simulada"):
+        ingerir_arquivo(
+            "MOV", "202609", ocupacoes, tmp_path, baixador=baixador, reprocessar=True
+        )
+
+    # 4. Parquet anterior deve permanecer legível e idêntico
+    assert caminho_parquet.exists()
+    df_preservado = pd.read_parquet(caminho_parquet)
+    pd.testing.assert_frame_equal(df_anterior, df_preservado)
+
+    # 5. Nenhum arquivo .tmp na pasta parquet
+    tmps = list((tmp_path / "caged" / "parquet").glob("*.tmp"))
+    assert tmps == []
+
+
+# ---------------------------------------------------------------------------
+# 19. A6: CLI e ingerir_periodo registram/imprimem cada arquivo assim que processa
+# ---------------------------------------------------------------------------
+def test_cli_imprime_cada_arquivo_assim_que_processa(tmp_path: Path, monkeypatch, capsys):
+    """A6: ao_registrar entrega o 1º arquivo antes do download do 2º; CLI imprime ao vivo."""
+    cbo = "212405"
+    linha = (
+        f"202609;3;33;330455;P;8513900;1;{cbo};101;9;30;40,00;1;1;0;1;97;0;0;0;"
+        "2000,00;99;0;1;202609;0;5;2000,00"
+    )
+    bytes_mov = criar_7z_em_bytes("CAGEDMOV202609.txt", f"{CABECALHO_MOV}\r\n{linha}\r\n")
+    bytes_for = criar_7z_em_bytes("CAGEDFOR202609.txt", f"{CABECALHO_MOV}\r\n{linha}\r\n")
+
+    eventos: list[tuple[str, str, str]] = []
+
+    class BaixadorInstrumentado(BaixadorFalso):
+        def baixar_arquivo(self, tipo: str, competencia: str, destino: Path) -> Path:
+            eventos.append(("download", tipo, competencia))
+            return super().baixar_arquivo(tipo, competencia, destino)
+
+    baixador = BaixadorInstrumentado(
+        arquivos={
+            ("MOV", "202609"): bytes_mov,
+            ("FOR", "202609"): bytes_for,
+        },
+        listar_map={"202609": ["CAGEDMOV202609.7z", "CAGEDFOR202609.7z"]},
+    )
+    ocupacoes = _obter_ocupacoes_teste([cbo])
+
+    def callback_registro(reg):
+        eventos.append(("registro", reg.tipo, reg.competencia_arquivo))
+
+    ingerir_periodo(
+        "202609",
+        "202609",
+        ocupacoes,
+        tmp_path,
+        baixador=baixador,
+        ao_registrar=callback_registro,
+    )
+
+    # O registro do primeiro arquivo (MOV) deve ser entregue antes do download do segundo (FOR)
+    idx_reg_mov = eventos.index(("registro", "MOV", "202609"))
+    idx_down_for = eventos.index(("download", "FOR", "202609"))
+    assert idx_reg_mov < idx_down_for
+
+    # Validação da CLI: em aborto, linhas já processadas foram impressas no stdout
+    json_ocupacoes = tmp_path / "ocupacoes.json"
+    json_ocupacoes.write_text(
+        json.dumps(
+            {
+                "versao": "teste-v1",
+                "destinos": {"dev": {"nome": "Dev", "cbo6": [cbo]}},
+                "cbo6_reserva": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    baixador_aborto = BaixadorFalso(
+        arquivos={("MOV", "202608"): bytes_mov},
+        listar_map={"202608": ["CAGEDMOV202608.7z"]},
+    )
+    monkeypatch.setattr(
+        "citizentech_ml.ingestao.ingestor.BaixadorCurl", lambda *args, **kwargs: baixador_aborto
+    )
+
+    chamadas_disco = 0
+
+    def mock_disco(dir_dados, fn):
+        nonlocal chamadas_disco
+        chamadas_disco += 1
+        if chamadas_disco > 1:
+            raise RuntimeError("Espaço livre em disco (2.0 GB) abaixo do limite de 4 GB exigido.")
+        return 10.0
+
+    monkeypatch.setattr("citizentech_ml.ingestao.ingestor._verificar_espaco_disco", mock_disco)
+
+    dir_dados_aborto = tmp_path / "dados_aborto"
+    args = [
+        "--ocupacoes",
+        str(json_ocupacoes),
+        "--inicio",
+        "202608",
+        "--fim",
+        "202609",
+        "--dados",
+        str(dir_dados_aborto),
+    ]
+
+    ret = cli_main(args)
+    assert ret == 1
+    stdout_aborto = capsys.readouterr().out
+    # A linha do MOV de 202608 já processado antes do aborto deve estar impressa no stdout
+    assert "MOV 202608 | lidas:" in stdout_aborto
+

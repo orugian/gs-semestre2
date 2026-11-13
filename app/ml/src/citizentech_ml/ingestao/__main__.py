@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from citizentech_ml.ingestao.ingestor import ingerir_periodo
+from citizentech_ml.ingestao.modelos import RegistroProcedencia
 from citizentech_ml.ingestao.ocupacoes import carregar_ocupacoes
 
 
@@ -70,6 +71,15 @@ def main(args: list[str] | None = None) -> int:
     print(f"Diretorio de destino: {caminho_dados}")
     print("-" * 75)
 
+    def imprimir_registro(reg: RegistroProcedencia) -> None:
+        print(
+            f"{reg.tipo:<3} {reg.competencia_arquivo:<6} | "
+            f"lidas: {reg.linhas_lidas:<8} | "
+            f"gravadas: {reg.linhas_gravadas:<8} | "
+            f"situacao: {reg.situacao}",
+            flush=True,
+        )
+
     try:
         resumo = ingerir_periodo(
             inicio=parsed.inicio,
@@ -77,18 +87,11 @@ def main(args: list[str] | None = None) -> int:
             ocupacoes=ocupacoes,
             dir_dados=caminho_dados,
             reprocessar=parsed.reprocessar,
+            ao_registrar=imprimir_registro,
         )
     except Exception as exc:
         print(f"Falha/aborto durante ingestao: {exc}", file=sys.stderr)
         return 1
-
-    for reg in resumo.registros:
-        print(
-            f"{reg.tipo:<3} {reg.competencia_arquivo:<6} | "
-            f"lidas: {reg.linhas_lidas:<8} | "
-            f"gravadas: {reg.linhas_gravadas:<8} | "
-            f"situacao: {reg.situacao}"
-        )
 
     print("-" * 75)
     print(

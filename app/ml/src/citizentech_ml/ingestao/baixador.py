@@ -38,7 +38,10 @@ class BaixadorCurl:
             check=False,
         )
         if resultado.returncode != 0:
-            return []
+            raise RuntimeError(
+                f"Falha ao listar arquivos de {competencia} (código {resultado.returncode}): "
+                f"{resultado.stderr.strip()}"
+            )
 
         arquivos: list[str] = []
         padrao = re.compile(rf"^CAGED(MOV|FOR|EXC){competencia}\.7z$", re.IGNORECASE)

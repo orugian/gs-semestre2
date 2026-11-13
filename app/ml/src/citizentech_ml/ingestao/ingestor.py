@@ -29,6 +29,10 @@ TRANSFORMACOES_PADRAO = [
 ]
 
 
+class EspacoInsuficiente(RuntimeError):
+    """Espaco livre abaixo do limite: a ingestao inteira aborta (nao e falha de um arquivo)."""
+
+
 def _limpar_diretorio(diretorio: Path) -> None:
     """Remove todo o conteúdo de um diretório mantendo o diretório vazio."""
     if not diretorio.exists():
@@ -68,7 +72,7 @@ def _verificar_espaco_disco(
         livre = uso.free / (1024**3)
 
     if livre < 4.0:
-        raise RuntimeError(
+        raise EspacoInsuficiente(
             f"Espaço livre em disco ({livre:.2f} GB) abaixo do limite de 4 GB exigido. "
             "Ingestão abortada."
         )
@@ -104,12 +108,16 @@ def ingerir_arquivo(
     ano = competencia[:4]
     url_arquivo = f"{fonte.url_base.rstrip('/')}/{ano}/{competencia}/{nome_7z}"
 
-    # Retomada se já ingerido e Parquet presente
+    # Retomada se já ingerido e Parquet presente com mesmo hash de ocupações
     manifesto = carregar_manifesto(manifesto_path)
     registro_previo = obter_registro(manifesto, tipo_upper, competencia)
+    mesmo_hash = (
+        registro_previo is not None
+        and registro_previo.hash_ocupacoes == ocupacoes.hash
+    )
     if (
         not reprocessar
-        and registro_previo is not None
+        and mesmo_hash
         and registro_previo.situacao == "ingerido"
         and caminho_parquet.exists()
     ):
@@ -171,6 +179,12 @@ def ingerir_arquivo(
             cbos_permitidos=ocupacoes.codigos_ingestao,
         )
 
+        hash_ocupacoes_anterior = (
+            registro_previo.hash_ocupacoes
+            if (registro_previo is not None and registro_previo.hash_ocupacoes != ocupacoes.hash)
+            else None
+        )
+
         registro = RegistroProcedencia(
             fonte=fonte.id,
             url=url_arquivo,
@@ -186,6 +200,7 @@ def ingerir_arquivo(
             colunas_descartadas_sensiveis=descartadas,
             colunas_ignoradas=ignoradas,
             hash_ocupacoes=ocupacoes.hash,
+            hash_ocupacoes_anterior=hash_ocupacoes_anterior,
             versao_ocupacoes=ocupacoes.versao,
             transformacoes=TRANSFORMACOES_PADRAO,
             conflito=conflito,
@@ -207,12 +222,15 @@ def ingerir_periodo(
     fonte: Fonte | None = None,
     espaco_livre_gb: Callable[[Path], float] | None = None,
     reprocessar: bool = False,
+    ao_registrar: Callable[[RegistroProcedencia], None] | None = None,
 ) -> ResumoIngestao:
     """Percorre as competências entre inicio e fim realizando a ingestão."""
     dir_dados_path = Path(dir_dados)
     caged_dir = dir_dados_path / "caged"
+    parquet_dir = caged_dir / "parquet"
     manifesto_path = caged_dir / "procedencia.json"
     caged_dir.mkdir(parents=True, exist_ok=True)
+    parquet_dir.mkdir(parents=True, exist_ok=True)
 
     if fonte is None:
         fonte = Fonte()
@@ -246,23 +264,95 @@ def ingerir_periodo(
                 resumo.registros.append(reg)
                 resumo.total_processados += 1
                 resumo.total_nao_promovidas += 1
+                if ao_registrar is not None:
+                    ao_registrar(reg)
         return resumo
 
     if baixador is None:
         baixador = BaixadorCurl(url_base=fonte.url_base)
 
     for comp in competencias:
+        manifesto = carregar_manifesto(manifesto_path)
+
+        tipos_a_processar: list[str] = []
+        for t in tipos:
+            caminho_parquet = parquet_dir / f"CAGED{t}{comp}.parquet"
+            reg_previo = obter_registro(manifesto, t, comp)
+            ja_ingerido = (
+                not reprocessar
+                and reg_previo is not None
+                and reg_previo.situacao == "ingerido"
+                and reg_previo.hash_ocupacoes == ocupacoes.hash
+                and caminho_parquet.exists()
+            )
+            if ja_ingerido and reg_previo is not None:
+                resumo.registros.append(reg_previo)
+                resumo.total_processados += 1
+                resumo.total_ingeridos += 1
+                resumo.total_linhas_lidas += reg_previo.linhas_lidas
+                resumo.total_linhas_gravadas += reg_previo.linhas_gravadas
+                if ao_registrar is not None:
+                    ao_registrar(reg_previo)
+            else:
+                tipos_a_processar.append(t)
+
+        if not tipos_a_processar:
+            continue
+
         # Disco: aborta antes de qualquer download se < 4 GB
         _verificar_espaco_disco(dir_dados_path, espaco_livre_gb)
 
-        arquivos_na_fonte = [a.upper() for a in baixador.listar_arquivos(comp)]
+        try:
+            arquivos_na_fonte = [a.upper() for a in baixador.listar_arquivos(comp)]
+        except Exception as exc_list:
+            resumo.sucesso = False
+            for t in tipos_a_processar:
+                ano = comp[:4]
+                nome_7z = f"CAGED{t}{comp}.7z"
+                url_arq = f"{fonte.url_base.rstrip('/')}/{ano}/{comp}/{nome_7z}"
+                reg_falha = RegistroProcedencia(
+                    fonte=fonte.id,
+                    url=url_arq,
+                    arquivo=nome_7z,
+                    tipo=t,
+                    competencia_arquivo=comp,
+                    situacao="falha",
+                    erro=f"Falha ao listar: {exc_list}",
+                    hash_ocupacoes=ocupacoes.hash,
+                    versao_ocupacoes=ocupacoes.versao,
+                    transformacoes=TRANSFORMACOES_PADRAO,
+                )
+                upsert_registro(manifesto_path, reg_falha)
+                resumo.registros.append(reg_falha)
+                resumo.total_processados += 1
+                resumo.total_falhas += 1
+                if ao_registrar is not None:
+                    ao_registrar(reg_falha)
+            continue
 
-        for t in tipos:
+        for t in tipos_a_processar:
             resumo.total_processados += 1
             nome_esperado = f"CAGED{t}{comp}.7z".upper()
+            caminho_parquet = parquet_dir / f"CAGED{t}{comp}.parquet"
+            reg_previo = obter_registro(manifesto, t, comp)
 
             # Se o arquivo não existir na fonte remota
             if nome_esperado not in arquivos_na_fonte:
+                parquet_existe = caminho_parquet.exists()
+                era_ingerido = (
+                    reg_previo is not None
+                    and reg_previo.situacao == "ingerido"
+                    and parquet_existe
+                )
+                if era_ingerido and reg_previo is not None:
+                    # Um registro ingerido cujo Parquet existe nunca é sobrescrito
+                    resumo.registros.append(reg_previo)
+                    resumo.total_falhas += 1
+                    resumo.sucesso = False
+                    if ao_registrar is not None:
+                        ao_registrar(reg_previo)
+                    continue
+
                 ano = comp[:4]
                 url_arq = f"{fonte.url_base.rstrip('/')}/{ano}/{comp}/CAGED{t}{comp}.7z"
                 reg_ausente = RegistroProcedencia(
@@ -279,19 +369,48 @@ def ingerir_periodo(
                 upsert_registro(manifesto_path, reg_ausente)
                 resumo.registros.append(reg_ausente)
                 resumo.total_ausentes += 1
+                if ao_registrar is not None:
+                    ao_registrar(reg_ausente)
                 continue
 
             # Processa o arquivo
-            reg = ingerir_arquivo(
-                tipo=t,
-                competencia=comp,
-                ocupacoes=ocupacoes,
-                dir_dados=dir_dados_path,
-                baixador=baixador,
-                fonte=fonte,
-                reprocessar=reprocessar,
-            )
+            try:
+                reg = ingerir_arquivo(
+                    tipo=t,
+                    competencia=comp,
+                    ocupacoes=ocupacoes,
+                    dir_dados=dir_dados_path,
+                    baixador=baixador,
+                    fonte=fonte,
+                    reprocessar=reprocessar,
+                )
+            except EspacoInsuficiente:
+                raise
+            except Exception as exc_proc:
+                if caminho_parquet.exists():
+                    caminho_parquet.unlink()
+                bruto_dir = caged_dir / "bruto"
+                _limpar_diretorio(bruto_dir)
+
+                ano = comp[:4]
+                url_arq = f"{fonte.url_base.rstrip('/')}/{ano}/{comp}/CAGED{t}{comp}.7z"
+                reg = RegistroProcedencia(
+                    fonte=fonte.id,
+                    url=url_arq,
+                    arquivo=f"CAGED{t}{comp}.7z",
+                    tipo=t,
+                    competencia_arquivo=comp,
+                    situacao="falha",
+                    hash_ocupacoes=ocupacoes.hash,
+                    versao_ocupacoes=ocupacoes.versao,
+                    transformacoes=TRANSFORMACOES_PADRAO,
+                    erro=f"{type(exc_proc).__name__}: {exc_proc}",
+                )
+                upsert_registro(manifesto_path, reg)
+
             resumo.registros.append(reg)
+            if ao_registrar is not None:
+                ao_registrar(reg)
 
             if reg.situacao == "ingerido":
                 resumo.total_ingeridos += 1

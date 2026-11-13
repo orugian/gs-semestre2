@@ -1,6 +1,7 @@
 """Gerenciamento do manifesto de procedência em procedencia.json."""
 
 import json
+import os
 from pathlib import Path
 
 from citizentech_ml.ingestao.modelos import RegistroProcedencia
@@ -23,10 +24,17 @@ def salvar_manifesto(caminho_json: Path, registros: list[RegistroProcedencia]) -
     """Salva a lista de registros de procedência em formato JSON UTF-8 sem BOM."""
     caminho_json.parent.mkdir(parents=True, exist_ok=True)
     dados = [r.to_dict() for r in registros]
-    caminho_json.write_text(
-        json.dumps(dados, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-    )
+    caminho_tmp = caminho_json.with_name(f"{caminho_json.name}.tmp")
+    try:
+        caminho_tmp.write_text(
+            json.dumps(dados, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(caminho_tmp, caminho_json)
+    except Exception:
+        if caminho_tmp.exists():
+            caminho_tmp.unlink()
+        raise
 
 
 def obter_registro(

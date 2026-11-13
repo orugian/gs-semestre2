@@ -49,6 +49,7 @@ class RegistroProcedencia:
     colunas_descartadas_sensiveis: list[str] = field(default_factory=list)
     colunas_ignoradas: list[str] = field(default_factory=list)
     hash_ocupacoes: str | None = None
+    hash_ocupacoes_anterior: str | None = None
     versao_ocupacoes: str | None = None
     layout_sha256: str = "0490f7ef84fd05db2d89cf22f56d8cf7262ceb14c9d7db1cca2bae422e6423ce"
     transformacoes: list[str] = field(default_factory=list)

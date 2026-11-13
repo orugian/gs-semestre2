@@ -1,5 +1,6 @@
 """Processamento, filtragem e conversão de microdados do Novo Caged para Parquet."""
 
+import os
 import unicodedata
 from pathlib import Path
 
@@ -262,7 +263,14 @@ def processar_txt_para_parquet(
     df = df[COLUNAS_ESQUEMA_PARQUET]
 
     caminho_parquet.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(caminho_parquet, index=False, engine="pyarrow")
+    caminho_tmp = caminho_parquet.with_name(f"{caminho_parquet.name}.tmp")
+    try:
+        df.to_parquet(caminho_tmp, index=False, engine="pyarrow")
+        os.replace(caminho_tmp, caminho_parquet)
+    except Exception:
+        if caminho_tmp.exists():
+            caminho_tmp.unlink()
+        raise
     linhas_gravadas = len(df)
 
     return linhas_lidas, linhas_gravadas, descartadas_sensiveis, ignoradas
