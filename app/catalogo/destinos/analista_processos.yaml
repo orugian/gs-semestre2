@@ -1,0 +1,259 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "analista_processos"
+nome: "Analista de Processos/Melhoria Contínua"
+cbo6:
+  - "214905"
+  - "214910"
+  - "214925"
+  - "214930"
+  - "391210"
+  - "391105"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais dedicados ao mapeamento, modelagem (BPMN), padronização, análise de gargalos e melhoria contínua de processos organizacionais e produtivos."
+  publico_alvo: "Engenheiros de produção, engenheiros de qualidade, cronoanalistas e tecnólogos em produção industrial atuando em projetos de melhoria contínua e Lean/Six Sigma."
+  limitacoes:
+    - "Destino analista_processos: nao ha codigo CBO proprio de analista de processos; os codigos sao aproximacoes."
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:51Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "processos_empresariais"
+    esco_id: "9e84a506-df06-4be3-874a-fa01293e3dd5"
+    esco_uri: "http://data.europa.eu/esco/skill/9e84a506-df06-4be3-874a-fa01293e3dd5"
+    titulo_oficial: "processos empresariais"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "Processos que uma organização aplica para melhorar a eficiência, definir novos objetivos e alcançar metas de forma rentável e atempada."
+    descricao_contextual_proposta: "Conhecimento sobre ciclos de vida de processos, cadeias de valor organizacionais e fundamentos de eficiência operacional (BPM, Lean e Six Sigma)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão conceitual de entradas, saídas, agregadores de valor e desperdícios em fluxos de trabalho."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:51Z"
+
+  - id_local: "criar_modelos_processos_empresariais"
+    esco_id: "6a7792a9-888a-46ad-afc9-2c0d94c8fde6"
+    esco_uri: "http://data.europa.eu/esco/skill/6a7792a9-888a-46ad-afc9-2c0d94c8fde6"
+    titulo_oficial: "criar modelos de processos empresariais"
+    tipo_esco: "competência"
+    descricao_oficial: "Desenvolver descrições formais e informais dos processos empresariais e da estrutura organizacional, recorrendo a modelos, notações e ferramentas de processos empresariais."
+    descricao_contextual_proposta: "Modelagem de fluxos de trabalho utilizando notação formal padronizada (BPMN), definindo piscinas (pools), raias (lanes), eventos de início/fim e gateways de decisão."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação e representação correta de fluxogramas em notação padronizada BPMN e sequenciamento de atividades."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:51Z"
+
+  - id_local: "analisar_processos_empresariais"
+    esco_id: "56042303-972b-41be-9310-58467599ff7e"
+    esco_uri: "http://data.europa.eu/esco/skill/56042303-972b-41be-9310-58467599ff7e"
+    titulo_oficial: "analisar os processos empresariais"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar a contribuição dos processos de trabalho para os objetivos da empresa e monitorizar a sua eficiência e produtividade."
+    descricao_contextual_proposta: "Diagnóstico de tempo de ciclo (lead time), identificação de gargalos de capacidade, etapas que não agregam valor e desperdícios em fluxos operacionais."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Cálculo de tempos de espera e proposta de redistribuição de tarefas para eliminação de gargalos."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:51Z"
+
+  - id_local: "identificar_requisitos_clientes"
+    esco_id: "0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    esco_uri: "http://data.europa.eu/esco/skill/0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    titulo_oficial: "identificar os requisitos dos clientes"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas e ferramentas, tais como inquéritos, questionários e aplicações TIC para averiguar, definir, analisar, documentar e manter os requisitos dos utilizadores a partir do sistema, serviço ou produto."
+    descricao_contextual_proposta: "Levantamento das necessidades da 'Voz do Cliente' (VoC) e requisitos de negócio internos para balizar acordos de nível de serviço (SLAs)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Tradução de dores e requisitos de usuários em especificações e metas de processo mensuráveis."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "analisar_dados"
+    esco_id: "a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    esco_uri: "http://data.europa.eu/esco/skill/a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    titulo_oficial: "analisar dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar, transformar e modelar dados para obtenção de informações úteis e apoio à tomada de decisões."
+    descricao_contextual_proposta: "Avaliação estatística básica de volumetria, taxas de retrabalho e dispersão de tempos de atendimento para priorização de intervenções."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Estruturação de dados operacionais para cálculo de taxas de defeito e tempo médio entre falhas."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "realizar_apresentacao_visual_dados"
+    esco_id: "c3e36d05-8ae8-447f-bb2b-6f9409f85389"
+    esco_uri: "http://data.europa.eu/esco/skill/c3e36d05-8ae8-447f-bb2b-6f9409f85389"
+    titulo_oficial: "realizar apresentação visual de dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Criar representações visuais de dados, tais como gráficos ou diagramas, para facilitar a compreensão."
+    descricao_contextual_proposta: "Construção de diagramas de Pareto, gráficos de tendência e mapas de fluxo de valor (VSM) para subsidiar discussões de melhoria contínua."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Uso do gráfico de Pareto (regra 80/20) para priorizar causas de retrabalho ou atrasos operacionais."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "garantia_qualidade_dados"
+    esco_id: "713fb616-118e-40bc-9366-4a69879a49d5"
+    esco_uri: "http://data.europa.eu/esco/skill/713fb616-118e-40bc-9366-4a69879a49d5"
+    titulo_oficial: "executar processos de garantia da qualidade dos dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas de análise, validação e verificação da qualidade em dados, a fim de verificar a integridade da qualidade dos dados."
+    descricao_contextual_proposta: "Verificação da integridade das fontes de apontamento de horas e chamados para evitar análises enviesadas por subnotificação."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Identificação de inconsistências em dados de amostragem de tempos e métodos de medição."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:46Z"
+
+  - id_local: "efetuar_analise_riscos"
+    esco_id: "1dd23dba-dd00-45ab-abf4-642902538317"
+    esco_uri: "http://data.europa.eu/esco/skill/1dd23dba-dd00-45ab-abf4-642902538317"
+    titulo_oficial: "efetuar análise de riscos"
+    tipo_esco: "competência"
+    descricao_oficial: "Identificar e avaliar fatores que possam comprometer o sucesso de um projeto ou ameaçar o funcionamento da organização. Implementar procedimentos para evitar ou minimizar o seu impacto."
+    descricao_contextual_proposta: "Mapeamento de riscos operacionais e pontos únicos de falha (FMEA) associados a transições entre sistemas ou mudanças de fluxo de trabalho."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação de causas de risco e elaboração de ações preventivas para mitigar rupturas de serviço."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:53Z"
+
+exercicio:
+  id: "ex_analista_processos_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados:
+    - "analisar_dados"
+    - "garantia_qualidade_dados"
+  cenario: "Cenário didático e sintético: A distribuidora de medicamentos 'FarmaLog' enfrenta atrasos crônicos no processo de conferência e expedição de pedidos para hospitais conveniados. O tempo total médio desde a aprovação do pedido até a expedição aumentou de 4 horas para 14 horas no último trimestre, gerando reclamações sobre quebra de SLA. O analista de processos foi designado para mapear o fluxo atual (AS-IS), identificar desperdícios e riscos operacionais e propor o redesenho (TO-BE)."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "Na notação BPMN 2.0, ao modelar um processo em que a separação de medicamentos refrigerados e medicamentos secos ocorre simultaneamente em linhas distintas e o empacotamento final só pode começar após a conclusão de ambas as separações, quais elementos de gateway devem ser utilizados para a divisão e para a convergência dos fluxos?"
+      alternativas:
+        A: "Gateway Exclusivo (XOR) para bifurcar os caminhos conforme o tipo do item e Gateway Paralelo (AND) para aguardar o lote final."
+        B: "Gateway Inclusivo (OR) para direcionar as etapas baseado em regras de negócio e Gateway Exclusivo (XOR) na junção de expedição."
+        C: "Gateway Paralelo (AND) para bifurcar o fluxo simultaneamente e Gateway Paralelo (AND) para sincronizar o encerramento conjunto."
+        D: "Gateway Baseado em Eventos para aguardar mensagens das docas e Gateway Complexo com expressões condicionais para a convergência."
+      gabarito: "C"
+      justificativa: "O Gateway Paralelo (AND) é o elemento padrão na notação BPMN 2.0 para modelar atividades executadas concorrentemente e sincronizar a convergência de todos os ramos antes da etapa seguinte. O Gateway Exclusivo seleciona apenas uma rota alternativa, o Gateway Inclusivo depende de condições lógicas dinâmicas sem sincronismo obrigatório e o Gateway de Eventos reage a sinais externos em vez de orquestrar tarefas concorrentes."
+      requisitos_avaliados:
+        - "criar_modelos_processos_empresariais"
+        - "processos_empresariais"
+
+    - id: "q2"
+      enunciado: "O analista coletou dados dos últimos 200 atrasos de expedição e categorizou as causas: Falta de assinatura manual do farmacêutico (124 ocorrências), Divergência de lote no leitor óptico (42 ocorrências), Queda momentânea da impressora térmica (18 ocorrências) e Outras causas dispersas (16 ocorrências). Qual ferramenta da qualidade e conclusão imediata fundamentam a priorização das melhorias?"
+      alternativas:
+        A: "Histograma de frequências contínuas, apontando que a distribuição dos erros segue uma curva normal com dispersão homogênea."
+        B: "Gráfico de dispersão cartesiano, correlacionando o número de impressões diárias com a temperatura interna das docas de carga."
+        C: "Diagrama de causa e efeito (Ishikawa), recomendando intervenção simultânea em todas as causas levantadas sem distinção de impacto."
+        D: "Gráfico de Pareto, evidenciando que duas categorias principais concentram mais de 80% das falhas e demandam ação prioritária."
+      gabarito: "D"
+      justificativa: "O Gráfico de Pareto aplica o princípio 80/20 ordenando causas por frequência decrescente e curva acumulada, demonstrando que assinatura manual e divergência de lote respondem por 83% dos incidentes. Histogramas analisam dispersão de variáveis quantitativas, diagramas de dispersão examinam relação entre duas variáveis contínuas e diagramas de Ishikawa mapeiam hipóteses qualitativas sem quantificar a relevância de cada ocorrência."
+      requisitos_avaliados:
+        - "realizar_apresentacao_visual_dados"
+        - "analisar_processos_empresariais"
+
+    - id: "q3"
+      enunciado: "Ao avaliar o risco de automatizar a conferência de medicamentos via leitor de código de barras 2D em substituição à conferência física manual, qual risco operacional crítico deve ser previsto na matriz de análise de riscos (FMEA) e qual respectiva salvaguarda deve ser implementada?"
+      alternativas:
+        A: "Risco de leitura incorreta em lotes similares; salvaguarda com dupla validação sistêmica contra o prontuário eletrônico do paciente."
+        B: "Risco de variação no preço das etiquetas de código de barras; salvaguarda com renegociação periódica com fornecedores gráficos."
+        C: "Risco de desmotivação dos operadores de estoque; salvaguarda com manutenção integral da checagem em papel paralelamente ao leitor."
+        D: "Risco de obsolescência tecnológica dos terminais; salvaguarda com substituição preventiva dos equipamentos a cada fechamento de mês."
+      gabarito: "A"
+      justificativa: "Na dispensação hospitalar, a troca inadvertida de dosagem ou princípio ativo constitui o risco de maior severidade assistencial, exigindo conferência cruzada com a prescrição médica digital antes da liberação. Custos de insumos referem-se a riscos financeiros de suprimentos, manter processos manuais paralelos anula os ganhos de produtividade da automação e trocar coletores mensalmente eleva despesas sem mitigar falhas operacionais."
+      requisitos_avaliados:
+        - "efetuar_analise_riscos"
+        - "identificar_requisitos_clientes"
+
+    - id: "q4"
+      enunciado: "No mapeamento do processo atual, constatou-se que após a separação dos produtos os pedidos ficam em média 5 horas parados em carrinhos aguardando a assinatura física de um único supervisor, enquanto o tempo de assinatura em si consome menos de 2 minutos por lote. Sob a ótica da metodologia Lean de processos, como essa espera deve ser classificada e tratada?"
+      alternativas:
+        A: "Desperdício por superprocessamento; deve ser mitigado com adição de formulários impressos para detalhar o histórico das checagens."
+        B: "Desperdício por tempo de espera em fila; deve ser mitigado com aprovação por alçada digital no sistema e regras automáticas de liberação."
+        C: "Desperdício por movimentação física; deve ser mitigado aproximando as bancadas de separação da sala de convivência da supervisão."
+        D: "Atividade essencial de agregação de valor; deve ser mantida integralmente ampliando o número de assinaturas exigidas por protocolo."
+      gabarito: "B"
+      justificativa: "Lotes parados aguardando assinaturas constituem desperdício clássico de espera na metodologia Lean, gerando atraso sem agregar valor perceptível ao cliente final. Criar mais formulários amplia a burocracia, mover bancadas apenas mascara a dependência de aprovação manual e classificar esperas ociosas como valor agregado distorce os fundamentos da melhoria contínua de processos."
+      requisitos_avaliados:
+        - "analisar_processos_empresariais"
+        - "processos_empresariais"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "Na distribuidora 'FarmaLog', o diretor de operações solicita uma proposta estruturada para reformular o processo de separação e expedição de pedidos emergenciais para UTIs, que hoje sofre com extravios e tempos imprevisíveis. Elabore uma proposta de melhoria contendo: (1) o redesenho conceitual do fluxo (TO-BE), destacando os papéis das áreas envolvidas (comercial, farmácia e expedição) e os pontos de checagem; (2) a identificação dos 2 maiores riscos de ruptura na transição e as respectivas ações de contingência; e (3) a definição de 2 indicadores-chave de processo (KPIs) com meta e fórmula clara para monitorar a eficácia da nova rotina."
+    requisitos_avaliados:
+      - "criar_modelos_processos_empresariais"
+      - "analisar_processos_empresariais"
+      - "efetuar_analise_riscos"
+      - "identificar_requisitos_clientes"
+    rubrica:
+      - id: "crit_redesenho_fluxo"
+        descricao: "Avalia a consistência e clareza do fluxo de trabalho proposto (TO-BE), separação de papéis e eliminação de gargalos."
+        requisitos_avaliados:
+          - "criar_modelos_processos_empresariais"
+          - "analisar_processos_empresariais"
+        ancoras:
+          0: "Não propõe redesenho de fluxo ou apresenta etapas confusas sem definição de responsabilidades entre áreas."
+          1: "Descreve um novo fluxo de forma genérica, sem detalhar os pontos de decisão, handoffs ou mecanismos de agilidade para pedidos emergenciais."
+          2: "Apresenta fluxo TO-BE claro e enxuto, com separação nítida de papéis (raias/responsáveis), conferência digital e rota expressa para emergências."
+
+      - id: "crit_gestao_riscos"
+        descricao: "Avalia a solidez na identificação de riscos operacionais durante a implementação e a eficácia dos planos de contingência."
+        requisitos_avaliados:
+          - "efetuar_analise_riscos"
+        ancoras:
+          0: "Ignora riscos operacionais ou propõe mitigações superficiais sem viabilidade prática."
+          1: "Identifica riscos pertinentes, mas as ações preventivas são tímidas ou não evitam a parada da expedição hospitalar."
+          2: "Mapeia os riscos críticos de transição (ex: falha de integração no leitor, resistência operacional) e apresenta contingências robustas com salvaguardas claras."
+
+      - id: "crit_indicadores_kpis"
+        descricao: "Avalia a formulação técnica dos indicadores de desempenho (KPIs), alinhamento com a necessidade do cliente e acionabilidade."
+        requisitos_avaliados:
+          - "identificar_requisitos_clientes"
+          - "analisar_processos_empresariais"
+        ancoras:
+          0: "Não apresenta KPIs ou propõe métricas subjetivas e sem fórmula."
+          1: "Apresenta métricas operacionais válidas, mas com fórmulas incompletas ou sem alinhamento direto aos prazos hospitalares."
+          2: "Define dois KPIs objetivos e acionáveis (ex: Lead Time de Expedição Emergencial e Taxa de Acurácia de Pedido Perfeito / OTIF), com fórmulas, metas e periodicidade."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"

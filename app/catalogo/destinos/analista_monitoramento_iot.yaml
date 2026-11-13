@@ -1,0 +1,260 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "analista_monitoramento_iot"
+nome: "Analista de Monitoramento/IoT Industrial"
+cbo6:
+  - "212415"
+  - "202110"
+  - "202120"
+  - "202105"
+  - "202115"
+  - "300105"
+  - "313410"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais responsáveis pela telemetria, instrumentação industrial, integração de dispositivos IoT, monitoramento contínuo de sinais físicos e diagnóstico de anomalias em plantas operacionais."
+  publico_alvo: "Engenheiros de controle e automação, tecnólogos em mecatrônica, técnicos em instrumentação e analistas de sistemas de automação industrial."
+  limitacoes:
+    - "Destino analista_monitoramento_iot: serie esparsa; abstencao por UF frequente (D04a)."
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:48Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "sensores"
+    esco_id: "70a7b3b3-31ef-4b29-a30f-bb7299dff39b"
+    esco_uri: "http://data.europa.eu/esco/skill/70a7b3b3-31ef-4b29-a30f-bb7299dff39b"
+    titulo_oficial: "sensores"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "Os sensores são transdutores que podem detetar ou identificar características no seu ambiente. Detetam alterações no aparelho ou no ambiente e fornecem um sinal ótico ou elétrico correspondente. Os sensores são geralmente divididos em seis classes: mecânicos, eletrónicos, térmicos, magnéticos, eletroquímicos e óticos."
+    descricao_contextual_proposta: "Conhecimento sobre transdutores térmicos (ex: termistores, sensores de temperatura industrial) e de distância/proximidade (ultrassônicos e ópticos), faixas de operação e condicionamento de sinais analógicos e digitais."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão dos princípios de transdução, amostragem e ruído em medições físicas sem implicar certificação de bancada."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "internet_das_coisas"
+    esco_id: "f049d050-12da-4e40-813a-2b5eb6df6b51"
+    esco_uri: "http://data.europa.eu/esco/skill/f049d050-12da-4e40-813a-2b5eb6df6b51"
+    titulo_oficial: "Internet das Coisas"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "Os princípios gerais, as categorias, os requisitos, as limitações e as vulnerabilidades dos dispositivos inteligentes conectados (a maioria dos quais com a desejada conectividade à Internet)."
+    descricao_contextual_proposta: "Conceitos fundamentais de topologias edge-to-cloud, nós microcontrolados (edge computing), restrições energéticas e de largura de banda em ambientes industriais."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Entendimento conceitual de arquitetura distribuída de telemetria em questionário simulado."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:58Z"
+
+  - id_local: "gerir_sistemas_recolha_dados"
+    esco_id: "a80fb090-63f4-4b05-83a5-2f090deb7757"
+    esco_uri: "http://data.europa.eu/esco/skill/a80fb090-63f4-4b05-83a5-2f090deb7757"
+    titulo_oficial: "gerir sistemas de recolha de dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Desenvolver e gerir métodos e estratégias destinados a maximizar a qualidade dos dados e a eficiência estatística na recolha de dados, a fim de garantir o melhor tratamento posterior dos dados recolhidos."
+    descricao_contextual_proposta: "Configuração de buffers locais, cadência de telemetria, tratamento de perdas de pacotes e sincronização de relógios em nós de aquisição."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Definição de estratégias de amortecimento de dados e tolerância a quedas de rede intermitentes."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "monitorizar_desempenho_sistemas"
+    esco_id: "9190d87f-9792-42e0-bb7f-64294a656bcd"
+    esco_uri: "http://data.europa.eu/esco/skill/9190d87f-9792-42e0-bb7f-64294a656bcd"
+    titulo_oficial: "monitorizar o desempenho dos sistemas"
+    tipo_esco: "competência"
+    descricao_oficial: "Medir a fiabilidade e o desempenho de um sistema antes, durante e após a integração de componentes e durante o funcionamento e a manutenção do sistema. Selecionar e utilizar ferramentas e técnicas de monitorização do desempenho, como software especial."
+    descricao_contextual_proposta: "Acompanhamento em tempo real de limiares de temperatura e aproximação, identificando transições de estado (normal, atenção e crítico) em painéis operacionais."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Classificação correta de alertas baseada nos limiares normatizados e detecção de sobreaquecimento e colisão."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:49Z"
+
+  - id_local: "protocolos_comunicacao_tic"
+    esco_id: "6e4f75b4-c60f-4623-a9ba-760c8245753b"
+    esco_uri: "http://data.europa.eu/esco/skill/6e4f75b4-c60f-4623-a9ba-760c8245753b"
+    titulo_oficial: "protocolos de comunicação de TIC"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "O sistema de regras que permite o intercâmbio de informações entre computadores ou outros dispositivos através de redes informáticas."
+    descricao_contextual_proposta: "Conhecimento sobre protocolos de transporte e aplicação voltados a IoT e automação, tais como MQTT (QoS, tópicos publish/subscribe), HTTP/REST, Modbus e WebSockets."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação dos níveis de garantia de entrega de mensagens (QoS) e estrutura de tópicos MQTT em rede operacional."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:49Z"
+
+  - id_local: "resolver_problemas_sistemas_tic"
+    esco_id: "9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    esco_uri: "http://data.europa.eu/esco/skill/9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    titulo_oficial: "resolver problemas de sistemas de TIC"
+    tipo_esco: "competência"
+    descricao_oficial: "Identificar potenciais anomalias em componentes. Monitorizar, documentar e comunicar incidentes. Utilizar recursos adequados, com o mínimo tempo de interrupção, e utilizar ferramentas de diagnóstico adequadas."
+    descricao_contextual_proposta: "Diagnóstico e resolução de falhas em conexões com brokers MQTT, travamento de atuadores (LED/buzzer) e interrupções na transmissão de telemetria."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Isolamento metódico da causa raiz de interrupções de fluxo de dados e falhas em dispositivos edge."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+  - id_local: "analisar_dados"
+    esco_id: "a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    esco_uri: "http://data.europa.eu/esco/skill/a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    titulo_oficial: "analisar dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar, transformar e modelar dados para obtenção de informações úteis e apoio à tomada de decisões."
+    descricao_contextual_proposta: "Interpretação de séries temporais de sinais de sensores, cálculo de taxas de variação térmica e correlação de eventos de proximidade com paradas de linha."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Extração de padrões de deriva térmica e degradação mecânica a partir de dados históricos de telemetria."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "garantia_qualidade_dados"
+    esco_id: "713fb616-118e-40bc-9366-4a69879a49d5"
+    esco_uri: "http://data.europa.eu/esco/skill/713fb616-118e-40bc-9366-4a69879a49d5"
+    titulo_oficial: "executar processos de garantia da qualidade dos dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas de análise, validação e verificação da qualidade em dados, a fim de verificar a integridade da qualidade dos dados."
+    descricao_contextual_proposta: "Filtragem de leituras espúrias de sensores (glitches), tratamento de valores fora da faixa física de operação e validação de carimbos de tempo (timestamps)."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Detecção e descarte de leituras fisicamente impossíveis causadas por ruído elétrico na instrumentação."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:46Z"
+
+exercicio:
+  id: "ex_analista_monitoramento_iot_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados:
+    - "analisar_dados"
+  cenario: "Cenário didático e sintético: Uma célula robotizada de manufatura possui um dispositivo de borda (edge) instrumentado com sensores de telemetria que publica medições via MQTT. O monitoramento obedece rigorosamente aos limiares versionados do sistema (app/config/limiares.json): para temperatura_c, normal é v < 35.0, atencao é 35.0 <= v < 45.0 e critico é v >= 45.0; para distancia_cm, normal é v > 15.0, atencao é 8.0 < v <= 15.0 e critico é 0.0 <= v <= 8.0. Em estado de atencao o LED acende (status ALERTA); em estado critico o LED e o buzzer são ativados simultaneamente (status ALERTA)."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "O sistema de telemetria do robô registra as seguintes leituras pontuais: temperatura_c = 38.0 °C e distancia_cm = 12.0 cm. De acordo com as regras de limiares versionadas do sistema, qual é a classificação de risco da célula e o estado esperado dos atuadores (LED e buzzer)?"
+      alternativas:
+        A: "Classe normal: atuador LED desligado e buzzer desligado, mantendo o firmware em status OK sem emissão de alertas na célula."
+        B: "Classe atencao: atuador LED ligado e buzzer desligado, mantendo o firmware em status ALERTA de conformidade com os limiares."
+        C: "Classe critico: atuador LED ligado e buzzer ligado, disparando alarme sonoro contínuo com acionamento simultâneo na bancada."
+        D: "Classe atencao: atuador LED desligado e buzzer ligado, mantendo o firmware em status OK com disparo sonoro intermitente na linha."
+      gabarito: "B"
+      justificativa: "Segundo as regras do sistema, temperatura entre 35.0 °C e 45.0 °C e distância entre 8.0 cm e 15.0 cm configuram estado de atenção. Nessa classe, o protocolo determina acionamento visual exclusivo por LED e status em ALERTA, reservando o buzzer para o estado crítico quando temperatura atinge 45.0 °C ou distância cai para 8.0 cm ou menos."
+      requisitos_avaliados:
+        - "monitorizar_desempenho_sistemas"
+        - "sensores"
+
+    - id: "q2"
+      enunciado: "Em uma aplicação industrial com conexão de rede sem fio sujeita a instabilidade passageira, mensagens críticas de alarme de sobreaquecimento (temperatura >= 45.0 °C) não podem ser perdidas, mas a rede possui banda limitada. No protocolo MQTT, qual nível de QoS (Quality of Service) é mais indicado para assegurar a entrega garantida do pacote de alarme sem sobrecarga desnecessária?"
+      alternativas:
+        A: "QoS 0 (At most once), que publica as mensagens no broker sem confirmação de entrega para economizar pacotes de rede sem fio."
+        B: "QoS 2 (Exactly once), que utiliza aperto de mão em quatro etapas para impedir qualquer mensagem duplicada na transmissão."
+        C: "QoS 1 (At least once), que assegura a entrega com confirmação PUBACK através de retransmissão e baixo overhead de comunicação."
+        D: "Substituição do broker MQTT por datagramas UDP sem controle de fluxo, dependendo de retransmissões manuais no microcontrolador."
+      gabarito: "C"
+      justificativa: "O nível QoS 1 garante a recepção da mensagem pelo broker através de confirmação PUBACK com baixo overhead, sendo ideal para alarmes em que eventuais duplicatas são tratadas pela estampa de tempo. O nível QoS 0 não oferece garantia contra perda em conexões instáveis, QoS 2 gera atrasos excessivos em quatro vias em redes congestionadas e datagramas UDP puros não oferecem entrega garantida."
+      requisitos_avaliados:
+        - "protocolos_comunicacao_tic"
+        - "internet_das_coisas"
+
+    - id: "q3"
+      enunciado: "Um sensor ultrassônico que monitora o perímetro da prensa repentinamente emite leituras intermitentes de 0.0 cm intercaladas com 25.0 cm a cada 100 ms, enquanto a prensa está em repouso. O operador percebe que cabos de potência de inversores de frequência foram recentemente instalados no mesmo eletroduto. Qual é o diagnóstico mais plausível e a conduta técnica prioritária?"
+      alternativas:
+        A: "Ajuste da calibração por software adicionando uma constante de compensação matemática para anular as leituras zeradas do sensor."
+        B: "Substituição imediata do transdutor ultrassônico por um modelo idêntico sob a premissa de falha de desgaste físico nos componentes."
+        C: "Aumento da frequência de varredura do conversor analógico-digital para capturar mais amostras por segundo sem alterar a infraestrutura."
+        D: "Indução eletromagnética no sinal por proximidade de cabos de força, exigindo segregação em eletrodutos próprios e cabeamento blindado aterrado."
+      gabarito: "D"
+      justificativa: "Cabos de potência de inversores geram ruído eletromagnético de alta frequência (EMI) nas linhas vizinhas, induzindo picos espúrios de tensão. A conduta correta é segregar o cabeamento de sinal em conduto metálico separado e empregar cabo blindado aterrado. Modificações de software mascaram a interferência física, trocar a peça mantém o circuito exposto ao ruído e elevar a amostragem apenas amplifica a coleta de dados corrompidos."
+      requisitos_avaliados:
+        - "resolver_problemas_sistemas_tic"
+        - "sensores"
+
+    - id: "q4"
+      enunciado: "O gateway de telemetria precisa armazenar medições em caso de queda de link com o servidor em nuvem e retransmiti-las em ordem assim que a conexão for restabelecida, evitando sobrecarga de memória RAM no nó de borda. Qual mecanismo deve ser implementado no firmware do nó coletor?"
+      alternativas:
+        A: "Fila circular em memória persistente com limite de descarte por tempo (TTL) e descarregamento ordenado em lotes após a reconexão da rede."
+        B: "Armazenamento de leituras em lista encadeada na memória RAM dinâmica do microcontrolador sem limite de retenção até o retorno da nuvem."
+        C: "Gravação de cada nova leitura no mesmo endereço de memória flash sobrescrevendo os dados anteriores para economizar espaço de partição."
+        D: "Bloqueio de novas leituras dos sensores mantendo o firmware em espera ativa síncrona até que o broker MQTT volte a responder requisições."
+      gabarito: "A"
+      justificativa: "Uma fila circular não volátil com controle de TTL e política FIFO garante a preservação dos dados durante a indisponibilidade sem esgotar a memória do dispositivo de borda. Reter registros na RAM causa estouro de memória e reinicializações indesejadas, sobrescrever a mesma posição apaga o histórico de telemetria e aplicar espera ativa bloqueia o processamento em tempo real de sensores e atuadores de segurança."
+      requisitos_avaliados:
+        - "gerir_sistemas_recolha_dados"
+        - "garantia_qualidade_dados"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "Em uma célula de estampagem industrial automatizada, a esteira transportadora possui um dispositivo de borda que afere temperatura_c do motor e distancia_cm de segurança do operador. Os limiares de segurança vigentes são: alerta de atenção para temperatura >= 35.0 °C e distância <= 15.0 cm; alarme crítico para temperatura >= 45.0 °C e distância <= 8.0 cm. Em uma inspeção, foi constatado que durante 15 minutos o nó publicou leituras de temperatura de 48.0 °C e distância de 5.0 cm, porém nem o LED nem o buzzer foram acionados, e o painel de nuvem permaneceu exibindo status anterior como 'normal'. Como analista de monitoramento IoT, estruture um plano de ação técnico contendo: (1) as hipóteses de falha divididas entre camada física/borda (sensores e atuadores), camada de firmware (lógica local de acionamento) e camada de rede (publicação MQTT/broker); (2) o procedimento passo a passo para testar e isolar onde ocorreu o bloqueio; e (3) a implementação de um mecanismo de 'heartbeat/watchdog' e redundância para impedir que falhas de acionamento passem despercebidas."
+    requisitos_avaliados:
+      - "monitorizar_desempenho_sistemas"
+      - "resolver_problemas_sistemas_tic"
+      - "protocolos_comunicacao_tic"
+      - "gerir_sistemas_recolha_dados"
+    rubrica:
+      - id: "crit_hipoteses_diagnostico"
+        descricao: "Avalia a capacidade analítica de formular hipóteses estruturadas cobrindo borda, rede e firmware."
+        requisitos_avaliados:
+          - "resolver_problemas_sistemas_tic"
+          - "monitorizar_desempenho_sistemas"
+        ancoras:
+          0: "Não identifica as possíveis camadas de falha ou atribui o erro genericamente ao computador sem método."
+          1: "Identifica falha em apenas uma das camadas (apenas rede ou apenas hardware local), sem visão de sistema integrado."
+          2: "Formula hipóteses abrangentes e consistentes (falha na GPIO dos atuadores, congelamento de thread no firmware, retenção de mensagens MQTT antigas ou falha de conexão)."
+
+      - id: "crit_metodologia_isolamento"
+        descricao: "Avalia a aplicação metódica de testes de bancada e inspeção de fluxo de dados para isolar a causa raiz."
+        requisitos_avaliados:
+          - "resolver_problemas_sistemas_tic"
+          - "protocolos_comunicacao_tic"
+        ancoras:
+          0: "Propõe ações aleatórias (como trocar peças sem testar) ou procedimentos que comprometem a segurança da célula."
+          1: "Descreve testes parciais (ex: reiniciar o gateway), mas sem medição com multímetro/osciloscópio ou inspeção dos tópicos MQTT no broker."
+          2: "Apresenta roteiro metódico de isolamento: teste elétrico de GPIO/atuadores, injeção de carga de teste via comando local e monitoramento de logs MQTT."
+
+      - id: "crit_resiliencia_e_seguranca"
+        descricao: "Avalia a qualidade das soluções de engenharia para assegurar fail-safe, watchdogs e supervisão em tempo real."
+        requisitos_avaliados:
+          - "gerir_sistemas_recolha_dados"
+          - "protocolos_comunicacao_tic"
+        ancoras:
+          0: "Não propõe mecanismos de contingência, watchdog ou monitoramento de conectividade."
+          1: "Menciona watchdog de forma genérica sem explicar como garantir o estado de segurança (fail-safe) caso o nó trave."
+          2: "Especifica rotinas de heartbeat com timeout para alerta de dispositivo offline, watchdog de hardware e circuito independente de desligamento de emergência (fail-safe)."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"

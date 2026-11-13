@@ -1,0 +1,257 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "analista_dados_bi"
+nome: "Analista de Dados/BI"
+cbo6:
+  - "211205"
+  - "211210"
+  - "211215"
+  - "211220"
+  - "142330"
+  - "261215"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais que atuam na extração, limpeza, modelagem, análise estatística e visualização de dados para subsidiar tomada de decisão estratégica e operacional."
+  publico_alvo: "Estatísticos, cientistas de dados, analistas de negócios e pesquisadores de dados com formação superior ou técnica correlata."
+  limitacoes:
+    - "Destino analista_dados_bi: 142330 (Analista de negocios, familia 1423) responde por cerca de 90% das admissoes com superior completo ou mais em set/2026."
+    - "Quebra de serie: 211220 so aparece a partir de 2024 (sondagem de meses de janeiro)."
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:45Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "analisar_dados"
+    esco_id: "a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    esco_uri: "http://data.europa.eu/esco/skill/a571ae14-3e16-4fd3-a615-5646e0b0b696"
+    titulo_oficial: "analisar dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar, transformar e modelar dados para obtenção de informações úteis e apoio à tomada de decisões."
+    descricao_contextual_proposta: "Capacidade de examinar conjuntos de dados relacionais e tabulares, aplicando agregações, filtragens e transformações lógicas para responder a dúvidas operacionais de negócio."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Resolução correta de consultas agregadas e interpretação de métricas de desempenho em cenários práticos simulados."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "identificar_padroes_estatisticos"
+    esco_id: "06670261-ea6b-4b52-a915-c7d4ff837f74"
+    esco_uri: "http://data.europa.eu/esco/skill/06670261-ea6b-4b52-a915-c7d4ff837f74"
+    titulo_oficial: "identificar padrões estatísticos"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar dados estatísticos para identificar padrões e tendências nos dados ou entre variáveis."
+    descricao_contextual_proposta: "Identificação de tendências centrais, dispersão, sazonalidade e desvios atípicos (outliers) em séries temporais e distribuições de atendimento."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Diferenciação clara entre médias, medianas e percentis ao avaliar volumetria e tempos de resposta."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "realizar_apresentacao_visual_dados"
+    esco_id: "c3e36d05-8ae8-447f-bb2b-6f9409f85389"
+    esco_uri: "http://data.europa.eu/esco/skill/c3e36d05-8ae8-447f-bb2b-6f9409f85389"
+    titulo_oficial: "realizar apresentação visual de dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Criar representações visuais de dados, tais como gráficos ou diagramas, para facilitar a compreensão."
+    descricao_contextual_proposta: "Seleção do tipo adequado de representação gráfica (barras, linhas, dispersão, histograma) para comunicar conclusões a públicos técnicos e não técnicos."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Escolha justificada do tipo de gráfico conforme a natureza da variável e o objetivo comunicacional no exercício."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:45Z"
+
+  - id_local: "garantia_qualidade_dados"
+    esco_id: "713fb616-118e-40bc-9366-4a69879a49d5"
+    esco_uri: "http://data.europa.eu/esco/skill/713fb616-118e-40bc-9366-4a69879a49d5"
+    titulo_oficial: "executar processos de garantia da qualidade dos dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas de análise, validação e verificação da qualidade em dados, a fim de verificar a integridade da qualidade dos dados."
+    descricao_contextual_proposta: "Aplicação de rotinas de higienização, detecção de registros nulos, duplicados ou inconsistentes e validação de chaves estrangeiras."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Detecção e proposta de correção de falhas de integridade referencial e valores anômalos no cenário didático."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:46Z"
+
+  - id_local: "sql"
+    esco_id: "598de5b0-5b58-4ea7-8058-a4bc4d18c742"
+    esco_uri: "http://data.europa.eu/esco/skill/598de5b0-5b58-4ea7-8058-a4bc4d18c742"
+    titulo_oficial: "SQL"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "A linguagem informática SQL é uma linguagem de pesquisa para obter informações de uma base de dados e de documentos que contêm as informações necessárias. É desenvolvida pelo American National Standards Institute (Instituto Nacional Americano de Normas) e pela International Organization for Standardization (Organização Internacional de Normalização)."
+    descricao_contextual_proposta: "Domínio conceitual da sintaxe SQL padrão (DML, DDL, DQL) para consultas complexas, junções (JOINs), filtros condicionais e agregações (GROUP BY)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão conceitual e aplicação sintática em consultas analíticas simuladas no questionário, sem pretensão de certificação de banco de dados."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:46Z"
+
+  - id_local: "ferramentas_etl"
+    esco_id: "9d0d89be-bffa-4393-b6f6-8d05bea49051"
+    esco_uri: "http://data.europa.eu/esco/skill/9d0d89be-bffa-4393-b6f6-8d05bea49051"
+    titulo_oficial: "ferramentas de extração transformação e carregamento de dados"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "As ferramentas para a integração de informações provenientes de múltiplas aplicações, criadas e mantidas por organizações, numa estrutura de dados coerente e transparente."
+    descricao_contextual_proposta: "Conhecimento conceitual sobre arquiteturas de pipeline de dados, estágios de ingestão (raw), tratamento (stage) e modelagem dimensional (trusted/analytics)."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Compreensão dos fundamentos de fluxos de ETL/ELT e tratamento de carga incremental em resposta analítica."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:47Z"
+
+  - id_local: "gerir_sistemas_recolha_dados"
+    esco_id: "a80fb090-63f4-4b05-83a5-2f090deb7757"
+    esco_uri: "http://data.europa.eu/esco/skill/a80fb090-63f4-4b05-83a5-2f090deb7757"
+    titulo_oficial: "gerir sistemas de recolha de dados"
+    tipo_esco: "competência"
+    descricao_oficial: "Desenvolver e gerir métodos e estratégias destinados a maximizar a qualidade dos dados e a eficiência estatística na recolha de dados, a fim de garantir o melhor tratamento posterior dos dados recolhidos."
+    descricao_contextual_proposta: "Definição de regras de validação no ponto de entrada e governança na captura contínua de transações operacionais."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Identificação de gargalos e boas práticas na captura e sincronização de dados transacionais."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "identificar_requisitos_clientes"
+    esco_id: "0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    esco_uri: "http://data.europa.eu/esco/skill/0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    titulo_oficial: "identificar os requisitos dos clientes"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas e ferramentas, tais como inquéritos, questionários e aplicações TIC para averiguar, definir, analisar, documentar e manter os requisitos dos utilizadores a partir do sistema, serviço ou produto."
+    descricao_contextual_proposta: "Tradução de necessidades informacionais de gestores de negócios em métricas analíticas e regras de negócio estruturadas."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Alinhamento das métricas do painel com os objetivos de gestão apresentados no enunciado didático."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+exercicio:
+  id: "ex_analista_dados_bi_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados: []
+  cenario: "Cenário didático e sintético: A rede de clínicas 'Saúde & Vida' consolidou dados de atendimentos ambulatoriais e agendamentos em um banco de dados relacional. O analista precisa identificar inconsistências na ingestão dos registros diários, consultar tabelas relacionais em SQL, gerar visualizações para a diretoria operacional e estruturar um pipeline de ETL para integrar prontuários legados."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "Em um banco de dados analítico, a tabela 'atendimentos' possui os campos: id_atendimento, id_unidade, especialidade, valor_consulta e data_atendimento. Para calcular o faturamento total e o tíquete médio por especialidade nas consultas realizadas em 2026, qual consulta SQL expressa corretamente essa agregação?"
+      alternativas:
+        A: "SELECT especialidade, SUM(valor_consulta) AS faturamento, AVG(valor_consulta) AS media FROM atendimentos WHERE data_atendimento >= '2026-01-01' AND data_atendimento <= '2026-12-31' GROUP BY especialidade;"
+        B: "SELECT especialidade, COUNT(valor_consulta) AS faturamento, AVG(valor_consulta) AS media FROM atendimentos GROUP BY especialidade HAVING data_atendimento >= '2026-01-01' AND data_atendimento <= '2026-12-31';"
+        C: "SELECT especialidade, SUM(valor_consulta) OVER (PARTITION BY especialidade) AS faturamento, AVG(valor_consulta) OVER (PARTITION BY especialidade) AS media FROM atendimentos WHERE ano = 2026;"
+        D: "SELECT especialidade, SUM(valor_consulta) AS faturamento, AVG(valor_consulta) AS media FROM atendimentos WHERE data_atendimento BETWEEN '2026-01-01' AND '2026-12-31' ORDER BY especialidade;"
+      gabarito: "A"
+      justificativa: "A consulta correta aplica as funções de agregação SUM e AVG com agrupamento dimensional pela cláusula GROUP BY e filtra o período anual na cláusula WHERE. Filtrar colunas não agregadas no HAVING gera erro de sintaxe, funções de janela com PARTITION BY preservam granularidade de linha sem colapsar os grupos, e ORDER BY apenas ordena os registros sem realizar agregação."
+      requisitos_avaliados:
+        - "sql"
+        - "analisar_dados"
+
+    - id: "q2"
+      enunciado: "Durante a validação de um lote diário de 50.000 novos registros de agendamento recebidos via arquivo CSV, o analista nota que 4% dos registros possuem o campo 'id_paciente' preenchido como NULL, violando a integridade referencial com a tabela de cadastro. Qual conduta é recomendada na etapa de garantia de qualidade (QA) do ETL?"
+      alternativas:
+        A: "Descartar silenciosamente as linhas inválidas no pipeline de ingestão e prosseguir com a carga dos registros restantes sem gerar notificações operacionais."
+        B: "Direcionar os registros inconsistentes para uma tabela de quarentena, emitir alerta de inconsistência à origem e carregar apenas os registros válidos no data warehouse."
+        C: "Substituir os valores nulos por um identificador padrão temporário como zero para permitir a conclusão da carga relacional sem quebrar chaves estrangeiras."
+        D: "Interromper imediatamente todo o processo de processamento da base analítica e abortar a carga de todos os 50.000 registros até a correção manual na origem."
+      gabarito: "B"
+      justificativa: "O isolamento em quarentena preserva a integridade referencial e o SLA operacional da base confiável enquanto notifica a origem para saneamento. Descartar silenciosamente oculta perdas de dados, imputar chaves artificiais falseia métricas assistenciais e abortar todo o lote interrompe desnecessariamente a operação de registros válidos."
+      requisitos_avaliados:
+        - "garantia_qualidade_dados"
+        - "ferramentas_etl"
+
+    - id: "q3"
+      enunciado: "A diretoria médica solicitou um relatório para entender a evolução mensal do total de cirurgias ambulatoriais ao longo dos últimos 3 anos, comparando a sazonalidade entre os meses. Qual representação visual é mais indicada para evidenciar tendências temporais contínuas e padrões sazonais?"
+      alternativas:
+        A: "Gráfico de setores circulares particionado em 36 fatias proporcionais para representar cada mês individual do triênio analisado."
+        B: "Gráfico de barras empilhadas normalizadas em 100% comparando a proporção de cada unidade hospitalar sem destacar a continuidade temporal."
+        C: "Gráfico de linhas temporais com meses no eixo horizontal e volume no vertical, permitindo sobreposição de séries anuais para verificar sazonalidade."
+        D: "Gráfico de dispersão pontual relacionando o identificador numérico da cirurgia com o dia da semana sem conexões sequenciais entre os períodos."
+      gabarito: "C"
+      justificativa: "Gráficos de linhas com séries sobrepostas são o padrão analítico para evidenciar continuidade temporal, tendências históricas e ciclos de sazonalidade. Gráficos de setores com dezenas de fatias inviabilizam a leitura comparativa, barras normalizadas ocultam o volume absoluto e dispersões sem linha não comunicam a passagem do tempo."
+      requisitos_avaliados:
+        - "realizar_apresentacao_visual_dados"
+        - "identificar_padroes_estatisticos"
+
+    - id: "q4"
+      enunciado: "Ao entrevistar a gerência de atendimento para criar um novo painel de gestão, os coordenadores relatam: 'Precisamos saber rapidamente onde os pacientes esperam mais do que 30 minutos entre a triagem e o primeiro atendimento médico'. Qual métrica primária e qual nível de agregação respondem diretamente a esse requisito de negócio?"
+      alternativas:
+        A: "Tempo médio global de espera calculado sobre todos os atendimentos do hospital sem segmentação de turnos ou unidades físicas."
+        B: "Contagem total de cancelamentos de fichas de atendimento no balcão de recepção antes da realização da triagem inicial de enfermagem."
+        C: "Duração média da consulta médica individualizada dividida pela quantidade de consultórios disponíveis em cada setor ambulatorial."
+        D: "Percentual de atendimentos com tempo de espera superior a 30 minutos na triagem, discriminado por unidade de atendimento e turno operacional."
+      gabarito: "D"
+      justificativa: "A taxa de conformidade percentual sobre o limiar de 30 minutos segmentada por unidade e turno traduz fielmente a regra de negócio e orienta intervenções operacionais localizadas. Médias globais mascaram filas extremas através de diluição matemática, cancelamentos medem evasão prévia e duração de consulta avalia tempo de atendimento clínico em vez de fila de espera."
+      requisitos_avaliados:
+        - "identificar_requisitos_clientes"
+        - "gerir_sistemas_recolha_dados"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "A rede de clínicas deseja automatizar a ingestão diária de exames laboratoriais de 12 laboratórios parceiros em formatos heterogêneos (CSV, JSON e APIs REST). Os gestores reclamam que alguns laudos chegam duplicados e que relatórios semanais divergem dependendo do horário em que foram emitidos. Descreva uma proposta técnica sintética contendo: (1) como você estruturaria o pipeline de ETL/ELT para padronizar e desduplicar os registros; (2) quais verificações de garantia de qualidade dos dados seriam inseridas antes da liberação para os dashboards; e (3) qual métrica de integridade você apresentaria aos gestores para comprovar a confiabilidade dos relatórios."
+    requisitos_avaliados:
+      - "analisar_dados"
+      - "garantia_qualidade_dados"
+      - "ferramentas_etl"
+      - "identificar_requisitos_clientes"
+    rubrica:
+      - id: "crit_arquitetura_etl"
+        descricao: "Avalia a coerência da arquitetura de ingestão proposta (camadas raw/stage/trusted) e a estratégia de desduplicação."
+        requisitos_avaliados:
+          - "ferramentas_etl"
+          - "analisar_dados"
+        ancoras:
+          0: "Não propõe arquitetura de camadas ou sugere sobrescrita direta em produção sem tratamento de duplicidades."
+          1: "Descreve etapas de ingestão e limpeza, mas a estratégia de desduplicação ou padronização de formatos é vaga ou incompleta."
+          2: "Apresenta estrutura em camadas com área de pouso (staging/raw), chave canônica única para desduplicação e rotina clara de carga incremental."
+
+      - id: "crit_qualidade_e_validacao"
+        descricao: "Avalia o rigor técnico na definição de validações de integridade, completude e consistência temporal dos dados."
+        requisitos_avaliados:
+          - "garantia_qualidade_dados"
+        ancoras:
+          0: "Não cita rotinas de validação de qualidade dos dados ou ignora a inconsistência de horários de corte."
+          1: "Cita validações genéricas de formato sem definir regras para dados nulos, chaves órfãs ou controle de lote/horário de corte."
+          2: "Especifica regras automáticas de validação (completude, unicidade, consistência de datas e janelas de corte diário bem definidas)."
+
+      - id: "crit_alinhamento_negocio"
+        descricao: "Avalia a pertinência da métrica de integridade comunicada e o alinhamento com a necessidade de confiabilidade dos gestores."
+        requisitos_avaliados:
+          - "identificar_requisitos_clientes"
+        ancoras:
+          0: "Não apresenta métrica de confiabilidade ou propõe indicador sem relação com a qualidade do pipeline."
+          1: "Apresenta métrica operacional com explicação parcial sobre como comprovar a estabilidade dos dados aos gestores."
+          2: "Define indicador claro e acionável de integridade (ex: percentual de registros conformes por lote, taxa de descarte em quarentena ou SLA de sincronismo)."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"

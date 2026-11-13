@@ -1,0 +1,262 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "desenvolvedor_sistemas"
+nome: "Desenvolvedor de Sistemas"
+cbo6:
+  - "212405"
+  - "317110"
+  - "317105"
+  - "317120"
+  - "212205"
+  - "212215"
+  - "212425"
+  - "212430"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais responsáveis pelo ciclo completo de engenharia de software: codificação, arquitetura de sistemas, testes automatizados (unitários e de integração), bancos de dados relacionais e integração em equipes ágeis."
+  publico_alvo: "Analistas de desenvolvimento de sistemas, programadores de sistemas de informação, programadores de internet, engenheiros de aplicativos e analistas de testes de software."
+  limitacoes:
+    - "Quebras de serie: 212425 e 212430 a partir de 2022 (sondagem de meses de janeiro)."
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:56Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "programacao_sistemas_informaticos"
+    esco_id: "b105ec9b-0857-41d6-8d07-a83e58b73d90"
+    esco_uri: "http://data.europa.eu/esco/skill/b105ec9b-0857-41d6-8d07-a83e58b73d90"
+    titulo_oficial: "programação de sistemas informáticos"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "Os métodos e ferramentas necessários para desenvolver software de sistemas, especificações de arquiteturas de sistemas e técnicas de interface entre os módulos e os componentes da rede e do sistema."
+    descricao_contextual_proposta: "Conhecimento sobre padrões arquiteturais (Clean Architecture, MVC, microsserviços), princípios de orientação a objetos e boas práticas de código limpo (SOLID, DRY)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão conceitual de modularidade, desacoplamento e interfaces entre módulos de software."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:56Z"
+
+  - id_local: "executar_testes_software"
+    esco_id: "913e7e83-b8f8-4574-b1ca-1b38f3fd974a"
+    esco_uri: "http://data.europa.eu/esco/skill/913e7e83-b8f8-4574-b1ca-1b38f3fd974a"
+    titulo_oficial: "executar testes de software"
+    tipo_esco: "competência"
+    descricao_oficial: "Realizar testes para garantir que um produto de software irá funcionar na perfeição, de acordo com os requisitos especificados pelo cliente, utilizando ferramentas de software especializadas. Aplicar técnicas e ferramentas de teste de software, a fim de identificar defeitos (erros) e anomalias em software."
+    descricao_contextual_proposta: "Execução de testes de integração, testes end-to-end (E2E), testes de regressão e garantia de qualidade contínua em pipelines de CI/CD."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação de estratégias adequadas para cenários de integração e prevenção de regressões em software."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:57Z"
+
+  - id_local: "testar_unidades_software"
+    esco_id: "7961413f-61d0-4722-9cd9-20a050a29899"
+    esco_uri: "http://data.europa.eu/esco/skill/7961413f-61d0-4722-9cd9-20a050a29899"
+    titulo_oficial: "testar unidades de «software»"
+    tipo_esco: "competência"
+    descricao_oficial: "Testar unidades únicas de código-fonte para determinar se são ou não adequadas para utilização através da criação de fragmentos de código abreviado."
+    descricao_contextual_proposta: "Criação de testes unitários isolados utilizando dublês de teste (mocks, stubs) e aderência ao ciclo TDD (Red-Green-Refactor) com ferramentas como pytest, Jest ou JUnit."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Construção e interpretação de asserções unitárias cobrindo casos de sucesso e tratamento de exceções."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:57Z"
+
+  - id_local: "sql"
+    esco_id: "598de5b0-5b58-4ea7-8058-a4bc4d18c742"
+    esco_uri: "http://data.europa.eu/esco/skill/598de5b0-5b58-4ea7-8058-a4bc4d18c742"
+    titulo_oficial: "SQL"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "A linguagem informática SQL é uma linguagem de pesquisa para obter informações de uma base de dados e de documentos que contêm as informações necessárias. É desenvolvida pelo American National Standards Institute (Instituto Nacional Americano de Normas) e pela International Organization for Standardization (Organização Internacional de Normalização)."
+    descricao_contextual_proposta: "Conhecimento sobre modelagem relacional, comandos DML/DDL, integridade referencial, transações ACID e consultas otimizadas para integração com ORMs."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão conceitual de comandos de persistência e transações seguras sem pretensão de certificação de DBA."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:46Z"
+
+  - id_local: "identificar_requisitos_clientes"
+    esco_id: "0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    esco_uri: "http://data.europa.eu/esco/skill/0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    titulo_oficial: "identificar os requisitos dos clientes"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas e ferramentas, tais como inquéritos, questionários e aplicações TIC para averiguar, definir, analisar, documentar e manter os requisitos dos utilizadores a partir do sistema, serviço ou produto."
+    descricao_contextual_proposta: "Interpretação e refinamento técnico de requisitos de usuários e histórias de negócio, validando viabilidade e restrições de arquitetura."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Detecção de ambiguidades e requisitos não funcionais em especificações de software."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "elaborar_documentacao_tecnica"
+    esco_id: "04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    esco_uri: "http://data.europa.eu/esco/skill/04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    titulo_oficial: "elaborar documentação técnica"
+    tipo_esco: "competência"
+    descricao_oficial: "Preparar documentação para produtos ou serviços existentes e futuros, descrevendo o seu funcionamento e composição, de tal forma que seja compreensível para um público alargado, sem conhecimentos técnicos e em conformidade com os requisitos e normas definidos. Manter a documentação atualizada."
+    descricao_contextual_proposta: "Elaboração de documentação de APIs (OpenAPI/Swagger), diagramas de arquitetura (C4 Model) e registros de decisões de arquitetura (ADRs)."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Estruturação clara de documentação técnica para consumo por outros desenvolvedores."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+  - id_local: "resolver_problemas_sistemas_tic"
+    esco_id: "9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    esco_uri: "http://data.europa.eu/esco/skill/9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    titulo_oficial: "resolver problemas de sistemas de TIC"
+    tipo_esco: "competência"
+    descricao_oficial: "Identificar potenciais anomalias em componentes. Monitorizar, documentar e comunicar incidentes. Utilizar recursos adequados, com o mínimo tempo de interrupção, e utilizar ferramentas de diagnóstico adequadas."
+    descricao_contextual_proposta: "Depuração de código (debugging), análise de rastreamento de pilha (stack traces), vazamentos de memória e erros de concorrência em produção."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Localização precisa e correção de bugs a partir de logs e exceções de tempo de execução."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+  - id_local: "gestao_agil_projetos"
+    esco_id: "0a9acb6b-1139-4be9-b431-3a80a959f2f4"
+    esco_uri: "http://data.europa.eu/esco/skill/0a9acb6b-1139-4be9-b431-3a80a959f2f4"
+    titulo_oficial: "gestão ágil de projetos"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "A abordagem flexível de gestão de projetos é uma metodologia de planeamento, gestão e supervisão dos recursos TIC, a fim de cumprir objetivos específicos e utilizar ferramentas TIC de gestão de projetos."
+    descricao_contextual_proposta: "Conhecimento sobre desenvolvimento iterativo e incremental, estimativas ágeis em equipe e colaboração contínua com feedback loops rápidos."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Entendimento do papel do desenvolvedor em rituais ágeis e refinamento contínuo de itens de trabalho."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:52Z"
+
+exercicio:
+  id: "ex_desenvolvedor_sistemas_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados:
+    - "elaborar_documentacao_tecnica"
+    - "gestao_agil_projetos"
+  cenario: "Cenário didático e sintético: A plataforma de e-commerce 'ShopTech' implementou um serviço de processamento de pagamentos em Python/FastAPI integrado a um banco de dados relacional. Em dias de grande promoção, o sistema apresentou pedidos com status inconsistente (pedidos marcados como 'pagos' sem transação confirmada no gateway) e alguns clientes relataram cobranças duplicadas devido a múltiplos cliques no botão de checkout."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "Para evitar cobranças duplicadas quando um cliente clica repetidamente no botão de finalizar compra em uma requisição HTTP POST para a API de pagamento, qual padrão de arquitetura de software deve ser adotado pelo desenvolvedor?"
+      alternativas:
+        A: "Desabilitação do botão de submissão na interface do navegador web sem implementação de verificações de estado no serviço de backend."
+        B: "Uso de chave de idempotência no cabeçalho HTTP da requisição, garantindo resposta única e consistente em tentativas repetidas do cliente."
+        C: "Conversão do método HTTP POST para GET repassando dados de pagamento nos parâmetros da URL para simplificar o roteamento na camada web."
+        D: "Bloqueio síncrono de todas as conexões do banco de dados na tabela transacional até que a primeira chamada finalize o processamento."
+      gabarito: "B"
+      justificativa: "A chave de idempotência (Idempotency Key) é o padrão de engenharia indicado para transações financeiras distribuídas, garantindo que retentativas com o mesmo identificador processem a cobrança uma única vez e retornem a resposta original em segurança. Controles restritos ao cliente web são facilmente burlados ou contornados por falhas de conexão, expor dados de cartões em métodos GET quebra normas de segurança e bloqueios síncronos globais inviabilizam a concorrência e a escalabilidade do sistema."
+      requisitos_avaliados:
+        - "programacao_sistemas_informaticos"
+        - "resolver_problemas_sistemas_tic"
+
+    - id: "q2"
+      enunciado: "No desenvolvimento de uma funcionalidade de cancelamento de compras com reembolso automático, a equipe de produto define a regra de negócio: 'Clientes cadastrados podem solicitar reembolso integral em até 7 dias da compra caso o pedido não tenha sido despachado'. Para exercitar o processo de identificação e validação de requisitos de clientes no fluxo guiado por testes (TDD), qual conduta o desenvolvedor deve adotar prioritariamente?"
+      alternativas:
+        A: "Escrever primeiro a implementação do código na camada de serviços e deixar a especificação de testes para a fase pós-implantação."
+        B: "Validar apenas o caminho feliz com datas recentes, dispensando a automação de casos de borda como pedidos já despachados pelo estoque."
+        C: "Registrar as regras de reembolso em atas de reunião internas sem traduzi-las em asserções executáveis de software no pipeline de entrega."
+        D: "Traduzir as regras de negócio em critérios de aceitação automatizados (cenários de teste unitário que falham) antes de escrever o código de produção."
+      gabarito: "D"
+      justificativa: "No fluxo de desenvolvimento orientado por testes (TDD), o levantamento e refinamento dos requisitos do cliente se materializam na criação prévia de testes automatizados que expressam os critérios de aceitação e comportamentos esperados (fase Red), garantindo que a implementação subsequente atenda estritamente à demanda funcional. Codificar sem testes adia a descoberta de divergências, ignorar casos de borda gera brechas contratuais no sistema e manter regras apenas em documentações estáticas impede a verificação contínua de conformidade."
+      requisitos_avaliados:
+        - "identificar_requisitos_clientes"
+        - "testar_unidades_software"
+
+    - id: "q3"
+      enunciado: "Ao realizar uma transferência de saldo entre duas contas bancárias em banco de dados relacional (débito na conta A e crédito na conta B), qual propriedade das transações (ACID) garante que, caso o crédito na conta B falhe por queda de conexão, o débito na conta A seja automaticamente desfeito (rollback)?"
+      alternativas:
+        A: "Atomicidade, que assegura que todas as instruções do bloco transacional sejam concluídas com sucesso ou completamente revertidas."
+        B: "Consistência, que estabelece que esquemas de chaves e restrições de integridade do banco devem ser validados após o encerramento da sessão."
+        C: "Isolamento, que define a visibilidade de dados intermediários entre transações concorrentes através de diferentes níveis de bloqueio."
+        D: "Durabilidade, que garante que alterações confirmadas por commit permaneçam gravadas em disco mesmo diante de falhas de energia do nó."
+      gabarito: "A"
+      justificativa: "A propriedade de Atomicidade no modelo ACID garante o princípio de integridade de tudo ou nada, revertendo automaticamente alterações parciais via rollback caso ocorra falha em qualquer etapa da transação. Consistência assegura o respeito às regras estruturais do banco, Isolamento disciplina a interferência entre operações simultâneas e Durabilidade preserva dados gravados contra perdas decorrentes de desligamentos físicos do servidor."
+      requisitos_avaliados:
+        - "sql"
+        - "programacao_sistemas_informaticos"
+
+    - id: "q4"
+      enunciado: "Em um teste unitário de um serviço de emissão de notas fiscais que consome uma API externa do Ministério da Fazenda lenta e instável, qual é a boa prática recomendada para garantir que a suíte de testes seja rápida, determinística e execute offline?"
+      alternativas:
+        A: "Configurar pausas explícitas no código do teste para aguardar pacientemente o retorno da chamada remota contra o servidor governamental."
+        B: "Desativar a execução de testes automatizados na classe fiscal integradora para contornar instabilidades passageiras de infraestrutura."
+        C: "Empregar dublês de teste como mocks ou stubs para simular o comportamento da API remota sem tráfego de rede durante os testes de unidade."
+        D: "Direcionar as chamadas da rotina fiscal diretamente para o ambiente de produção do órgão público para garantir fidelidade das respostas."
+      gabarito: "C"
+      justificativa: "Testes unitários devem isolar dependências externas voláteis por meio de dublês de teste (mocks e stubs), simulando contratos de resposta e cenários de erro com rapidez e sem necessidade de conexão à internet. Introduzir pausas prolonga a execução sem garantir estabilidade, desativar asserções retira a segurança contra regressões e executar chamadas reais contra órgãos externos acarreta custos, lentidão e risco de emissões indevidas."
+      requisitos_avaliados:
+        - "testar_unidades_software"
+        - "executar_testes_software"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "Na plataforma de e-commerce 'ShopTech', durante a Black Friday, o serviço de finalização de compras (checkout) sofreu degradação severa: centenas de clientes conseguiram finalizar o pedido sem que o estoque do produto fosse reservado, gerando overbooking (venda de itens sem disponibilidade física). O código legado executava um SELECT na tabela de produtos seguido de um UPDATE no estoque em comandos isolados sem controle de concorrência. Como desenvolvedor de software, elabore uma solução técnica completa contendo: (1) a explicação da causa raiz do problema de concorrência (race condition / leitura suja); (2) a proposta de solução a nível de banco de dados e aplicação (ex: transações com bloqueio pessimista via SELECT FOR UPDATE ou controle de concorrência otimista com versionamento); e (3) a estrutura de um teste unitário ou de integração com asserções que provem a prevenção do overbooking em condições de múltiplas requisições simultâneas."
+    requisitos_avaliados:
+      - "programacao_sistemas_informaticos"
+      - "sql"
+      - "testar_unidades_software"
+      - "resolver_problemas_sistemas_tic"
+    rubrica:
+      - id: "crit_diagnostico_concorrencia"
+        descricao: "Avalia a precisão na identificação e explicação do problema de condição de corrida (race condition) entre threads."
+        requisitos_avaliados:
+          - "resolver_problemas_sistemas_tic"
+          - "programacao_sistemas_informaticos"
+        ancoras:
+          0: "Não compreende o problema de concorrência, atribuindo a falha genericamente a lentidão ou erros de digitação."
+          1: "Identifica que duas pessoas compraram ao mesmo tempo, mas não explica o mecanismo técnico da condição de corrida ou leitura concorrente."
+          2: "Explica com clareza a condição de corrida (race condition) gerada pelo intervalo entre a leitura (SELECT) e a atualização (UPDATE) sem bloqueio atômico."
+
+      - id: "crit_arquitetura_solucao"
+        descricao: "Avalia a adequação da solução técnica proposta utilizando transações atômicas e controle de concorrência."
+        requisitos_avaliados:
+          - "sql"
+          - "programacao_sistemas_informaticos"
+        ancoras:
+          0: "Propõe soluções ineficazes (como colocar sleep entre requisições ou tentar controlar concorrência no front-end)."
+          1: "Sugere o uso de transações, mas sem especificar mecanismos de bloqueio (pessimista/otimista) ou tratamento de exceções de esgotamento de estoque."
+          2: "Propõe solução robusta e justificada: transação ACID com bloqueio pessimista (SELECT ... FOR UPDATE) ou otimista com coluna de versão, com validação atômica no banco."
+
+      - id: "crit_estrategia_testes"
+        descricao: "Avalia a qualidade do teste automatizado concebido para reproduzir e impedir regressões de concorrência."
+        requisitos_avaliados:
+          - "testar_unidades_software"
+          - "executar_testes_software"
+        ancoras:
+          0: "Não propõe testes automatizados ou sugere apenas teste manual após publicação em produção."
+          1: "Propõe teste com chamadas sequenciais que não simulam a concorrência real entre duas ou mais requisições simultâneas."
+          2: "Estrutura teste automatizado com concorrência simulada (ex: threads concorrentes, asyncio.gather ou locks) e asserções claras garantindo que apenas compras com estoque válido sejam confirmadas e as excedentes rejeitadas com erro controlado."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"
