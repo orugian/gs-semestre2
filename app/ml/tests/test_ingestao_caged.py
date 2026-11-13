@@ -1124,3 +1124,44 @@ def test_cli_imprime_cada_arquivo_assim_que_processa(tmp_path: Path, monkeypatch
     # A linha do MOV de 202608 já processado antes do aborto deve estar impressa no stdout
     assert "MOV 202608 | lidas:" in stdout_aborto
 
+def test_hash_das_ocupacoes_depende_so_do_conjunto_de_codigos(tmp_path: Path):
+    """Aprovar a lista, renomear um destino ou mover um código da reserva não muda o filtro."""
+
+    def gravar(nome: str, conteudo: dict) -> Path:
+        caminho = tmp_path / nome
+        caminho.write_text(json.dumps(conteudo, indent=2), encoding="utf-8")
+        return caminho
+
+    provisoria = gravar(
+        "provisoria.json",
+        {
+            "versao": "provisoria",
+            "situacao": "aguardando aprovacao",
+            "destinos": {"dev": {"nome": "Dev", "cbo6": ["212405", "317110"]}},
+            "cbo6_reserva": ["212305"],
+        },
+    )
+    aprovada = gravar(
+        "aprovada.json",
+        {
+            "versao": "aprovada",
+            "destinos": {
+                "dev": {"nome": "Desenvolvedor de Sistemas", "cbo6": ["317110", "212405"]},
+                "infra": {"nome": "Infra", "cbo6": ["212305"]},
+            },
+            "cbo6_reserva": [],
+        },
+    )
+    ampliada = gravar(
+        "ampliada.json",
+        {
+            "versao": "ampliada",
+            "destinos": {"dev": {"nome": "Dev", "cbo6": ["212405", "317110"]}},
+            "cbo6_reserva": ["212305", "212320"],
+        },
+    )
+
+    hash_provisoria = carregar_ocupacoes(provisoria).hash
+    assert carregar_ocupacoes(aprovada).hash == hash_provisoria
+    assert carregar_ocupacoes(ampliada).hash != hash_provisoria
+    assert len(hash_provisoria) == 64
