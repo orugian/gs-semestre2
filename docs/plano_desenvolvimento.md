@@ -128,7 +128,7 @@ Cenários: **25 °C/25 cm** (normal) · **38 °C/12 cm** (atenção) · **48 °C
 | `POST /me/caminho` → `GET /me/plano` · `PATCH /me/plano/checkpoints/{id}` | cookie | plano por regras (grafo de pré-requisitos) |
 | `GET /destinos/{id}/exercicio` · `POST /me/tentativas` · `POST /me/tentativas/{id}/discordo` | cookie | sem gabarito no GET; nota 50/50; fallback "parcial" |
 | `POST /me/laboratorio/sessoes` → código | cookie | vincula as leituras ao usuário |
-| `POST /leituras` | `X-Device-Key` | 201 / 400 / 401 / 429 / 503; CSV + outbox; estado `pendente_nuvem` |
+| `POST /leituras` | `X-Device-Key` | 201 novo / 200 reenvio idêntico / 409 mesmo `evento_id` com conteúdo diferente / 400 / 401 / 429 / 503; CSV + outbox; estado `pendente_nuvem`. Extensão idempotente local aprovada pelo usuário em 13/11/2026 (D2). |
 | `GET /leituras?sessao=&page=` · `GET /leituras/indicadores` | chave de dispositivo **ou** cookie do dono (R16) | histórico + total de alertas + média/máx./mín. por métrica |
 | `GET /mercado/{destino}/modelos?uf=` | público (painel técnico) | previsões e métricas de todos os modelos, incluindo a RNA (R06) |
 | `POST /me/curriculo/confirmar-envio` | cookie | o usuário revisa o texto redigido antes da LLM (R18) |
