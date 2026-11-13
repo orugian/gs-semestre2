@@ -1,0 +1,340 @@
+{
+  "versao": "aprovada-2026-11-13",
+  "situacao": "aprovada",
+  "aprovado_por": "usuario (sessao de 13/11/2026)",
+  "aprovado_em": "2026-11-13",
+  "decisoes": [
+    "D02",
+    "D04a",
+    "R04",
+    "R05"
+  ],
+  "descricao": "Ocupacoes CBO de 6 digitos por destino (conjuntos disjuntos, D04a). A ingestao do Novo Caged filtra pela uniao dos destinos com a reserva. A reserva nao pertence a nenhum destino: permite ajustar a atribuicao ate o congelamento do pre-registro (S7) sem novo download.",
+  "fontes": {
+    "layout_novo_caged": "Aba cbo2002ocupacao de 'Layout Nao-identificado Novo Caged Movimentacao.xlsx' (FTP do MTE, baixado em 12/11/2026, SHA-256 0490f7ef84fd05db2d89cf22f56d8cf7262ceb14c9d7db1cca2bae422e6423ce)",
+    "espelho_secundario": "salario.com.br/ocupacao/cargos (consultado em 12/11/2026); o site oficial cbo.mte.gov.br exige reCAPTCHA e nao foi consultado"
+  },
+  "limitacoes": [
+    "Destino analista_dados_bi: 142330 (Analista de negocios, familia 1423) responde por cerca de 90% das admissoes com superior completo ou mais em set/2026.",
+    "Destino analista_processos: nao ha codigo CBO proprio de analista de processos; os codigos sao aproximacoes.",
+    "Destino gerente_projetos_produto: so 2 codigos; 142315 (Gerente de marketing, sinonimo 'Gerente de produtos') ficou na reserva.",
+    "Destino analista_monitoramento_iot: serie esparsa; abstencao por UF frequente (D04a).",
+    "Quebras de serie: 211220 so aparece a partir de 2024; 212425 e 212430 a partir de 2022 (sondagem de meses de janeiro)."
+  ],
+  "destinos": {
+    "analista_dados_bi": {
+      "nome": "Analista de Dados/BI",
+      "cbo6": [
+        "211205",
+        "211210",
+        "211215",
+        "211220",
+        "142330",
+        "261215"
+      ]
+    },
+    "analista_monitoramento_iot": {
+      "nome": "Analista de Monitoramento/IoT Industrial",
+      "cbo6": [
+        "212415",
+        "202110",
+        "202120",
+        "202105",
+        "202115",
+        "300105",
+        "313410"
+      ]
+    },
+    "analista_processos": {
+      "nome": "Analista de Processos/Melhoria Contínua",
+      "cbo6": [
+        "214905",
+        "214910",
+        "214925",
+        "214930",
+        "391210",
+        "391105"
+      ]
+    },
+    "gerente_projetos_produto": {
+      "nome": "Gerente de Projetos/Produto",
+      "cbo6": [
+        "142520",
+        "142605"
+      ]
+    },
+    "analista_suporte_infra": {
+      "nome": "Analista de Suporte/Infraestrutura de TI",
+      "cbo6": [
+        "212420",
+        "212410",
+        "212310",
+        "212315",
+        "317210"
+      ]
+    },
+    "desenvolvedor_sistemas": {
+      "nome": "Desenvolvedor de Sistemas",
+      "cbo6": [
+        "212405",
+        "317110",
+        "317105",
+        "317120",
+        "212205",
+        "212215",
+        "212425",
+        "212430"
+      ]
+    }
+  },
+  "cbo6_reserva": [
+    "211110",
+    "142335",
+    "214355",
+    "300110",
+    "313415",
+    "391220",
+    "313405",
+    "391125",
+    "391205",
+    "252105",
+    "142315",
+    "142705",
+    "142510",
+    "142535",
+    "212305",
+    "212320",
+    "313220",
+    "317205",
+    "142530",
+    "142505",
+    "212210",
+    "203105"
+  ],
+  "ocupacoes": {
+    "142315": {
+      "titulo": "Gerente de Marketing",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142330": {
+      "titulo": "Analista de Negocios (A)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142335": {
+      "titulo": "Analista de Pesquisa de Mercado (A)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142505": {
+      "titulo": "Gerente de Rede",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142510": {
+      "titulo": "Gerente de Desenvolvimento de Sistemas",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142520": {
+      "titulo": "Gerente de Projetos de Tecnologia da Informacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142530": {
+      "titulo": "Gerente de Suporte Tecnico de Tecnologia da Informacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142535": {
+      "titulo": "Tecnólogo em Gestão da Tecnologia da Informação",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142605": {
+      "titulo": "Gerente de Pesquisa e Desenvolvimento (P&D)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "142705": {
+      "titulo": "Gerente de Projetos e Servicos de Manutencao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "202105": {
+      "titulo": "Engenheiro Mecatronico",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "202110": {
+      "titulo": "Engenheiro de Controle e Automacao (A)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "202115": {
+      "titulo": "Tecnologo em Mecatronica",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "202120": {
+      "titulo": "Tecnologo em Automacao Industrial",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "203105": {
+      "titulo": "Pesquisador em Ciencias da Computacao e Informatica",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "211110": {
+      "titulo": "Especialista em Pesquisa Operacional",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "211205": {
+      "titulo": "Estatistico",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "211210": {
+      "titulo": "Estatistico (Estatistica Aplicada)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "211215": {
+      "titulo": "Estatistico Teorico",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212205": {
+      "titulo": "Engenheiro de Aplicativos em Computacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212210": {
+      "titulo": "Engenheiro de Equipamentos em Computacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212215": {
+      "titulo": "Engenheiros de Sistemas Operacionais em Computacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212305": {
+      "titulo": "Administrador de Banco de Dados",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212310": {
+      "titulo": "Administrador de Redes",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212315": {
+      "titulo": "Administrador de Sistemas Operacionais",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212320": {
+      "titulo": "Administrador em Segurança da Informação",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212405": {
+      "titulo": "Analista de Desenvolvimento de Sistemas",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212410": {
+      "titulo": "Analista de Redes e de Comunicacao de Dados",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212415": {
+      "titulo": "Analista de Sistemas de Automacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212420": {
+      "titulo": "Analista de Suporte Computacional",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212425": {
+      "titulo": "Arquiteto De Soluções De Tecnologia Da Informação",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "212430": {
+      "titulo": "Analista De Testes De Tecnologia Da Informação",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "214355": {
+      "titulo": "Engenheiro de Controle e Automacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "214905": {
+      "titulo": "Engenheiro de Producao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "214910": {
+      "titulo": "Engenheiro de Controle de Qualidade",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "214925": {
+      "titulo": "Engenheiro de Tempos e Movimentos",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "214930": {
+      "titulo": "Tecnólogo em Produção Industrial",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "252105": {
+      "titulo": "Administrador",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "261215": {
+      "titulo": "Analista de Informacoes (Pesquisador de Informacoes de Rede)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "300105": {
+      "titulo": "Tecnico em Mecatronica - Automacao da Manufatura",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "300110": {
+      "titulo": "Tecnico em Mecatronica - Robotica",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "313220": {
+      "titulo": "Tecnico em Manutencao de Equipamentos de Informatica",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "313405": {
+      "titulo": "Tecnico em Calibracao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "313410": {
+      "titulo": "Tecnico em Instrumentacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "313415": {
+      "titulo": "Encarregado de Manutencao de Instrumentos de Controle, Medicao e Similares",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "317105": {
+      "titulo": "Programador de Internet",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "317110": {
+      "titulo": "Programador de Sistemas de Informacao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "317120": {
+      "titulo": "Programador de Multimidia",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "317205": {
+      "titulo": "Operador de Computador (Inclusive Microcomputador)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "317210": {
+      "titulo": "Tecnico de Apoio ao Usuario de Informatica (Helpdesk)",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "391105": {
+      "titulo": "Cronoanalista",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "391125": {
+      "titulo": "Tecnico de Planejamento de Producao",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "391205": {
+      "titulo": "Inspetor de Qualidade",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "391210": {
+      "titulo": "Tecnico de Garantia da Qualidade",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "391220": {
+      "titulo": "Tecnico de Painel de Controle",
+      "fonte_titulo": "layout_novo_caged"
+    },
+    "211220": {
+      "titulo": "Cientista de dados",
+      "fonte_titulo": "espelho_secundario"
+    }
+  }
+}
