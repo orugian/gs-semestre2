@@ -2,7 +2,7 @@
 
 > Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
 
-**Atualizado em:** 13/11/2026, 10h20 · **Dias até o prazo (19/11 23h55):** 6,5 · **Fase:** fim do D1 (S0 e S1 integradas; S6 com código integrado, lista de ocupações aprovada e download completo em execução)
+**Atualizado em:** 13/11/2026, 11h15 · **Dias até o prazo (19/11 23h55):** 6,5 · **Fase:** D1 concluído com sucesso (S0, S1 e S6 integradas e validadas de ponta a ponta)
 
 ## Concluído
 
@@ -14,23 +14,24 @@
   - `app/tools/md_para_pdf.py`: 5 testes com Edge real; plano → PDF de 14 páginas; `--max-paginas 2` → saída 1.
   - `app/web`: React 19.3 + Vite 8 + Tailwind 4 + Astryx 0.7.14; teste, build e captura de tela ok. **Plano B (Radix) não acionado.**
 - **S1 — limiares compartilhados (12/11), em `main`.** Via `agy`. Os 3 cenários classificam igual na API e na Lambda; tabela compartilhada em `app/config/casos_limiares.json`.
-- **S6 — ingestão do Novo Caged: código em `main` (12/11).** Via `agy`, 2 rodadas, mais ajustes do orquestrador. Smoke real de 202609 conferido contra contagem independente (46 378 admissões; 800 células CBO × UF idênticas). Nenhuma coluna sensível no Parquet.
-- **Lista de ocupações CBO aprovada pelo usuário (13/11)**, sem alterações, seguindo as recomendações do orquestrador nos pontos fracos. Versionada em `app/catalogo/ocupacoes_cbo.json` (6 destinos, 34 códigos; 22 de reserva; título e fonte de cada título; limitações declaradas no próprio arquivo). Evidência da escolha: `GS\.kaiser\reports\S6-sonda-cbo\`.
-- **Push (13/11):** `main` enviado para `https://github.com/orugian/gs-semestre2` (remoto `gs-semestre2`), a pedido do usuário. Antes do envio: gitleaks em todo o histórico → sem vazamentos; nenhum `.env`, chave ou dado rastreado.
-- Regressão em `main` (13/11): `uv run pytest` → api 48, cloud 50, ml 25, tools 5. Web: 1 teste (vitest, executado em 12/11).
+- **S6 — ingestão do Novo Caged: concluída e validada (13/11), em `main`.**
+  - Código implementado via `agy` (2 rodadas) e refinado pelo orquestrador.
+  - Lista de ocupações CBO aprovada pelo usuário versionada em `app/catalogo/ocupacoes_cbo.json` (6 destinos, 34 códigos; 22 de reserva).
+  - **Download e processamento completo (202001–202609):** 243 arquivos verificados, 239 ingeridos, 4 ausentes na fonte legítimos (FOR e EXC de 202001, EXC de 202002 e EXC de 202003), 0 falhas, 0 pendentes.
+  - 239 arquivos Parquet gerados em `.dados\caged\parquet\` totalizando 107,32 MB.
+  - `caged\bruto\` 100% limpo e vazio.
+  - **Conferência independente:** contagem de admissões no MOV em 7 competências amostrais (202001, 202101, 202201, 202301, 202401, 202501 e 202609) 100% idêntica às sondagens prévias independentes.
+  - Nenhuma coluna sensível preservada nos Parquets (estrita adesão ao R05).
+- **Push (13/11):** `main` enviado para `https://github.com/orugian/gs-semestre2` (remoto `gs-semestre2`). Gitleaks limpo em todo o histórico.
+- Regressão em `main` (13/11): `uv run pytest` → api 48, cloud 50, ml 25, tools 5 (todos passando). Web: 1 teste (vitest).
 
 ## Em andamento
 
-- **S6 — download completo (202001–202609), job `pwsh-204` do harness, iniciado em 13/11 às 10h14.**
-  - Destino: `GS\.dados\caged\parquet\` + `GS\.dados\caged\procedencia.json`. Log: `GS\.kaiser\reports\S6-download-completo.log` (UTF-16; ler com `Get-Content -Encoding Unicode`).
-  - Ritmo medido no início: 4 competências em 1,6 min (previsão de cerca de 35 min no total).
-  - **Se a sessão terminar antes, o job pode morrer junto. A retomada é segura:** arquivos já ingeridos são pulados sem rede. Basta repetir o comando do "Próximo passo".
-  - **A conferência do resultado ainda não foi feita** (ver "Próximo passo", item 1).
-- Nenhum worktree, nenhum `agy`. Serviços de teste do compose **parados** (`stop`; volumes preservados).
+- Nada no momento. Nenhum job ativo, nenhum worktree. Serviços de teste do compose **parados** (`stop`; volumes preservados).
 
 ## Bloqueios e pendências [HUMANO]
 
-- [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e agora contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
+- [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
 - [ ] **Qual é o remoto oficial?** `origin` continua `insonia999/GS2_26` (D14b) e não recebeu push. Decidir se `gs-semestre2` substitui o `origin` ou se os dois recebem push.
 - [ ] `MONGODB_URI` completa e IP liberado no Atlas.
 - [ ] Senha correta do Oracle FIAP.
@@ -41,7 +42,7 @@
 - [ ] Revisão humana das rubricas até **D3 (15/11) às 18h**, senão corte automático para 3 destinos (R29).
 - [ ] `gh auth refresh -s project,read:project`; ideia da live (AIC); quem grava cada vídeo.
 
-**Disco:** 16,0 GB livres em 13/11 às 10h (eram 5,6 GB em 12/11 às 21h40; a recuperação aconteceu fora da sessão e a causa da queda continua sem explicação, ver CLAUDE.md §14.3).
+**Disco:** 15,59 GB livres em 13/11 às 11h15.
 
 ## Validação das credenciais (12/11, sem expor valores)
 
@@ -68,17 +69,11 @@
 
 ## Não verificado
 
-- Resultado do download completo (cobertura, contagens, tamanho final).
 - `GET /health` num servidor `uvicorn` real (só pelo `TestClient`).
 - Títulos oficiais da CBO no site do MTE (reCAPTCHA); o título de 211220 vem de fonte secundária.
 
 ## Próximo passo exato
 
-1. **Fechar a S6.** Em `app\ml`, com `$env:CITIZENTECH_DADOS = 'C:\Users\orugi\Documents\Projetos\FIAP\GS\.dados'` e `$env:PYTHONUTF8 = '1'`:
-   - se o log não terminar com `Resumo da ingestao`, repetir `uv run python -m citizentech_ml.ingestao --ocupacoes ..\catalogo\ocupacoes_cbo.json --inicio 202001 --fim 202609` (retoma de onde parou);
-   - conferir `cobertura(dados, "202001", "202609")`: nenhuma `falha` nem `pendente`; cada `ausente_na_fonte` confirmado por listagem do FTP (já confirmados em 12/11: FOR e EXC de 202001, EXC de 202002);
-   - conferir as admissões do MOV de 202001, 202101, 202201, 202301, 202401, 202501 e 202609 contra as contagens independentes em `GS\.kaiser\reports\S6-sonda-cbo\` (`sonda_historico_cbo.csv` e `sonda_adm_202609_cbo_uf.csv`, por CBO);
-   - confirmar `caged\bruto\` vazio, medir o tamanho do Parquet e registrar aqui.
-2. **D2, frente B (caminho crítico):** contrato e `agy` da **S7** (features e split: T04, T05, T18, T19; revisão independente obrigatória) + EDA + medição da defasagem do FOR (R02) + baselines.
-3. **D2, frente A:** S2 (leituras CTP, modo isolado), depois S3 (outbox) e S5 (auth), estas duas com revisão independente. Subir os serviços de teste antes das fatias que usam banco. Rascunho por agente do catálogo YAML dos 6 destinos (ESCO, questões, rubricas).
-4. Snapshot da Adzuna, só com o ok do usuário.
+1. **D2, frente B (caminho crítico):** contrato e `agy` da **S7** (features e split: T04, T05, T18, T19; **revisão independente obrigatória**) + EDA + medição da defasagem do FOR (R02) + baselines.
+2. **D2, frente A:** S2 (leituras CTP, modo isolado), depois S3 (outbox) e S5 (auth), estas duas com revisão independente. Subir os serviços de teste antes das fatias que usam banco. Rascunho por agente do catálogo YAML dos 6 destinos (ESCO, questões, rubricas).
+3. **Snapshot da Adzuna:** script com contador (máximo 12 chamadas), disparado assim que aprovado pelo usuário.
