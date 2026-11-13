@@ -1,0 +1,256 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "analista_suporte_infra"
+nome: "Analista de Suporte/Infraestrutura de TI"
+cbo6:
+  - "212420"
+  - "212410"
+  - "212310"
+  - "212315"
+  - "317210"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais responsáveis pela administração de servidores, sustentação de redes locais e em nuvem, suporte a usuários (helpdesk/servicedesk), monitoramento de infraestrutura e gestão de segurança de TI."
+  publico_alvo: "Analistas de suporte computacional, administradores de redes, administradores de sistemas operacionais e técnicos de apoio ao usuário de informática."
+  limitacoes:
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:54Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "administrar_sistemas_informaticos"
+    esco_id: "0868eef3-2213-4572-9343-74931345a7d3"
+    esco_uri: "http://data.europa.eu/esco/skill/0868eef3-2213-4572-9343-74931345a7d3"
+    titulo_oficial: "administrar sistemas informáticos"
+    tipo_esco: "competência"
+    descricao_oficial: "Tratar os componentes do sistema informático mantendo a configuração, gerindo os utilizadores, monitorizando o uso dos recursos, realizando cópias de segurança e instalando hardware ou software para cumprir com os requisitos definidos."
+    descricao_contextual_proposta: "Configuração e gestão de servidores (Linux/Windows Server), políticas de controle de acesso (RBAC, Active Directory/LDAP), rotinas de backup e restauração."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Execução e verificação de rotinas de administração de usuários, permissões de arquivos e integridade de backups."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:54Z"
+
+  - id_local: "manutencao_sistemas_informaticos"
+    esco_id: "fbbcb9ab-4b95-4e57-a756-30d08b7da7a5"
+    esco_uri: "http://data.europa.eu/esco/skill/fbbcb9ab-4b95-4e57-a756-30d08b7da7a5"
+    titulo_oficial: "efetuar a manutenção de sistemas informáticos"
+    tipo_esco: "competência"
+    descricao_oficial: "Selecionar e aplicar técnicas de monitorização de sistemas e redes. Identificar e resolver problemas operacionais. Assegurar que as capacidades e a eficiência do sistema correspondem às especificações da empresa."
+    descricao_contextual_proposta: "Aplicação periódica de patches de segurança, atualização de sistemas operacionais, limpeza de logs e manutenção preventiva de hardware e instâncias virtuais."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação de rotinas de manutenção de servidores para garantir alta disponibilidade e estabilidade de operação."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:54Z"
+
+  - id_local: "apoiar_utilizadores_sistemas_informaticos"
+    esco_id: "db36f7f1-5900-45bd-9ffb-f2b19c4362ac"
+    esco_uri: "http://data.europa.eu/esco/skill/db36f7f1-5900-45bd-9ffb-f2b19c4362ac"
+    titulo_oficial: "apoiar utilizadores de sistemas informáticos"
+    tipo_esco: "competência"
+    descricao_oficial: "Comunicar com os utilizadores finais, ensiná-los formas de executar tarefas, utilizar ferramentas e métodos de apoio às TIC para resolver problemas e identificar possíveis consequências e fornecer soluções."
+    descricao_contextual_proposta: "Atendimento técnico N1/N2, triagem de chamados, suporte presencial e remoto, esclarecimento de dúvidas e orientação sobre boas práticas de uso de TIC."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Comunicação clara, assertiva e empática ao diagnosticar problemas relatados por usuários finais."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:55Z"
+
+  - id_local: "monitorizar_desempenho_sistemas"
+    esco_id: "9190d87f-9792-42e0-bb7f-64294a656bcd"
+    esco_uri: "http://data.europa.eu/esco/skill/9190d87f-9792-42e0-bb7f-64294a656bcd"
+    titulo_oficial: "monitorizar o desempenho dos sistemas"
+    tipo_esco: "competência"
+    descricao_oficial: "Medir a fiabilidade e o desempenho de um sistema antes, durante e após a integração de componentes e durante o funcionamento e a manutenção do sistema. Selecionar e utilizar ferramentas e técnicas de monitorização do desempenho, como software especial."
+    descricao_contextual_proposta: "Supervisão contínua de métricas de CPU, memória, I/O de disco, tráfego de rede e latência de serviços utilizando ferramentas de observabilidade (ex: Prometheus, Grafana, Zabbix)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Interpretação de alertas de sobrecarga de recursos e diagnóstico de gargalos de desempenho em servidores."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:49Z"
+
+  - id_local: "protocolos_comunicacao_tic"
+    esco_id: "6e4f75b4-c60f-4623-a9ba-760c8245753b"
+    esco_uri: "http://data.europa.eu/esco/skill/6e4f75b4-c60f-4623-a9ba-760c8245753b"
+    titulo_oficial: "protocolos de comunicação de TIC"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "O sistema de regras que permite o intercâmbio de informações entre computadores ou outros dispositivos através de redes informáticas."
+    descricao_contextual_proposta: "Conhecimento sobre modelo TCP/IP, roteamento, resolução de nomes DNS, DHCP, protocolos seguros (SSH, TLS/HTTPS), VPNs e segmentação de VLANs."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão da pilha TCP/IP, portas padrão e diagnóstico de resolução de nomes em redes corporativas."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:49Z"
+
+  - id_local: "resolver_problemas_sistemas_tic"
+    esco_id: "9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    esco_uri: "http://data.europa.eu/esco/skill/9e06bac6-6b91-48ca-8b7d-c1f48cdecd7c"
+    titulo_oficial: "resolver problemas de sistemas de TIC"
+    tipo_esco: "competência"
+    descricao_oficial: "Identificar potenciais anomalias em componentes. Monitorizar, documentar e comunicar incidentes. Utilizar recursos adequados, com o mínimo tempo de interrupção, e utilizar ferramentas de diagnóstico adequadas."
+    descricao_contextual_proposta: "Troubleshooting sistemático de conectividade de rede, falhas de autenticação, corrupção de arquivos e queda de serviços em servidores."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Aplicação de comandos de diagnóstico de rede (ping, traceroute, netstat/ss, nslookup) para isolar causas raiz."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+  - id_local: "elaborar_documentacao_tecnica"
+    esco_id: "04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    esco_uri: "http://data.europa.eu/esco/skill/04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    titulo_oficial: "elaborar documentação técnica"
+    tipo_esco: "competência"
+    descricao_oficial: "Preparar documentação para produtos ou serviços existentes e futuros, descrevendo o seu funcionamento e composição, de tal forma que seja compreensível para um público alargado, sem conhecimentos técnicos e em conformidade com os requisitos e normas definidos. Manter a documentação atualizada."
+    descricao_contextual_proposta: "Criação de Procedimentos Operacionais Padrão (POPs), manuais de suporte, artigos de base de conhecimento (Knowledge Base) e diagramas de topologia de rede."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Redação clara de roteiros passo a passo para resolução de chamados frequentes e configurações de ambiente."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+  - id_local: "identificar_riscos_seguranca_informatica"
+    esco_id: "fe1c2b32-7fe9-4668-affa-07ff658a68cf"
+    esco_uri: "http://data.europa.eu/esco/skill/fe1c2b32-7fe9-4668-affa-07ff658a68cf"
+    titulo_oficial: "identificar riscos de segurança informática"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar métodos e técnicas para identificar potenciais ameaças à segurança, violações da segurança e fatores de risco utilizando ferramentas informáticas para vigiar sistemas informáticos, analisando riscos, vulnerabilidades e ameaças e avaliando planos de contingência."
+    descricao_contextual_proposta: "Identificação de portas expostas indevidamente, tentativas de força bruta (brute-force), phishing, senhas fracas e ausência de autenticação multifator (MFA)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Reconhecimento de vulnerabilidades comuns de infraestrutura e recomendação de ações de mitigação segundo boas práticas de segurança."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:56Z"
+
+exercicio:
+  id: "ex_analista_suporte_infra_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados:
+    - "elaborar_documentacao_tecnica"
+  cenario: "Cenário didático e sintético: A sede corporativa da empresa 'LogExpress' possui 180 colaboradores conectados a uma rede local (LAN) com servidores internos de arquivos (NFS/SMB) e acesso a aplicações web via link de internet dedicado. Na manhã de segunda-feira, diversos colaboradores abrem chamados simultâneos relatando incapacidade de acessar sites externos e lentidão extrema para abrir pastas de rede compartilhadas, enquanto alguns departamentos afirmam conseguir navegar normalmente utilizando endereços IP numéricos."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "Os usuários relatam que conseguem acessar um servidor de destino digitando diretamente seu endereço IP (ex: http://192.168.10.50), porém ao digitar o nome de domínio corporativo interno (ex: intranet.empresa.local) o navegador retorna erro 'Host não encontrado'. Qual serviço de infraestrutura de rede é a provável causa raiz da falha?"
+      alternativas:
+        A: "Serviço de resolução de nomes de domínio (DNS) inativo ou com encaminhadores corporativos desconfigurados na rede local."
+        B: "Serviço de configuração dinâmica de endereços de rede (DHCP) com escopo de concessão esgotado para novas estações clientes."
+        C: "Roteador de borda principal com tabela de rotas corrompida bloqueando pacotes direcionados à sub-rede dos servidores internos."
+        D: "Regra restritiva no firewall corporativo filtrando portas de aplicação web para todo o tráfego originado nas estações de trabalho."
+      gabarito: "A"
+      justificativa: "O acesso bem-sucedido via endereço IP confirma que conectividade física, protocolos de roteamento e portas de aplicação estão operantes, isolando a inconsistência no serviço DNS encarregado de traduzir nomes de domínio em endereços IP. Esgotamento de DHCP impediria novas estações de obter conectividade básica, falhas no roteador inviabilizariam o tráfego por IP e bloqueios de firewall na porta web impediriam conexões em ambas as formas de chamada."
+      requisitos_avaliados:
+        - "protocolos_comunicacao_tic"
+        - "resolver_problemas_sistemas_tic"
+
+    - id: "q2"
+      enunciado: "Um analista de suporte precisa verificar no servidor Linux quais portas de rede estão atualmente abertas e escutando conexões (LISTEN), além dos processos responsáveis por elas. Qual comando no terminal Linux executa essa inspeção de forma moderna e padrão?"
+      alternativas:
+        A: "ping -c 4 localhost para checar a integridade da pilha de protocolos TCP/IP e o tempo de resposta do loopback local."
+        B: "ifconfig -a para listar os endereços físicos de hardware (MAC) e os identificadores das interfaces ativas no sistema."
+        C: "ss -tulpn para inspecionar sockets TCP e UDP em estado de escuta com identificadores numéricos e processos vinculados."
+        D: "traceroute 127.0.0.1 para mapear a quantidade de saltos lógicos percorridos até o gateway padrão de saída da empresa."
+      gabarito: "C"
+      justificativa: "O utilitário ss com parâmetros para TCP (-t), UDP (-u), sockets em escuta (-l), processos (-p) e resolução numérica (-n) é a ferramenta padrão em ambientes Linux modernos para auditar serviços de rede ativos. O comando ping apenas verifica conectividade básica via pacotes ICMP, ifconfig exibe configurações das interfaces de rede sem listar portas de escuta e traceroute diagnostica rotas de roteamento externo."
+      requisitos_avaliados:
+        - "administrar_sistemas_informaticos"
+        - "resolver_problemas_sistemas_tic"
+
+    - id: "q3"
+      enunciado: "O painel de monitoramento do servidor de arquivos emite alerta crítico indicando que o volume de armazenamento principal atingiu 98% de ocupação, com taxa de crescimento contínua de 500 MB por hora. Qual ação imediata deve ser executada pelo administrador de infraestrutura para evitar a indisponibilidade total dos serviços?"
+      alternativas:
+        A: "Reinicializar o servidor corporativo para descarregar o cache de memória e aguardar estabilização do disco em produção."
+        B: "Ativar compressão nativa em toda a partição do sistema operacional sem checar a origem dos arquivos que estão crescendo."
+        C: "Apagar diretamente pastas ativas de banco de dados para recuperar espaço imediato sem validação prévia de integridade."
+        D: "Localizar diretórios com retenção anômala de logs ou arquivos temporários, realizar expurgo seguro e planejar expansão de partição."
+      gabarito: "D"
+      justificativa: "A intervenção correta consiste em mapear a causa do crescimento anormal (como falhas no logrotate ou despejos temporários), liberar espaço de forma criteriosa e expandir o volume lógico via LVM antes do esgotamento da partição. Reinicializações não liberam espaço persistente consumido, compressão em tempo real eleva uso de CPU sem conter a gravação contínua e exclusões sem triagem arriscam corromper arquivos vitais de produção."
+      requisitos_avaliados:
+        - "manutencao_sistemas_informaticos"
+        - "monitorizar_desempenho_sistemas"
+
+    - id: "q4"
+      enunciado: "Ao analisar os registros de auditoria (logs do firewall e SSH), o analista identifica milhares de tentativas consecutivas de conexão vindas de um endereço IP externo desconhecido na porta padrão 22, tentando autenticar contas como 'root', 'admin' e 'test'. Qual tipo de ataque isso caracteriza e qual medida técnica mitiga imediatamente esse risco?"
+      alternativas:
+        A: "Negação de serviço distribuída (DDoS); contingência com alteração emergencial dos servidores DNS primários e secundários."
+        B: "Força bruta direcionada ao serviço SSH; contingência com bloqueio por firewall, desativação de login root e uso de fail2ban ou chaves."
+        C: "Injeção de código em banco de dados (SQL Injection); contingência com reinstalação das tabelas e expurgo da base transacional."
+        D: "Envenenamento de cache local (ARP Spoofing); contingência com substituição física das placas de rede nos servidores afetados."
+      gabarito: "B"
+      justificativa: "Tentativas repetitivas de adivinhação de credenciais contra portas de gerência tipificam ataque de força bruta, mitigado eficazmente por restrição de acesso em nível de firewall ou VPN, desabilitação de autenticação direta para contas privilegiadas e filtros como fail2ban ou pares de chaves criptográficas. Ataques de negação de serviço saturam banda em vez de autenticar contas, injeções SQL exploram aplicações web em portas HTTP e falsificação ARP atua no enlace de redes locais."
+      requisitos_avaliados:
+        - "identificar_riscos_seguranca_informatica"
+        - "administrar_sistemas_informaticos"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "Durante o expediente na 'LogExpress', o servidor principal de autenticação e arquivos para de responder. Os 180 colaboradores perdem acesso simultâneo às suas estações de trabalho e arquivos de rede. O telefone do suporte toca ininterruptamente e o diretor de operações exige restabelecimento imediato. Como analista de suporte e infraestrutura de TI, elabore um plano de resposta a incidentes contendo: (1) o procedimento inicial de comunicação e triagem para organizar o atendimento e evitar sobrecarga na equipe; (2) o checklist de contingência técnica para investigar hardware, hipervisor, sistema operacional e conectividade de rede; e (3) a estratégia de recuperação (DRP) com restauração de backup e teste de integridade pós-restabelecimento."
+    requisitos_avaliados:
+      - "resolver_problemas_sistemas_tic"
+      - "administrar_sistemas_informaticos"
+      - "apoiar_utilizadores_sistemas_informaticos"
+      - "manutencao_sistemas_informaticos"
+    rubrica:
+      - id: "crit_comunicacao_triagem"
+        descricao: "Avalia a estruturação da comunicação com usuários e liderança durante incidentes de alta severidade (Sev-1)."
+        requisitos_avaliados:
+          - "apoiar_utilizadores_sistemas_informaticos"
+        ancoras:
+          0: "Não propõe canal de comunicação oficial, deixando usuários sem informação ou atendendo chamados repetidos sem critério."
+          1: "Descreve comunicado genérico sem definir responsáveis pela comunicação ou sem estimativa de SLA/atualização periódica."
+          2: "Estabelece protocolo de crise com mensagem broadcast imediata aos usuários, ponto único de contato (SPOC) e atualizações com prazos transparentes."
+
+      - id: "crit_troubleshooting_infra"
+        descricao: "Avalia o método técnico de investigação em camadas para identificação e resolução da causa raiz."
+        requisitos_avaliados:
+          - "resolver_problemas_sistemas_tic"
+          - "administrar_sistemas_informaticos"
+        ancoras:
+          0: "Propõe ações desordenadas sem seguir modelo lógico de isolamento de falhas."
+          1: "Investiga apenas uma camada superficial (ex: reiniciar sem olhar logs de kernel ou console do hipervisor)."
+          2: "Apresenta checklist metódico em camadas (energia/hardware físico, hipervisor/VMware/Proxmox, logs de boot/dmesg do SO e serviços de rede)."
+
+      - id: "crit_recuperacao_resiliencia"
+        descricao: "Avalia a consistência do plano de restauração de desastres (DRP), teste de integridade e pós-mórtem do incidente."
+        requisitos_avaliados:
+          - "manutencao_sistemas_informaticos"
+          - "administrar_sistemas_informaticos"
+        ancoras:
+          0: "Não contempla plano de backup/restauração ou considera o incidente encerrado sem testar o acesso dos usuários."
+          1: "Cita restauração de backup mas não define procedimento de verificação de consistência nem confecção de relatório de causa raiz."
+          2: "Especifica procedimento rigoroso de restauração de snapshot/backup imutável, checagem cruzada de integridade de dados e confecção de relatório pós-mórtem com ações preventivas."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"

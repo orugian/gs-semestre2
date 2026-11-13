@@ -1,0 +1,255 @@
+schema_version: "1.0"
+versao: "0.1.0-rascunho"
+destino_id: "gerente_projetos_produto"
+nome: "Gerente de Projetos/Produto"
+cbo6:
+  - "142520"
+  - "142605"
+status: "rascunho"
+curadoria_natureza: "inferida_pendente_revisao"
+
+revisao_humana:
+  status: "pendente"
+  revisor: null
+  revisado_em: null
+  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+
+populacao:
+  descricao: "Profissionais responsáveis pelo planejamento, liderança ágil, gestão de escopo e produto (Product Management), alinhamento de roadmap e negociação estratégica entre stakeholders e times técnicos."
+  publico_alvo: "Gerentes de projetos de tecnologia da informação e gerentes de pesquisa e desenvolvimento (P&D) atuando em produtos digitais e projetos de transformação tecnológica."
+  limitacoes:
+    - "Destino gerente_projetos_produto: so 2 codigos; 142315 (Gerente de marketing, sinonimo 'Gerente de produtos') ficou na reserva."
+    - "Mapeamento contextual inferido; requisitos e critérios de aprovação são propostas submetidas à homologação humana na revisão D3."
+
+fontes_referencia:
+  cbo:
+    arquivo: "app/catalogo/ocupacoes_cbo.json"
+    versao: "aprovada-2026-11-13"
+  esco:
+    arquivo: "app/catalogo/fontes/esco_20261113.json"
+    sha256: "08eff6c325155d8cfaef70c8d390ba67303f3ed17897cd4ce8857cbf40db5a7c"
+    consultado_em: "2026-11-13T14:41:52Z"
+    nota_versao: "Versão ESCO não fixada na consulta (endpoint padrão da API oficial da Comissão Europeia em 13/11/2026)."
+
+requisitos:
+  - id_local: "gestao_projetos"
+    esco_id: "7111b95d-0ce3-441a-9d92-4c75d05c4388"
+    esco_uri: "http://data.europa.eu/esco/skill/7111b95d-0ce3-441a-9d92-4c75d05c4388"
+    titulo_oficial: "gestão de projetos"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "Compreender a gestão de projetos e as atividades que incluem esta área. Conhecer as variáveis implícitas na gestão de projetos, tais como o tempo, os recursos, os requisitos, os prazos e a resposta a acontecimentos inesperados."
+    descricao_contextual_proposta: "Conhecimento sobre o triângulo de restrições (escopo, prazo e custo), gestão de aquisições, comunicação corporativa e ciclo de vida de projetos de TI."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Compreensão dos fundamentos de alocação de recursos e marcos críticos de entrega em projetos digitais."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:52Z"
+
+  - id_local: "gestao_agil_projetos"
+    esco_id: "0a9acb6b-1139-4be9-b431-3a80a959f2f4"
+    esco_uri: "http://data.europa.eu/esco/skill/0a9acb6b-1139-4be9-b431-3a80a959f2f4"
+    titulo_oficial: "gestão ágil de projetos"
+    tipo_esco: "conhecimento"
+    descricao_oficial: "A abordagem flexível de gestão de projetos é uma metodologia de planeamento, gestão e supervisão dos recursos TIC, a fim de cumprir objetivos específicos e utilizar ferramentas TIC de gestão de projetos."
+    descricao_contextual_proposta: "Domínio conceitual dos princípios do Manifesto Ágil, cerimônias e papéis do Scrum (sprints, dailies, reviews, retros) e gestão de fluxo contínuo Kanban."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Conhecimento conceitual da dinâmica ágil e gestão de backlog de produto em ambiente colaborativo."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:52Z"
+
+  - id_local: "avaliar_planos_projetos"
+    esco_id: "2db2d9a8-298d-4d1a-a194-d3282e70d6cb"
+    esco_uri: "http://data.europa.eu/esco/skill/2db2d9a8-298d-4d1a-a194-d3282e70d6cb"
+    titulo_oficial: "avaliar planos de projetos"
+    tipo_esco: "competência"
+    descricao_oficial: "Avaliar propostas/planos de projetos e avaliar as questões de exequibilidade."
+    descricao_contextual_proposta: "Análise crítica de viabilidade técnica e financeira, dimensionamento de esforço (story points/horas), identificação de dependências e estimativas de entrega."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Avaliação da coerência entre escopo planejado, capacidade de time e viabilidade de cronograma."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:52Z"
+
+  - id_local: "efetuar_analise_riscos"
+    esco_id: "1dd23dba-dd00-45ab-abf4-642902538317"
+    esco_uri: "http://data.europa.eu/esco/skill/1dd23dba-dd00-45ab-abf4-642902538317"
+    titulo_oficial: "efetuar análise de riscos"
+    tipo_esco: "competência"
+    descricao_oficial: "Identificar e avaliar fatores que possam comprometer o sucesso de um projeto ou ameaçar o funcionamento da organização. Implementar procedimentos para evitar ou minimizar o seu impacto."
+    descricao_contextual_proposta: "Elaboração de matriz de probabilidade e impacto para riscos de tecnologia, débitos técnicos, rotatividade de equipe e dependências com fornecedores."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Identificação antecipada de impedimentos críticos e proposta de planos de mitigação e contingência."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:53Z"
+
+  - id_local: "negociar_partes_interessadas"
+    esco_id: "87de6e49-ca1c-42a4-8751-5ff0b991966b"
+    esco_uri: "http://data.europa.eu/esco/skill/87de6e49-ca1c-42a4-8751-5ff0b991966b"
+    titulo_oficial: "negociar com as partes interessadas"
+    tipo_esco: "competência"
+    descricao_oficial: "Negociar compromissos com as partes interessadas e procurar alcançar os acordos mais vantajosos para a empresa. Isso pode envolver o estabelecimento de relações com fornecedores e clientes, bem como assegurar a rentabilidade dos produtos."
+    descricao_contextual_proposta: "Condução de alinhamentos e negociação de prioridades de produto (trade-offs), prazos e entregáveis com executivos, clientes e parceiros técnicos."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Resolução objetiva de conflitos de prioridade fundamentada em valor de negócio e capacidade de engenharia."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:53Z"
+
+  - id_local: "identificar_requisitos_clientes"
+    esco_id: "0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    esco_uri: "http://data.europa.eu/esco/skill/0e0c9c11-b39e-43cf-ba95-2fe646f5de64"
+    titulo_oficial: "identificar os requisitos dos clientes"
+    tipo_esco: "competência"
+    descricao_oficial: "Aplicar técnicas e ferramentas, tais como inquéritos, questionários e aplicações TIC para averiguar, definir, analisar, documentar e manter os requisitos dos utilizadores a partir do sistema, serviço ou produto."
+    descricao_contextual_proposta: "Descoberta de produto (Product Discovery), mapeamento da jornada do usuário, entrevistas e estruturação de personas para guiar o desenvolvimento de funcionalidades."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Tradução de necessidades de usuários em histórias de usuário claras com critérios de aceite testáveis."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:48Z"
+
+  - id_local: "analisar_processos_empresariais"
+    esco_id: "56042303-972b-41be-9310-58467599ff7e"
+    esco_uri: "http://data.europa.eu/esco/skill/56042303-972b-41be-9310-58467599ff7e"
+    titulo_oficial: "analisar os processos empresariais"
+    tipo_esco: "competência"
+    descricao_oficial: "Analisar a contribuição dos processos de trabalho para os objetivos da empresa e monitorizar a sua eficiência e produtividade."
+    descricao_contextual_proposta: "Compreensão de fluxos de ponta a ponta na organização para garantir que novas funcionalidades do produto não criem gargalos em suporte ou operações."
+    obrigatorio_proposto: false
+    evidencia_esperada: "Avaliação do impacto operacional decorrente do lançamento de novas versões ou processos."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:51Z"
+
+  - id_local: "elaborar_documentacao_tecnica"
+    esco_id: "04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    esco_uri: "http://data.europa.eu/esco/skill/04dfd9fb-e0cf-40f6-96c6-9d2280c4347e"
+    titulo_oficial: "elaborar documentação técnica"
+    tipo_esco: "competência"
+    descricao_oficial: "Preparar documentação para produtos ou serviços existentes e futuros, descrevendo o seu funcionamento e composição, de tal forma que seja compreensível para um público alargado, sem conhecimentos técnicos e em conformidade com os requisitos e normas definidos. Manter a documentação atualizada."
+    descricao_contextual_proposta: "Redação de Documentos de Requisitos de Produto (PRD), especificações funcionais, atas de alinhamento e notas de lançamento (release notes)."
+    obrigatorio_proposto: true
+    evidencia_esperada: "Estruturação clara de um PRD ou história de usuário com regras de negócio e critérios de aceitação objetivos."
+    origem_dados: "esco_20261113.json"
+    consultado_em: "2026-11-13T14:41:50Z"
+
+exercicio:
+  id: "ex_gerente_projetos_produto_01"
+  versao: "0.1.0"
+  tipo: "diagnostico_pratico_didatico"
+  requisitos_nao_avaliados:
+    - "analisar_processos_empresariais"
+  cenario: "Cenário didático e sintético: A fintech 'CréditoAgil' está desenvolvendo um novo módulo de concessão instantânea de microcrédito no aplicativo móvel. O lançamento está agendado para daqui a 8 semanas para coincidir com uma campanha nacional de marketing. Faltando 4 semanas para o prazo final, o time de engenharia descobre que a integração com o bureau externo de crédito possui latência excessiva (média de 12 segundos) e taxa de erro de 15%, o que inviabiliza a aprovação imediata prometida pelo comercial."
+
+  questoes_objetivas:
+    - id: "q1"
+      enunciado: "Na metodologia Scrum, quando o Product Owner e os desenvolvedores identificam no meio da sprint que uma funcionalidade estimada em 13 pontos não será concluída devido a bloqueios técnicos externos imprevistos, qual é a conduta correta de acordo com as boas práticas ágeis?"
+      alternativas:
+        A: "Cancelar unilateralmente a sprint vigente e reiniciar o planejamento de todo o backlog do zero com a equipe de desenvolvimento."
+        B: "Exigir horas extras emergenciais do time técnico para entregar o pacote completo sem alterar o escopo acordado no planejamento."
+        C: "Marcar a história como concluída sem validação de testes automatizados para manter a velocidade prevista no gráfico de burndown."
+        D: "Repactuar o escopo com o Product Owner, desmembrando o item para entregar valor parcial e expondo o impedimento na reunião diária."
+      gabarito: "D"
+      justificativa: "O framework Scrum orienta que impedimentos detectados durante a iteração sejam tratados com transparência e adaptação contínua, negociando escopo entre equipe e Product Owner para preservar a meta da sprint. Cancelar a sprint é medida drástica reservada para obsolescência de meta, impor horas extras degrada o ritmo sustentável e aprovar itens incompletos viola a definição de pronto (DoD)."
+      requisitos_avaliados:
+        - "gestao_agil_projetos"
+        - "avaliar_planos_projetos"
+
+    - id: "q2"
+      enunciado: "O diretor comercial exige que todas as 15 regras de validação cadastral manual sejam incluídas na primeira versão de lançamento (MVP) daqui a 4 semanas. A equipe técnica aponta que isso exigirá 16 semanas de desenvolvimento. Como o gerente de produto deve negociar esse impasse com o stakeholder?"
+      alternativas:
+        A: "Empregar métodos de priorização como MoSCoW ou RICE para focar o MVP nas regras críticas e planejar as demais em versões futuras."
+        B: "Comprometer-se formalmente com o prazo de 4 semanas sem alterar o escopo, atribuindo futuros atrasos à sobrecarga dos engenheiros."
+        C: "Rejeitar sumariamente a solicitação comercial sem apresentar dados de capacidade técnica ou alternativas de viabilidade para o negócio."
+        D: "Reduzir o prazo de entrega eliminando as etapas de validação de segurança e testes unitários para cumprir a demanda integral no prazo."
+      gabarito: "A"
+      justificativa: "A negociação produtiva orientada a valor utiliza frameworks objetivos de priorização para calibrar expectativas, viabilizando o lançamento dentro do prazo com núcleo indispensável de segurança e escalonando as demais regras para releases subsequentes. Prometer prazos inviáveis compromete a previsibilidade, recusar sem diálogo rompe pontes com a liderança e suprimir testes acarreta riscos severos de conformidade regulatória."
+      requisitos_avaliados:
+        - "negociar_partes_interessadas"
+        - "identificar_requisitos_clientes"
+
+    - id: "q3"
+      enunciado: "Ao registrar o risco da lentidão do bureau de crédito na Matriz de Riscos do projeto, como o gerente deve categorizar o risco e qual plano de contingência técnico deve ser proposto?"
+      alternativas:
+        A: "Probabilidade baixa e impacto mínimo; plano de aceitação passiva sem necessidade de ajustes arquiteturais no fluxo do aplicativo."
+        B: "Probabilidade alta e impacto alto; contingência com arquitetura assíncrona, notificações push e política de cache para consultas."
+        C: "Probabilidade incerta e impacto total; encerramento definitivo da iniciativa de microcrédito e rescisão imediata com parceiros."
+        D: "Probabilidade moderada e impacto baixo; transferência da responsabilidade operacional ao cliente final por meio de termos de uso."
+      gabarito: "B"
+      justificativa: "Com 15% de erro e 12 segundos de latência, o evento possui probabilidade elevada e forte impacto na retenção de usuários, demandando mitigação técnica por chamadas assíncronas, retorno transparente via push e cache de dados transacionais. Desconsiderar o evento causa abandono de checkout, cancelar a operação interrompe o planejamento estratégico e transferir a responsabilidade via termos de uso prejudica a experiência e a imagem da marca."
+      requisitos_avaliados:
+        - "efetuar_analise_riscos"
+        - "gestao_projetos"
+
+    - id: "q4"
+      enunciado: "Ao redigir uma história de usuário (User Story) para a jornada de contratação de microcrédito, qual formato garante clareza de valor para o cliente e critérios de aceitação objetivos para o time de qualidade?"
+      alternativas:
+        A: "Descrição exclusiva do esquema físico de banco de dados e rotas da API REST sem vinculação direta à jornada do usuário final."
+        B: "Definição genérica solicitando que a contratação de crédito seja simples, intuitiva e agradável para os correntistas do banco."
+        C: "Estrutura padrão de persona, desejo e benefício, complementada por cenários de aceitação em formato Dado, Quando e Então (BDD)."
+        D: "Lista sequencial de tarefas operacionais de desenvolvimento com datas de início e término estimadas em horas individuais de trabalho."
+      gabarito: "C"
+      justificativa: "A formulação canônica de história de usuário explicita o público, o objetivo prático e a entrega de valor, permitindo que cenários em linguagem BDD orientem tanto o desenvolvimento quanto os testes automatizados de aceitação. Especificações restritas ao backend ignoram a experiência do cliente, descrições subjetivas não fornecem critérios verificáveis e listas cronológicas de tarefas não comunicam valor funcional."
+      requisitos_avaliados:
+        - "elaborar_documentacao_tecnica"
+        - "identificar_requisitos_clientes"
+
+  questao_aberta:
+    id: "qa1"
+    enunciado: "Você é o Gerente de Produto encarregado do lançamento do módulo de microcrédito da fintech 'CréditoAgil'. Faltando 4 semanas para o lançamento e com a campanha de marketing agendada, o fornecedor de bureau de crédito externo comunica que não conseguirá reduzir a latência de 12 segundos e a taxa de erro de 15% antes da data acordada. A diretoria executiva pressiona pela manutenção do prazo original, mas o líder técnico afirma que a experiência atual causará avalanches de reclamações no Procon e churn. Elabore um plano estratégico de gestão de produto e projeto contendo: (1) a estratégia de renegociação de escopo/jornada com os stakeholders de negócios para viabilizar um lançamento seguro no prazo (MVP adaptado); (2) o desenho da nova experiência do usuário (UX assíncrona/degradada graciosa) mitigando a frustração da espera; e (3) a definição de 2 critérios de aceite definitivos (Go/No-Go) que o produto precisa obrigatoriamente atingir antes da liberação nas lojas de aplicativos."
+    requisitos_avaliados:
+      - "negociar_partes_interessadas"
+      - "avaliar_planos_projetos"
+      - "efetuar_analise_riscos"
+      - "elaborar_documentacao_tecnica"
+    rubrica:
+      - id: "crit_renegociacao_stakeholders"
+        descricao: "Avalia a habilidade de negociação de prazos e alinhamento de expectativas sem comprometer a estabilidade do produto."
+        requisitos_avaliados:
+          - "negociar_partes_interessadas"
+          - "avaliar_planos_projetos"
+        ancoras:
+          0: "Não propõe estratégia de negociação, cedendo cegamente à pressão executiva ou sugerindo cancelamento sumário do projeto."
+          1: "Propõe negociar apenas com os desenvolvedores ou apresenta um plano de comunicação vago com a diretoria."
+          2: "Apresenta estratégia estruturada de alinhamento com dados de impacto, propondo faseamento por cohort/soft-launch e revisão de metas com marketing."
+
+      - id: "crit_solucao_experiencia"
+        descricao: "Avalia a consistência da jornada assíncrona proposta e a mitigação técnica dos erros e da lentidão externa."
+        requisitos_avaliados:
+          - "efetuar_analise_riscos"
+          - "elaborar_documentacao_tecnica"
+        ancoras:
+          0: "Mantém a jornada bloqueante (tela de espera congelada por 12 segundos) sem tratamento de erros."
+          1: "Descreve mensagem genérica de erro na tela sem fornecer caminho alternativo ou notificação assíncrona ao usuário."
+          2: "Desenha experiência assíncrona fluida (análise em segundo plano com aviso via push/SMS) e mecanismo transparente de retry em caso de indisponibilidade temporária."
+
+      - id: "crit_criterios_gonogo"
+        descricao: "Avalia a definição de critérios de aceite mensuráveis e rigor técnico para decisão de liberação em produção."
+        requisitos_avaliados:
+          - "avaliar_planos_projetos"
+          - "elaborar_documentacao_tecnica"
+        ancoras:
+          0: "Não apresenta critérios de Go/No-Go objetivos ou baseia a decisão em impressões subjetivas."
+          1: "Apresenta critérios vagos (ex: 'sistema estável e sem bugs graves') sem métricas de corte quantitativas."
+          2: "Estabelece critérios quantitativos e inegociáveis de Go/No-Go (ex: taxa de erro em produção < 1%, tempo de resposta de fallback < 2s e zero vulnerabilidades de segurança críticas)."
+
+politica_avaliacao_proposta:
+  pesos:
+    objetiva: 0.5
+    llm: 0.5
+  minimo_objetiva: null
+  minimo_llm: null
+  criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
+  fallback_llm:
+    comportamento: "parcial"
+    descricao: "Em caso de falha ou indisponibilidade do serviço LLM, o resultado dissertativo fica pendente/parcial, preservando a nota objetiva e permitindo refazer ou contestar."
+  politica_tentativas:
+    max_tentativas_24h: 3
+  recurso_contestacao:
+    permitido: true
+    descricao: "O candidato pode solicitar revisão humana ou contestar avaliação discordante da LLM."
+  vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
+
+checklist_revisao:
+  pertinencia_ocupacional: "pendente"
+  carater_obrigatorio_requisitos: "pendente"
+  adequacao_enunciados_gabaritos: "pendente"
+  rubricas_e_ancoras: "pendente"
+  minimos_aprovacao: "pendente"
+  acessibilidade_e_inclusao: "pendente"
+  fontes_e_versao_esco: "pendente"
