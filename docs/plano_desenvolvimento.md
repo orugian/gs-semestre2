@@ -118,7 +118,7 @@ Cenários: **25 °C/25 cm** (normal) · **38 °C/12 cm** (atenção) · **48 °C
 | Rota | Auth | Resumo |
 |---|---|---|
 | `POST /auth/registrar` · `POST /auth/login` · `POST /auth/logout` · `GET /me` | — / cookie | argon2, JWT httpOnly, 429 no login |
-| `POST /me/consentimentos` | cookie | finalidades: `perfil`, `curriculo_llm`, `laboratorio_nuvem` |
+| `POST /me/consentimentos` · `GET /me/consentimentos` · `DELETE /me/consentimentos/{id}` | cookie | finalidades: `perfil`, `curriculo_llm`, `laboratorio_nuvem`. Listagem do dono e revogação (404 se não existe ou é de outra pessoa): extensão aprovada pelo usuário em 13/11/2026 (D2), para tornar o T14 testável na S5. |
 | `PUT /me/intencao` | cookie | atividades desejadas, motivos, h/semana, orçamento, UF |
 | `POST /me/experiencias` (texto) · `POST /me/curriculo` (multipart ≤ 2 MB) | cookie | redação de PII → Mongo (texto + hash) |
 | `POST /me/competencias/extrair` → candidatas · `PATCH /me/competencias/{id}` | cookie + quota LLM | confirmar, editar ou rejeitar; o estado nasce `declarada` |
