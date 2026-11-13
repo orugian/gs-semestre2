@@ -77,6 +77,31 @@ def test_competencia_com_espacos_aceita_nao_perde_movimentacao():
     assert p.loc[p.destino == "analista_dados_bi", "admissoes"].iloc[0] == 1.0
 
 
+def test_pendencia_futura_no_manifesto_nao_anula_alvo_historico():
+    """RV-S7-01: linha pendente em mes futuro do manifesto nao pode anular alvo ja observado."""
+    c = pd.concat(
+        [cobertura(), pd.DataFrame([
+            {"competencia": "202501", "tipo": "FOR", "situacao": "pendente"},
+        ])],
+        ignore_index=True,
+    )
+    dados = [
+        linha() | {"competencia_mov": m, "competencia_dec": m, "competencia_arquivo": m}
+        for m in ["202402", "202403", "202404"]
+    ]
+    p = construir_painel_features(pd.DataFrame(dados), c, competencias=["202401"], ufs=["35"])
+    assert p.loc[p.destino == "analista_dados_bi", "alvo"].iloc[0] == 3.0
+
+
+def test_competencias_do_manifesto_sao_validadas_quando_omitidas():
+    """RV-S7-02: competencias vindas da cobertura passam pela mesma validacao das explicitas."""
+    c = cobertura()
+    c["competencia"] = " " + c["competencia"] + " "
+    p = construir_painel_features(pd.DataFrame([linha()]), c, ufs=["35"], calcular_alvo=False)
+    assert set(p["mes"]) == {1, 2, 3, 4}
+    assert set(p["competencia"]) == {"202401", "202402", "202403", "202404"}
+
+
 def test_pre_agregado_nao_silencia_catalogo_sobreposto():
     from citizentech_ml.features import pre_agregar_microdados
 

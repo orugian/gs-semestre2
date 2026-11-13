@@ -93,12 +93,14 @@ def construir_painel_features(
         _, destinos = extrair_mapa_cbo(ocupacoes)
 
     if competencias is None:
+        # As competências inferidas passam pela mesma validação das explícitas (RV-S7-02).
         if "competencia" in cobertura.columns and not cobertura.empty:
-            todas_comp = sorted(cobertura["competencia"].dropna().unique().tolist())
+            origem_comp = cobertura["competencia"]
         elif not df_pre.empty:
-            todas_comp = sorted(df_pre["competencia_mov"].dropna().unique().tolist())
+            origem_comp = df_pre["competencia_mov"]
         else:
-            todas_comp = []
+            origem_comp = pd.Series(dtype="string")
+        todas_comp = sorted({validar_competencia(str(c)) for c in origem_comp.dropna()})
 
         if not permitir_teste:
             # Em modo desenvolvimento padrão, nunca calcula origens de teste (>= 202601)
@@ -122,7 +124,15 @@ def construir_painel_features(
         if horizonte_consolidacao is not None:
             t_max_disp = validar_competencia(horizonte_consolidacao)
         elif not cobertura.empty and "competencia" in cobertura.columns:
-            t_max_disp = str(cobertura["competencia"].max())
+            # Horizonte padrão = última competência com algum arquivo ingerido (RV-S7-01).
+            # Linhas apenas pendentes/falhas DEPOIS dela não existem como informação e não
+            # podem anular alvos já observados; lacunas ANTES dela continuam produzindo NaN.
+            ingeridas = cobertura.loc[
+                cobertura["situacao"].astype(str).str.strip().str.lower() == "ingerido",
+                "competencia",
+            ]
+            base_horizonte = ingeridas if not ingeridas.empty else cobertura["competencia"]
+            t_max_disp = max(validar_competencia(str(c)) for c in base_horizonte.dropna())
         elif not df_pre.empty and df_pre["competencia_disp"].notna().any():
             t_max_disp = str(df_pre["competencia_disp"].max())
         else:
