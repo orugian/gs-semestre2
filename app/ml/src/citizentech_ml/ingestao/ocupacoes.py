@@ -14,16 +14,14 @@ def carregar_ocupacoes(caminho: str | Path) -> Ocupacoes:
     - O arquivo precisa conter 'destinos' com pelo menos um destino.
     - Cada código CBO deve ter exatamente 6 dígitos numéricos.
     - Conjuntos disjuntos: nenhum código pode aparecer em mais de um destino ou na reserva.
-    - Retorna a estrutura Ocupacoes com codigos_ingestao e hash estável.
+    - Retorna a estrutura Ocupacoes com codigos_ingestao e o hash do conjunto de códigos
+      (estável a mudanças de nome, versão ou distribuição entre destinos e reserva).
     """
     caminho_path = Path(caminho)
     if not caminho_path.exists():
         raise FileNotFoundError(f"Arquivo de ocupações não encontrado: {caminho_path}")
 
-    conteudo_bytes = caminho_path.read_bytes()
-    hash_sha256 = hashlib.sha256(conteudo_bytes).hexdigest()
-
-    dados = json.loads(conteudo_bytes.decode("utf-8"))
+    dados = json.loads(caminho_path.read_text(encoding="utf-8"))
 
     versao = dados.get("versao", "desconhecida")
     destinos = dados.get("destinos")
@@ -74,6 +72,8 @@ def carregar_ocupacoes(caminho: str | Path) -> Ocupacoes:
         cbo6_reserva.append(cbo)
 
     codigos_ingestao = todos_cbo_destinos | set(cbo6_reserva)
+    # O hash identifica o FILTRO aplicado aos microdados: so o conjunto de codigos importa.
+    hash_sha256 = hashlib.sha256(",".join(sorted(codigos_ingestao)).encode("utf-8")).hexdigest()
 
     return Ocupacoes(
         versao=versao,
