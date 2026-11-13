@@ -1,93 +1,205 @@
-# CitizenTech API — Telemetria CTP e Modo Isolado (S2)
+# CitizenTech API — Telemetria CTP e Outbox Durável (S2 + S3)
 
-Módulo de recepção, validação, classificação e persistência de telemetria didática de monitoramento IoT (sensores de temperatura e distância/nível), operando de forma autônoma sem dependência de bancos de dados relacionais ou documentais.
+Módulo de recepção, validação, classificação de risco, persistência durável local e reenvio idempotente de telemetria IoT (sensores de temperatura e distância/nível), operando de forma resiliente com persistência dupla em CSV e SQLite Outbox.
 
 ---
 
-## 1. Execução em Modo Isolado CTP
+## 1. Execução
 
-O modo isolado permite executar a API sem Oracle, sem MongoDB e sem acesso a rede externa, utilizando armazenamento durável em arquivo CSV com locking de arquivo (`portalocker`) e sincronização física em disco (`fsync`):
+### Modo Integrado (com Outbox e Worker em Segundo Plano)
+O modo principal executa a API com ciclo de vida completo (*lifespan*), inicializando a reconciliação de inicialização entre CSV e SQLite e, se `FUNCTION_URL` estiver configurada, disparando o worker assíncrono interno de despacho para a nuvem:
+
+```powershell
+# No diretorio app/api
+uv run uvicorn citizentech.main:app --port 8000
+```
+
+### Modo Isolado CTP (Autocontido, Sem Nuvem)
+O modo isolado permite executar a API sem nenhuma dependência de rede externa, bancos relacionais ou documentais, utilizando exclusivamente o runtime durável local:
 
 ```powershell
 # No diretorio app/api
 uv run uvicorn citizentech.leituras.isolado:app --port 8000
 ```
 
-> **Aviso de concorrência e processo:** Esta fase foi projetada para execução com um único processo worker do Uvicorn (`--workers 1`), assegurando consistência na escrita do CSV com lock de filesystem/memória e sincronização física em disco (`fsync`). O lock previne condições de corrida entre threads e processos no mesmo arquivo.
+> **Aviso de concorrência e processo:** Esta fase foi projetada para execução com um único processo worker do Uvicorn (`--workers 1`), assegurando consistência na escrita do CSV com lock de filesystem/memória (`portalocker`) e transações seguras em SQLite com modo WAL (`busy_timeout=5000`, `synchronous=FULL`).
 
 ---
 
-## 2. Variáveis de Ambiente
+## 2. Vocabulário de Status e Validação
+
+O payload de telemetria aceita opcionalmente o campo `status` reportado pelo hardware:
+- **`OK`**: Dispositivo operando em condições normais.
+- **`ALERTA`**: Dispositivo sinaliza condição operacional que requer atenção.
+- **`ERRO`**: Dispositivo em estado de falha de hardware ou sensor; a API rejeita com **HTTP 400 Bad Request** ("Medida com status de erro do dispositivo nao e valida para registro.").
+
+A classificação final de `risco` (`normal`, `atencao`, `critico`) e a flag `alerta` são sempre recalculadas deterministicamente pela API a partir dos limiares centralizados (`limiares.json`), nunca confiando cegamente no status declarado pelo cliente.
+
+---
+
+## 3. Máquina de Estados da Outbox
+
+A fila de pendências (`pendencias`) gerencia a durabilidade e o ciclo de vida de cada evento de telemetria através da seguinte máquina de estados (`pendente_nuvem` → `sincronizado` | `conflito` | `erro_permanente`):
+
+```
+                  ┌──────────────────────────────────────────────┐
+                  │ POST /leituras (201 Created)                 │
+                  │ CSV fsync OK + SQLite pendencias OK          │
+                  └──────────────────────┬───────────────────────┘
+                                         │
+                                         ▼
+                             ┌───────────────────────┐
+            ┌───────────────►│    pendente_nuvem     │◄──────────────┐
+            │                └───────────┬───────────┘               │
+            │                            │                           │
+            │ Retry com                  │ Despacho HTTP             │ Retry com
+            │ Backoff Exponencial        │ para FUNCTION_URL         │ Backoff Exponencial
+            │ (5xx, Timeout, 429)        │                           │ (Perda de resposta /
+            │                            │                           │  Envelope inválido)
+            ├────────────────────────────┴───────────────────────────┤
+            │                                                        │
+            ▼                                                        ▼
+┌───────────────────────┐                                ┌───────────────────────┐
+│     sincronizado      │                                │       conflito        │
+├───────────────────────┤                                ├───────────────────────┤
+│ Nuvem responde 200/201│                                │ Nuvem responde 409    │
+│ com envelope válido   │                                │ (sem loop infinito)   │
+│ {evento_id, id}       │                                └───────────────────────┘
+└───────────────────────┘                                            │
+                                                                     ▼
+                                                         ┌───────────────────────┐
+                                                         │   erro_permanente     │
+                                                         ├───────────────────────┤
+                                                         │ Nuvem responde        │
+                                                         │ 400, 401 ou 403, ou   │
+                                                         │ URL insegura          │
+                                                         └───────────────────────┘
+```
+
+- **`pendente_nuvem`:** Estado inicial após persistência local. Aguarda envio ou reenvio agendado.
+- **`sincronizado`:** Evento confirmado pela nuvem (código HTTP 200 ou 201 com envelope JSON contendo `evento_id` correspondente).
+- **`conflito`:** Nuvem retornou HTTP 409 (identificador reutilizado com dados incompatíveis). Sinalizado explicitamente; não repete indefinidamente.
+- **`erro_permanente`:** Nuvem retornou erro de cliente/autenticação (HTTP 400, 401, 403) ou a URL de destino é insegura. Interrompe tentativas automáticas.
+
+### Tabela de Códigos de `ultimo_erro`
+
+| Código de Erro | Origem / Causa | Estado Resultante | Política de Reenvio |
+|---|---|---|---|
+| `CONFIGURACAO_AUSENTE` | `FUNCTION_URL` ou `DEVICE_KEY` não configuradas | `pendente_nuvem` | Aguarda configuração no ambiente |
+| `URL_INSEGURA` | URL não usa `https://` (exceto `localhost`/`127.0.0.1`) | `erro_permanente` | Não repete (evita tráfego em texto claro) |
+| `TIMEOUT` | Timeout na comunicação HTTP com a Lambda | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `CONEXAO_RECUSADA` | Falha de conexão de rede ou porta inacessível | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `RATE_LIMIT_429` | Nuvem respondeu HTTP 429 Too Many Requests | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `ERRO_SERVIDOR_5XX` | Nuvem respondeu HTTP 500, 502, 503 ou 504 | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `ENVELOPE_INVALIDO` | Resposta 200/201 sem JSON ou com `evento_id` divergente | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `CONFLITO_409` | Nuvem respondeu HTTP 409 Conflict | `conflito` | Não repete (requer intervenção/análise) |
+| `ERRO_CLIENTE_4XX` | Nuvem respondeu HTTP 400, 401 ou 403 | `erro_permanente` | Não repete (credenciais/payload inválido) |
+| `ERRO_DESCONHECIDO` | Exceção imprevista durante despacho HTTP | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `ERRO_REMOTO_INDEFINIDO` | Resposta HTTP inesperada | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+
+---
+
+## 4. Protocolo de Falha, Idempotência e Reconciliação
+
+### Ordem das Gravações e Transação Durável
+Dois sistemas de armazenamento distintos (CSV em disco e SQLite outbox) não possuem transação distribuída atômica de dois fases nativa. O protocolo implementa durabilidade e recuperação nos seguintes passos:
+1. **Lock Exclusivo:** Cada escrita adquire bloqueio de memória (`threading.RLock`) e de filesystem (`portalocker`), garantindo serialização estrita mesmo sob concorrência intensa (até 6 requisições simultâneas).
+2. **Checagem de Idempotência:**
+   - Se o `evento_id` já existir e possuir os mesmos campos estáveis (`dispositivo_id`, `metrica`, `unidade`, `valor`, `sessao_laboratorio_id`, `ciclo_id`, `tipo_dispositivo`), responde **HTTP 200 OK** com os dados originais (reaproveitando o `medido_em` original se omitido no reenvio).
+   - Se o `evento_id` existir mas contiver dados divergentes, rejeita imediatamente com **HTTP 409 Conflict** sem sobrescrever dados.
+3. **Escrita Atômica no CSV:** Grava a nova linha e executa `os.fsync()`. Se ocorrer falha de disco, restaura o arquivo ao tamanho original via truncamento conservador e retorna **HTTP 503**.
+4. **Commit na Outbox SQLite:** Insere o registro na tabela `pendencias` com `estado='pendente_nuvem'`. Se o SQLite falhar, desfaz a escrita no CSV via truncamento seguro e retorna **HTTP 503**.
+5. **Confirmação:** Confirma **HTTP 201 Created** apenas após ambos estarem duravelmente gravados.
+
+### Janelas de Crash e Protocolos de Recuperação
+- **Crash entre CSV fsync e SQLite commit:** O evento está seguro no CSV, mas ausente do SQLite.
+  - **Reconciliação no Startup:** Na inicialização da aplicação, `reconciliar_com_csv()` varre o CSV e insere todos os registros órfãos na outbox como `pendente_nuvem`.
+  - **Cura no Reenvio:** Se o dispositivo reenviar a requisição antes do reinício do servidor, a API detecta que o evento existe no CSV mas não no SQLite, insere a pendência na outbox (idempotente) antes de responder **HTTP 200 OK** (se a inserção falhar, retorna **HTTP 503**).
+- **Perda de resposta após aceite na nuvem (T13):** Se a Lambda aceitar o evento mas a conexão cair antes da API receber a confirmação, o worker registrará `TIMEOUT`. Na próxima iteração (após backoff), reenvia exatamente o mesmo `evento_id` e payload estável. A Lambda detecta a idempotência, retorna HTTP 200 com o envelope acordado e mantém apenas um registro lógico. A outbox atualiza para `sincronizado`.
+- **Composição na Leitura:** O CSV em disco permanece como histórico imutável com `estado="pendente_nuvem"`. O endpoint `GET /leituras` compõe dinamicamente o estado atual consultando o mapa de estados da outbox SQLite, sem reescrever o arquivo CSV.
+
+### Regra HTTPS para Despacho Remoto
+O `ClienteLambda` exige estritamente URLs com esquema `https://`. Apenas `http://localhost` e `http://127.0.0.1` (emulador local na porta 8099) são aceitos com HTTP plano. Qualquer outra URL externa em HTTP plano é recusada imediatamente, nenhum pedido sai da aplicação, e o evento é marcado como `erro_permanente` com código `URL_INSEGURA`, evitando envio da chave do dispositivo (`X-Device-Key`) em texto claro.
+
+---
+
+## 5. Variáveis de Ambiente
 
 Configure as variáveis de ambiente necessárias (nomes sem segredos ou credenciais reais):
 
-- `DEVICE_KEY`: Chave secreta exclusiva do dispositivo IoT (demo). Obrigatória; a API opera em modo *fail-closed* (sem chave configurada ou com chave incorreta, retorna HTTP 401). A validação usa comparação resistente a timing (`secrets.compare_digest`).
-- `CITIZENTECH_DADOS`: Caminho raiz para armazenamento de dados fora do repositório git. O arquivo CSV de runtime será salvo em `$env:CITIZENTECH_DADOS\runtime\leituras.csv`.
-- `CITIZENTECH_LEITURAS_CSV` *(opcional)*: Caminho direto e explícito para o arquivo CSV de telemetria (utilizado primordialmente em testes automatizados).
-- `CITIZENTECH_RATE_LIMIT_POR_MINUTO` *(opcional)*: Teto de requisições permitidas por minuto para cada `dispositivo_id` (padrão: 60 requisições/min).
-- `CITIZENTECH_LIMIARES` *(opcional)*: Caminho para a fonte única de limiares (`limiares.json`). Por padrão, aponta para `app/config/limiares.json`.
+- `DEVICE_KEY`: Chave secreta de autenticação compartilhada com o dispositivo IoT e a fronteira Lambda. Obrigatória; a API opera em modo *fail-closed* (sem chave ou com chave incorreta, retorna HTTP 401 via `secrets.compare_digest`).
+- `FUNCTION_URL` *(opcional)*: URL de invocação da Lambda na nuvem para despacho da telemetria pelo worker outbox (deve usar `https://`, exceto localhost/127.0.0.1).
+- `CITIZENTECH_DADOS`: Caminho raiz para armazenamento de dados fora do repositório git. O runtime salvará `$env:CITIZENTECH_DADOS\runtime\leituras.csv` e `$env:CITIZENTECH_DADOS\runtime\outbox.db`.
+- `CITIZENTECH_OUTBOX_DB` *(opcional)*: Caminho direto e explícito para o banco SQLite outbox (usado em testes automatizados).
+- `CITIZENTECH_LEITURAS_CSV` *(opcional)*: Caminho direto e explícito para o arquivo CSV de telemetria (usado em testes automatizados).
+- `CITIZENTECH_RATE_LIMIT_POR_MINUTO` *(opcional)*: Teto de requisições por minuto para cada `dispositivo_id` (padrão: 60 requisições/min).
+- `CITIZENTECH_LIMIARES` *(opcional)*: Caminho para a fonte única de limiares (`limiares.json`). Padrão: `app/config/limiares.json`.
 
 ---
 
-## 3. Exemplos de Requisições — Cenários Sintéticos
+## 6. Exemplos de Requisições — Cenários e Contrato HTTP
 
-A autenticação é realizada **exclusivamente** via header `X-Device-Key: <DEVICE_KEY>` (cabeçalhos de autorização como Bearer tokens não são aceitos nesta fatia).
+A autenticação é realizada **exclusivamente** via header `X-Device-Key: <DEVICE_KEY>` (cabeçalhos `Authorization: Bearer` são estritamente rejeitados com HTTP 401).
 
-### Cenário 1: Normal (Temperatura 25.0 °C / Distância 25.0 cm)
+### Envio de Leitura Nova (HTTP 201 Created)
 ```powershell
 curl.exe -X POST "http://localhost:8000/leituras" `
   -H "Content-Type: application/json" `
   -H "X-Device-Key: $env:DEVICE_KEY" `
-  -d '{"dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "valor": 25.0}'
+  -d '{"evento_id": "evt-demo-01", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "valor": 38.0}'
 ```
-*Resposta esperada:* HTTP 201 com `"risco": "normal"`, `"alerta": false`, `"estado": "pendente_nuvem"`.
+*Resposta esperada (HTTP 201):*
+```json
+{
+  "evento_id": "evt-demo-01",
+  "dispositivo_id": "esp32-lab-01",
+  "metrica": "temperatura_c",
+  "unidade": "C",
+  "valor": 38.0,
+  "risco": "atencao",
+  "alerta": true,
+  "estado": "pendente_nuvem",
+  "medido_em": "2026-11-13T12:00:00Z"
+}
+```
 
-### Cenário 2: Atenção (Temperatura 38.0 °C / Distância 12.0 cm)
+### Reenvio Idêntico do Mesmo Evento (HTTP 200 OK)
 ```powershell
 curl.exe -X POST "http://localhost:8000/leituras" `
   -H "Content-Type: application/json" `
   -H "X-Device-Key: $env:DEVICE_KEY" `
-  -d '{"dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "valor": 38.0, "status": "OK"}'
+  -d '{"evento_id": "evt-demo-01", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "valor": 38.0}'
 ```
-*Resposta esperada:* HTTP 201 com `"risco": "atencao"`, `"alerta": true`. Note que o status `"OK"` declarado pelo cliente é ignorado, prevalecendo o recálculo do servidor. O campo `status` é opcional e aceita apenas o vocabulário do firmware (`OK`, `ALERTA`, `ERRO`); outro valor responde 400, e `ERRO` também responde 400 porque não há medida válida a registrar.
+*Resposta esperada (HTTP 200):* Mesmo corpo retornado originalmente, sem duplicar registros no CSV nem na outbox. O status 200 local confirma o aceite idempotente e **o 200 de reenvio não significa sincronização com a nuvem**.
 
-### Cenário 3: Crítico (Temperatura 48.0 °C / Distância 5.0 cm)
+### Reenvio Conflitante com Conteúdo Divergente (HTTP 409 Conflict)
 ```powershell
 curl.exe -X POST "http://localhost:8000/leituras" `
   -H "Content-Type: application/json" `
   -H "X-Device-Key: $env:DEVICE_KEY" `
-  -d '{"dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "valor": 5.0}'
+  -d '{"evento_id": "evt-demo-01", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "valor": 45.0}'
 ```
-*Resposta esperada:* HTTP 201 com `"risco": "critico"`, `"alerta": true`.
+*Resposta esperada (HTTP 409):*
+```json
+{
+  "erro": "Conflito",
+  "detalhes": "Mesmo evento_id com conteudo divergente."
+}
+```
 
-### Consulta de Histórico Paginado
+### Consulta de Histórico com Composição de Estado
 ```powershell
-curl.exe -X GET "http://localhost:8000/leituras?page=1&page_size=20&sessao=sessao-demo" `
+curl.exe -X GET "http://localhost:8000/leituras?page=1&page_size=20" `
   -H "X-Device-Key: $env:DEVICE_KEY"
 ```
-
-### Consulta de Indicadores Estatísticos
-```powershell
-curl.exe -X GET "http://localhost:8000/leituras/indicadores?metrica=temperatura_c" `
-  -H "X-Device-Key: $env:DEVICE_KEY"
-```
+*Resposta esperada (HTTP 200):* Itens paginados onde `"estado"` reflete a situação em tempo real (`"sincronizado"`, `"pendente_nuvem"`, `"conflito"` ou `"erro_permanente"`).
 
 ---
 
-## 4. Arquitetura e Decisões de Implementação
+## 7. Limitações Conhecidas
 
-- **Isolamento de Banco de Dados:** O módulo isolado (`citizentech.leituras.isolado:app`) e o módulo principal (`citizentech.main:app`) compartilham as mesmas rotas e regras de negócio sem importar nem exigir Oracle ou MongoDB.
-- **Lock de Filesystem e Durabilidade:** Escrita atômica em CSV sob lock exclusivo de arquivo (`portalocker`) e lock de thread. Antes do append, a integridade do arquivo existente (cabeçalho exato, tipos válidos, valores coerentes com classificações de risco e final sem truncamento) é integralmente verificada. Caso o arquivo esteja corrompido, a API retorna HTTP 503 sem alterar os bytes do arquivo em disco.
-- **Tolerância a Falhas e Rollback:** Se o append ou o `os.fsync()` falhar, o arquivo é truncado de volta ao tamanho original para preservar os registros preexistentes intactos, retornando HTTP 503 ao cliente.
-- **Consumo Protegido de Stream:** O corpo da requisição é lido progressivamente via `request.stream()` com teto de 8192 bytes (8KB). Requisições sem `Content-Length` que excedam o limite são imediatamente abortadas com HTTP 400 sem consumir o restante do payload.
-- **Fail-Closed e Sem Vazamento de Dados:** Sem `DEVICE_KEY` configurada ou com chave incorreta, retorna HTTP 401. Erros de validação nunca refletem conteúdos de payload enviados pelo cliente, parâmetros de consulta arbitrários, caminhos internos ou chaves de segredo.
-- **Cálculo Numérico Estável:** O cálculo de média nos indicadores utiliza algoritmo incremental estável, prevenindo estouro para infinito (`Inf`) ao somar valores finitos de grande magnitude e respondendo com erro controlado em caso de overflow.
-- **Tratamento de Sentinela de Hardware:** A temperatura de `-127.0 °C` (código de desconexão/erro físico do sensor Dallas DS18B20) é estritamente rejeitada como falha de hardware com HTTP 400, sem impor faixas físicas arbitrárias não contratadas.
-
----
-
-## 5. Limitações Conhecidas e Escopo Futuro
-
-1. **Sincronização com Nuvem (S3):** O atributo `"estado": "pendente_nuvem"` indica que os dados foram persistidos apenas localmente. O worker outbox assíncrono para reconciliação com a nuvem AWS será implementado na fatia S3.
-2. **Autenticação de Usuários e Sessões (S5 / S14):** Nesta fatia S2, a autenticação restringe-se à chave de dispositivo (`DEVICE_KEY`). Não há cookies de sessão, login de usuários ou emissão de JWT implementados nesta etapa.
-3. **Campo Relato:** O campo opcional `relato` presente no envelope da telemetria é previsto para apoio didático na S14; nesta fase ele tem tamanho validado (<= 280 caracteres), é descartado e não é persistido nem repassado a modelos de linguagem, prevenindo injeções de prompt.
+1. **Fronteira Fake Lambda:** Os testes automatizados da fatia S3 utilizam transporte simulado em memória (`httpx.MockTransport`) na fronteira da Lambda. Isso valida o contrato HTTP, segurança de headers, redirects desabilitados e envelopes de resposta sem realizar chamadas de rede externas, mas **fake da Lambda não prova AWS/RDS** (escopo das fatias S4 e S12).
+2. **Tentativas e Backoff:** As pendências em falha transitória realizam **tentativas sem teto (backoff máximo de 60 s)** até que a nuvem restabeleça comunicação ou retorne código definitivo (`409`, `400`, `401`, `403`).
+3. **Modo Isolado e SQLite:** **O modo isolado passa a gravar também `outbox.db` (SQLite da biblioteca padrão) ao lado do CSV**, mantendo o estado de durabilidade e idempotência local unificado.
+4. **Worker Monoprocesso:** O worker em segundo plano é executado como uma tarefa assíncrona dentro do mesmo processo da API FastAPI (*single process*). Não há dependência de Celery, Redis ou filas distribuídas externas. Se o processo da API for finalizado, as pendências permanecem íntegras no SQLite e serão retomadas no próximo startup.
+5. **Minimização de Dados (D13/D22):** O cliente outbox despacha estritamente os campos normalizados de telemetria, omitindo categoricamente o campo didático `relato` e eventuais dados de consentimento/PII, que serão tratados na fatia S14 após anonimização e validação de consentimento.

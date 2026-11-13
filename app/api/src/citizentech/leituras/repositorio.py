@@ -18,8 +18,14 @@ from typing import Any
 
 import portalocker
 
-from citizentech.erros import ErroArmazenamento
+from citizentech.erros import ConflitoEvento, ErroArmazenamento
 from citizentech.limiares import carregar_limiares, classificar_risco
+from citizentech.outbox.banco import (
+    obter_caminho_outbox_db,
+    obter_pendencia,
+    salvar_pendencia,
+)
+from citizentech.outbox.canonicalizacao import comparar_payloads_identicos
 
 _MEM_LOCK = threading.RLock()
 _ID_REGEX = re.compile(r"^[\w\-.:]{1,64}$")
@@ -70,7 +76,7 @@ def _obter_lock_exclusivo(caminho: Path) -> Generator[None, None, None]:
         try:
             with portalocker.Lock(lock_file, timeout=10):
                 yield
-        except ErroArmazenamento:
+        except (ErroArmazenamento, ConflitoEvento):
             raise
         except Exception as err:
             raise ErroArmazenamento("Falha de bloqueio de arquivo no armazenamento.") from err
@@ -213,16 +219,62 @@ def _validar_e_carregar_arquivo(caminho: Path) -> list[dict[str, Any]]:
     return registros
 
 
-def salvar_leitura(registro: dict[str, Any], caminho: Path | None = None) -> None:
-    """Grava o registro no CSV com append atomico, validacao previa e fsync."""
+def salvar_leitura_duravel(
+    registro: dict[str, Any],
+    caminho: Path | None = None,
+) -> tuple[str, dict[str, Any]]:
+    """Grava o registro no CSV e na Outbox SQLite de forma duravel e idempotente.
+
+    Retorna ("criado", registro) ou ("reenvio_identico", existente).
+    Lanca ConflitoEvento (409) se mesmo evento_id tiver conteudo divergente.
+    Lanca ErroArmazenamento (503) se falhar gravacao no CSV ou SQLite.
+    """
     if caminho is None:
         caminho = obter_caminho_csv()
 
-    with _obter_lock_exclusivo(caminho):
-        # 1. Valida se arquivo existente esta integro. Se corrompido, 503 sem alterar bytes.
-        if caminho.exists() and caminho.stat().st_size > 0:
-            _validar_e_carregar_arquivo(caminho)
+    try:
+        caminho_db = obter_caminho_outbox_db()
+        if caminho_db.is_dir():
+            raise ErroArmazenamento("Destino outbox invalido: aponta para diretorio.")
+    except ErroArmazenamento:
+        raise
+    except Exception as err:
+        raise ErroArmazenamento(
+            f"Erro ao verificar configuracao de outbox: {type(err).__name__}"
+        ) from err
 
+    with _obter_lock_exclusivo(caminho):
+        # 1. Valida integridade do CSV existente. Se corrompido, 503 sem alterar bytes.
+        linhas_existentes: list[dict[str, Any]] = []
+        if caminho.exists() and caminho.stat().st_size > 0:
+            linhas_existentes = _validar_e_carregar_arquivo(caminho)
+
+        # 2. Verificacao de idempotencia (Outbox ou CSV)
+        pendencia = obter_pendencia(registro["evento_id"], caminho_db)
+        if pendencia is not None:
+            existente = pendencia["payload"]
+            if comparar_payloads_identicos(existente, registro):
+                existente_copia = dict(existente)
+                existente_copia["estado"] = pendencia["estado"]
+                return ("reenvio_identico", existente_copia)
+            raise ConflitoEvento("Mesmo evento_id com conteudo divergente.")
+
+        for linha in linhas_existentes:
+            if linha["evento_id"] == registro["evento_id"]:
+                if comparar_payloads_identicos(linha, registro):
+                    try:
+                        salvar_pendencia(linha, caminho_db)
+                    except ErroArmazenamento:
+                        raise
+                    except Exception as err:
+                        raise ErroArmazenamento(
+                            "Falha ao inserir pendencia de orfao na outbox SQLite: "
+                            f"{type(err).__name__}"
+                        ) from err
+                    return ("reenvio_identico", dict(linha))
+                raise ConflitoEvento("Mesmo evento_id com conteudo divergente.")
+
+        # 3. Novo registro: grava no CSV com fsync
         tamanho_original = caminho.stat().st_size if caminho.exists() else 0
         arquivo_novo = tamanho_original == 0
 
@@ -235,8 +287,6 @@ def salvar_leitura(registro: dict[str, Any], caminho: Path | None = None) -> Non
                 arquivo.flush()
                 os.fsync(arquivo.fileno())
         except Exception as err:
-            # Recuperacao conservadora: se falhar o append/fsync,
-            # restaura estado anterior sem apagar preexistente
             try:
                 if arquivo_novo:
                     if caminho.exists():
@@ -252,6 +302,33 @@ def salvar_leitura(registro: dict[str, Any], caminho: Path | None = None) -> Non
             raise ErroArmazenamento(
                 f"Falha na gravacao duravel do arquivo CSV: {type(err).__name__}"
             ) from err
+
+        # 4. Grava na Outbox SQLite. Se falhar, faz rollback do CSV!
+        try:
+            salvar_pendencia(registro, caminho_db)
+        except Exception as err:
+            try:
+                if arquivo_novo:
+                    if caminho.exists():
+                        caminho.unlink(missing_ok=True)
+                else:
+                    with open(caminho, mode="r+b") as f_rollback:
+                        f_rollback.seek(tamanho_original)
+                        f_rollback.truncate()
+                        f_rollback.flush()
+                        os.fsync(f_rollback.fileno())
+            except Exception:
+                pass
+            raise ErroArmazenamento(
+                f"Falha na gravacao duravel da outbox SQLite: {type(err).__name__}"
+            ) from err
+
+        return ("criado", registro)
+
+
+def salvar_leitura(registro: dict[str, Any], caminho: Path | None = None) -> None:
+    """Grava o registro no CSV e na outbox duravel."""
+    salvar_leitura_duravel(registro, caminho)
 
 
 def ler_todas_leituras(caminho: Path | None = None) -> list[dict[str, Any]]:
