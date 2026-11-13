@@ -198,10 +198,12 @@ def test_r05_ponta_a_ponta_valores_sensiveis_nunca_aparecem_em_manifesto_ou_cli(
 ):
     """R05: valores sentinela de colunas sensíveis não vazam em arquivos nem logs."""
     cbo = "212405"
-    idade_sentinela = "777"
-    raca_sentinela = "888"
-    sexo_sentinela = "999"
-    defici_sentinela = "555"
+    # Sentinelas com letras fora de [0-9a-f]: nao podem coincidir por acaso com o sha256
+    # do .7z gravado no manifesto (com "888" o teste falhava em ~6% das execucoes).
+    idade_sentinela = "ZQ777"
+    raca_sentinela = "ZQ888"
+    sexo_sentinela = "ZQ999"
+    defici_sentinela = "ZQ555"
 
     linha = (
         f"202609;3;33;330455;P;8513900;1;{cbo};101;9;"
