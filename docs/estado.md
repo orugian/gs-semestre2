@@ -2,99 +2,83 @@
 
 > Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
 
-**Atualizado em:** 12/11/2026, 21h50 · **Dias até o prazo (19/11 23h55):** 7 · **Fase:** D1 em andamento (S0 e S1 integradas; S6 com código integrado e download completo aguardando aprovação)
+**Atualizado em:** 13/11/2026, 10h20 · **Dias até o prazo (19/11 23h55):** 6,5 · **Fase:** fim do D1 (S0 e S1 integradas; S6 com código integrado, lista de ocupações aprovada e download completo em execução)
 
 ## Concluído
 
 - Documentação de base: proposta, plano v1.1 (D01–D25), revisões adversariais (R01–R30) e `CLAUDE.md`.
 - **S0 — esqueleto (12/11), em `main`.** Evidência executada pelo orquestrador:
-  - `.gitattributes` (LF; `.ps1` em CRLF; binários), `core.longpaths=true`, `.gitignore` ampliado (§15.3).
-  - `uv` por componente (`app/api`, `app/ml`, `app/cloud`, `app/tools`), Python 3.11, `uv.lock` versionado.
-  - `app/docker-compose.yml`, profile `teste`: `up -d --wait` → 3 serviços *healthy*; Oracle 26ai Free (usuário `CITIZENTECH` no `FREEPDB1`), Postgres 17.11 na 5433, Mongo 8.0.38 na 27018; portas respondendo no host.
-  - `app/config/limiares.json` e `GET /health` (RED por `NotImplementedError`, depois verde pelo `TestClient`).
-  - `app/tools/md_para_pdf.py`: 5 testes com Edge real; `plano_desenvolvimento.md` → PDF de 14 páginas; `--max-paginas 2` → saída 1.
-  - `app/web`: React 19.3 + Vite 8 + Tailwind 4 + Astryx 0.7.14. `pnpm run test` → 1 passou; `pnpm run build` → ok; renderização conferida por captura de tela no Edge. **Plano B (Radix) não acionado.**
-- **S1 — limiares compartilhados (12/11), em `main`.** Implementada pelo `agy` (job pwsh-135), aceita depois de: testes reexecutados (api 48, cloud 50), busca por limiar fixo no código (nenhum), 15 contraexemplos fora da tabela. Um defeito achado no aceite (inteiro gigante gerava `OverflowError`) foi corrigido pelo orquestrador com teste antes. Os 3 cenários classificam igual na API e na Lambda.
-- **S6 — ingestão do Novo Caged, código em `main` (12/11).** Duas rodadas de `agy` (jobs pwsh-134 e pwsh-183) e ajustes do orquestrador. `uv run pytest` em `app/ml` → 23 passaram.
-  - Smoke real de 202609 (em temporário): MOV 4 307 569 linhas lidas e 93 175 gravadas; FOR 1 540; EXC 59; 40 s. Conferência independente: 46 378 admissões e 800 células CBO × UF de superior+ idênticas à sondagem feita pelo orquestrador antes do agente.
-  - Nenhuma coluna sensível no Parquet (28 colunas; idade, sexo, raça/cor e deficiência nunca são lidas).
-  - Achados do aceite da rodada 1, todos corrigidos na rodada 2 com teste antes: falha de rede na listagem virava `ausente_na_fonte`; a retomada ignorava a troca da lista de ocupações; um registro `ingerido` podia ser rebaixado; um arquivo corrompido derrubava o período; gravações não atômicas; a CLI só imprimia no fim.
-  - Ajustes do orquestrador: exceção própria para o aborto por disco; o hash da lista de ocupações passou a depender só do conjunto de códigos (aprovar a lista ou mover um código da reserva para um destino não força novo download).
+  - `.gitattributes`, `core.longpaths=true`, `.gitignore` ampliado (§15.3); `uv` por componente (`app/api`, `app/ml`, `app/cloud`, `app/tools`), Python 3.11.
+  - `app/docker-compose.yml`, profile `teste`: 3 serviços *healthy* (Oracle 26ai Free no `FREEPDB1`, Postgres 17.11 na 5433, Mongo 8.0.38 na 27018), login testado nos três.
+  - `app/config/limiares.json` e `GET /health` (RED → GREEN pelo `TestClient`).
+  - `app/tools/md_para_pdf.py`: 5 testes com Edge real; plano → PDF de 14 páginas; `--max-paginas 2` → saída 1.
+  - `app/web`: React 19.3 + Vite 8 + Tailwind 4 + Astryx 0.7.14; teste, build e captura de tela ok. **Plano B (Radix) não acionado.**
+- **S1 — limiares compartilhados (12/11), em `main`.** Via `agy`. Os 3 cenários classificam igual na API e na Lambda; tabela compartilhada em `app/config/casos_limiares.json`.
+- **S6 — ingestão do Novo Caged: código em `main` (12/11).** Via `agy`, 2 rodadas, mais ajustes do orquestrador. Smoke real de 202609 conferido contra contagem independente (46 378 admissões; 800 células CBO × UF idênticas). Nenhuma coluna sensível no Parquet.
+- **Lista de ocupações CBO aprovada pelo usuário (13/11)**, sem alterações, seguindo as recomendações do orquestrador nos pontos fracos. Versionada em `app/catalogo/ocupacoes_cbo.json` (6 destinos, 34 códigos; 22 de reserva; título e fonte de cada título; limitações declaradas no próprio arquivo). Evidência da escolha: `GS\.kaiser\reports\S6-sonda-cbo\`.
+- **Push (13/11):** `main` enviado para `https://github.com/orugian/gs-semestre2` (remoto `gs-semestre2`), a pedido do usuário. Antes do envio: gitleaks em todo o histórico → sem vazamentos; nenhum `.env`, chave ou dado rastreado.
+- Regressão em `main` (13/11): `uv run pytest` → api 48, cloud 50, ml 25, tools 5. Web: 1 teste (vitest, executado em 12/11).
 
 ## Em andamento
 
-- Nenhum job ativo, nenhum worktree. Serviços de teste do compose **parados** (`stop`; volumes preservados).
-- **S6 — download completo (81 competências): NÃO executado.** Depende da aprovação da lista de ocupações abaixo. `.dados\caged\` ainda não existe.
-
-## Lista de ocupações CBO — PROVISÓRIA, aguardando aprovação do usuário
-
-Evidência completa em `GS\.kaiser\reports\S6-sonda-cbo\` (contagens por CBO × UF de 202609, histórico de 6 meses de janeiro, scripts e a lista em JSON). Contagens abaixo: admissões com superior completo ou mais, Brasil, só o arquivo MOV de set/2026.
-
-| Destino | CBO de 6 dígitos recomendados | Sup+ no mês | UFs com ≥ 4 no mês |
-|---|---|---|---|
-| 1 Dados/BI | 211205, 211210, 211215, 211220, 142330, 261215 | 3 034 | 22 |
-| 2 Monitoramento/IoT | 212415, 202110, 202120, 202105, 202115, 300105, 313410 | 366 | 14 |
-| 3 Processos | 214905, 214910, 214925, 214930, 391210, 391105 | 1 595 | 22 |
-| 4 Projetos/Produto | 142520, 142605 | 676 | 12 |
-| 5 Suporte/Infra | 212420, 212410, 212310, 212315, 317210 | 2 955 | 24 |
-| 6 Desenvolvimento | 212405, 317110, 317105, 317120, 212205, 212215, 212425, 212430 | 5 925 | 24 |
-
-Reserva (baixada junto, sem destino atribuído): 211110, 142335, 214355, 300110, 313415, 391220, 313405, 391125, 391205, 252105, 142315, 142705, 142510, 142535, 212305, 212320, 313220, 317205, 142530, 142505, 212210, 203105.
-
-Pontos que o usuário precisa decidir ou conhecer:
-
-- **Destino 1 depende de 142330 (Analista de negócios): 2 769 das 3 034.** Sem ele sobram 265 por mês e 11 UFs. O código fica na família 1423 (gerentes de comercialização, marketing e comunicação).
-- **Destino 4 tem só 2 códigos.** "Gerente de produtos" aparece como sinônimo de 142315 (Gerente de marketing), que está na reserva: incluí-lo leva a 1 219 e 17 UFs, mas mistura gerentes de marketing.
-- **Destino 3 não tem código próprio de "analista de processos".** Os códigos são aproximações. 252105 (Administrador, 3 907) ficou na reserva por ser genérico demais.
-- **Destino 2 é esparso** (366 no país): a abstenção por UF (D04a) vai ser frequente.
-- **Quebras de série:** 211220 (Cientista de dados) só aparece a partir de 2024; 212425 e 212430 a partir de 2022.
-- **Fontes:** títulos do layout oficial do Caged (MTE). O site oficial da CBO exige reCAPTCHA; sinônimos e o título de 211220 vêm de espelho público (fonte secundária). As duas fontes divergem sobre 253120, que não está na lista.
-- "UFs com ≥ 4 no mês" é só uma aproximação, com um único mês, da regra de densidade de D04a (≥ 10 por trimestre na média do treino).
+- **S6 — download completo (202001–202609), job `pwsh-204` do harness, iniciado em 13/11 às 10h14.**
+  - Destino: `GS\.dados\caged\parquet\` + `GS\.dados\caged\procedencia.json`. Log: `GS\.kaiser\reports\S6-download-completo.log` (UTF-16; ler com `Get-Content -Encoding Unicode`).
+  - Ritmo medido no início: 4 competências em 1,6 min (previsão de cerca de 35 min no total).
+  - **Se a sessão terminar antes, o job pode morrer junto. A retomada é segura:** arquivos já ingeridos são pulados sem rede. Basta repetir o comando do "Próximo passo".
+  - **A conferência do resultado ainda não foi feita** (ver "Próximo passo", item 1).
+- Nenhum worktree, nenhum `agy`. Serviços de teste do compose **parados** (`stop`; volumes preservados).
 
 ## Bloqueios e pendências [HUMANO]
 
-- [ ] **Aprovar a lista de ocupações** (bloqueia o download completo do Caged, caminho crítico).
-- [ ] **Disco: 5,6 GB livres, abaixo do aviso de 6 GB.** A queda de cerca de 5 GB durante a sessão não foi explicada (detalhe em CLAUDE.md §14.3). A ingestão aborta abaixo de 4 GB. Liberar espaço antes do download e antes do PyTorch (D3).
+- [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e agora contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
+- [ ] **Qual é o remoto oficial?** `origin` continua `insonia999/GS2_26` (D14b) e não recebeu push. Decidir se `gs-semestre2` substitui o `origin` ou se os dois recebem push.
 - [ ] `MONGODB_URI` completa e IP liberado no Atlas.
 - [ ] Senha correta do Oracle FIAP.
 - [ ] Sessão do Learner Lab e porta 5432 do RDS antes do D4.
 - [ ] Caminho da IA de sentimento (créditos HF ou Comprehend).
 - [ ] AWS CLI (instalar ou usar o console).
-- [ ] Push para o GitHub: `main` está 19 commits à frente de `origin/main`; nada foi enviado.
+- [ ] Ok para o snapshot da Adzuna (até 12 chamadas, com contador).
+- [ ] Revisão humana das rubricas até **D3 (15/11) às 18h**, senão corte automático para 3 destinos (R29).
 - [ ] `gh auth refresh -s project,read:project`; ideia da live (AIC); quem grava cada vídeo.
+
+**Disco:** 16,0 GB livres em 13/11 às 10h (eram 5,6 GB em 12/11 às 21h40; a recuperação aconteceu fora da sessão e a causa da queda continua sem explicação, ver CLAUDE.md §14.3).
 
 ## Validação das credenciais (12/11, sem expor valores)
 
 | Serviço | Resultado | Ação |
 |---|---|---|
-| OpenRouter | ok: chave ativa (limite US$ 7); `deepseek-v4.1-flash-1017` devolveu JSON válido via json_schema | — |
-| Adzuna | ok: 200 (1 de 25 chamadas usada como smoke, registrada no contador) | snapshot só na S6, com o contador |
-| Hugging Face | token válido, mas a inferência do modelo do enunciado retorna **402 (sem créditos)** | **decidir:** comprar créditos HF ou usar o caminho B (Amazon Comprehend, `pt`) |
-| Lambda (reaproveitada) | 200, mas é `cp2-hello-world`, que responde 'Hello World' em toda rota | subir o código de ingestão na S4 |
-| RDS (reaproveitado) | **TCP 5432 com timeout** a partir do IP público desta máquina | abrir o Learner Lab, liberar o SG (D09), criar `app_ingest` |
+| OpenRouter | ok (limite US$ 7); JSON válido via json_schema | — |
+| Adzuna | ok (1 de 25 chamadas usada como smoke) | snapshot com o contador, depois do ok |
+| Hugging Face | token válido, inferência retorna **402 (sem créditos)** | decidir: créditos HF ou Comprehend |
+| Lambda (reaproveitada) | 200, mas ainda é `cp2-hello-world` | subir o código na S4 |
+| RDS (reaproveitado) | **TCP 5432 com timeout** | Learner Lab, SG (D09), usuário `app_ingest` |
 | Oracle FIAP | **ORA-01017** | corrigir `ORACLE_FIAP_PASSWORD` |
-| Mongo Atlas | **`MONGODB_URI` contém só o nome de usuário** | preencher a URI completa e liberar o IP |
+| Mongo Atlas | **`MONGODB_URI` só com o usuário** | URI completa e IP liberado |
 
 ## Decisões tomadas fora do plano
 
 - **Equipe (12/11):** Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725).
 - **LLM fallback (D06a):** `xiaomi/mimo-v2.6-flash`.
-- **AWS reaproveitada (12/11):** Lambda `cp2-hello-world` e RDS `cp1-cloud`, com alteração autorizada pelo usuário.
-- **S0 feita pelo orquestrador, não pelo `agy` (12/11).** É andaime e configuração (compose, uv, gitignore, smokes), em passos pequenos e verificados um a um. A regra de D14 (implementação via `agy`) foi seguida na S1 e na S6.
-- **Escolhas locais da S0:** pacote da API chama-se `citizentech`; `app/tools` é projeto uv sem pacote; `@stylexjs/stylex` fixado em 0.19.1, porque a 0.19.2 tinha menos de um dia e o pnpm a recusa (a política não foi afrouxada); o `postinstall` do Astryx fica desativado; `GS22026_enunciadosOG.txt` (material do professor) mantém os bytes originais via `-text`.
-- **S6:** o Parquet guarda uma linha por movimentação filtrada, um arquivo por tipo e competência, em `.dados\caged\parquet\`, com `procedencia.json` ao lado. O plano cita `app/data/`; vale o mapa do CLAUDE.md §15.1 (`.dados`, fora do git).
-- **S6:** a ingestão baixa a união dos códigos dos destinos com a reserva (56 códigos). Assim a atribuição de códigos a destinos pode ser ajustada até o congelamento da S7 sem novo download.
+- **AWS reaproveitada (12/11):** Lambda `cp2-hello-world` e RDS `cp1-cloud`, com alteração autorizada.
+- **S0 feita pelo orquestrador, não pelo `agy`:** andaime e configuração, em passos pequenos. D14 foi seguido na S1 e na S6.
+- **Escolhas locais da S0:** pacote da API chama-se `citizentech`; `app/tools` é projeto uv sem pacote; `@stylexjs/stylex` fixado em 0.19.1 (a 0.19.2 tinha menos de um dia e o pnpm a recusa); `postinstall` do Astryx desativado; `GS22026_enunciadosOG.txt` mantém os bytes originais (`-text`).
+- **S6:** Parquet com uma linha por movimentação filtrada, um arquivo por tipo e competência, em `.dados\caged\parquet\` (o plano cita `app/data/`; vale o mapa do CLAUDE.md §15.1).
+- **S6:** a ingestão baixa a união dos destinos com a reserva (56 códigos); o hash da lista depende só do conjunto de códigos. A atribuição de códigos a destinos pode mudar até o congelamento da S7 sem novo download.
+- **Ocupações (13/11), decisões do usuário:** manter 142330 no destino 1; manter 142315 na reserva (destino 4 fica com 2 códigos); 252105 na reserva; aceitar a esparsidade do destino 2 e as quebras de série de 211220, 212425 e 212430.
 
 ## Não verificado
 
-- `GET /health` num servidor `uvicorn` real (só pelo `TestClient`; a tentativa de subir o servidor falhou por erro da ferramenta de shell, sem processo órfão).
-- Títulos oficiais da CBO no site do MTE (reCAPTCHA).
-- Competências 202003 a 202005: quais dos arquivos MOV/FOR/EXC existem.
-- Tempo e tamanho do download completo: estimativa por um único mês (cerca de 40 s e 1,5 MB por competência; perto de 55 min e 125 MB no total).
+- Resultado do download completo (cobertura, contagens, tamanho final).
+- `GET /health` num servidor `uvicorn` real (só pelo `TestClient`).
+- Títulos oficiais da CBO no site do MTE (reCAPTCHA); o título de 211220 vem de fonte secundária.
 
 ## Próximo passo exato
 
-1. Com a lista aprovada: gravar a versão aprovada em `app/catalogo/ocupacoes_cbo.json` (commit), conferir o disco (≥ 6 GB) e rodar, em background, em `app/ml`:
-   `uv run python -m citizentech_ml.ingestao --ocupacoes ..\catalogo\ocupacoes_cbo.json --inicio 202001 --fim 202609` com `$env:CITIZENTECH_DADOS` definido. Depois, `cobertura()` e conferência de 202609 contra a sondagem.
-2. Snapshot da Adzuna (script com contador, máximo de 12 chamadas), só com o ok do usuário.
-3. D2: S2 (leituras CTP), S3 (outbox) e S5 (auth) na frente A; S7 (features e split) na frente B, assim que o Parquet existir.
+1. **Fechar a S6.** Em `app\ml`, com `$env:CITIZENTECH_DADOS = 'C:\Users\orugi\Documents\Projetos\FIAP\GS\.dados'` e `$env:PYTHONUTF8 = '1'`:
+   - se o log não terminar com `Resumo da ingestao`, repetir `uv run python -m citizentech_ml.ingestao --ocupacoes ..\catalogo\ocupacoes_cbo.json --inicio 202001 --fim 202609` (retoma de onde parou);
+   - conferir `cobertura(dados, "202001", "202609")`: nenhuma `falha` nem `pendente`; cada `ausente_na_fonte` confirmado por listagem do FTP (já confirmados em 12/11: FOR e EXC de 202001, EXC de 202002);
+   - conferir as admissões do MOV de 202001, 202101, 202201, 202301, 202401, 202501 e 202609 contra as contagens independentes em `GS\.kaiser\reports\S6-sonda-cbo\` (`sonda_historico_cbo.csv` e `sonda_adm_202609_cbo_uf.csv`, por CBO);
+   - confirmar `caged\bruto\` vazio, medir o tamanho do Parquet e registrar aqui.
+2. **D2, frente B (caminho crítico):** contrato e `agy` da **S7** (features e split: T04, T05, T18, T19; revisão independente obrigatória) + EDA + medição da defasagem do FOR (R02) + baselines.
+3. **D2, frente A:** S2 (leituras CTP, modo isolado), depois S3 (outbox) e S5 (auth), estas duas com revisão independente. Subir os serviços de teste antes das fatias que usam banco. Rascunho por agente do catálogo YAML dos 6 destinos (ESCO, questões, rubricas).
+4. Snapshot da Adzuna, só com o ok do usuário.
