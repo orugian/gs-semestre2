@@ -1,0 +1,56 @@
+Evidencia de execucao - painel de desenvolvimento e baselines (somente treino)
+Executado pelo orquestrador em 13/11/2026 (22h12, America/Sao_Paulo), a partir de main (commit 464fa4c).
+Natureza: dados OBSERVADOS do Novo Caged (MTE/PDET). Validacao (origens 202501-202509) e teste (2026) NAO foram avaliados.
+
+Comandos (em app\ml):
+  uv run python -m citizentech_ml.painel --dados <DADOS> --saida <DADOS>\caged\painel
+  uv run python -m citizentech_ml.baselines --painel <DADOS>\caged\painel\painel_desenvolvimento.parquet --saida <tmp>
+  uv run python -m citizentech_ml.eda --painel <idem> --dados <DADOS> --saida <tmp>
+
+--- painel_desenvolvimento.json ---
+{
+  "relatorio": {
+    "arquivos_lidos": 239,
+    "linhas_lidas": 6925532,
+    "linhas_uf_invalida": {
+      "99": 2264
+    },
+    "linhas_apos_limite": 865842,
+    "linhas_pre_agregadas": 42902,
+    "limite_usado": "202512",
+    "inicio": "202001",
+    "fim": "202509",
+    "linhas_painel": 11178,
+    "particoes": {
+      "treino": 9234,
+      "validacao": 1458,
+      "embargo": 486
+    }
+  },
+  "sha256_parquet": "8e653b0047ceed204d25bf7c0d9d28c8d7944bd4e75c7f65bf4ea09651b4eb9e",
+  "sha256_ocupacoes": "8e62b0ce099291751cf746c281ed53f199096bda1aab7e674acd934858de0f60",
+  "data_utc": "2026-11-14T01:13:01Z",
+  "versoes": {
+    "pandas": "3.1.1",
+    "numpy": "2.4.6",
+    "pyarrow": "26.0.1"
+  }
+}
+
+--- saida do comando de baselines ---
+=== Avaliação dos Baselines (Origem Móvel) ===
+Folds avaliados: 3
+Persistência | Folds válidos: 3 | MAE médio:   52.17 (±   9.63) | WAPE médio:  13.71% (±  2.91%)
+Sazonal      | Folds válidos: 3 | MAE médio:   65.45 (±  13.98) | WAPE médio:  17.09% (±  3.37%)
+Relatório gravado em: C:\Users\orugi\Documents\Projetos\FIAP\GS\.kaiser\tmp\s7b_final\baselines.json
+
+--- conferencia independente (calculo direto dos Parquets, sem usar citizentech_ml.features) ---
+alvo consolidado da origem 202312 (admissoes de 202401-202403, MOV+FOR-EXC): 162 series, 0 divergentes, soma 38598 = 38598
+admissoes declaradas ate 202403 (visao as-of): 162 series, 0 divergentes, soma 13258 = 13258 (consolidado do mes: 13298)
+baselines: n, MAE e WAPE dos 3 folds identicos ao recalculo independente.
+
+Folds (origem movel dentro do treino, embargo de 3 meses, densidade D04a recalculada em cada fold):
+  fold 0: treino ate 202309, avaliacao 202401-202403, 113 series, n=339: persistencia MAE 63,08 / WAPE 16,98% ; sazonal MAE 49,63 / WAPE 13,36%
+  fold 1: treino ate 202312, avaliacao 202404-202406, 114 series, n=342: persistencia MAE 44,82 / WAPE 11,43% ; sazonal MAE 70,58 / WAPE 18,00%
+  fold 2: treino ate 202403, avaliacao 202407-202409, 114 series, n=342: persistencia MAE 48,62 / WAPE 12,71% ; sazonal MAE 76,15 / WAPE 19,90%
+Unidade: admissoes formais com superior completo ou mais, por destino x UF, soma dos 3 meses seguintes a origem.

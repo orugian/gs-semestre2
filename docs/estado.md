@@ -2,7 +2,7 @@
 
 > Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
 
-**Atualizado em:** 13/11/2026, 12h25 · **Dias até o prazo (19/11 23h55):** 6,5 · **Fase:** D2 em andamento (adiantado 1 dia): S7, S2 e rascunho do catálogo integrados; S3 no `agy`; EDA/baselines e S5 a fazer
+**Atualizado em:** 13/11/2026, 22h20 · **Dias até o prazo (19/11 23h55):** 6,1 · **Fase:** D2 quase completo, um dia adiantado: S7, S7b (EDA + baselines), S2, S3 e rascunho do catálogo em `main`; S5 no `agy`
 
 ## Concluído
 
@@ -46,13 +46,25 @@
   - Contagens as-of (movimentações ≤ 202512): **0 células** destino × UF × mês com acumulado negativo; 0 linhas com disponibilidade anterior à movimentação.
   - **Defasagem de declaração (R02), preliminar** (`.kaiser/reports/R02-sondagem-defasagem-for.txt`; só movimentações ≤ 202512): fração de admissões vinda de FOR por coorte, série principal: 2020 2,48% · 2021 1,31% · 2022 0,75% · 2023 0,49% · 2024 0,34% · 2025 0,32% (2025 é limite inferior: coorte ainda imatura). Nas coortes 202407–202506, fica por declarar depois do mês da movimentação 0,33% (máximo mensal 0,65%) na série principal e 0,51% (máximo 0,94%) na total; depois de 1 mês, 0,11% e 0,20%. **Abaixo do limite de 2% de D04b:** pelo pré-registro, os meses finais do teste não são cortados e o viés de subcontagem (< 1%) é declarado. Falta formalizar no notebook de EDA. A sondagem expôs o total anual de admissões de 2025 (período de validação), nenhum valor de 2026.
 
-## Em andamento (13/11, 12h50)
+- **S3 — outbox durável e `POST /leituras` idempotente, em `main` (merge `04c7f94`).** `agy` em 2 rodadas + ajustes do orquestrador.
+  - Evidência: em `app/api`, `uv run pytest -q -rs` → 109 passed, 0 pulados; ruff limpo (em `main`, depois do merge).
+  - **RED reproduzido** com o worker neutralizado: `'pendente_nuvem' == 'sincronizado'` falha por asserção (`.kaiser/reports/S3-red-reproduzido.txt`). Diff lido na íntegra.
+  - Aceite adversarial (11 contraexemplos): 3 falharam na rodada 1 — reenvio sem `medido_em` virava 409 quando o relógio avançava (o caso T13 real; o teste do autor passava por cair no mesmo segundo); órfão do CSV reenviado respondia 200 sem entrar na fila; chave do dispositivo saía por `http://` para host externo. Corrigidos na rodada 2, junto com `synchronous=FULL`, mensagens 503 sem texto de exceção, `.dockerignore`, uv 0.11.6 e usuário não-root na imagem.
+  - **Revisão independente** (`agy --mode plan`, `.kaiser/reports/S3-outbox-rev.md`, sobre o commit `09e2f0d`), adjudicação: **RV-S3-01 aceito** (ack sem `id` remoto marcava `sincronizado`; agora exige `evento_id` igual e `id` não vazio); **RV-S3-02 aceito** (CSV com caminho explícito e outbox em outra pasta; a outbox agora acompanha o CSV); **RV-S3-03 aceito** (backoff contava do início do lote; agora do momento da falha); **RV-S3-04 aceito** (modo isolado não reconciliava órfãos ao subir; ganhou `lifespan` sem worker); **RV-S3-05 aceito em parte** (413 e 422 viram `erro_permanente`; 404/405 continuam na fila porque indicam URL mal configurada, corrigível); **RV-S3-06/07/08 aceitos como limitação**, documentados no README (processo único obrigatório, sem keep-alive, contexto de build em `app/`). Cada correção com RED por asserção (`.kaiser/reports/S3-revisao-red.txt`). As correções pós-revisão (commit `1f837ef`) **não passaram por nova revisão independente**.
+  - **Imagem Docker construída e exercitada pelo orquestrador:** `docker build -f app\api\Dockerfile app` → 376 MB; contêiner com volume nomeado temporário: `/health` 200, POST novo 201, reenvio 2 s depois 200 com o mesmo `medido_em`, conteúdo diferente 409, processo como usuário `citizentech`, CSV + `outbox.db` no volume, estado preservado depois de `docker restart`; contêiner e volume temporários removidos. A imagem `citizentech-api:s3` ficou no Docker.
+  - **Achado do orquestrador:** os testes da rodada 1 gravaram um `outbox.db` com 77 eventos de teste em `.dados\runtime\` (o `agy` roda com `CITIZENTECH_DADOS` real). Adicionada a fixture autouse `ambiente_isolado` em `app/api/tests/conftest.py`; verificado com diretório-sentinela que a suíte não cria mais nada fora de `tmp`. **O arquivo antigo continua lá** (apagar exige aprovação; ver pendências).
+- **S7b — painel de desenvolvimento, EDA do treino e baselines, em `main` (merge `464fa4c`).** `agy` em 2 rodadas + ajustes do orquestrador. Sem revisão independente (não é fatia de risco na lista do plano).
+  - Evidência: em `app/ml`, `uv run pytest -q` → 86 passed; ruff limpo (em `main`).
+  - **Executado nos dados reais a partir de `main`:** `python -m citizentech_ml.painel` → `.dados\caged\painel\painel_desenvolvimento.parquet` (11 178 linhas: treino 9 234, embargo 486, validação 1 458; sha256 `8e653b00…b4eb9e`, idêntico entre execuções). **Conferência independente direto dos Parquets:** alvo consolidado da origem 202312 e admissões as-of de 202403 com 0 divergências em 162 séries; `n`, MAE e WAPE dos 3 folds iguais ao recálculo à parte.
+  - **Baselines, só treino (validação e teste NÃO avaliados):** 3 folds de origem móvel (avaliação em 202401–03, 202404–06, 202407–09; 113/114/114 séries elegíveis de 162). Persistência trimestral: MAE médio 52,17 (desvio 9,63), WAPE 13,71%. Sazonal: MAE 65,45 (desvio 13,98), WAPE 17,09%. O sazonal vence só no fold de jan–mar/2024 (49,63 contra 63,08).
+  - **EDA do treino** (`05_ML/evidencias/20261113-eda-treino.md` + 2 PNG): 115 de 162 séries passam na densidade (D04a) e cobrem 99,61% das admissões do treino; IoT tem 14 UFs elegíveis e Projetos/Produto 13; índice sazonal do agregado: pico em agosto (1,11), vale em dezembro (0,82); 45 origens de treino com todas as features (202101–202409); defasagem de declaração e FOR abaixo de 2% a partir de 2021 (2020: 2,48% de FOR na série principal).
+  - Devolvido na rodada 1: MAE 0,0 fabricado quando n = 0; fração de exclusões subestimada; rótulos e formatação. Corrigido pelo orquestrador depois da rodada 2: a tabela da série total comparava o consolidado com o as-of da série principal (mostrava 75–90% de diferença; o correto é 0,5–3%).
+  - Evidências versionadas em `05_ML/evidencias/20261113-*` (EDA, PNGs, `baselines-treino.json` e `.txt` com comandos e conferência).
 
-- **S3 — outbox, rodada 2 no `agy`:** job `pwsh-300` (45 min), worktree `GS-wt/S3-outbox`, branch `fatia/S3-outbox` (base `de3a55e`). Rodada 1 (`pwsh-281`): 92 testes verdes e ruff limpo executados pelo orquestrador; **RED reproduzido** com o worker neutralizado (`'pendente_nuvem' == 'sincronizado'`, `.kaiser/reports/S3-red-reproduzido.txt`); diff lido na íntegra. Aceite adversarial: **3 de 11 falharam** (`.kaiser/reports/S3-aceite-adversarial-red.txt`): reenvio sem `medido_em` vira 409 quando o relógio avança (o caso T13 real); órfão do CSV reenviado responde 200 e não entra na fila; chave do dispositivo enviada por `http://` a host externo. Devolvidos também: `synchronous=NORMAL`, `{err}` em mensagens 503, `.dockerignore`, uv 0.5.29 no Dockerfile (lock é do 0.11.6), processo como root. Contratos `.kaiser/contratos/S3-outbox[-r2].md`. **Falta:** aceite da rodada 2, `docker compose --profile app build`, commit, revisão independente, merge.
-- **S7b — painel, EDA e baselines, rodada 2 no `agy`:** job `pwsh-303` (45 min), worktree `GS-wt/S7b-eda-baselines`, branch `fatia/S7b-eda-baselines` (base `659ecbe`). Rodada 1 (`pwsh-292`): 78 testes verdes, ruff limpo. **Executado nos dados reais pelo orquestrador** (saídas em `.kaiser/tmp/s7b_real/`, descartáveis): painel em 78 s (11 178 linhas: treino 9 234, embargo 486, validação 1 458); **conferência independente direto dos Parquets: 0 divergências em 162 séries** (alvo consolidado da origem 202312 e admissões as-of de 202403); baselines dos 3 folds recalculados à parte com `n`, MAE e WAPE idênticos. Devolvido: métrica 0,0 com n = 0, fração de exclusões subestimada na EDA, rótulos e formatação do relatório (15 itens, `.kaiser/contratos/S7b-eda-baselines-r2.md`). **Falta:** aceite da rodada 2, commit, merge, rodar de novo nos dados reais e gravar a evidência em `05_ML/evidencias/`.
-- **Resultados preliminares dos baselines (só treino, validação NÃO aberta; números do código da rodada 1, conferidos por recálculo independente):** folds com validação 202401–03, 202404–06 e 202407–09; séries elegíveis 113/114/114 de 162; MAE médio persistência 52,17 (desvio 9,63), sazonal 65,45 (desvio 13,98); WAPE médio 13,7% e 17,1%. O sazonal vence só no fold de jan–mar/2024. Origens de treino com todas as features: 202101–202409 (45 meses); 2020 fica sem lag 12 por construção.
-- **S5 — contrato pronto, não disparado** (`.kaiser/contratos/S5-auth.md`): depende da S3 integrada (as duas editam `main.py` e `erros.py`). Schema `CT_S5_TESTE` criado no Oracle Docker com aprovação do usuário; a senha é uma fixture didática escrita no comando de criação e vai para o `agy` só por variável de ambiente.
-- **Serviços de teste de pé** (Oracle, Postgres, Mongo *healthy* desde 11h10) à espera da S5.
+## Em andamento (13/11, 22h20)
+
+- **S5 — auth, no `agy`:** job `pwsh-324` (45 min, disparado às 22h05), worktree `GS-wt/S5-auth`, branch `fatia/S5-auth` (base `04c7f94`). Contrato `.kaiser/contratos/S5-auth.md`, relatório `.kaiser/reports/S5-auth.md`. Oracle Docker de pé; login do schema `CT_S5_TESTE` conferido (só `CREATE SESSION/TABLE/SEQUENCE`). **Falta:** aceite com reprodução do RED, contraexemplos, leitura integral do diff, commit, revisão independente, merge.
+- **Serviços:** só o Oracle está de pé (Mongo e Postgres parados com `stop` às 22h05; volumes preservados).
 ## Bloqueios e pendências [HUMANO]
 
 - [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
@@ -63,10 +75,12 @@
 - [ ] Caminho da IA de sentimento (créditos HF ou Comprehend).
 - [ ] AWS CLI (instalar ou usar o console).
 - [ ] Ok para o snapshot da Adzuna (até 12 chamadas, com contador).
+- [ ] **Decisão de D10: excluir 2020 do treino?** Tem de ser tomada antes de abrir a validação. Dados da EDA (série principal): coeficiente de variação mensal 0,251 em 2020 contra 0,089–0,150 nos outros anos; FOR 2,48% contra 0,38–1,31%; além disso 2020 não tem lag de 12 meses, então suas 12 origens já ficam sem a feature sazonal.
+- [ ] **Apagar `.dados\runtime\outbox.db*`?** São 77 eventos de teste gravados por engano (ver S3). Enquanto existirem, subir a API com `CITIZENTECH_DADOS` real e `FUNCTION_URL` configurada enviaria esses eventos à Lambda.
 - [ ] **Revisão humana do catálogo até D3 (15/11) às 18h**, senão corte automático para 3 destinos (R29). Os 6 rascunhos estão em `app/catalogo/destinos/`; o roteiro de revisão (7 itens, inclusive definir `minimo_objetiva` e `minimo_llm`) está em `app/catalogo/README.md` §4.
 - [ ] `gh auth refresh -s project,read:project`; ideia da live (AIC); quem grava cada vídeo.
 
-**Disco:** 14,7 GB livres em 13/11 às 12h22 (15,6 GB às 11h08).
+**Disco:** 8,6 GB livres em 13/11 às 22h04 (15,6 GB às 11h08; 10,1 GB às 17h12). A queda de ~7 GB não vem do projeto: worktrees 0,34 GB, `.dados` 0,11 GB, cache do uv 3,1 GB no total, VHDX do Docker inalterado em 23,5 GB; a imagem da API (376 MB) custou 0,4 GB. Causa não identificada (mesmo padrão do dia 12/11). **Abaixo de 6 GB, avisar; abaixo de 4 GB, parar.**
 
 ## Validação das credenciais (12/11, sem expor valores)
 
@@ -100,15 +114,14 @@
 ## Não verificado
 
 - Títulos oficiais da CBO no site do MTE (reCAPTCHA); o título de 211220 vem de fonte secundária.
-- S2: POST vindo do Wokwi/ESP32 real; execução com mais de um processo `uvicorn`.
-- S7: painel completo sobre os dados reais (só a pré-agregação foi executada: 55 s); desempenho de `construir_painel_features` nas ~69 origens.
+- S2/S3: POST vindo do Wokwi/ESP32 real; worker contra a Lambda e o RDS reais (só fake na fronteira); `docker compose --profile app up` com o `app/.env` real (o smoke usou `docker run` com chave descartável).
+- S7b: baselines na validação (aguarda a decisão sobre 2020); EDA do período de validação (não deve ser feita).
 - Catálogo: correção técnica de enunciados, gabaritos e rubricas (depende da revisão humana); versão da ESCO.
 - Regressão web (`pnpm run test`) nesta sessão: não executada (nenhuma mudança em `app/web`).
-
 ## Próximo passo exato
 
-1. **S3:** coletar `pwsh-300`; rodar `tests/test_s3_aceite.py` + regressão; `docker compose -f app\docker-compose.yml --profile app build api`; commit em `fatia/S3-outbox`; `git diff main..fatia/S3-outbox > .kaiser\tmp\S3-diff.patch`; revisão independente (`agy --mode plan`, 20 min); adjudicar; merge `--no-ff`; regressão em `main`.
-2. **S7b:** coletar `pwsh-303`; regressão; rodar os 3 comandos nos dados reais; repetir `.kaiser\tmp\conferir_painel.py`; ler a EDA; commit, merge; copiar `eda_treino.md`, PNGs e `baselines.json` para `05_ML/evidencias/20261113-*`. **Decisão de D10 pendente do usuário:** excluir 2020 do treino? (dados da EDA: CV mensal 0,25 em 2020 contra 0,09–0,15 nos demais; FOR 2,5% contra 0,3–1,3%). Só depois disso rodar os baselines com `--validacao`.
-3. **S5:** disparar o `agy` com `ORACLE_DSN=localhost:1521/FREEPDB1`, `ORACLE_USER=CT_S5_TESTE` e a senha de fixture, depois da S3 em `main`. Revisão independente obrigatória.
-4. **Snapshot da Adzuna:** script com contador (máximo 12 chamadas), só depois do ok do usuário.
+1. **S5:** coletar `pwsh-324`; aceite (§7.5) com as variáveis `ORACLE_DSN=localhost:1521/FREEPDB1`, `ORACLE_USER=CT_S5_TESTE` e a senha de fixture; conferir com `-rs` que nenhum teste foi pulado; reproduzir o RED; contraexemplos (CSRF de outra sessão, T14, enumeração, `alg: none`); commit; `git diff main...fatia/S5-auth > .kaiser\tmp\S5-diff.patch`; revisão independente; adjudicar; merge; regressão; parar o Oracle (`stop`).
+2. **Baselines na validação:** depois da resposta do usuário sobre 2020, rodar `python -m citizentech_ml.baselines --painel … --validacao [--inicio-treino 202101]` e gravar a evidência. É o número que os modelos do D3 terão de superar em 5% (D10a).
+3. **D3 (plano §5):** S4 (Lambda) e S8 (API de mercado) na frente A; modelos Ridge/RF/HGB com tuning e MLP na frente B; revisão humana do catálogo até 15/11 às 18h.
+4. **Snapshot da Adzuna:** só depois do ok do usuário.
 5. **Push:** `main` está à frente de `gs-semestre2/main`; não houve push nesta sessão (falta o ok).
