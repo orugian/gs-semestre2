@@ -1,0 +1,19 @@
+# Ignora arquivos sensiveis, ambientes e dados temporarios do build Docker
+.git
+.gitignore
+**/.env*
+**/.venv
+**/node_modules
+**/.pytest_cache
+**/.ruff_cache
+**/__pycache__
+**/*.pyc
+**/tests
+web
+ml
+cloud
+tools
+iot
+db
+dados
+.dados

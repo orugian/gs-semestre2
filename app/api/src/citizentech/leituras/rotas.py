@@ -7,11 +7,16 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse
 
+from citizentech.erros import ConflitoEvento
 from citizentech.leituras.esquemas import validar_e_processar_payload
 from citizentech.leituras.limitador import obter_limitador
-from citizentech.leituras.repositorio import ler_todas_leituras, salvar_leitura
+from citizentech.leituras.repositorio import (
+    ler_todas_leituras,
+    salvar_leitura_duravel,
+)
 from citizentech.leituras.seguranca import verificar_chave_dispositivo
 from citizentech.limiares import carregar_limiares
+from citizentech.outbox.banco import obter_mapa_estados
 
 router = APIRouter()
 
@@ -83,22 +88,35 @@ async def criar_leitura(
             },
         )
 
-    # 5. Persistencia duravel em CSV
-    salvar_leitura(registro)
+    # 5. Persistencia duravel em CSV e Outbox SQLite
+    try:
+        resultado, reg_final = salvar_leitura_duravel(registro)
+    except ConflitoEvento as err:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "erro": "Conflito",
+                "detalhes": str(err),
+            },
+        ) from err
 
-    # 6. Resposta conforme contrato
+    codigo_status = (
+        status.HTTP_201_CREATED if resultado == "criado" else status.HTTP_200_OK
+    )
+
+    # 6. Resposta conforme contrato (201 novo, 200 reenvio identico)
     return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
+        status_code=codigo_status,
         content={
-            "evento_id": registro["evento_id"],
-            "dispositivo_id": registro["dispositivo_id"],
-            "metrica": registro["metrica"],
-            "unidade": registro["unidade"],
-            "valor": registro["valor"],
-            "risco": registro["risco"],
-            "alerta": registro["alerta"],
-            "estado": registro["estado"],
-            "medido_em": registro["medido_em"],
+            "evento_id": reg_final["evento_id"],
+            "dispositivo_id": reg_final["dispositivo_id"],
+            "metrica": reg_final["metrica"],
+            "unidade": reg_final["unidade"],
+            "valor": reg_final["valor"],
+            "risco": reg_final["risco"],
+            "alerta": reg_final["alerta"],
+            "estado": reg_final["estado"],
+            "medido_em": reg_final["medido_em"],
         },
     )
 
@@ -122,6 +140,12 @@ def listar_leituras(
         )
 
     todos = ler_todas_leituras()
+    mapa_estados = obter_mapa_estados()
+    if mapa_estados:
+        for r in todos:
+            if r["evento_id"] in mapa_estados:
+                r["estado"] = mapa_estados[r["evento_id"]]
+
     if sessao is not None and sessao != "":
         todos = [r for r in todos if r["sessao_laboratorio_id"] == sessao]
 

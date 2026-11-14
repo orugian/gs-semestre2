@@ -26,6 +26,14 @@ class ErroArmazenamento(RuntimeError):
         self.detalhes = detalhes
 
 
+class ConflitoEvento(ValueError):
+    """Conflito de evento_id com payload divergente."""
+
+    def __init__(self, detalhes: str) -> None:
+        super().__init__(detalhes)
+        self.detalhes = detalhes
+
+
 def registrar_manipuladores_de_erro(app: FastAPI) -> None:
     """Registra manipuladores de erro globais para assegurar o contrato de respostas."""
 
@@ -66,6 +74,19 @@ def registrar_manipuladores_de_erro(app: FastAPI) -> None:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={
                 "erro": "Servico indisponivel",
+                "detalhes": exc.detalhes,
+            },
+        )
+
+    @app.exception_handler(ConflitoEvento)
+    async def manipulador_conflito(
+        request: Request,
+        exc: ConflitoEvento,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={
+                "erro": "Conflito",
                 "detalhes": exc.detalhes,
             },
         )

@@ -199,6 +199,11 @@ def validar_e_processar_payload(dados: dict[str, Any]) -> dict[str, Any]:
     else:
         tipo_disp = "esp32"
 
+    medido_em_informado = (
+        "medido_em" in dados
+        and dados["medido_em"] is not None
+        and dados["medido_em"] != ""
+    )
     medido_em = _parsear_data_iso(dados.get("medido_em"))
     criado_em = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -219,5 +224,6 @@ def validar_e_processar_payload(dados: dict[str, Any]) -> dict[str, Any]:
         "estado": "pendente_nuvem",
         "medido_em": medido_em,
         "criado_em": criado_em,
+        "medido_em_informado": medido_em_informado,
     }
 

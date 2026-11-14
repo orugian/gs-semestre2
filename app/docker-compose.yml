@@ -57,7 +57,22 @@ services:
       timeout: 5s
       retries: 20
 
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    profiles: ["app"]
+    environment:
+      CITIZENTECH_DADOS: /var/lib/citizentech
+      DEVICE_KEY: ${DEVICE_KEY:-}
+      FUNCTION_URL: ${FUNCTION_URL:-}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - api_runtime:/var/lib/citizentech
+
 volumes:
   oracle_dados:
   postgres_teste_dados:
   mongo_teste_dados:
+  api_runtime:
