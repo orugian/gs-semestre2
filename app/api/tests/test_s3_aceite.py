@@ -231,3 +231,67 @@ def test_url_http_externa_nao_recebe_a_chave(ctx):
     processar_pendencias_uma_vez(cliente=inseguro)
     assert vistos == []
     assert obter_pendencia("evt-aceite-1", db)["estado"] != "sincronizado"
+
+
+# --- Achados da revisao independente (RV-S3-01 a 04) ---
+
+
+def test_ack_sem_id_remoto_nao_sincroniza(ctx):
+    cliente, _, db = ctx
+    cliente.post("/leituras", json=BASE, headers=K)
+    for corpo in ({"evento_id": "evt-aceite-1"}, {"evento_id": "evt-aceite-1", "id": ""}):
+        processar_pendencias_uma_vez(
+            cliente=_lambda(lambda req, c=corpo: httpx.Response(200, json=c)),
+            relogio=lambda: datetime(2031, 1, 1, tzinfo=UTC),
+        )
+        pend = obter_pendencia("evt-aceite-1", db)
+        assert pend["estado"] == "pendente_nuvem"
+        assert pend["ultimo_erro"] == "ENVELOPE_INVALIDO"
+
+
+def test_caminho_explicito_do_csv_leva_a_outbox_para_a_mesma_pasta(monkeypatch, tmp_path):
+    from citizentech.leituras.esquemas import validar_e_processar_payload
+
+    monkeypatch.delenv("CITIZENTECH_OUTBOX_DB", raising=False)
+    monkeypatch.delenv("CITIZENTECH_LEITURAS_CSV", raising=False)
+    monkeypatch.setenv("CITIZENTECH_DADOS", str(tmp_path / "outro"))
+    csv = tmp_path / "explicito" / "leituras.csv"
+    resultado, _ = repositorio.salvar_leitura_duravel(validar_e_processar_payload(BASE), csv)
+    assert resultado == "criado"
+    assert (tmp_path / "explicito" / "outbox.db").exists()
+    assert not (tmp_path / "outro").exists()
+
+
+def test_backoff_conta_a_partir_do_momento_da_falha(ctx):
+    cliente, _, db = ctx
+    cliente.post("/leituras", json=BASE, headers=K)
+    inicio = datetime(2030, 1, 1, tzinfo=UTC)
+    leituras_do_relogio = []
+
+    def relogio() -> datetime:
+        leituras_do_relogio.append(1)
+        return inicio + timedelta(seconds=50 * (len(leituras_do_relogio) - 1))
+
+    processar_pendencias_uma_vez(
+        cliente=_lambda(lambda req: httpx.Response(503)), relogio=relogio
+    )
+    proxima = datetime.fromisoformat(
+        obter_pendencia("evt-aceite-1", db)["proxima_tentativa_em"].replace("Z", "+00:00")
+    )
+    assert proxima > inicio + timedelta(seconds=50)
+
+
+def test_modo_isolado_reconcilia_orfaos_ao_subir(ctx):
+    from citizentech.leituras.isolado import app as app_isolado
+
+    _, csv, db = ctx
+    csv.parent.mkdir(parents=True, exist_ok=True)
+    csv.write_text(
+        CABECALHO
+        + "evt-orfao-iso,esp32-a,,,esp32,temperatura_c,C,38.0,atencao,True,"
+        "pendente_nuvem,2026-11-13T12:00:00Z,2026-11-13T12:00:00Z\n",
+        encoding="utf-8",
+    )
+    with TestClient(app_isolado) as isolado:
+        assert isolado.get("/leituras", headers=K).status_code == 200
+    assert obter_pendencia("evt-orfao-iso", db) is not None

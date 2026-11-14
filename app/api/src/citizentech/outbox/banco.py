@@ -28,11 +28,18 @@ CREATE INDEX IF NOT EXISTS idx_pendencias_estado_proxima
 """
 
 
-def obter_caminho_outbox_db() -> Path:
-    """Resolve o caminho do SQLite outbox.db a partir do ambiente ou do runtime do CSV."""
+def obter_caminho_outbox_db(caminho_csv: Path | None = None) -> Path:
+    """Resolve o caminho do SQLite outbox.db.
+
+    Ordem: CITIZENTECH_OUTBOX_DB; pasta do CSV recebido explicitamente; pasta de
+    CITIZENTECH_LEITURAS_CSV; CITIZENTECH_DADOS/runtime. O banco fica sempre ao lado do CSV.
+    """
     caminho_env = os.environ.get("CITIZENTECH_OUTBOX_DB")
     if caminho_env:
         return Path(caminho_env)
+
+    if caminho_csv is not None:
+        return Path(caminho_csv).parent / "outbox.db"
 
     caminho_csv = os.environ.get("CITIZENTECH_LEITURAS_CSV")
     if caminho_csv:

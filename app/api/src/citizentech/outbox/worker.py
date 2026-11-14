@@ -86,7 +86,7 @@ def processar_pendencias_uma_vez(
         else:
             # Erro transitorio (5xx, timeout, conexao recusada, rate limit, envelope invalido)
             proxima_iso = calcular_proxima_tentativa(
-                agora=agora_dt,
+                agora=relogio(),
                 tentativas=tentativas,
                 base_segundos=base_backoff_segundos,
                 max_segundos=max_backoff_segundos,

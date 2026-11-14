@@ -194,6 +194,10 @@ def test_cliente_lambda_tratamento_respostas_de_erro():
         (400, {"erro": "Bad Request"}, "erro_permanente", "ERRO_CLIENTE_4XX"),
         (401, {"erro": "Unauthorized"}, "erro_permanente", "ERRO_CLIENTE_4XX"),
         (403, {"erro": "Forbidden"}, "erro_permanente", "ERRO_CLIENTE_4XX"),
+        (413, {"erro": "Payload Too Large"}, "erro_permanente", "ERRO_CLIENTE_4XX"),
+        (422, {"erro": "Unprocessable"}, "erro_permanente", "ERRO_CLIENTE_4XX"),
+        # URL mal configurada pode ser corrigida: continua na fila
+        (404, {"erro": "Not Found"}, "pendente_nuvem", "ERRO_REMOTO_INDEFINIDO"),
         (429, {"erro": "Too Many Requests"}, "pendente_nuvem", "RATE_LIMIT_429"),
         (500, {"erro": "Internal Error"}, "pendente_nuvem", "ERRO_SERVIDOR_5XX"),
         (503, {"erro": "Service Unavailable"}, "pendente_nuvem", "ERRO_SERVIDOR_5XX"),

@@ -233,7 +233,7 @@ def salvar_leitura_duravel(
         caminho = obter_caminho_csv()
 
     try:
-        caminho_db = obter_caminho_outbox_db()
+        caminho_db = obter_caminho_outbox_db(caminho)
         if caminho_db.is_dir():
             raise ErroArmazenamento("Destino outbox invalido: aponta para diretorio.")
     except ErroArmazenamento:

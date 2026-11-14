@@ -71,15 +71,15 @@ A fila de pendências (`pendencias`) gerencia a durabilidade e o ciclo de vida d
                                                          │   erro_permanente     │
                                                          ├───────────────────────┤
                                                          │ Nuvem responde        │
-                                                         │ 400, 401 ou 403, ou   │
-                                                         │ URL insegura          │
+                                                         │ 400, 401, 403, 413 ou │
+                                                         │ 422, ou URL insegura  │
                                                          └───────────────────────┘
 ```
 
 - **`pendente_nuvem`:** Estado inicial após persistência local. Aguarda envio ou reenvio agendado.
-- **`sincronizado`:** Evento confirmado pela nuvem (código HTTP 200 ou 201 com envelope JSON contendo `evento_id` correspondente).
+- **`sincronizado`:** Evento confirmado pela nuvem (código HTTP 200 ou 201 com envelope JSON contendo o `evento_id` correspondente **e** um `id` remoto não vazio; sem o `id` não há prova de persistência e o evento continua pendente).
 - **`conflito`:** Nuvem retornou HTTP 409 (identificador reutilizado com dados incompatíveis). Sinalizado explicitamente; não repete indefinidamente.
-- **`erro_permanente`:** Nuvem retornou erro de cliente/autenticação (HTTP 400, 401, 403) ou a URL de destino é insegura. Interrompe tentativas automáticas.
+- **`erro_permanente`:** Nuvem retornou erro de cliente/autenticação (HTTP 400, 401, 403, 413, 422) ou a URL de destino é insegura. HTTP 404 e 405 **não** são permanentes: indicam `FUNCTION_URL` mal configurada, que pode ser corrigida, e o evento continua na fila. Interrompe tentativas automáticas.
 
 ### Tabela de Códigos de `ultimo_erro`
 
@@ -91,11 +91,11 @@ A fila de pendências (`pendencias`) gerencia a durabilidade e o ciclo de vida d
 | `CONEXAO_RECUSADA` | Falha de conexão de rede ou porta inacessível | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
 | `RATE_LIMIT_429` | Nuvem respondeu HTTP 429 Too Many Requests | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
 | `ERRO_SERVIDOR_5XX` | Nuvem respondeu HTTP 500, 502, 503 ou 504 | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
-| `ENVELOPE_INVALIDO` | Resposta 200/201 sem JSON ou com `evento_id` divergente | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `ENVELOPE_INVALIDO` | Resposta 200/201 sem JSON, com `evento_id` divergente ou sem `id` remoto | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
 | `CONFLITO_409` | Nuvem respondeu HTTP 409 Conflict | `conflito` | Não repete (requer intervenção/análise) |
-| `ERRO_CLIENTE_4XX` | Nuvem respondeu HTTP 400, 401 ou 403 | `erro_permanente` | Não repete (credenciais/payload inválido) |
+| `ERRO_CLIENTE_4XX` | Nuvem respondeu HTTP 400, 401, 403, 413 ou 422 | `erro_permanente` | Não repete (credenciais/payload inválido) |
 | `ERRO_DESCONHECIDO` | Exceção imprevista durante despacho HTTP | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
-| `ERRO_REMOTO_INDEFINIDO` | Resposta HTTP inesperada | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
+| `ERRO_REMOTO_INDEFINIDO` | Outra resposta HTTP (inclui 3xx, 404 e 405) | `pendente_nuvem` | Retry com backoff exponencial (máx 60s) |
 
 ---
 
@@ -113,7 +113,7 @@ Dois sistemas de armazenamento distintos (CSV em disco e SQLite outbox) não pos
 
 ### Janelas de Crash e Protocolos de Recuperação
 - **Crash entre CSV fsync e SQLite commit:** O evento está seguro no CSV, mas ausente do SQLite.
-  - **Reconciliação no Startup:** Na inicialização da aplicação, `reconciliar_com_csv()` varre o CSV e insere todos os registros órfãos na outbox como `pendente_nuvem`.
+  - **Reconciliação no Startup:** Na inicialização da aplicação, `reconciliar_com_csv()` varre o CSV e insere todos os registros órfãos na outbox como `pendente_nuvem`. Vale para a aplicação integrada e para o modo isolado (que reconcilia, mas não inicia o worker).
   - **Cura no Reenvio:** Se o dispositivo reenviar a requisição antes do reinício do servidor, a API detecta que o evento existe no CSV mas não no SQLite, insere a pendência na outbox (idempotente) antes de responder **HTTP 200 OK** (se a inserção falhar, retorna **HTTP 503**).
 - **Perda de resposta após aceite na nuvem (T13):** Se a Lambda aceitar o evento mas a conexão cair antes da API receber a confirmação, o worker registrará `TIMEOUT`. Na próxima iteração (após backoff), reenvia exatamente o mesmo `evento_id` e payload estável. A Lambda detecta a idempotência, retorna HTTP 200 com o envelope acordado e mantém apenas um registro lógico. A outbox atualiza para `sincronizado`.
 - **Composição na Leitura:** O CSV em disco permanece como histórico imutável com `estado="pendente_nuvem"`. O endpoint `GET /leituras` compõe dinamicamente o estado atual consultando o mapa de estados da outbox SQLite, sem reescrever o arquivo CSV.
@@ -199,7 +199,8 @@ curl.exe -X GET "http://localhost:8000/leituras?page=1&page_size=20" `
 ## 7. Limitações Conhecidas
 
 1. **Fronteira Fake Lambda:** Os testes automatizados da fatia S3 utilizam transporte simulado em memória (`httpx.MockTransport`) na fronteira da Lambda. Isso valida o contrato HTTP, segurança de headers, redirects desabilitados e envelopes de resposta sem realizar chamadas de rede externas, mas **fake da Lambda não prova AWS/RDS** (escopo das fatias S4 e S12).
-2. **Tentativas e Backoff:** As pendências em falha transitória realizam **tentativas sem teto (backoff máximo de 60 s)** até que a nuvem restabeleça comunicação ou retorne código definitivo (`409`, `400`, `401`, `403`).
-3. **Modo Isolado e SQLite:** **O modo isolado passa a gravar também `outbox.db` (SQLite da biblioteca padrão) ao lado do CSV**, mantendo o estado de durabilidade e idempotência local unificado.
-4. **Worker Monoprocesso:** O worker em segundo plano é executado como uma tarefa assíncrona dentro do mesmo processo da API FastAPI (*single process*). Não há dependência de Celery, Redis ou filas distribuídas externas. Se o processo da API for finalizado, as pendências permanecem íntegras no SQLite e serão retomadas no próximo startup.
+2. **Tentativas e Backoff:** As pendências em falha transitória realizam **tentativas sem teto (backoff máximo de 60 s)** até que a nuvem restabeleça comunicação ou retorne código definitivo (`409`, `400`, `401`, `403`, `413`, `422`). O intervalo de espera conta a partir do momento da falha de cada item.
+3. **Modo Isolado e SQLite:** **O modo isolado passa a gravar também `outbox.db` (SQLite da biblioteca padrão) ao lado do CSV**, mantendo o estado de durabilidade e idempotência local unificado. O banco fica sempre na mesma pasta do CSV (ou em `CITIZENTECH_OUTBOX_DB`, se definida).
+4. **Worker Monoprocesso:** O worker em segundo plano é executado como uma tarefa assíncrona dentro do mesmo processo da API FastAPI (*single process*). Não há dependência de Celery, Redis ou filas distribuídas externas. Se o processo da API for finalizado, as pendências permanecem íntegras no SQLite e serão retomadas no próximo startup. A fila não reserva linhas: com mais de um processo (`--workers 2`), o mesmo evento seria enviado em duplicidade (a idempotência da Lambda evitaria o registro duplicado, mas o uso é **não suportado**). Cada envio abre uma conexão HTTP nova, sem reaproveitamento.
 5. **Minimização de Dados (D13/D22):** O cliente outbox despacha estritamente os campos normalizados de telemetria, omitindo categoricamente o campo didático `relato` e eventuais dados de consentimento/PII, que serão tratados na fatia S14 após anonimização e validação de consentimento.
+6. **Imagem Docker:** o contexto de build é a pasta `app/` (o Dockerfile copia `api/` e `config/`): use `docker compose -f app\docker-compose.yml --profile app build api` ou `docker build -f app\api\Dockerfile app`. A imagem roda como usuário não-root com um único worker e grava CSV e outbox no volume nomeado `api_runtime`.

@@ -115,7 +115,15 @@ class ClienteLambda:
                     status_code=status_code,
                 )
 
-            if not isinstance(corpo, dict) or corpo.get("evento_id") != registro["evento_id"]:
+            id_remoto = corpo.get("id") if isinstance(corpo, dict) else None
+            ack_valido = (
+                isinstance(corpo, dict)
+                and corpo.get("evento_id") == registro["evento_id"]
+                and isinstance(id_remoto, (str, int))
+                and not isinstance(id_remoto, bool)
+                and str(id_remoto).strip() != ""
+            )
+            if not ack_valido:
                 return ResultadoEnvio(
                     sucesso=False,
                     estado_final="pendente_nuvem",
@@ -139,8 +147,9 @@ class ClienteLambda:
                 status_code=status_code,
             )
 
-        # 3. Erros permanentes de cliente / autenticacao (400, 401, 403)
-        if status_code in (400, 401, 403):
+        # 3. Erros permanentes: payload rejeitado (400, 413, 422) ou credencial recusada (401, 403).
+        # 404/405 ficam como transitorios: indicam URL mal configurada, que pode ser corrigida.
+        if status_code in (400, 401, 403, 413, 422):
             return ResultadoEnvio(
                 sucesso=False,
                 estado_final="erro_permanente",
