@@ -183,3 +183,55 @@ for fold_idx, (idx_tr, idx_val) in enumerate(folds):
     print(f"Fold {fold_idx}: treino={len(idx_tr)} linhas, val={len(idx_val)} linhas")
 ```
 
+---
+
+## 9. Painel, EDA e Baselines
+
+Esta seção documenta os módulos de construção do painel de desenvolvimento, análise exploratória descritiva do treino e avaliação dos modelos de referência (baselines).
+
+### 9.1 Comandos de Execução
+
+#### 1. Montagem do Painel de Desenvolvimento
+Gera a grade consolidada destino × UF × mês até setembro de 2025, atribuindo as partições de treino ($t \le 202409$), embargo ($202410–202412$) e validação ($202501–202509$):
+```bash
+uv run python -m citizentech_ml.painel --dados <dir_dados> --saida <dir_saida> [--inicio 202001] [--fim 202509]
+```
+
+#### 2. Geração da EDA do Treino
+Produz o relatório em Markdown e figuras PNG descritivas operando estritamente sobre as origens de treino:
+```bash
+uv run python -m citizentech_ml.eda --painel <caminho_painel.parquet> --dados <dir_dados> --saida <dir_saida>
+```
+
+#### 3. Avaliação dos Baselines (Origem Móvel)
+Executa o backtesting com expansão temporal (3 folds) dentro do treino para os baselines de persistência trimestral e sazonal, e opcionalmente avalia a partição de validação:
+```bash
+uv run python -m citizentech_ml.baselines --painel <caminho_painel.parquet> --saida <dir_saida> [--inicio-treino AAAAMM] [--validacao]
+```
+
+### 9.2 Arquivos de Saída Gerados
+
+1. **`painel_desenvolvimento.parquet`**: Painel temporal estruturado contendo identificadores (`competencia`, `destino`, `uf`, `mes`), features retrospectivas as-of, baselines nativos (`admissoes_soma_3m`, `admissoes_sazonal_ano_anterior`), alvo trimestral consolidado $y(g,t) = A(t+1) + A(t+2) + A(t+3)$ e a coluna categórica `particao`.
+2. **`painel_desenvolvimento.json`**: Metadados auditáveis da construção contendo contagem de arquivos e linhas lidas, mapa de descarte de UFs inválidas por código, linhas descartadas após o limite temporal, sha256 do Parquet gerado, sha256 do catálogo CBO utilizado, data/hora UTC ISO-8601 e versões das bibliotecas pandas, numpy e pyarrow.
+3. **`eda_treino.md`**: Relatório descritivo com tabelas estruturadas (indicando Fonte, População, Unidade, Período e Natureza) e frases factuais sem interpretações inventadas, números formatados no padrão pt-BR, organizado em 7 seções:
+   - *Cabeçalho*: data UTC de geração, SHA-256 do painel analisado e nota metodológica obrigatória.
+   - *1. Qualidade e cobertura*: volume de microdados, descartes de UF inválida (legível como "UF 99: ..."), origens cobertas, origens com todas as features completas, tabela de ausência por feature, alvos nulos e proporção de células com zero.
+   - *2. Densidade (D04a)*: contagem de UFs elegíveis ($\ge 10$ admissões/trimestre), fração de cobertura efetiva de admissões e lista de UFs excluídas por destino.
+   - *3. Nível e tendência*: totais e médias de admissões consolidadas por destino (série principal vs total) e comparativo percentual contra a visão as-of.
+   - *4. Sazonalidade*: índice sazonal (1,00 = média anual) calculado estritamente sobre anos completos presentes no treino (12 meses, excluindo anos parciais como 2024).
+   - *5. 2020 × demais anos*: comparativo anual de admissões consolidadas, meses no treino, média mensal, coeficiente de variação mensal (CV), fração de declarações por arquivo FOR (FOR ÷ (MOV+FOR)) e declaradas após o mês da movimentação, para ambas as séries (principal e total).
+   - *6. Defasagem de declaração (R02)*: fração acumulada das admissões brutas declaradas até 0, 1, 2, 3, 6 e 12 meses após a competência da movimentação e fração de exclusões (calculada a partir dos arquivos EXC sem cancelamento interno), para ambas as séries.
+   - *7. Distribuição do alvo*: contagem, taxa de zeros, média, desvio e quantis (Q10, Q25, Mediana, Q75, Q90) por destino.
+4. **`nivel_tendencia.png` e `sazonalidade.png`**: Gráficos gerados via matplotlib utilizando backend sem tela (`Agg`). `nivel_tendencia.png` apresenta dois subplots verticais (série principal e total) e `sazonalidade.png` apresenta a curva do índice sazonal por destino e o agregado.
+5. **`baselines.json`**: Registro da avaliação dos baselines contendo parâmetros utilizados, sha256 do painel, métricas por fold (`n`, `mae`, `rmse`, `wape`, `macro_mae`, `mase` com escala sazonal de treino, `series_com_escala` e `series_sem_escala`), resumo agregado entre folds (`folds_validos`, médias e desvios padrão amostrais com $ddof=1$, retornando `None` quando não há folds válidos) e métricas da partição de validação (quando solicitada).
+
+
+### 9.3 Limitações e Regras Congeladas
+
+- **Proteção do Holdout (D10)**: Competências $\ge 202601$ são proibidas em desenvolvimento; qualquer tentativa de processar ou avaliar o período de teste nesta fatia gera `ValueError`.
+- **Isolamento de Partições**: A EDA e a seleção por densidade dentro dos folds utilizam exclusivamente dados de treino ($t \le 202409$). Registros de validação nunca vazam para a seleção de séries ou métricas in-sample.
+- **Tratamento de UF 99**: Registros com UF não identificada ou inválida (fora dos 27 códigos IBGE) são descartados no carregamento e registrados com contagem exata por código no relatório, garantindo que o agregador receba apenas UFs válidas.
+- **Comparação Justa de Baselines**: As métricas de persistência e sazonal são calculadas sobre o subconjunto idêntico de linhas em cada fold onde ambas as previsões e o alvo consolidado estão simultaneamente presentes.
+- **Imunidade a Falsos Zeros**: Janelas temporais com histórico incompleto permanecem estritamente como `NaN` e não são convertidas em zero.
+
+
