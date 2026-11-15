@@ -204,3 +204,59 @@ curl.exe -X GET "http://localhost:8000/leituras?page=1&page_size=20" `
 4. **Worker Monoprocesso:** O worker em segundo plano é executado como uma tarefa assíncrona dentro do mesmo processo da API FastAPI (*single process*). Não há dependência de Celery, Redis ou filas distribuídas externas. Se o processo da API for finalizado, as pendências permanecem íntegras no SQLite e serão retomadas no próximo startup. A fila não reserva linhas: com mais de um processo (`--workers 2`), o mesmo evento seria enviado em duplicidade (a idempotência da Lambda evitaria o registro duplicado, mas o uso é **não suportado**). Cada envio abre uma conexão HTTP nova, sem reaproveitamento.
 5. **Minimização de Dados (D13/D22):** O cliente outbox despacha estritamente os campos normalizados de telemetria, omitindo categoricamente o campo didático `relato` e eventuais dados de consentimento/PII, que serão tratados na fatia S14 após anonimização e validação de consentimento.
 6. **Imagem Docker:** o contexto de build é a pasta `app/` (o Dockerfile copia `api/` e `config/`): use `docker compose -f app\docker-compose.yml --profile app build api` ou `docker build -f app\api\Dockerfile app`. A imagem roda como usuário não-root com um único worker e grava CSV e outbox no volume nomeado `api_runtime`.
+
+---
+
+## 8. Autenticação e Sessão (S5)
+
+Proteção funcional de autenticação, sessão segura, prevenção a CSRF e autorização por proprietário (Cybersecurity D12, T14, T16, R20).
+
+### Rotas de Autenticação e Consentimento
+
+| Rota | Método | Autenticação / CSRF | Sucesso | Erros |
+|---|---|---|---|---|
+| `/auth/registrar` | `POST` | Pública (sem sessão) | `201 Created` `{id, email, criado_em}` | `400` payload/política inválida, `409` e-mail já cadastrado |
+| `/auth/login` | `POST` | Pública (sem sessão) | `200 OK` `{id, email}` + cookies `sessao` e `csrf_token` | `401` credenciais inválidas, `429` rate limit excedido, `400` payload inválido |
+| `/auth/logout` | `POST` | Cookie `sessao` + `X-CSRF-Token` | `204 No Content` (invalida todas as sessões do usuário no servidor via incremento de `sessao_versao` e remove cookies) | `401` não autenticado, `403` CSRF inválido ou ausente |
+| `/me` | `GET` | Cookie `sessao` | `200 OK` `{id, email, criado_em, persona_demo}` | `401` não autenticado |
+| `/me/consentimentos` | `POST` | Cookie `sessao` + `X-CSRF-Token` | `201 Created` `{id, finalidade, versao_termo, concedido_em, revogado_em: null}` | `400` finalidade desconhecida, `401`, `403` |
+| `/me/consentimentos` | `GET` | Cookie `sessao` (sem CSRF) | `200 OK` `{itens: [...]}` (apenas do proprietário) | `401` |
+| `/me/consentimentos/{id}` | `DELETE` | Cookie `sessao` + `X-CSRF-Token` | `204 No Content` (marca `revogado_em`) | `401`, `403`, `404` se inexistente ou de outro usuário (T14) |
+
+### Cookies e Proteção de Sessão
+- **Cookie de Sessão (`sessao`):** JWT assinado com HS256 emitido com atributos `HttpOnly; Secure; SameSite=Lax; Path=/` e `Max-Age` configurado conforme expiração (padrão 60 minutos). O atributo `HttpOnly` impede a leitura direta do cookie via JavaScript (`document.cookie`), dificultando o roubo de tokens por scripts maliciosos, mas **não previne XSS em geral** (ataques XSS ainda podem disparar requisições autenticadas no contexto do navegador ou manipular o DOM; a segurança plena exige sanitização rigorosa e Content Security Policy). O token JWT nunca é retornado no corpo da resposta nem em outros cabeçalhos.
+- **Cookie de CSRF (`csrf_token`):** Token aleatório emitido com `Secure; SameSite=Lax; Path=/` (sem `HttpOnly`), permitindo leitura pelo frontend para envio no cabeçalho `X-CSRF-Token`.
+
+### Proteção Anti-CSRF (R20)
+- Em requisições autenticadas mutáveis (`POST`, `PUT`, `PATCH`, `DELETE`), o servidor exige o cabeçalho `X-CSRF-Token`.
+- O servidor calcula o hash SHA-256 do token do cabeçalho e compara com o claim `csrf` contido no JWT de sessão utilizando `hmac.compare_digest` (tempo constante).
+- Se o cabeçalho estiver ausente, vazio, divergente ou pertencer a outra sessão, a requisição é rejeitada com **HTTP 403 Forbidden**.
+- As rotas públicas (`/auth/registrar`, `/auth/login`) e as rotas seguras de leitura (`GET`) não exigem token CSRF.
+
+### Limite de Taxa no Login (D12, T16)
+- No máximo 5 tentativas de login por minuto por e-mail normalizado e, separadamente, por endereço IP de origem (`request.client.host`).
+- Conta tentativas com sucesso e falha. A 6ª tentativa retorna **HTTP 429 Too Many Requests** com cabeçalho `Retry-After: <segundos>`.
+- O limite por e-mail aplica-se igualmente a e-mails inexistentes e cadastrados, prevenindo enumeração de contas por exaustão ou temporização.
+
+### Variáveis de Ambiente
+- `ORACLE_DSN`: String de conexão / DSN com o banco Oracle (ex: `localhost:1521/FREEPDB1`).
+- `ORACLE_USER`: Usuário do schema Oracle.
+- `ORACLE_PASSWORD`: Senha do usuário Oracle.
+- `JWT_SECRET`: Segredo de no mínimo 32 caracteres para assinatura do JWT (fail-closed: se ausente ou curto, rotas de auth respondem `503 Service Unavailable`).
+- `JWT_EXPIRA_MINUTOS`: Duração da sessão em minutos (padrão `60`).
+
+### Como Aplicar o DDL no Oracle
+O script DDL em dialeto Oracle 19c está em `app/db/ddl/001_usuario_consentimento.sql`:
+```powershell
+# Executavel via SQL*Plus ou SQL Developer no schema desejado:
+# Recomenda-se autenticacao interativa (solicitando a senha em prompt seguro) para evitar o vazamento de credenciais na lista de processos do sistema operacional:
+sqlplus "$env:ORACLE_USER@$env:ORACLE_DSN" @app/db/ddl/001_usuario_consentimento.sql
+```
+Nos testes automatizados, a fixture de sessão do pytest aplica o DDL automaticamente no schema exclusivo de teste (`CT_*TESTE*`).
+
+### Limitações Conhecidas
+1. **Rate Limit em Memória e Monoprocesso:** O controle de tentativas de login é mantido em memória dentro do processo da API. Em arquiteturas com múltiplos nós ou múltiplos workers, cada processo terá seu próprio contador, sendo necessário Redis/Key-Value distribuído para coordenação global.
+2. **Sem MFA / 2FA:** A autenticação atual implementa fator único (e-mail + senha Argon2id).
+3. **Sem Recuperação de Senha:** Não há fluxo de envio de e-mail com token temporário para redefinição de senha esquecida.
+4. **Enumeração Residual por 409 no Cadastro:** O endpoint `/auth/registrar` retorna `409 Conflict` quando um e-mail já existe no banco (para consistência e prevenção de contas zumbis), o que revela a existência da conta no momento da tentativa de registro.
+5. **Invalidação Global de Sessões no Logout e JWT sem Rotação:** O token de sessão não utiliza mecanismo de refresh tokens rotativos. O endpoint de logout incrementa a coluna global `sessao_versao` do usuário no banco de dados, o que invalida **todas as sessões ativas do usuário em todos os dispositivos simultaneamente**, e não apenas a sessão do dispositivo local.

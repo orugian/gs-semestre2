@@ -12,11 +12,32 @@ from citizentech.leituras.isolado import app as app_isolado
 
 
 def test_modo_isolado_nao_importa_oracle_nem_mongo():
-    modulos_proibidos = ["oracledb", "cx_Oracle", "pymongo", "motor"]
-    for modulo in modulos_proibidos:
-        assert modulo not in sys.modules, (
-            f"Modulo '{modulo}' nao deveria ser importado no modo isolado CTP."
-        )
+    import subprocess
+
+    codigo = (
+        "import sys\n"
+        "from citizentech.leituras.isolado import app\n"
+        "proibidos = ['oracledb', 'cx_Oracle', 'pymongo', 'motor']\n"
+        "importados = [m for m in proibidos if m in sys.modules]\n"
+        "if importados:\n"
+        "    sys.stderr.write(f'Modulos proibidos importados: {importados}')\n"
+        "    sys.exit(1)\n"
+        "sys.stdout.write('LIMPO')\n"
+        "sys.exit(0)\n"
+    )
+    resultado = subprocess.run(
+        [sys.executable, "-c", codigo],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert resultado.returncode == 0, (
+        f"Modo isolado importou modulos proibidos no processo limpo. "
+        f"Stderr: {resultado.stderr} Stdout: {resultado.stdout}"
+    )
+    for modulo in ["oracledb", "cx_Oracle", "pymongo", "motor"]:
+        assert modulo not in resultado.stderr
+    assert resultado.stdout.strip() == "LIMPO"
 
 
 def test_modo_isolado_executa_ciclo_completo_ctp(monkeypatch, tmp_path):
