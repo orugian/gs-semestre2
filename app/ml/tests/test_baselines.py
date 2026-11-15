@@ -324,10 +324,10 @@ def test_cli_baselines_escopo_mvp(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
         assert all(m >= "202101" for m in fold["meses_treino"])
 
 
-def test_cli_baselines_rotulo_catalogo_completo(
+def test_cli_baselines_rotula_populacao_parcial_sem_flag_mvp(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Sem flag --escopo-mvp, mantém compatibilidade e rotula como catalogo_completo."""
+    """Sem flag MVP, declara a populacao realmente presente, sem alegar seis destinos."""
     import sys
 
     from citizentech_ml.baselines import main
@@ -354,7 +354,17 @@ def test_cli_baselines_rotulo_catalogo_completo(
     assert p_json.exists()
     conteudo = json.loads(p_json.read_text(encoding="utf-8"))
     assert "escopo" in conteudo
-    assert conteudo["escopo"]["modo"] == "catalogo_completo"
+    assert conteudo["escopo"]["modo"] == "catalogo_parcial"
     # O modo sem recorte nao prova que seis destinos estejam presentes no arquivo.
     assert conteudo["escopo"]["destinos"] == ["d1", "d2"]
+
+
+def test_relatorio_baseline_existente_nao_e_sobrescrito(tmp_path: Path) -> None:
+    from citizentech_ml.baselines import salvar_relatorio_baselines
+
+    existente = tmp_path / "baselines.json"
+    existente.write_text("evidencia preservada", encoding="utf-8")
+    with pytest.raises(FileExistsError):
+        salvar_relatorio_baselines({}, tmp_path / "painel.parquet", tmp_path)
+    assert existente.read_text(encoding="utf-8") == "evidencia preservada"
 

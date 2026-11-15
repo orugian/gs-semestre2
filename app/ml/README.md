@@ -235,12 +235,13 @@ uv run python -m citizentech_ml.recorte --painel <caminho_painel.parquet> --said
 ### 9.3 Limitações e Regras Congeladas
 
 - **Recorte MVP R29**: Redução de escopo operacional restrita aos destinos `analista_dados_bi`, `analista_monitoramento_iot` e `analista_processos`. Os seis destinos canônicos originais continuam preservados na base e nas estatísticas (D11). A projeção não homologa rubricas e não altera a modelagem temporal.
-- **Proteção do Holdout (D10)**: Competências $\ge 202601$ são proibidas em desenvolvimento; qualquer tentativa de processar ou avaliar o período de teste nesta fatia gera `ValueError`.
+- **Proteção do Holdout (D10)**: competências $\ge 202601$ são rejeitadas em memória. Isso **não é uma barreira de leitura**: o CLI lê o arquivo indicado antes de validar suas linhas. Use exclusivamente o painel de desenvolvimento segregado e previamente identificado; nunca passe Parquets de microdados ou do holdout. Não reconstrua o painel apontando para o diretório misto de microdados 2020–2026: o carregador legado também filtra depois da leitura.
 - **Início do Treino 202101 (D10)**: A partição de treino cobre origens $202101 \le t \le 202409$; dados de 2020 são estritamente utilizados como histórico retrospectivo para o cálculo de lags e sazonais.
 - **Isolamento de Partições**: A EDA e a seleção por densidade dentro dos folds utilizam exclusivamente dados de treino ($t \le 202409$). Registros de validação nunca vazam para a seleção de séries ou métricas in-sample.
 - **Tratamento de UF 99**: Registros com UF não identificada ou inválida (fora dos 27 códigos IBGE) são descartados no carregamento e registrados com contagem exata por código no relatório, garantindo que o agregador receba apenas UFs válidas.
 - **Comparação Justa de Baselines**: As métricas de persistência e sazonal são calculadas sobre o subconjunto idêntico de linhas em cada fold onde ambas as previsões e o alvo consolidado estão simultaneamente presentes.
 - **Imunidade a Falsos Zeros**: Janelas temporais com histórico incompleto permanecem estritamente como `NaN` e não são convertidas em zero.
-- **Proteção contra Sobrescrita**: As saídas geradas por recorte (`executar_recorte_cli`) proíbem substituição de arquivos existentes para garantir a auditabilidade e integridade histórica das evidências.
+- **População nos manifestos**: sem `--escopo-mvp`, `catalogo_completo` só é usado quando os seis destinos canônicos estão presentes; subconjuntos são `catalogo_parcial`, com IDs efetivamente encontrados. Na chamada de biblioteca sem metadados, o escopo fica `nao_informado`, não inferido.
+- **Proteção contra Sobrescrita**: recorte e relatório de baselines rejeitam arquivos de saída existentes, preservando evidências anteriores.
 
 

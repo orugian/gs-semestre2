@@ -21,6 +21,7 @@ from citizentech_ml.features.densidade import (
 )
 from citizentech_ml.metricas import mae, mase, resumir_erros
 from citizentech_ml.recorte import (
+    DESTINOS_CANONICOS_SEIS,
     carregar_escopo_mvp,
     recortar_painel_mvp,
 )
@@ -282,6 +283,8 @@ def salvar_relatorio_baselines(
     dir_s = Path(dir_saida)
     dir_s.mkdir(parents=True, exist_ok=True)
     caminho_json = dir_s / "baselines.json"
+    if caminho_json.exists():
+        raise FileExistsError(f"Relatorio ja existente: {caminho_json}")
 
     sha256_painel: str | None = None
     p_painel = Path(caminho_painel)
@@ -354,10 +357,13 @@ def main() -> None:
             }
         else:
             inicio_treino = args.inicio_treino
-            info_escopo = {
-                "modo": "catalogo_completo",
-                "destinos": sorted(df_painel["destino"].astype(str).unique().tolist()),
-            }
+            destinos_presentes = sorted(df_painel["destino"].astype(str).unique().tolist())
+            modo = (
+                "catalogo_completo"
+                if set(destinos_presentes) == set(DESTINOS_CANONICOS_SEIS)
+                else "catalogo_parcial"
+            )
+            info_escopo = {"modo": modo, "destinos": destinos_presentes}
 
         relatorio = avaliar_baselines(
             painel=df_painel,

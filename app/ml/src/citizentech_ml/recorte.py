@@ -208,8 +208,6 @@ def recortar_painel_mvp(
 
     return df_recortado
 
-    return df_recortado
-
 
 def executar_recorte_cli(
     caminho_painel: str | Path,
