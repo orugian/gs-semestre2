@@ -2,9 +2,9 @@
 
 > Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
 
-**Atualizado em:** 15/11/2026, 18h50 (UTC−3) · **Dias até o prazo (19/11 23h55):** 4,21 · **Fase:** encerramento para handoff; D2 com S5 em aceite, ainda não integrada; modelos ML/RNA/Estatística pendentes. Caminho crítico atrasado > meio dia, usuário avisado.
+**Atualizado em:** 15/11/2026, 20h15 (UTC−3) · **Dias até o prazo (19/11 23h55):** 4,15 · **Fase:** retomada ativa; S5 devolvida para correções do aceite, RED independente reproduzido; R29 técnico em implementação e modelos ML/RNA/Estatística pendentes. Caminho crítico atrasado > meio dia, usuário avisado.
 
-**Ponto de parada:** `main` em `72fd784` antes deste commit documental; único worktree pendente `../GS-wt/S5-auth`, branch `fatia/S5-auth`, base `04c7f94`, com alterações não commitadas. Nenhum `agy` ou job ativo. Objetivo automático pausado a pedido de passagem para a próxima sessão. Handoff operacional: `%TEMP%\handoff_citizentech_20261115.md`.
+**Ponto corrente:** `main` em `112042d` antes do registro da retomada; worktrees `../GS-wt/S5-auth` (base `04c7f94`, implementação não commitada preservada), `../GS-wt/S7-recorte` (base `112042d`, implementação parcial) e `../GS-wt/S5-red` (descartável, main + esqueleto do RED). Dois `agy` de retomada ativos, listados abaixo; objetivo automático ativo. Handoff anterior: `%TEMP%\handoff_citizentech_20261115.md`.
 
 **Escopo vigente (D02/D16/R29):** prazo de 15/11 às 18h ultrapassado, sem revisão humana registrada nos YAMLs nem nesta conversa. Acionado o corte automático para **Dados/BI, Monitoramento/IoT e Processos**. Os seis rascunhos e o painel de seis destinos estão preservados; a aplicação do recorte no produto/execuções futuras ainda está pendente. Não equivale à aprovação das três rubricas.
 
@@ -64,6 +64,20 @@
   - **EDA do treino** (`05_ML/evidencias/20261113-eda-treino.md` + 2 PNG): 115 de 162 séries passam na densidade (D04a) e cobrem 99,61% das admissões do treino; IoT tem 14 UFs elegíveis e Projetos/Produto 13; índice sazonal do agregado: pico em agosto (1,11), vale em dezembro (0,82); 45 origens de treino com todas as features (202101–202409); defasagem de declaração e FOR abaixo de 2% a partir de 2021 (2020: 2,48% de FOR na série principal).
   - Devolvido na rodada 1: MAE 0,0 fabricado quando n = 0; fração de exclusões subestimada; rótulos e formatação. Corrigido pelo orquestrador depois da rodada 2: a tabela da série total comparava o consolidado com o as-of da série principal (mostrava 75–90% de diferença; o correto é 0,5–3%).
   - Evidências versionadas em `05_ML/evidencias/20261113-*` (EDA, PNGs, `baselines-treino.json` e `.txt` com comandos e conferência).
+
+## Retomada — sessão iniciada em 15/11 às 19h01 (continuação às 20h13)
+
+- Após interrupção externa, `job_list` vazio e `job_output` dos antigos `pwsh-16`/`pwsh-23` retornou unknown job. Nenhum `agy` ativo confirmado. Relatório recorte parcial (aguardava tarefa filha), relatório S5-r2 vazio; mudanças preservadas. Não atribuir saída0 nem conclusão a esses jobs perdidos.
+- **Retentativas únicas em execução nesta continuação:** recorte `pwsh-5`, S5-r2 `pwsh-6`, contratos/relatórios com sufixo `-retomada`. Orientados a comandos síncronos, sem tarefas filhas pendentes. Dois slots agy ocupados, escopos disjuntos. Objetivo rearmado revisão2.
+- Às20h13 Docker daemon indisponível (named pipe ausente), não é falha da aplicação. Sem conexão Oracle segura disponível, integração S5 permanece bloqueada; não iniciar bancos sem necessidade de teste. Disco24,8GB.
+
+- Ritual executado: `main` limpo em `112042d`, worktree S5 preservado, nenhum `agy` herdado; Docker 29.6.2/Oracle healthy; disco 25,3 GB, prazo 4,20 dias.
+- O objetivo antigo não foi localizado por `get_goal` (retornou null); continuidade recriada como `goal-b26c0ecc-56d3-46a1-9ddc-bb5fb7873872`, ativo, com as restrições do usuário.
+- **S7-recorte via agy em execução: job `pwsh-16`**, worktree `../GS-wt/S7-recorte`, contrato `../.kaiser/contratos/S7-recorte.md`. Escopo: manifesto R29, projeção do painel de desenvolvimento, baselines explícitos202101 e dependências sklearn/scipy/statsmodels. Somente fixtures; sem acesso a `.dados`, sem torch nesta fatia.
+- **Gate Oracle S5:** variáveis de conexão não herdadas, fixture segura ainda indisponível; não ler `.env` nem mudar credenciais. Usuário pediu explicação e recebeu; testes Oracle atuais ainda não executados.
+- **S5 aceite nesta retomada:** rascunho corrigido e copiado para `tests/test_s5_aceite.py` (limite por e-mail sem login de preparação; JWT adulterado a partir de token válido). `pwsh-20` coletado: 7 passed,16 deselected nos casos sem Oracle; ruff limpo. RED original reproduzido independentemente sobre `main` + rota501 em worktree `../GS-wt/S5-red`: `pwsh-19` saída1 por **assert501==201**, evidência `../.kaiser/reports/S5-red-independente-20261115.txt`.
+- **Falhas novas confirmadas:** `tests/test_s5_validacao_sem_banco.py`, `pwsh-21` coletado →6 failed,5 passed (aceita ausênciaiat/jti; exp malformado causaTypeError; senha5000 no login responde503 antes de validação400). Não são testes Oracle nem avaliação do holdout. **Devolvido ao agy, rodada2 `pwsh-23` em execução**, contrato `../.kaiser/contratos/S5-auth-r2.md`, mesmo worktree preservado. Adendo autoriza substituir a prova de isolamento por subprocesso novo (sem remover drivers de sys.modules), config fail-closed e limpeza de entradas expiradas do limitador, sem apagar dados. Máximo2 agy respeitado com `pwsh-16`.
+- Exploração somente leitura identificou riscos para confirmar: carregador do painel abre Parquets antes de filtrar2026 (não reconstruir painel real); D11 ainda seis destinos e denominador municipal total não disponível no parquet filtrado. Manter população D11 até decisão explícita; nunca substituir denominador por total do recorte. O catálogo contém estatística2026 em texto legado, vista incidentalmente pelo explorador, não usada nem reproduzida; nenhum arquivo de holdout foi aberto.
 
 ## Em andamento — ponto de parada em 15/11
 

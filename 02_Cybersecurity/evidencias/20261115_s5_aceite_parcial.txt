@@ -1,0 +1,41 @@
+CitizenTech — S5 — aceite parcial independente em 15/11/2026
+Natureza: execução do orquestrador, não autorrelato. NÃO é aceite final.
+
+1. RED original independente (job pwsh-19, coletado antes da interrupção)
+Worktree: GS-wt/S5-red, main112042d + somente teste novo original test_auth.py e rota mínima POST /auth/registrar ->501.
+Comando, em app/api:
+uv run pytest tests/test_auth.py::test_ciclo_completo_registro_login_me -q -o markers=oracle
+Saída real relevante:
+>       assert resp_reg.status_code == 201
+E       assert 501 == 201
+E        +  where 501 = <Response [501 Not Implemented]>.status_code
+
+tests\test_auth.py:19: AssertionError
+RED exit esperado=1: 1
+
+O teste original foi copiado sem alteração. A marca oracle não foi removida; o main-base não possuía a fixture Oracle da S5. A primeira asserção executa somente a interface mínima501, sem conexão ao banco. Isso prova a sensibilidade desse teste sobre main+esqueleto; não é prova retroativa da ordem autoral TDD.
+Log completo fora do git: .kaiser/reports/S5-red-independente-20261115.txt.
+
+2. Rascunho adversarial revisado (job pwsh-20, coletado)
+- Rate limit por e-mail: cadastro sem login na preparação, preservando as cinco tentativas do teste.
+- JWTs: base obtida de sessão válida, preservando jti/iat/csrf e alterando uma propriedade por caso.
+- Integração Oracle marcada individualmente; casos sem banco separados.
+uv run ruff check tests/test_s5_aceite.py
+All checks passed!
+uv run pytest tests/test_s5_aceite.py -m 'not oracle' -q -rs -o addopts=''
+7 passed, 16 deselected, 1 warning in 1.84s
+Warning: StarletteDeprecationWarning sobre httpx no TestClient.
+Os16 casos Oracle foram DESELECIONADOS, não executados. Não substituem integração real.
+
+3. Novos contraexemplos sem banco (job pwsh-21, coletado)
+uv run pytest tests/test_s5_validacao_sem_banco.py -q -o addopts=''
+6 failed, 5 passed, 1 warning in 1.29s
+Falhas observadas:
+- iat ausente: DID NOT RAISE HTTPException.
+- jti ausente: DID NOT RAISE HTTPException.
+- exp string/dict/list: TypeError na comparação agora>=exp, em vez de401.
+- senha5000 caracteres no login: assert503==400; dependência do banco atingida antes da validação de tamanho.
+Há controle positivo de token válido antes de retirar cada claim. As falhas TypeError não são o RED canônico de1, que foi por asserçãoHTTP.
+O log de3 contém somente tokens sintéticos de fixture e fica na trilha local; não é copiado para este entregável.
+
+Estado: devolvido ao agy para correção. Oracle real nesta retomada NÃO EXECUTADO; revisão independente, adjudicação e merge ainda pendentes. Sem abertura do holdout, leitura de.env, exclusão de dados ou push.
