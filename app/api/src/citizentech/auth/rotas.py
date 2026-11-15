@@ -103,8 +103,7 @@ def login(
             },
         )
 
-    # Emissao de tokens e cookies seguros
-    expira_minutos = obter_expiracao_minutos()
+    # Emissao de tokens e cookies seguros com a configuracao ja validada.
     max_age_segundos = expira_minutos * 60
     token_csrf = gerar_token_csrf()
     token_jwt = criar_token_sessao(

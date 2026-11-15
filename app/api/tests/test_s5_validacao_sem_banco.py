@@ -10,7 +10,11 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from citizentech.auth.limitador import LimitadorLogin, limitador_login
-from citizentech.auth.tokens import decodificar_token_sessao, obter_expiracao_minutos
+from citizentech.auth.tokens import (
+    decodificar_token_sessao,
+    obter_expiracao_minutos,
+    obter_jwt_secret,
+)
 from citizentech.erros import ErroSegurancaIndisponivel
 from citizentech.main import app
 
@@ -81,7 +85,9 @@ def test_registro_fail_closed_quando_jwt_secret_ausente_ou_curto(monkeypatch, se
     assert resposta.json()["erro"] == "Servico indisponivel"
 
 
-@pytest.mark.parametrize("valor_invalido", ["invalido", "0", "-5", "-100", "99999999999999999999"])
+@pytest.mark.parametrize(
+    "valor_invalido", ["", " ", "invalido", "0", "-5", "-100", "99999999999999999999"]
+)
 def test_jwt_expira_minutos_invalido_ou_nao_positivo_retorna_503(monkeypatch, valor_invalido):
     monkeypatch.setenv("JWT_EXPIRA_MINUTOS", valor_invalido)
     with pytest.raises(ErroSegurancaIndisponivel):
@@ -95,6 +101,13 @@ def test_jwt_expira_minutos_invalido_ou_nao_positivo_retorna_503(monkeypatch, va
     assert set(resposta.json()) == {"erro", "detalhes"}
     assert resposta.json()["erro"] == "Servico indisponivel"
     assert "Configuracao de seguranca" in resposta.json()["detalhes"]
+
+
+@pytest.mark.parametrize("invalido", [" " * 32, "\t" * 32])
+def test_jwt_secret_so_com_espacos_e_rejeitado(monkeypatch, invalido):
+    monkeypatch.setenv("JWT_SECRET", invalido)
+    with pytest.raises(ErroSegurancaIndisponivel):
+        obter_jwt_secret()
 
 
 def test_jwt_expira_minutos_ausente_usa_padrao_60(monkeypatch):

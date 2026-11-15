@@ -21,7 +21,7 @@ def obter_jwt_secret() -> str:
     retorno 503, sem nunca adotar valor padrao.
     """
     secret = os.environ.get("JWT_SECRET")
-    if not secret or len(secret) < 32:
+    if not secret or len(secret.strip()) < 32:
         raise ErroSegurancaIndisponivel(
             "Configuracao de seguranca ausente ou invalida "
             "(JWT_SECRET deve ter ao menos 32 caracteres)."
@@ -36,7 +36,7 @@ def obter_expiracao_minutos() -> int:
     ErroSegurancaIndisponivel para retorno 503. Padrao 60 apenas quando ausente.
     """
     raw = os.environ.get("JWT_EXPIRA_MINUTOS")
-    if raw is None or raw.strip() == "":
+    if raw is None:
         return 60
 
     try:
