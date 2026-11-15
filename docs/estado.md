@@ -2,7 +2,11 @@
 
 > Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
 
-**Atualizado em:** 13/11/2026, 22h20 · **Dias até o prazo (19/11 23h55):** 6,1 · **Fase:** D2 quase completo, um dia adiantado: S7, S7b (EDA + baselines), S2, S3 e rascunho do catálogo em `main`; S5 no `agy`
+**Atualizado em:** 15/11/2026, 18h50 (UTC−3) · **Dias até o prazo (19/11 23h55):** 4,21 · **Fase:** encerramento para handoff; D2 com S5 em aceite, ainda não integrada; modelos ML/RNA/Estatística pendentes. Caminho crítico atrasado > meio dia, usuário avisado.
+
+**Ponto de parada:** `main` em `72fd784` antes deste commit documental; único worktree pendente `../GS-wt/S5-auth`, branch `fatia/S5-auth`, base `04c7f94`, com alterações não commitadas. Nenhum `agy` ou job ativo. Objetivo automático pausado a pedido de passagem para a próxima sessão. Handoff operacional: `%TEMP%\handoff_citizentech_20261115.md`.
+
+**Escopo vigente (D02/D16/R29):** prazo de 15/11 às 18h ultrapassado, sem revisão humana registrada nos YAMLs nem nesta conversa. Acionado o corte automático para **Dados/BI, Monitoramento/IoT e Processos**. Os seis rascunhos e o painel de seis destinos estão preservados; a aplicação do recorte no produto/execuções futuras ainda está pendente. Não equivale à aprovação das três rubricas.
 
 ## Concluído
 
@@ -48,7 +52,7 @@
 
 - **S3 — outbox durável e `POST /leituras` idempotente, em `main` (merge `04c7f94`).** `agy` em 2 rodadas + ajustes do orquestrador.
   - Evidência: em `app/api`, `uv run pytest -q -rs` → 109 passed, 0 pulados; ruff limpo (em `main`, depois do merge).
-  - **RED reproduzido** com o worker neutralizado: `'pendente_nuvem' == 'sincronizado'` falha por asserção (`.kaiser/reports/S3-red-reproduzido.txt`). Diff lido na íntegra.
+  - **Sensibilidade do teste reproduzida por mutação**, com o worker neutralizado: `'pendente_nuvem' == 'sincronizado'` falha por asserção (`.kaiser/reports/S3-red-reproduzido.txt`). Isso **não** é reprodução literal de testes novos sobre base + esqueleto (§7.5), nem prova retroativa da sequência autoral TDD. Diff lido na íntegra.
   - Aceite adversarial (11 contraexemplos): 3 falharam na rodada 1 — reenvio sem `medido_em` virava 409 quando o relógio avançava (o caso T13 real; o teste do autor passava por cair no mesmo segundo); órfão do CSV reenviado respondia 200 sem entrar na fila; chave do dispositivo saía por `http://` para host externo. Corrigidos na rodada 2, junto com `synchronous=FULL`, mensagens 503 sem texto de exceção, `.dockerignore`, uv 0.11.6 e usuário não-root na imagem.
   - **Revisão independente** (`agy --mode plan`, `.kaiser/reports/S3-outbox-rev.md`, sobre o commit `09e2f0d`), adjudicação: **RV-S3-01 aceito** (ack sem `id` remoto marcava `sincronizado`; agora exige `evento_id` igual e `id` não vazio); **RV-S3-02 aceito** (CSV com caminho explícito e outbox em outra pasta; a outbox agora acompanha o CSV); **RV-S3-03 aceito** (backoff contava do início do lote; agora do momento da falha); **RV-S3-04 aceito** (modo isolado não reconciliava órfãos ao subir; ganhou `lifespan` sem worker); **RV-S3-05 aceito em parte** (413 e 422 viram `erro_permanente`; 404/405 continuam na fila porque indicam URL mal configurada, corrigível); **RV-S3-06/07/08 aceitos como limitação**, documentados no README (processo único obrigatório, sem keep-alive, contexto de build em `app/`). Cada correção com RED por asserção (`.kaiser/reports/S3-revisao-red.txt`). As correções pós-revisão (commit `1f837ef`) **não passaram por nova revisão independente**.
   - **Imagem Docker construída e exercitada pelo orquestrador:** `docker build -f app\api\Dockerfile app` → 376 MB; contêiner com volume nomeado temporário: `/health` 200, POST novo 201, reenvio 2 s depois 200 com o mesmo `medido_em`, conteúdo diferente 409, processo como usuário `citizentech`, CSV + `outbox.db` no volume, estado preservado depois de `docker restart`; contêiner e volume temporários removidos. A imagem `citizentech-api:s3` ficou no Docker.
@@ -61,10 +65,15 @@
   - Devolvido na rodada 1: MAE 0,0 fabricado quando n = 0; fração de exclusões subestimada; rótulos e formatação. Corrigido pelo orquestrador depois da rodada 2: a tabela da série total comparava o consolidado com o as-of da série principal (mostrava 75–90% de diferença; o correto é 0,5–3%).
   - Evidências versionadas em `05_ML/evidencias/20261113-*` (EDA, PNGs, `baselines-treino.json` e `.txt` com comandos e conferência).
 
-## Em andamento (13/11, 22h20)
+## Em andamento — ponto de parada em 15/11
 
-- **S5 — auth, no `agy`:** job `pwsh-324` (45 min, disparado às 22h05), worktree `GS-wt/S5-auth`, branch `fatia/S5-auth` (base `04c7f94`). Contrato `.kaiser/contratos/S5-auth.md`, relatório `.kaiser/reports/S5-auth.md`. Oracle Docker de pé; login do schema `CT_S5_TESTE` conferido (só `CREATE SESSION/TABLE/SEQUENCE`). **Falta:** aceite com reprodução do RED, contraexemplos, leitura integral do diff, commit, revisão independente, merge.
-- **Serviços:** só o Oracle está de pé (Mongo e Postgres parados com `stop` às 22h05; volumes preservados).
+- **S5 — auth e consentimentos: implementação concluída pelo `agy`, aceite incompleto.** `pwsh-324` terminou com saída 0; não está rodando. Worktree `../GS-wt/S5-auth`, branch `fatia/S5-auth`, base `04c7f94`; código e testes novos **não commitados**, nenhum merge. Contrato `../.kaiser/contratos/S5-auth.md`, relatório `../.kaiser/reports/S5-auth.md`; snapshots de base e escopo em `../.kaiser/snapshots/S5-auth-{base,depois}.txt`.
+  - **Executado pelo orquestrador em 15/11 (`pwsh-6`, já coletado):** em `app/api` do worktree, `uv run pytest -q -rs -p no:warnings` com Oracle de teste configurado → saída 0, nenhum skip listado, ~99 s; sequência de 143 testes verdes compatível com a contagem do autorrelato. `uv run ruff check . -q` → saída 0. Sem variáveis Oracle → saída 0, **12 testes pulados** por banco não configurado; isso não substitui integração real. Evidência consolidada em `../.kaiser/reports/S5-aceite-orquestrador-20261115.md`.
+  - **RED:** autorrelato mostra `501 == 201` em `test_ciclo_completo_registro_login_me`; reprodução independente exigida por §7.5 **não executada**. A leitura integral do diff e a revisão independente `agy --mode plan` também não foram concluídas.
+  - **Contraexemplos apenas redigidos, NÃO executados:** `../.kaiser/tmp/test_s5_aceite.py`, preservado também em `../.kaiser/snapshots/S5-test_s5_aceite-rascunho.py`. Ainda não copiado para os testes do worktree. Revisar o próprio rascunho antes de usá-lo: o caso de limite por e-mail já consome uma tentativa ao criar a conta; os JWTs forjados omitem `jti`, podendo falhar por claim ausente em vez do motivo alegado. Nenhum desses casos é falha reproduzida.
+  - **Pontos de atenção lidos, sem correção/reprodução:** login não aplica o limite de senha antes da verificação Argon2; fixture `_proteger_modo_isolado` remove drivers de `sys.modules`, enfraquecendo a prova de isolamento (preferir processo novo); revisar limites/configuração de expiração, crescimento do limitador e autorização/CSRF. Não mudar o contrato público por inferência.
+- **Serviços verificados às 18h50:** Docker 29.6.2 ativo; só Oracle `healthy` (1521, PDB `FREEPDB1`), Postgres e Mongo não aparecem como ativos. Schema dedicado `CT_S5_TESTE`, fixture local já autorizada, segredo não reproduzido nos documentos. Não alterar credenciais/permissões para retomar.
+- **Jobs/higiene:** `pwsh-2` e `pwsh-6` concluídos/coletados; nenhum processo `agy` encontrado. Preservar o worktree S5 e os temporários relevantes ao aceite. Brutos Caged vazios. Nenhum arquivo de implementação alterado durante o fechamento documental.
 ## Bloqueios e pendências [HUMANO]
 
 - [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
@@ -75,12 +84,12 @@
 - [ ] Caminho da IA de sentimento (créditos HF ou Comprehend).
 - [ ] AWS CLI (instalar ou usar o console).
 - [ ] Ok para o snapshot da Adzuna (até 12 chamadas, com contador).
-- [ ] **Decisão de D10: excluir 2020 do treino?** Tem de ser tomada antes de abrir a validação. Dados da EDA (série principal): coeficiente de variação mensal 0,251 em 2020 contra 0,089–0,150 nos outros anos; FOR 2,48% contra 0,38–1,31%; além disso 2020 não tem lag de 12 meses, então suas 12 origens já ficam sem a feature sazonal.
+- [x] **D10, aprovado pelo usuário em 15/11:** treino com origens desde **202101**, preservando 2020 apenas como histórico de lags (45 origens até 202409, sem imputar 2020 para incluí-lo no treino). EDA: CV 0,251 e FOR 2,48% em 2020, além de ausência de lag de 12 meses. **Execução dos baselines e modelos com essa escolha ainda pendente**; split, embargo, densidade e promoção inalterados.
 - [ ] **Apagar `.dados\runtime\outbox.db*`?** São 77 eventos de teste gravados por engano (ver S3). Enquanto existirem, subir a API com `CITIZENTECH_DADOS` real e `FUNCTION_URL` configurada enviaria esses eventos à Lambda.
-- [ ] **Revisão humana do catálogo até D3 (15/11) às 18h**, senão corte automático para 3 destinos (R29). Os 6 rascunhos estão em `app/catalogo/destinos/`; o roteiro de revisão (7 itens, inclusive definir `minimo_objetiva` e `minimo_llm`) está em `app/catalogo/README.md` §4.
+- [ ] **Revisão humana das três rubricas mantidas após o corte R29:** Dados/BI, Monitoramento/IoT e Processos. Às 18h50 de 15/11, os seis YAMLs ainda eram rascunhos com revisor e mínimos nulos; nenhuma revisão humana foi registrada. Roteiro em `app/catalogo/README.md` §4. Os demais rascunhos estão preservados, não aprovados.
 - [ ] `gh auth refresh -s project,read:project`; ideia da live (AIC); quem grava cada vídeo.
 
-**Disco:** 8,6 GB livres em 13/11 às 22h04 (15,6 GB às 11h08; 10,1 GB às 17h12). A queda de ~7 GB não vem do projeto: worktrees 0,34 GB, `.dados` 0,11 GB, cache do uv 3,1 GB no total, VHDX do Docker inalterado em 23,5 GB; a imagem da API (376 MB) custou 0,4 GB. Causa não identificada (mesmo padrão do dia 12/11). **Abaixo de 6 GB, avisar; abaixo de 4 GB, parar.**
+**Disco:** 25,3 GB livres em 15/11 às 18h50; a recuperação desde os 8,6 GB de 13/11 ocorreu fora do trabalho aqui registrado, causa não verificada. **Abaixo de 6 GB, avisar; abaixo de 4 GB, parar.**
 
 ## Validação das credenciais (12/11, sem expor valores)
 
@@ -115,13 +124,14 @@
 
 - Títulos oficiais da CBO no site do MTE (reCAPTCHA); o título de 211220 vem de fonte secundária.
 - S2/S3: POST vindo do Wokwi/ESP32 real; worker contra a Lambda e o RDS reais (só fake na fronteira); `docker compose --profile app up` com o `app/.env` real (o smoke usou `docker run` com chave descartável).
-- S7b: baselines na validação (aguarda a decisão sobre 2020); EDA do período de validação (não deve ser feita).
+- S7b: baselines com `--inicio-treino 202101` e métricas de validação ainda não executados; decisão do usuário já registrada. **Não fazer EDA da validação nem abrir o holdout.** Resultados de 13/11 descrevem os seis destinos e a configuração anterior; não relabelar como resultado do recorte novo.
 - Catálogo: correção técnica de enunciados, gabaritos e rubricas (depende da revisão humana); versão da ESCO.
 - Regressão web (`pnpm run test`) nesta sessão: não executada (nenhuma mudança em `app/web`).
 ## Próximo passo exato
 
-1. **S5:** coletar `pwsh-324`; aceite (§7.5) com as variáveis `ORACLE_DSN=localhost:1521/FREEPDB1`, `ORACLE_USER=CT_S5_TESTE` e a senha de fixture; conferir com `-rs` que nenhum teste foi pulado; reproduzir o RED; contraexemplos (CSRF de outra sessão, T14, enumeração, `alg: none`); commit; `git diff main...fatia/S5-auth > .kaiser\tmp\S5-diff.patch`; revisão independente; adjudicar; merge; regressão; parar o Oracle (`stop`).
-2. **Baselines na validação:** depois da resposta do usuário sobre 2020, rodar `python -m citizentech_ml.baselines --painel … --validacao [--inicio-treino 202101]` e gravar a evidência. É o número que os modelos do D3 terão de superar em 5% (D10a).
-3. **D3 (plano §5):** S4 (Lambda) e S8 (API de mercado) na frente A; modelos Ridge/RF/HGB com tuning e MLP na frente B; revisão humana do catálogo até 15/11 às 18h.
-4. **Snapshot da Adzuna:** só depois do ok do usuário.
-5. **Push:** `main` está à frente de `gs-semestre2/main`; não houve push nesta sessão (falta o ok).
+1. **Retomada:** cumprir CLAUDE.md §5, ler o handoff em `%TEMP%\handoff_citizentech_20261115.md`, preservar o worktree S5 e rearmar o objetivo pausado somente quando o usuário pedir continuidade. Nenhum job antigo precisa ser aguardado.
+2. **S5:** revisar o rascunho adversarial antes de copiá-lo ao worktree, executar seus casos com Oracle real, reproduzir RED sobre base + interface mínima e concluir leitura integral do diff (§7.5). Devolver ao `agy` com falhas concretas se necessário (ainda só houve uma rodada de autoria). Após aceite: commit no branch com gitleaks; patch de **três pontos** `git diff main...fatia/S5-auth` (evita falsas remoções de commits posteriores de main); revisão independente obrigatória; adjudicar; merge `--no-ff`; regressão em main; remover apenas o worktree integrado; parar Oracle se não estiver em uso. Sem senha de fixture disponível, pedir acesso seguro, nunca trocar por teste pulado ou ler `.env`.
+3. **Em paralelo, caminho crítico ML/RNA:** aplicar explicitamente o recorte de três destinos (D02/R29), sem apagar os seis rascunhos/Parquets e sem alterar silenciosamente o pré-registro. Registrar a população usada em cada execução. Com origens desde 202101, rodar em `app/ml`: `uv run python -m citizentech_ml.baselines --painel <DADOS>\caged\painel\painel_desenvolvimento.parquet --saida <SAIDA_NOVA> --inicio-treino 202101 --validacao`. O painel atual tem seis destinos: o CLI não ganha recorte automaticamente; verificar/configurar o recorte antes da avaliação destinada ao MVP. Preservar evidências anteriores e não tratar um resultado de seis como se fosse de três destinos.
+4. **Cronograma restante:** consultar o plano §5 literalmente: D3 prevê **S9/S10/S11**, ML (Ridge/RF/HGB + tuning), RNA (MLP ≥ 2 configs) e Estatística; D4 prevê **S4**, firmware e **S8/S12/S13**. Priorizar o caminho crítico atrasado e dependências, não apresentar todas essas fatias como iniciadas. Não abrir holdout nesta retomada antes de concluir critérios e candidatos.
+5. **Dependências humanas:** revisão das três rubricas, credenciais/infra e vídeos; apagar o outbox contaminado e snapshot Adzuna só com aprovação específica.
+6. **Push:** não autorizado neste fechamento. Antes do commit documental, `main` tinha 19 commits a mais que a referência local `gs-semestre2/main`; referência não consultada remotamente. Não houve push nesta sessão.

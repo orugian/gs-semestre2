@@ -50,6 +50,11 @@
 | D25 | Oracle (**R27**) | DDL no **dialeto 19c** (sem `BOOLEAN`, sem `IF [NOT] EXISTS`, sem domínios), para rodar igual no Docker 23ai e no Oracle FIAP. **Data Modeler (R11): obrigatório [HUMANO] no D4** (cerca de 30 min: importar o DDL, gerar os modelos lógico e relacional, exportar imagem/PDF). |
 | D20 | Repositório | Monorepo em `info-gs-diciplinas/`: código em `app/`, entregas nas pastas `0X_*`, que referenciam o código. Limiares em **um único `app/config/limiares.json`**, consumido pela API, pela Lambda (copiado no empacotamento) e pelo firmware (header gerado). |
 
+### 1.1 Registro de execução — 15/11/2026
+
+- **D10 — escolha aprovada pelo usuário antes de avaliar a validação:** treinar com origens **202101–202409** (45 meses), mantendo os dados de 2020 apenas como histórico para os lags das origens de 2021. Excluir as 12 origens de 2020; não imputar suas features ausentes para incluí-las no treino. Os limites de validação/teste, embargo, densidade e promoção permanecem congelados. A aprovação **não é evidência de execução**: baselines com `--inicio-treino 202101 --validacao` e treinamento dos modelos ainda pendentes no encerramento. Justificativa e evidências da EDA em `docs/estado.md` e `05_ML/evidencias/20261113-eda-treino.md`.
+- **D02/D16/R29 — corte automático acionado:** às 18h50 de 15/11, os seis YAMLs continuavam com revisão humana pendente, sem aprovação registrada na sessão. Escopo do MVP reduzido aos destinos **(1) Dados/BI, (2) Monitoramento/IoT e (3) Processos/Melhoria Contínua**, conforme a ordem já aprovada. O corte não aprova rubricas nem autoriza apagar os outros rascunhos/dados. Aplicação técnica do recorte ainda pendente; o painel e as evidências existentes continuam descrevendo seis destinos.
+
 ---
 
 ## 2. Arquitetura alvo
