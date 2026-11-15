@@ -252,3 +252,109 @@ def test_cli_baselines(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     assert "avaliacao" in conteudo
     assert conteudo["avaliacao"]["validacao"] is not None
 
+
+def test_cli_baselines_escopo_mvp(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Valida flag --escopo-mvp: projeta para MVP R29, início treino 202101 e manifesto."""
+    import sys
+
+    from citizentech_ml.baselines import main
+    from citizentech_ml.recorte import DESTINOS_MVP_PADRAO
+
+    # Painel sintético contendo os 6 destinos canônicos
+    todos_destinos = [
+        "analista_dados_bi",
+        "analista_monitoramento_iot",
+        "analista_processos",
+        "gerente_projetos_produto",
+        "analista_suporte_infra",
+        "desenvolvedor_sistemas",
+    ]
+    meses = gerar_intervalo_meses("202012", "202409")
+    linhas = []
+    for d in todos_destinos:
+        for m in meses:
+            linhas.append(
+                {
+                    "competencia": m,
+                    "destino": d,
+                    "uf": "35",
+                    "alvo": 30.0,
+                    "admissoes_soma_3m": 30.0,
+                    "admissoes_sazonal_ano_anterior": 30.0,
+                }
+            )
+    df = prever_baselines(pd.DataFrame(linhas))
+    p_painel = tmp_path / "painel_completo.parquet"
+    df.to_parquet(p_painel, index=False)
+    dir_saida = tmp_path / "saida_mvp"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "baselines",
+            "--painel",
+            str(p_painel),
+            "--saida",
+            str(dir_saida),
+            "--escopo-mvp",
+        ],
+    )
+    main()
+
+    p_json = dir_saida / "baselines.json"
+    assert p_json.exists()
+    conteudo = json.loads(p_json.read_text(encoding="utf-8"))
+
+    # Verifica registro explícito do escopo MVP
+    assert "escopo" in conteudo
+    esc = conteudo["escopo"]
+    assert esc["modo"] == "mvp_r29"
+    assert sorted(esc["destinos"]) == sorted(DESTINOS_MVP_PADRAO)
+    assert "hash_recorte" in esc
+    assert "sha256_escopo" in esc
+    assert esc["inicio_treino"] == "202101"
+
+    # Avaliação deve ter inicio_treino explícito 202101 (dados 2020 apenas histórico)
+    aval = conteudo["avaliacao"]
+    assert aval["inicio_treino"] == "202101"
+    # Folds e densidade calculados estritamente sobre treino >= 202101 e destinos MVP
+    assert len(aval["folds"]) == 3
+    for fold in aval["folds"]:
+        assert all(m >= "202101" for m in fold["meses_treino"])
+
+
+def test_cli_baselines_rotulo_catalogo_completo(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Sem flag --escopo-mvp, mantém compatibilidade e rotula como catalogo_completo."""
+    import sys
+
+    from citizentech_ml.baselines import main
+
+    df_painel = _criar_painel_sintetico()
+    p_painel = tmp_path / "painel.parquet"
+    df_painel.to_parquet(p_painel, index=False)
+    dir_saida = tmp_path / "saida_completo"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "baselines",
+            "--painel",
+            str(p_painel),
+            "--saida",
+            str(dir_saida),
+        ],
+    )
+    main()
+
+    p_json = dir_saida / "baselines.json"
+    assert p_json.exists()
+    conteudo = json.loads(p_json.read_text(encoding="utf-8"))
+    assert "escopo" in conteudo
+    assert conteudo["escopo"]["modo"] == "catalogo_completo"
+    # O modo sem recorte nao prova que seis destinos estejam presentes no arquivo.
+    assert conteudo["escopo"]["destinos"] == ["d1", "d2"]
+

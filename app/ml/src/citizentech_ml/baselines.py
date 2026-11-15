@@ -20,6 +20,10 @@ from citizentech_ml.features.densidade import (
     obter_series_elegiveis,
 )
 from citizentech_ml.metricas import mae, mase, resumir_erros
+from citizentech_ml.recorte import (
+    carregar_escopo_mvp,
+    recortar_painel_mvp,
+)
 from citizentech_ml.split import SplitOrigemMovel
 
 
@@ -272,8 +276,9 @@ def salvar_relatorio_baselines(
     relatorio: dict[str, Any],
     caminho_painel: str | Path,
     dir_saida: str | Path,
+    info_escopo: dict[str, Any] | None = None,
 ) -> Path:
-    """Salva o baselines.json com parâmetros, sha256 do painel e data UTC."""
+    """Salva o baselines.json com parâmetros, sha256 do painel, escopo e data UTC."""
     dir_s = Path(dir_saida)
     dir_s.mkdir(parents=True, exist_ok=True)
     caminho_json = dir_s / "baselines.json"
@@ -285,10 +290,16 @@ def salvar_relatorio_baselines(
 
     data_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    escopo_dict = info_escopo or {
+        "modo": "nao_informado",
+        "destinos": None,
+    }
+
     conteudo = {
         "sha256_painel": sha256_painel,
         "caminho_painel": str(p_painel),
         "data_utc": data_utc,
+        "escopo": escopo_dict,
         "avaliacao": relatorio,
     }
 
@@ -319,14 +330,38 @@ def main() -> None:
         default=10.0,
         help="Média mínima de admissões no treino (D04a).",
     )
+    parser.add_argument(
+        "--escopo-mvp",
+        action="store_true",
+        help="Projeta o painel para o escopo MVP R29 antes da avaliação dos baselines.",
+    )
 
     args = parser.parse_args()
 
     try:
         df_painel = pd.read_parquet(args.painel)
+
+        if args.escopo_mvp:
+            escopo = carregar_escopo_mvp()
+            df_painel = recortar_painel_mvp(df_painel, escopo=escopo)
+            inicio_treino = args.inicio_treino or "202101"
+            info_escopo: dict[str, Any] = {
+                "modo": "mvp_r29",
+                "destinos": escopo["destinos"],
+                "hash_recorte": escopo["hash_recorte"],
+                "sha256_escopo": escopo["sha256_escopo"],
+                "inicio_treino": inicio_treino,
+            }
+        else:
+            inicio_treino = args.inicio_treino
+            info_escopo = {
+                "modo": "catalogo_completo",
+                "destinos": sorted(df_painel["destino"].astype(str).unique().tolist()),
+            }
+
         relatorio = avaliar_baselines(
             painel=df_painel,
-            inicio_treino=args.inicio_treino,
+            inicio_treino=inicio_treino,
             incluir_validacao=args.validacao,
             n_splits=args.n_splits,
             limite_densidade=args.limite_densidade,
@@ -335,6 +370,7 @@ def main() -> None:
             relatorio=relatorio,
             caminho_painel=args.painel,
             dir_saida=args.saida,
+            info_escopo=info_escopo,
         )
         print("=== Avaliação dos Baselines (Origem Móvel) ===")
         resumo = relatorio["resumo_folds"]

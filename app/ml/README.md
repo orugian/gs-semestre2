@@ -204,9 +204,15 @@ uv run python -m citizentech_ml.eda --painel <caminho_painel.parquet> --dados <d
 ```
 
 #### 3. Avaliação dos Baselines (Origem Móvel)
-Executa o backtesting com expansão temporal (3 folds) dentro do treino para os baselines de persistência trimestral e sazonal, e opcionalmente avalia a partição de validação:
+Executa o backtesting com expansão temporal (3 folds) dentro do treino para os baselines de persistência trimestral e sazonal, e opcionalmente avalia a partição de validação ou projeta para o recorte MVP R29:
 ```bash
-uv run python -m citizentech_ml.baselines --painel <caminho_painel.parquet> --saida <dir_saida> [--inicio-treino AAAAMM] [--validacao]
+uv run python -m citizentech_ml.baselines --painel <caminho_painel.parquet> --saida <dir_saida> [--inicio-treino AAAAMM] [--validacao] [--escopo-mvp]
+```
+
+#### 4. Recorte do Escopo MVP (R29)
+Filtra o painel de desenvolvimento retendo exclusivamente os 3 destinos aprovados no MVP (`analista_dados_bi`, `analista_monitoramento_iot`, `analista_processos`), preservando todas as colunas, o histórico de lags 2020 e gravando manifesto determinístico sem permitir sobrescrita:
+```bash
+uv run python -m citizentech_ml.recorte --painel <caminho_painel.parquet> --saida <caminho_saida.parquet> [--escopo <caminho_escopo.json>]
 ```
 
 ### 9.2 Arquivos de Saída Gerados
@@ -223,15 +229,18 @@ uv run python -m citizentech_ml.baselines --painel <caminho_painel.parquet> --sa
    - *6. Defasagem de declaração (R02)*: fração acumulada das admissões brutas declaradas até 0, 1, 2, 3, 6 e 12 meses após a competência da movimentação e fração de exclusões (calculada a partir dos arquivos EXC sem cancelamento interno), para ambas as séries.
    - *7. Distribuição do alvo*: contagem, taxa de zeros, média, desvio e quantis (Q10, Q25, Mediana, Q75, Q90) por destino.
 4. **`nivel_tendencia.png` e `sazonalidade.png`**: Gráficos gerados via matplotlib utilizando backend sem tela (`Agg`). `nivel_tendencia.png` apresenta dois subplots verticais (série principal e total) e `sazonalidade.png` apresenta a curva do índice sazonal por destino e o agregado.
-5. **`baselines.json`**: Registro da avaliação dos baselines contendo parâmetros utilizados, sha256 do painel, métricas por fold (`n`, `mae`, `rmse`, `wape`, `macro_mae`, `mase` com escala sazonal de treino, `series_com_escala` e `series_sem_escala`), resumo agregado entre folds (`folds_validos`, médias e desvios padrão amostrais com $ddof=1$, retornando `None` quando não há folds válidos) e métricas da partição de validação (quando solicitada).
-
+5. **`baselines.json`**: Registro da avaliação dos baselines contendo parâmetros utilizados, sha256 do painel, metadados do escopo (`modo`, `destinos`, `hash_recorte`), métricas por fold (`n`, `mae`, `rmse`, `wape`, `macro_mae`, `mase` com escala sazonal de treino, `series_com_escala` e `series_sem_escala`), resumo agregado entre folds (`folds_validos`, médias e desvios padrão amostrais com $ddof=1$, retornando `None` quando não há folds válidos) e métricas da partição de validação (quando solicitada).
+6. **`<saida_recorte>.parquet` e `<saida_recorte>.json`**: Parquet contendo os dados projetados exclusivamente nos 3 destinos do MVP R29 acompanhado de manifesto JSON contendo SHA-256 do arquivo de entrada e de saída, SHA-256 e hash determinístico do recorte, contagem de linhas por partição temporal (`historico_2020`, `treino_202101_202409`, `embargo_202410_202412`, `validacao_202501_202509`), carimbo UTC e versões dos componentes. Falha antecipadamente se o arquivo de destino já existir.
 
 ### 9.3 Limitações e Regras Congeladas
 
+- **Recorte MVP R29**: Redução de escopo operacional restrita aos destinos `analista_dados_bi`, `analista_monitoramento_iot` e `analista_processos`. Os seis destinos canônicos originais continuam preservados na base e nas estatísticas (D11). A projeção não homologa rubricas e não altera a modelagem temporal.
 - **Proteção do Holdout (D10)**: Competências $\ge 202601$ são proibidas em desenvolvimento; qualquer tentativa de processar ou avaliar o período de teste nesta fatia gera `ValueError`.
+- **Início do Treino 202101 (D10)**: A partição de treino cobre origens $202101 \le t \le 202409$; dados de 2020 são estritamente utilizados como histórico retrospectivo para o cálculo de lags e sazonais.
 - **Isolamento de Partições**: A EDA e a seleção por densidade dentro dos folds utilizam exclusivamente dados de treino ($t \le 202409$). Registros de validação nunca vazam para a seleção de séries ou métricas in-sample.
 - **Tratamento de UF 99**: Registros com UF não identificada ou inválida (fora dos 27 códigos IBGE) são descartados no carregamento e registrados com contagem exata por código no relatório, garantindo que o agregador receba apenas UFs válidas.
 - **Comparação Justa de Baselines**: As métricas de persistência e sazonal são calculadas sobre o subconjunto idêntico de linhas em cada fold onde ambas as previsões e o alvo consolidado estão simultaneamente presentes.
 - **Imunidade a Falsos Zeros**: Janelas temporais com histórico incompleto permanecem estritamente como `NaN` e não são convertidas em zero.
+- **Proteção contra Sobrescrita**: As saídas geradas por recorte (`executar_recorte_cli`) proíbem substituição de arquivos existentes para garantir a auditabilidade e integridade histórica das evidências.
 
 
