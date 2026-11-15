@@ -1,0 +1,30 @@
+{
+  "decisao": "R29",
+  "destinos": [
+    "analista_dados_bi",
+    "analista_monitoramento_iot",
+    "analista_processos"
+  ],
+  "sha256_input": "8e653b0047ceed204d25bf7c0d9d28c8d7944bd4e75c7f65bf4ea09651b4eb9e",
+  "sha256_output": "33a898980916c841c325fb9e37b643484ee1d6f8b7017a19f52208de02e922c5",
+  "sha256_escopo": "b38dce5d67bbc61bafb41af8df37dc66cab06cc954bdc3e1cb53eac956e8bcff",
+  "hash_recorte": "991fbc5dbbcc7646de699ef38ef845e4a04f58299a13e04477516918c6cb1f61",
+  "intervalo_origens": {
+    "inicio": "202001",
+    "fim": "202509"
+  },
+  "inicio_treino": "202101",
+  "linhas_por_particao": {
+    "historico_2020": 972,
+    "treino_202101_202409": 3645,
+    "embargo_202410_202412": 243,
+    "validacao_202501_202509": 729,
+    "total": 5589
+  },
+  "data_utc": "2026-11-15T23:38:59Z",
+  "versoes": {
+    "pandas": "3.1.1",
+    "numpy": "2.4.6",
+    "pyarrow": "26.0.1"
+  }
+}
