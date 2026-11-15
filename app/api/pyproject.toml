@@ -4,9 +4,12 @@ version = "0.1.0"
 description = "API FastAPI do CitizenTech (FIAP GS 2026.2)"
 requires-python = ">=3.11,<3.12"
 dependencies = [
+    "argon2-cffi>=25.1.0",
     "fastapi>=0.115,<1",
     "httpx>=0.27,<1",
+    "oracledb>=26.1.0",
     "portalocker>=4.4.2",
+    "pyjwt>=2.15.1",
     "uvicorn[standard]>=0.32,<1",
 ]
 
@@ -27,6 +30,9 @@ module-name = "citizentech"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+    "oracle: testes que dependem do banco de dados Oracle",
+]
 
 [tool.ruff]
 line-length = 100

@@ -34,6 +34,26 @@ class ConflitoEvento(ValueError):
         self.detalhes = detalhes
 
 
+class ErroBancoIndisponivel(RuntimeError):
+    """Erro de conexao ou indisponibilidade do banco Oracle."""
+
+    def __init__(
+        self, detalhes: str = "Falha na comunicacao com o banco de dados."
+    ) -> None:
+        super().__init__(detalhes)
+        self.detalhes = detalhes
+
+
+class ErroSegurancaIndisponivel(RuntimeError):
+    """Erro de configuracao de seguranca (ex: JWT_SECRET ausente ou curto)."""
+
+    def __init__(
+        self, detalhes: str = "Configuracao de seguranca ausente ou invalida."
+    ) -> None:
+        super().__init__(detalhes)
+        self.detalhes = detalhes
+
+
 def registrar_manipuladores_de_erro(app: FastAPI) -> None:
     """Registra manipuladores de erro globais para assegurar o contrato de respostas."""
 
@@ -91,6 +111,32 @@ def registrar_manipuladores_de_erro(app: FastAPI) -> None:
             },
         )
 
+    @app.exception_handler(ErroBancoIndisponivel)
+    async def manipulador_banco(
+        request: Request,
+        exc: ErroBancoIndisponivel,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "erro": "Servico indisponivel",
+                "detalhes": exc.detalhes,
+            },
+        )
+
+    @app.exception_handler(ErroSegurancaIndisponivel)
+    async def manipulador_seguranca(
+        request: Request,
+        exc: ErroSegurancaIndisponivel,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "erro": "Servico indisponivel",
+                "detalhes": exc.detalhes,
+            },
+        )
+
     @app.exception_handler(StarletteHTTPException)
     async def manipulador_http_exception(
         request: Request,
@@ -106,4 +152,5 @@ def registrar_manipuladores_de_erro(app: FastAPI) -> None:
         return JSONResponse(
             status_code=exc.status_code,
             content=conteudo,
+            headers=exc.headers,
         )
