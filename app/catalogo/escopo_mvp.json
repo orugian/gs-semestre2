@@ -1,0 +1,10 @@
+{
+  "versao": "1.0.0",
+  "decisao": "R29",
+  "destinos": [
+    "analista_dados_bi",
+    "analista_monitoramento_iot",
+    "analista_processos"
+  ],
+  "status_rubricas": "revisao_humana_pendente"
+}
