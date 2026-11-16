@@ -450,3 +450,40 @@ def test_requirements_txt_estatistica_gerado_exatamente_7_linhas(tmp_path: Path)
         "scikit-learn",
         "openpyxl",
     ]
+
+
+def test_concatenacao_junta_fontes_em_ordem_e_verificar_detecta_mudanca(tmp_path: Path):
+    raiz = tmp_path / "repo"
+    (raiz / "docs").mkdir(parents=True)
+    a = raiz / "app/db/ddl/001_a.sql"
+    b = raiz / "app/db/consultas/b.sql"
+    for caminho, texto in ((a, "CREATE TABLE a (x NUMBER);\n"), (b, "SELECT 1 FROM dual;\n")):
+        caminho.parent.mkdir(parents=True, exist_ok=True)
+        caminho.write_text(texto, encoding="utf-8")
+    item = ItemEntrega(
+        tipo="concatenacao",
+        origem="app/db/ddl/001_a.sql;app/db/consultas/b.sql",
+        destino="03_DataScience/oracle.sql",
+        conteudo="-- cabeçalho gerado",
+    )
+
+    assert main(["--raiz", str(raiz), "--sem-pdf"], itens=[item]) == 0
+    texto = (raiz / "03_DataScience/oracle.sql").read_text(encoding="utf-8")
+    assert texto.startswith("-- cabeçalho gerado")
+    assert texto.index("CREATE TABLE a") < texto.index("SELECT 1 FROM dual")
+    assert "-- Origem: app/db/ddl/001_a.sql" in texto
+    assert main(["--raiz", str(raiz), "--sem-pdf", "--verificar"], itens=[item]) == 0
+
+    b.write_text("SELECT 2 FROM dual;\n", encoding="utf-8")
+    assert main(["--raiz", str(raiz), "--sem-pdf", "--verificar"], itens=[item]) == 1
+
+
+def test_itens_codigo_apontam_para_fontes_existentes():
+    from empacotar_entregas import itens_codigo
+
+    raiz = Path(__file__).resolve().parents[3]
+    for item in itens_codigo():
+        if item.tipo not in ("copia", "concatenacao"):
+            continue
+        for origem in item.origem.split(";"):
+            assert (raiz / origem).is_file(), origem

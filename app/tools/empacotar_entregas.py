@@ -90,6 +90,153 @@ def itens_padrao(sha_csv: str = SHA256_BASE_MUNICIPAL) -> list[ItemEntrega]:
     ]
 
 
+def _texto_concatenado(raiz: Path, item: ItemEntrega) -> bytes:
+    """Junta as origens (separadas por ';') em ordem, com o cabeçalho e a origem de cada parte."""
+    partes = [item.conteudo or ""]
+    for origem in item.origem.split(";"):
+        texto = (raiz / origem).read_text(encoding="utf-8").replace("\r\n", "\n").rstrip("\n")
+        partes.append(f"\n\n-- {'=' * 70}\n-- Origem: {origem}\n-- {'=' * 70}\n{texto}")
+    return ("".join(partes).lstrip("\n") + "\n").encode("utf-8")
+
+
+ARQUIVOS_CLOUD = [
+    "__init__.py",
+    "risco.py",
+    "sentimento.py",
+    "banco.py",
+    "lambda_function.py",
+    "simulador.py",
+    "servidor_local.py",
+]
+ARQUIVOS_CTP = [
+    "__init__.py",
+    "erros.py",
+    "limiares.py",
+    "leituras/__init__.py",
+    "leituras/esquemas.py",
+    "leituras/isolado.py",
+    "leituras/limitador.py",
+    "leituras/repositorio.py",
+    "leituras/rotas.py",
+    "leituras/seguranca.py",
+    "outbox/__init__.py",
+    "outbox/banco.py",
+    "outbox/canonicalizacao.py",
+    "outbox/cliente.py",
+    "outbox/worker.py",
+]
+ARQUIVOS_FIRMWARE = [
+    "sketch.ino",
+    "logica.h",
+    "limiares.h",
+    "diagram.json",
+    "libraries.txt",
+    "segredos.exemplo.h",
+    "teste_logica.cpp",
+    "README.md",
+]
+CONTEUDO_REQUISITOS_CTP = (
+    "# API de leituras CitizenTech em modo isolado (cópia em codigo/).\n"
+    "# Executar a partir de 04_CTP_Python/codigo com:\n"
+    "#   $env:CITIZENTECH_LIMIARES = \"$PWD\\config\\limiares.json\"; $env:DEVICE_KEY = '<chave>'\n"
+    "#   python -m uvicorn citizentech.leituras.isolado:app --port 8001\n"
+    "fastapi>=0.115,<1\nuvicorn[standard]>=0.32,<1\nhttpx>=0.27,<1\nportalocker>=4.4.2\n"
+)
+DDL_ORACLE = [
+    "001_usuario_consentimento.sql",
+    "002_competencias.sql",
+    "003_intencao_comparacao.sql",
+    "004_avaliacao.sql",
+    "005_plano.sql",
+    "006_laboratorio.sql",
+    "007_catalogo.sql",
+]
+CABECALHO_ORACLE = (
+    "-- CitizenTech · Data Science · Oracle (dialeto 19c)\n"
+    "-- Arquivo GERADO por app/tools/empacotar_entregas.py: não edite aqui; edite as origens.\n"
+    "-- Ordem: DDL 001–007 e, no fim, as consultas de evidência (resultados em evidencias/)."
+)
+
+
+def itens_codigo() -> list[ItemEntrega]:
+    """Cópias do código final para as pastas das disciplinas (Cloud, CTP, AICSS, Data Science)."""
+    itens = [
+        ItemEntrega(
+            tipo="copia",
+            origem=f"app/cloud/src/citizentech_cloud/{nome}",
+            destino=f"06_Cloud/codigo/citizentech_cloud/{nome}",
+        )
+        for nome in ARQUIVOS_CLOUD
+    ]
+    itens += [
+        ItemEntrega(
+            tipo="copia",
+            origem="app/config/limiares.json",
+            destino="06_Cloud/codigo/citizentech_cloud/limiares.json",
+        ),
+        ItemEntrega(
+            tipo="copia",
+            origem="app/cloud/src/citizentech_cloud/lambda_function.py",
+            destino="06_Cloud/lambda_function.py",
+        ),
+        ItemEntrega(
+            tipo="copia",
+            origem="app/cloud/src/citizentech_cloud/simulador.py",
+            destino="06_Cloud/simulador_dispositivo.py",
+        ),
+        ItemEntrega(
+            tipo="copia",
+            origem="app/cloud/sql/ocorrencias.sql",
+            destino="06_Cloud/tabela_ocorrencias.sql",
+        ),
+    ]
+    itens += [
+        ItemEntrega(
+            tipo="copia",
+            origem=f"app/api/src/citizentech/{nome}",
+            destino=f"04_CTP_Python/codigo/citizentech/{nome}",
+        )
+        for nome in ARQUIVOS_CTP
+    ]
+    itens.append(
+        ItemEntrega(
+            tipo="copia",
+            origem="app/config/limiares.json",
+            destino="04_CTP_Python/codigo/config/limiares.json",
+        )
+    )
+    itens.append(
+        ItemEntrega(
+            tipo="texto_gerado",
+            origem="(declarado: dependências do modo isolado)",
+            destino="04_CTP_Python/requirements.txt",
+            conteudo=CONTEUDO_REQUISITOS_CTP,
+        )
+    )
+    itens += [
+        ItemEntrega(
+            tipo="copia", origem=f"app/iot/firmware/{nome}", destino=f"01_AICSS/firmware/{nome}"
+        )
+        for nome in ARQUIVOS_FIRMWARE
+    ]
+    itens += [
+        ItemEntrega(
+            tipo="concatenacao",
+            origem=";".join(
+                [f"app/db/ddl/{n}" for n in DDL_ORACLE] + ["app/db/consultas/evidencias_oracle.sql"]
+            ),
+            destino="03_DataScience/oracle.sql",
+            conteudo=CABECALHO_ORACLE,
+        ),
+        ItemEntrega(
+            tipo="copia",
+            origem="app/db/mongo/evidencias_mongo.js",
+            destino="03_DataScience/mongodb.js",
+        ),
+    ]
+    return itens
+
+
 def calcular_sha256(caminho: Path) -> str:
     hasher = hashlib.sha256()
     with open(caminho, "rb") as f:
@@ -197,6 +344,13 @@ def validar_origens(raiz: Path, dados: Path | None, itens: list[ItemEntrega]) ->
                     return 2
         elif item.tipo == "texto_gerado":
             pass
+        elif item.tipo == "concatenacao":
+            for origem in item.origem.split(";"):
+                if not (raiz / origem).is_file():
+                    print(
+                        f"ERRO: arquivo de origem não encontrado: {raiz / origem}", file=sys.stderr
+                    )
+                    return 2
         else:
             print(f"ERRO: tipo de entrega desconhecido: {item.tipo}", file=sys.stderr)
             return 2
@@ -276,6 +430,19 @@ def empacotar(
                     "destino": Path(item.destino).as_posix(),
                     "origem": item.origem or "(declarado)",
                     "sha256": sha,
+                    "paginas": None,
+                    "estado": estado,
+                }
+            )
+
+        elif item.tipo == "concatenacao":
+            conteudo_bytes = _texto_concatenado(raiz, item)
+            estado = gravar_se_diferente(dest, conteudo_bytes)
+            itens_manifesto.append(
+                {
+                    "destino": Path(item.destino).as_posix(),
+                    "origem": item.origem,
+                    "sha256": hashlib.sha256(conteudo_bytes).hexdigest(),
                     "paginas": None,
                     "estado": estado,
                 }
@@ -406,6 +573,13 @@ def verificar(
             if dest.read_bytes() != esperado:
                 falhas.append(f"{item.destino}: conteúdo divergente do texto gerado esperado")
 
+        elif item.tipo == "concatenacao":
+            origens_ok = all((raiz / o).is_file() for o in item.origem.split(";"))
+            if not origens_ok:
+                falhas.append(f"{item.destino}: alguma origem ausente ({item.origem})")
+            elif dest.read_bytes() != _texto_concatenado(raiz, item):
+                falhas.append(f"{item.destino}: conteúdo divergente das origens concatenadas")
+
         elif item.tipo == "pdf":
             orig = raiz / item.origem
             if not orig.is_file():
@@ -462,7 +636,7 @@ def main(argumentos: list[str] | None = None, itens: list[ItemEntrega] | None = 
         dados = dados.resolve()
 
     if itens is None:
-        itens = itens_padrao()
+        itens = itens_padrao() + itens_codigo()
 
     if opcoes.verificar:
         return verificar(raiz=raiz, dados=dados, itens=itens, sem_pdf=opcoes.sem_pdf)

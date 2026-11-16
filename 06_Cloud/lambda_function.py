@@ -1,261 +1,403 @@
-"""
-CitizenTech - Sprint 4
-API Serverless de ingestao de ocorrencias urbanas/rurais.
+"""Handler principal da funcao Lambda de ingestao de ocorrencias (Function URL)."""
 
-A mesma funcao Lambda da Sprint 3 passa a:
-  1. receber dados enviados por dispositivos de campo (ESP32 / drone / app do cidadao);
-  2. registrar no CloudWatch tudo o que chega (o "log das informacoes chegando");
-  3. classificar o nivel de risco da leitura;
-  4. classificar o relato em texto com um modelo de IA (Hugging Face, opcional);
-  5. gravar o resultado no RDS PostgreSQL.
-
-Rotas (Function URL):
-  GET  /health       -> status da funcao e do banco
-  POST /ocorrencias  -> recebe a leitura do dispositivo, classifica e grava
-  GET  /ocorrencias  -> lista as ultimas ocorrencias gravadas
-  GET  /locais       -> rota de consulta da Sprint 3 (mantida)
-
-Variaveis de ambiente:
-  DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD   (RDS da Sprint 3)
-  HF_TOKEN      token gratuito do tipo Read da Hugging Face (opcional)
-  HF_MODEL      default: cardiffnlp/twitter-xlm-roberta-base-sentiment
-  HF_API_URL    default: https://router.huggingface.co/hf-inference/models
-"""
-
+import base64
+import hmac
 import json
 import logging
+import math
 import os
-import urllib.error
-import urllib.request
-from datetime import datetime, timezone
+import urllib.parse
+from datetime import datetime
 
-# Driver do PostgreSQL: o mesmo que ja foi empacotado na Sprint 3.
-# pg8000 e Python puro (pip install pg8000 -t .) e nao exige compilacao.
-# Se a sua Sprint 3 usa psycopg2, troque apenas esta linha por:
-#   import psycopg2 as driver     e use dbname= no lugar de database=
-import pg8000 as driver
+from citizentech_cloud import banco, risco, sentimento
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-HF_MODEL = os.environ.get("HF_MODEL", "cardiffnlp/twitter-xlm-roberta-base-sentiment")
-HF_API_URL = os.environ.get("HF_API_URL", "https://router.huggingface.co/hf-inference/models")
-HF_TOKEN = os.environ.get("HF_TOKEN")
-
-# Limiares por metrica: valor acima de "critico" dispara alerta ao cidadao.
-LIMIARES = {
-    "nivel_rio_cm": {"atencao": 150.0, "critico": 250.0},
-    "chuva_mm_h": {"atencao": 20.0, "critico": 50.0},
-    "fumaca_ppm": {"atencao": 300.0, "critico": 600.0},
-    "temperatura_c": {"atencao": 35.0, "critico": 40.0},
-    "umidade_solo_pct": {"atencao": 20.0, "critico": 10.0},  # quanto MENOR, pior
-}
-
-INVERTIDAS = {"umidade_solo_pct"}
+logger = logging.getLogger("citizentech_cloud.lambda_function")
+# O runtime Python da AWS deixa a raiz em WARNING; o enunciado exige as linhas INFO no CloudWatch.
+logging.getLogger("citizentech_cloud").setLevel(
+    os.environ.get("CITIZENTECH_LOG_LEVEL", "INFO").upper()
+)
 
 
-# ---------------------------------------------------------------- banco
-def conectar():
-    return driver.connect(
-        host=os.environ["DB_HOST"],
-        port=int(os.environ.get("DB_PORT", 5432)),
-        database=os.environ["DB_NAME"],
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-    )
-
-
-def gravar_ocorrencia(dados):
-    sql = """
-        INSERT INTO ocorrencias
-            (dispositivo_id, tipo_dispositivo, latitude, longitude,
-             metrica, valor, relato, sentimento, confianca, nivel_risco, medido_em)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        RETURNING id, criado_em
-    """
-    conn = conectar()
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, (
-            dados["dispositivo_id"], dados["tipo_dispositivo"],
-            dados["latitude"], dados["longitude"],
-            dados["metrica"], dados["valor"], dados["relato"],
-            dados["sentimento"], dados["confianca"],
-            dados["nivel_risco"], dados["medido_em"],
-        ))
-        novo_id, criado_em = cur.fetchone()
-        conn.commit()
-        return novo_id, criado_em
-    finally:
-        conn.close()
-
-
-def listar_ocorrencias(limite=20):
-    conn = conectar()
-    try:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT id, dispositivo_id, tipo_dispositivo, metrica, valor,
-                   nivel_risco, sentimento, confianca, relato, criado_em
-              FROM ocorrencias
-             ORDER BY id DESC
-             LIMIT %s
-        """, (limite,))
-        colunas = ["id", "dispositivo_id", "tipo_dispositivo", "metrica", "valor",
-                   "nivel_risco", "sentimento", "confianca", "relato", "criado_em"]
-        return [dict(zip(colunas, linha)) for linha in cur.fetchall()]
-    finally:
-        conn.close()
-
-
-# ------------------------------------------------------- classificacoes
-def classificar_risco(metrica, valor):
-    """Regra de limiar: nao depende de rede nem de token. Sempre executa."""
-    faixa = LIMIARES.get(metrica)
-    if faixa is None or valor is None:
-        return "desconhecido"
-    if metrica in INVERTIDAS:
-        if valor <= faixa["critico"]:
-            return "critico"
-        if valor <= faixa["atencao"]:
-            return "atencao"
-        return "normal"
-    if valor >= faixa["critico"]:
-        return "critico"
-    if valor >= faixa["atencao"]:
-        return "atencao"
-    return "normal"
-
-
-def analisar_relato(texto):
-    """
-    Caminho A - Hugging Face.
-    Manda o relato do cidadao para o modelo de sentimento e devolve
-    (rotulo, confianca). Usa apenas urllib: nenhuma biblioteca nova no pacote.
-    """
-    if not texto or not HF_TOKEN:
-        return None, None
-
-    url = f"{HF_API_URL}/{HF_MODEL}"
-    corpo = json.dumps({"inputs": texto}).encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=corpo,
-        headers={
-            "Authorization": f"Bearer {HF_TOKEN}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            saida = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as erro:
-        logger.warning("Hugging Face respondeu %s: %s", erro.code, erro.read()[:200])
-        return None, None
-    except Exception as erro:  # timeout, DNS, etc.
-        logger.warning("Falha ao chamar a Hugging Face: %s", erro)
-        return None, None
-
-    # A resposta vem como [[{"label": "...", "score": 0.97}, ...]]
-    lista = saida[0] if saida and isinstance(saida[0], list) else saida
-    melhor = max(lista, key=lambda item: item["score"])
-    return melhor["label"], round(float(melhor["score"]), 4)
-
-
-# --------------------------------------------------------------- rotas
-def rota_ingestao(evento):
-    bruto = evento.get("body") or "{}"
-    logger.info("PAYLOAD RECEBIDO: %s", bruto)
-
-    try:
-        payload = json.loads(bruto)
-    except json.JSONDecodeError:
-        return resposta(400, {"erro": "corpo nao e um JSON valido"})
-
-    obrigatorios = ["dispositivo_id", "metrica", "valor"]
-    faltando = [c for c in obrigatorios if payload.get(c) is None]
-    if faltando:
-        logger.warning("LEITURA DESCARTADA - campos ausentes: %s", faltando)
-        return resposta(400, {"erro": "campos obrigatorios ausentes", "campos": faltando})
-
-    dados = {
-        "dispositivo_id": payload["dispositivo_id"],
-        "tipo_dispositivo": payload.get("tipo_dispositivo", "desconhecido"),
-        "latitude": payload.get("latitude"),
-        "longitude": payload.get("longitude"),
-        "metrica": payload["metrica"],
-        "valor": float(payload["valor"]),
-        "relato": payload.get("relato"),
-        "medido_em": payload.get("medido_em") or datetime.now(timezone.utc).isoformat(),
-    }
-
-    logger.info(
-        "DISPOSITIVO=%s TIPO=%s GPS=(%s, %s) %s=%s",
-        dados["dispositivo_id"], dados["tipo_dispositivo"],
-        dados["latitude"], dados["longitude"],
-        dados["metrica"], dados["valor"],
-    )
-
-    dados["nivel_risco"] = classificar_risco(dados["metrica"], dados["valor"])
-    dados["sentimento"], dados["confianca"] = analisar_relato(dados["relato"])
-
-    logger.info(
-        "CLASSIFICACAO risco=%s sentimento=%s confianca=%s",
-        dados["nivel_risco"], dados["sentimento"], dados["confianca"],
-    )
-    if dados["nivel_risco"] == "critico":
-        logger.warning(
-            "ALERTA CIDADAO: %s em %s atingiu %s (%s)",
-            dados["metrica"], dados["dispositivo_id"],
-            dados["valor"], dados["nivel_risco"],
-        )
-
-    novo_id, criado_em = gravar_ocorrencia(dados)
-    logger.info("GRAVADO NO RDS id=%s em %s", novo_id, criado_em)
-
-    return resposta(201, {
-        "id": novo_id,
-        "dispositivo_id": dados["dispositivo_id"],
-        "metrica": dados["metrica"],
-        "valor": dados["valor"],
-        "nivel_risco": dados["nivel_risco"],
-        "sentimento": dados["sentimento"],
-        "confianca": dados["confianca"],
-        "alerta": dados["nivel_risco"] == "critico",
-    })
-
-
-def resposta(status, corpo):
+def _resposta(status: int, corpo: dict) -> dict:
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(corpo, default=str, ensure_ascii=False),
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": json.dumps(corpo, ensure_ascii=False),
     }
 
 
-def lambda_handler(evento, contexto):
-    metodo = (evento.get("requestContext", {})
-                    .get("http", {})
-                    .get("method", "GET")).upper()
-    caminho = evento.get("rawPath", "/")
+def lambda_handler(evento: dict, contexto=None) -> dict:
+    """Handler da AWS Lambda Function URL."""
+    # 1. Determina rota e metodo HTTP
+    http_ctx = (evento.get("requestContext") or {}).get("http") or {}
+    rota = evento.get("rawPath") or http_ctx.get("path") or evento.get("path") or ""
+    metodo = (http_ctx.get("method") or evento.get("httpMethod") or "GET").upper()
 
-    logger.info("REQUISICAO %s %s", metodo, caminho)
+    logger.info("REQUISICAO %s %s", metodo, rota)
+
+    # Normalizacao de barra final (/ocorrencias/ == /ocorrencias, /health/ == /health)
+    rota_normalizada = rota.rstrip("/") if rota != "/" else "/"
+
+    # 2. Rota de Health Check
+    if rota_normalizada == "/health":
+        if metodo != "GET":
+            return _resposta(
+                405, {"erro": "Metodo nao permitido", "detalhes": "Apenas GET em /health"}
+            )
+        banco_status = "ok" if banco.testar_conexao() else "indisponivel"
+        ia_provedor = os.environ.get("SENTIMENTO_PROVEDOR", "comprehend")
+        return _resposta(200, {
+            "status": "ok",
+            "banco": banco_status,
+            "ia_provedor": ia_provedor,
+        })
+
+    # 3. Rota de Ocorrencias
+    if rota_normalizada == "/ocorrencias":
+        if metodo == "GET":
+            return _tratar_get_ocorrencias(evento)
+        if metodo == "POST":
+            return _tratar_post_ocorrencias(evento)
+        return _resposta(405, {
+            "erro": "Metodo nao permitido",
+            "detalhes": "Apenas GET e POST em /ocorrencias",
+        })
+
+    return _resposta(404, {"erro": "Nao encontrado", "detalhes": f"Rota '{rota}' inexistente"})
+
+
+def _tratar_get_ocorrencias(evento: dict) -> dict:
+    """Processa GET /ocorrencias?limite=N."""
+    params = evento.get("queryStringParameters") or {}
+    limite_str = params.get("limite")
+
+    if not limite_str and "rawQueryString" in evento:
+        qs = urllib.parse.parse_qs(evento["rawQueryString"])
+        limite_str = qs.get("limite", [None])[0]
+
+    limite = 20
+    if limite_str is not None:
+        try:
+            limite = int(limite_str)
+            if limite < 1 or limite > 100:
+                return _resposta(400, {
+                    "erro": "Parametro invalido",
+                    "detalhes": "limite deve ser um inteiro entre 1 e 100",
+                })
+        except (ValueError, TypeError):
+            return _resposta(400, {
+                "erro": "Parametro invalido",
+                "detalhes": "limite deve ser um inteiro entre 1 e 100",
+            })
 
     try:
-        if caminho == "/health":
-            return resposta(200, {"status": "ok", "modelo": HF_MODEL,
-                                  "ia_ativa": bool(HF_TOKEN)})
+        itens = banco.listar_ocorrencias(limite=limite)
+        return _resposta(200, {"ocorrencias": itens})
+    except Exception as e:
+        logger.error("Erro ao listar ocorrencias: %s", type(e).__name__)
+        return _resposta(503, {
+            "erro": "Banco indisponivel",
+            "detalhes": "Falha ao consultar ocorrencias no banco",
+        })
 
-        if caminho == "/ocorrencias" and metodo == "POST":
-            return rota_ingestao(evento)
 
-        if caminho == "/ocorrencias" and metodo == "GET":
-            return resposta(200, {"ocorrencias": listar_ocorrencias()})
+def _tratar_post_ocorrencias(evento: dict) -> dict:
+    """Processa POST /ocorrencias."""
+    # Obter e decodificar corpo bruto
+    corpo_bruto = evento.get("body")
+    if evento.get("isBase64Encoded") and corpo_bruto:
+        try:
+            corpo_bruto = base64.b64decode(corpo_bruto).decode("utf-8")
+        except Exception:
+            logger.warning("LEITURA DESCARTADA - erro na decodificacao base64")
+            return _resposta(
+                400, {"erro": "Corpo invalido", "detalhes": "Falha ao decodificar base64"}
+            )
 
-        return resposta(404, {"erro": "rota nao encontrada", "caminho": caminho})
+    if corpo_bruto is None:
+        corpo_str = ""
+    elif isinstance(corpo_bruto, str):
+        corpo_str = corpo_bruto
+    else:
+        corpo_str = json.dumps(corpo_bruto)
 
-    except Exception as erro:
-        logger.exception("ERRO NAO TRATADO")
-        return resposta(500, {"erro": str(erro)})
+    logger.info("PAYLOAD RECEBIDO: %s", corpo_str[:2000])
+
+    # Limite maximo de 8 KB
+    if len(corpo_str.encode("utf-8")) > 8192:
+        logger.warning("LEITURA DESCARTADA - payload excede 8 KB")
+        return _resposta(400, {"erro": "Payload muito grande", "detalhes": "Corpo excede 8 KB"})
+
+    # Parse JSON
+    try:
+        dados = json.loads(corpo_str)
+    except Exception as e:
+        logger.warning("LEITURA DESCARTADA - JSON malformado")
+        return _resposta(400, {"erro": "JSON malformado", "detalhes": str(e)})
+
+    if not isinstance(dados, dict):
+        logger.warning("LEITURA DESCARTADA - corpo deve ser um objeto JSON")
+        return _resposta(400, {"erro": "Corpo invalido", "detalhes": "Esperado objeto JSON"})
+
+    # Validacao de campos obrigatorios
+    for campo in ("dispositivo_id", "metrica", "valor"):
+        if campo not in dados or dados[campo] is None:
+            logger.warning("LEITURA DESCARTADA - campo obrigatorio ausente: %s", campo)
+            return _resposta(400, {
+                "erro": "Campo obrigatorio ausente",
+                "detalhes": f"Campo '{campo}' e obrigatorio e nao pode ser nulo",
+            })
+
+    disp_id = dados["dispositivo_id"]
+    if not isinstance(disp_id, str) or not (1 <= len(disp_id) <= 64):
+        logger.warning("LEITURA DESCARTADA - dispositivo_id deve ter entre 1 e 64 caracteres")
+        return _resposta(400, {
+            "erro": "dispositivo_id invalido",
+            "detalhes": "dispositivo_id deve ser string com 1 a 64 caracteres",
+        })
+
+    # Validacao de valor
+    valor = dados["valor"]
+    if isinstance(valor, bool):
+        logger.warning("LEITURA DESCARTADA - valor nao pode ser booleano")
+        return _resposta(400, {"erro": "Valor invalido", "detalhes": "valor nao pode ser booleano"})
+
+    if not isinstance(valor, (int, float)):
+        logger.warning("LEITURA DESCARTADA - valor deve ser numerico")
+        return _resposta(400, {"erro": "Valor invalido", "detalhes": "valor deve ser int ou float"})
+
+    try:
+        valor_float = float(valor)
+        if not math.isfinite(valor_float) or valor_float < -1e6 or valor_float > 1e6:
+            logger.warning("LEITURA DESCARTADA - valor fora da faixa [-1e6, 1e6] ou nao-finito")
+            return _resposta(400, {
+                "erro": "Valor invalido",
+                "detalhes": "valor deve estar entre -1e6 e 1e6 e ser finito",
+            })
+    except (ValueError, OverflowError):
+        logger.warning("LEITURA DESCARTADA - valor numerico invalido")
+        return _resposta(400, {"erro": "Valor invalido", "detalhes": "valor numerico invalido"})
+
+    # Validacao de coordenadas
+    lat = dados.get("latitude")
+    if lat is not None:
+        lat_invalida = (
+            isinstance(lat, bool)
+            or not isinstance(lat, (int, float))
+            or not (-90.0 <= float(lat) <= 90.0)
+        )
+        if lat_invalida:
+            logger.warning("LEITURA DESCARTADA - latitude fora de [-90, 90]")
+            return _resposta(
+                400,
+                {"erro": "Latitude invalida", "detalhes": "latitude deve estar entre -90 e 90"},
+            )
+        lat = float(lat)
+
+    lon = dados.get("longitude")
+    if lon is not None:
+        lon_invalida = (
+            isinstance(lon, bool)
+            or not isinstance(lon, (int, float))
+            or not (-180.0 <= float(lon) <= 180.0)
+        )
+        if lon_invalida:
+            logger.warning("LEITURA DESCARTADA - longitude fora de [-180, 180]")
+            return _resposta(
+                400,
+                {"erro": "Longitude invalida", "detalhes": "longitude deve estar entre -180 e 180"},
+            )
+        lon = float(lon)
+
+    # Validacao de relato
+    relato = dados.get("relato")
+    if relato is not None:
+        if not isinstance(relato, str) or len(relato) > 280:
+            logger.warning("LEITURA DESCARTADA - relato deve ser string de ate 280 caracteres")
+            return _resposta(400, {
+                "erro": "Relato invalido",
+                "detalhes": "relato deve ser string com no maximo 280 caracteres",
+            })
+
+    # Validacao de evento_id
+    evento_id = dados.get("evento_id")
+    if evento_id is not None:
+        if not isinstance(evento_id, str) or not (1 <= len(evento_id) <= 64):
+            logger.warning("LEITURA DESCARTADA - evento_id deve ser string de 1 a 64 caracteres")
+            return _resposta(400, {
+                "erro": "evento_id invalido",
+                "detalhes": "evento_id deve ser string com 1 a 64 caracteres",
+            })
+
+    # Campos textuais: tipo e tamanho (evita 201 com lixo e 503 por erro do banco)
+    for campo, maximo, obrigatorio in (
+        ("metrica", 64, True),
+        ("tipo_dispositivo", 32, False),
+        ("unidade", 16, False),
+        ("sessao_laboratorio_id", 64, False),
+        ("ciclo_id", 64, False),
+    ):
+        texto = dados.get(campo)
+        if texto is None and not obrigatorio:
+            continue
+        if not isinstance(texto, str) or not (1 <= len(texto) <= maximo):
+            logger.warning("LEITURA DESCARTADA - %s invalido", campo)
+            return _resposta(400, {
+                "erro": f"{campo} invalido",
+                "detalhes": f"{campo} deve ser string com 1 a {maximo} caracteres",
+            })
+
+    medido_em = dados.get("medido_em")
+    if medido_em is not None:
+        try:
+            if not isinstance(medido_em, str):
+                raise ValueError
+            instante = datetime.fromisoformat(medido_em.replace("Z", "+00:00"))
+            if instante.tzinfo is None:
+                raise ValueError
+        except ValueError:
+            logger.warning("LEITURA DESCARTADA - medido_em invalido")
+            return _resposta(400, {
+                "erro": "medido_em invalido",
+                "detalhes": "medido_em deve ser data ISO-8601 com fuso horario",
+            })
+
+    # Autenticacao via header X-Device-Key (D09a)
+    headers = {k.lower(): v for k, v in (evento.get("headers") or {}).items()}
+    chave_enviada = headers.get("x-device-key")
+    chave_esperada = os.environ.get("DEVICE_KEY")
+
+    if chave_enviada is None:
+        autenticado = False
+        logger.info("DISPOSITIVO=%s nao autenticado", disp_id)
+    else:
+        if not chave_esperada or not hmac.compare_digest(chave_enviada, chave_esperada):
+            logger.warning("CHAVE INVALIDA dispositivo=%s", disp_id)
+            return _resposta(401, {
+                "erro": "Nao autorizado",
+                "detalhes": "Chave de dispositivo invalida",
+            })
+        autenticado = True
+
+    # Classificacao de risco
+    metrica = dados["metrica"]
+    try:
+        nivel_risco = risco.classificar_risco(metrica, valor_float)
+    except risco.ValorInvalido as e:
+        logger.warning("LEITURA DESCARTADA - %s", str(e))
+        return _resposta(400, {"erro": "Valor invalido", "detalhes": str(e)})
+    except (risco.MetricaDesconhecida, Exception):
+        logger.warning("metrica sem limiar: %s", metrica)
+        nivel_risco = "desconhecido"
+
+    alerta = (nivel_risco == "critico")
+
+    # Registro de divergencia se outbox enviou risco
+    risco_enviado = dados.get("risco")
+    if risco_enviado and risco_enviado != nivel_risco:
+        logger.info(
+            "Risco recebido ('%s') diverge do calculado localmente ('%s')",
+            risco_enviado,
+            nivel_risco,
+        )
+
+    tipo_disp = dados.get("tipo_dispositivo") or "desconhecido"
+    logger.info(
+        "DISPOSITIVO=%s TIPO=%s GPS=(%s, %s) %s=%s AUTENTICADO=%s",
+        disp_id,
+        tipo_disp,
+        lat,
+        lon,
+        metrica,
+        valor_float,
+        "true" if autenticado else "false",
+    )
+
+    # Analise de sentimento do relato
+    ia_res = sentimento.analisar_relato(relato)
+    sentimento_rotulo = ia_res.get("sentimento")
+    confianca = ia_res.get("confianca")
+    analise_status = ia_res.get("analise_status")
+
+    logger.info(
+        "CLASSIFICACAO risco=%s sentimento=%s confianca=%s analise=%s",
+        nivel_risco,
+        sentimento_rotulo,
+        confianca,
+        analise_status,
+    )
+
+    if alerta:
+        logger.warning(
+            "ALERTA CIDADAO: dispositivo %s em nivel critico (%s=%s)",
+            disp_id,
+            metrica,
+            valor_float,
+        )
+
+    # Persistencia no RDS PostgreSQL
+    dados_banco = {
+        "dispositivo_id": disp_id,
+        "tipo_dispositivo": tipo_disp,
+        "latitude": lat,
+        "longitude": lon,
+        "metrica": metrica,
+        "valor": valor_float,
+        "relato": relato,
+        "sentimento": sentimento_rotulo,
+        "confianca": confianca,
+        "nivel_risco": nivel_risco,
+        "medido_em": dados.get("medido_em"),
+        "evento_id": evento_id,
+        "autenticado": autenticado,
+        "unidade": dados.get("unidade"),
+        "sessao_laboratorio_id": dados.get("sessao_laboratorio_id"),
+        "ciclo_id": dados.get("ciclo_id"),
+        "alerta": alerta,
+        "analise_status": analise_status,
+    }
+
+    try:
+        resultado = banco.inserir_ocorrencia(dados_banco)
+    except banco.LimiteExcedidoError:
+        logger.warning("LIMITE EXCEDIDO dispositivo=%s", disp_id)
+        return _resposta(429, {
+            "erro": "Limite excedido",
+            "detalhes": "Maximo de requisicoes por minuto excedido",
+        })
+    except banco.ConflitoEventoError:
+        return _resposta(409, {
+            "erro": "Conflito de evento",
+            "detalhes": "evento_id ja registrado com conteudo diferente",
+        })
+    except banco.BancoIndisponivelError:
+        return _resposta(503, {
+            "erro": "Banco indisponivel",
+            "detalhes": "Falha ao registrar ocorrencia no banco",
+        })
+
+    id_gravado = resultado["id"]
+    logger.info("GRAVADO NO RDS id=%s", id_gravado)
+
+    corpo_resposta = {
+        "id": id_gravado,
+        "evento_id": evento_id,
+        "dispositivo_id": disp_id,
+        "metrica": metrica,
+        "valor": valor_float,
+        "nivel_risco": nivel_risco,
+        "alerta": alerta,
+        "autenticado": autenticado,
+        "sentimento": sentimento_rotulo,
+        "confianca": confianca,
+        "analise_status": analise_status,
+    }
+
+    if resultado.get("duplicata"):
+        corpo_resposta["duplicata"] = True
+        return _resposta(200, corpo_resposta)
+
+    return _resposta(201, corpo_resposta)

@@ -1,48 +1,49 @@
-// GS 2026.2 - Data Science - MongoDB (mongosh)
-// Dados semiestruturados: payload bruto vindo dos dispositivos e relatos livres dos cidadãos.
-// Executar: mongosh < mongodb.js
-// TODO: ajustar coleções/campos à ideia e justificar a divisão Oracle x MongoDB no relatorio.md.
+// CitizenTech: consultas de evidência (Data Science) — MongoDB (mongosh)
+// Banco: MongoDB Atlas do projeto (nome em MONGODB_DB). Execução sem expor a URI:
+//   docker cp evidencias_mongo.js citizentech-mongo-1:/tmp/e.js; docker exec -e MONGODB_URI -e MONGODB_DB citizentech-mongo-1 sh -c 'mongosh "$MONGODB_URI" --quiet --file /tmp/e.js'
+// Nenhuma consulta devolve texto de currículo ou de resposta: só metadados, contagens e hashes.
 
-use("citizentech");
+const banco = db.getSiblingDB(process.env.MONGODB_DB);
+const mostrar = (titulo, valor) => { print(`\n== ${titulo}`); printjson(valor); };
 
-// ------------------------------------------------------------ documentos
-db.leituras_brutas.insertMany([
-  {
-    dispositivo_id: "esp32-01", tipo_dispositivo: "esp32",
-    localizacao: { type: "Point", coordinates: [0.0, 0.0] },   // [longitude, latitude]
-    metrica: "TODO_metrica_1", valor: 75.0, status: "ALERTA",
-    payload_original: { /* JSON exatamente como chegou */ },
-    recebido_em: new Date()
-  }
-]);
+// M1. Coleções e quantidade de documentos
+mostrar("M1. Documentos por coleção",
+  banco.getCollectionNames().sort().map((n) => ({colecao: n, documentos: banco.getCollection(n).countDocuments({})})));
 
-db.relatos.insertMany([
-  {
-    cidadao_id: 1,                                   // id_cidadao no Oracle
-    texto: "TODO relato do cidadão",
-    analise_ia: { rotulo: "negative", confianca: 0.91 },
-    anexos: [{ tipo: "foto", url: "TODO" }],
-    tags: ["TODO"],
-    criado_em: new Date()
-  }
-]);
+// M2. Currículos redigidos por origem e status (sem o texto)
+mostrar("M2. curriculos_redigidos por origem e status", banco.curriculos_redigidos.aggregate([
+  {$group: {_id: {origem: "$origem", status: "$status"}, total: {$sum: 1},
+            emails_redigidos: {$sum: "$redacoes.email"}, telefones_redigidos: {$sum: "$redacoes.telefone"}}},
+  {$sort: {"_id.origem": 1, "_id.status": 1}},
+]).toArray());
 
-db.leituras_brutas.createIndex({ localizacao: "2dsphere" });
-db.leituras_brutas.createIndex({ dispositivo_id: 1, recebido_em: -1 });
+// M3. Extrações de competências pela LLM: modelo usado, candidatas e descartes (sem resposta bruta)
+mostrar("M3. extracoes_llm por modelo", banco.extracoes_llm.aggregate([
+  {$group: {_id: "$modelo", extracoes: {$sum: 1}, media_candidatas: {$avg: "$contagem_candidatas"},
+            fora_da_lista: {$sum: "$descartadas.fora_da_lista"}, sem_trecho: {$sum: "$descartadas.sem_trecho"},
+            trecho_nao_encontrado: {$sum: "$descartadas.trecho_nao_encontrado"}}},
+  {$sort: {extracoes: -1}},
+]).toArray());
 
-// ------------------------------------------------------------ consultas
-// 1) últimas leituras em alerta
-db.leituras_brutas.find({ status: "ALERTA" }).sort({ recebido_em: -1 }).limit(10);
+// M4. Model cards dos modelos de mercado (procedência e promoção)
+mostrar("M4. model_cards", banco.model_cards.find({},
+  {_id: 0, modelo: 1, tipo: 1, status_promocao: 1, periodo_treino: 1, periodo_validacao: 1, seed: 1,
+   "versoes.sklearn": 1, sha256_artefatos: 1}).sort({modelo: 1}).toArray());
 
-// 2) média e pico por métrica (agregação)
-db.leituras_brutas.aggregate([
-  { $group: { _id: "$metrica", media: { $avg: "$valor" }, pico: { $max: "$valor" }, total: { $sum: 1 } } }
-]);
+// M5. Avaliações da resposta aberta em cache: nível médio por critério da rubrica
+mostrar("M5. avaliacoes_llm: nível médio por critério", banco.avaliacoes_llm.aggregate([
+  {$unwind: "$criterios"},
+  {$group: {_id: {exercicio: "$exercicio_id", criterio: "$criterios.id"}, avaliacoes: {$sum: 1},
+            nivel_medio: {$avg: "$criterios.nivel"}}},
+  {$sort: {"_id.exercicio": 1, "_id.criterio": 1}},
+]).toArray());
 
-// 3) relatos classificados pela IA como negativos
-db.relatos.find({ "analise_ia.rotulo": "negative" }, { texto: 1, "analise_ia": 1, _id: 0 });
+// M6. Respostas abertas guardadas (redigidas): quantidade por pessoa, sem o texto
+mostrar("M6. respostas_abertas por usuário", banco.respostas_abertas.aggregate([
+  {$group: {_id: "$usuario_id", respostas: {$sum: 1}, ultima: {$max: "$criado_em"}}},
+  {$sort: {respostas: -1}}, {$limit: 10},
+]).toArray());
 
-// 4) leituras num raio de 2 km de um ponto
-db.leituras_brutas.find({
-  localizacao: { $near: { $geometry: { type: "Point", coordinates: [0.0, 0.0] }, $maxDistance: 2000 } }
-});
+// M7. Índices existentes (desempenho e unicidade)
+mostrar("M7. Índices por coleção", banco.getCollectionNames().sort().map((n) => ({
+  colecao: n, indices: banco.getCollection(n).getIndexes().map((i) => i.name)})));

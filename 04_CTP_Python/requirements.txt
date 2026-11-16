@@ -1,1 +1,8 @@
-flask
+# API de leituras CitizenTech em modo isolado (cópia em codigo/).
+# Executar a partir de 04_CTP_Python/codigo com:
+#   $env:CITIZENTECH_LIMIARES = "$PWD\config\limiares.json"; $env:DEVICE_KEY = '<chave>'
+#   python -m uvicorn citizentech.leituras.isolado:app --port 8001
+fastapi>=0.115,<1
+uvicorn[standard]>=0.32,<1
+httpx>=0.27,<1
+portalocker>=4.4.2

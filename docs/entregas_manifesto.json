@@ -1,54 +1,306 @@
 {
-  "gerado_em": "2026-11-16T13:39:02Z",
+  "gerado_em": "2026-11-16T22:11:52Z",
   "itens": [
+    {
+      "destino": "01_AICSS/firmware/README.md",
+      "origem": "app/iot/firmware/README.md",
+      "sha256": "095a64a9dea1f5b0f528ef72eb3f52fa48e7226b5c726eb4e8211a7ef12bc062",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/diagram.json",
+      "origem": "app/iot/firmware/diagram.json",
+      "sha256": "76d3cd83de3d3d5a313e43d30af8301ea8b81707006df7f79b2b3fc80bdbe704",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/libraries.txt",
+      "origem": "app/iot/firmware/libraries.txt",
+      "sha256": "93b975220dfb028ebd38051ab0a441ef8527fc1431bfc593faac41b9520fead9",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/limiares.h",
+      "origem": "app/iot/firmware/limiares.h",
+      "sha256": "b9a852b39c2e881bd5c4070ba6d160c4dcb3e263827645e8f4e39d0184d08a40",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/logica.h",
+      "origem": "app/iot/firmware/logica.h",
+      "sha256": "919d2f76dbffe603fc881eedbd4935cb53528d847e9e9f2a67bf835b707fa3f5",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/segredos.exemplo.h",
+      "origem": "app/iot/firmware/segredos.exemplo.h",
+      "sha256": "2bd2ab6b2c54544edbcb11c317a817e0428d11d5f940fd1b8c66a49b0860b226",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/sketch.ino",
+      "origem": "app/iot/firmware/sketch.ino",
+      "sha256": "ea37bd25d01bbe3144af83c589c316f2eef16cbe65d950f7fd9467de504414a7",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "01_AICSS/firmware/teste_logica.cpp",
+      "origem": "app/iot/firmware/teste_logica.cpp",
+      "sha256": "c6164db4037077d75206c93b7ae603f556a675bbdc62324e02330e136ffbd489",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "03_DataScience/mongodb.js",
+      "origem": "app/db/mongo/evidencias_mongo.js",
+      "sha256": "240ecec254b9b06f9383e90c1edb5ab9a70781400c7e3cbcab52163a3e859267",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "03_DataScience/oracle.sql",
+      "origem": "app/db/ddl/001_usuario_consentimento.sql;app/db/ddl/002_competencias.sql;app/db/ddl/003_intencao_comparacao.sql;app/db/ddl/004_avaliacao.sql;app/db/ddl/005_plano.sql;app/db/ddl/006_laboratorio.sql;app/db/ddl/007_catalogo.sql;app/db/consultas/evidencias_oracle.sql",
+      "sha256": "170a495e0b84b2b7d2c0fc1a9cb75ba6c175ed5907b72c50f4f848f1a7c632e0",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/__init__.py",
+      "origem": "app/api/src/citizentech/__init__.py",
+      "sha256": "3cd01c6df7ff65793e8e0a056e2b47a22f414d9ea2794b5a880b287fc1413370",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/erros.py",
+      "origem": "app/api/src/citizentech/erros.py",
+      "sha256": "944aff790fa1927cbc3204ecb5d4dff96ce1c663f1d44cb7532f13eca480448d",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/__init__.py",
+      "origem": "app/api/src/citizentech/leituras/__init__.py",
+      "sha256": "f64d7e750ddd2c2f2a848bf4a7eb7fe521f10262ea0487d4d5ad576d2a736640",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/esquemas.py",
+      "origem": "app/api/src/citizentech/leituras/esquemas.py",
+      "sha256": "e35455c63559dc878803401d917c4d28a679a6ee17752da890a786cf618b0bb4",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/isolado.py",
+      "origem": "app/api/src/citizentech/leituras/isolado.py",
+      "sha256": "f02ea541a9c36dcf8788434f5bd81f9a9eb182d14a3faf2f7e4b8812dcbe1a8d",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/limitador.py",
+      "origem": "app/api/src/citizentech/leituras/limitador.py",
+      "sha256": "256fa3ab04c774370e826d643abe9f3e374c7b918851f86a8b386df64c745a5b",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/repositorio.py",
+      "origem": "app/api/src/citizentech/leituras/repositorio.py",
+      "sha256": "dded5703d8b3b8b7eaaf34aa765e54157c2ac2383e346b0068f754fa8df2c502",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/rotas.py",
+      "origem": "app/api/src/citizentech/leituras/rotas.py",
+      "sha256": "09b556b0b8934610007aa40b1730d086558d3cac930185045e31c58105fbed0b",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/seguranca.py",
+      "origem": "app/api/src/citizentech/leituras/seguranca.py",
+      "sha256": "65835aca49c8a40614937c6c12c8254872ad229187e5b72e5cf9ad2455aa58ec",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/limiares.py",
+      "origem": "app/api/src/citizentech/limiares.py",
+      "sha256": "ef97963c2ff0fc8196007ba94b43f09436b8061d98a35e5f9ac88b72a928ee78",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/outbox/__init__.py",
+      "origem": "app/api/src/citizentech/outbox/__init__.py",
+      "sha256": "5350d016d59eb6b6a5295818ab2d6c99c088b4c220a62cb4c0d36080dbb57627",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/outbox/banco.py",
+      "origem": "app/api/src/citizentech/outbox/banco.py",
+      "sha256": "a3371a3f2dc01ab5b3ba9553ee933a039f4bcfe592aba9fa2b8e4ef6c3b97fc9",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/outbox/canonicalizacao.py",
+      "origem": "app/api/src/citizentech/outbox/canonicalizacao.py",
+      "sha256": "e12ef4d5d1a2fa953f4e955835234ea2b97c8147a6e2aaacb14a3b25b4d7eca9",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/outbox/cliente.py",
+      "origem": "app/api/src/citizentech/outbox/cliente.py",
+      "sha256": "06f20eed4c9db040a84c18f1b5e337467e93da4380c2fc5251ed8dee6673085e",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/outbox/worker.py",
+      "origem": "app/api/src/citizentech/outbox/worker.py",
+      "sha256": "7691dc2a12c6f67530414b57b54c11355ce744e35fa0099dce00c305e3273026",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/config/limiares.json",
+      "origem": "app/config/limiares.json",
+      "sha256": "283065ebfc3a3511fcb39e1eb155133e943ee1968e7941511cb143828eab427e",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/requirements.txt",
+      "origem": "(declarado: dependências do modo isolado)",
+      "sha256": "b4e1a105bae22f05f802d7fc5a78e69f14fd409873d7cec106531e199d077132",
+      "paginas": null,
+      "estado": "atualizado"
+    },
     {
       "destino": "05_ML/notebook.ipynb",
       "origem": "app/ml/notebooks/ml_mercado.ipynb",
       "sha256": "4b1600307cf7c225a7d5f7722433f657cad2d46e2bdd80ba23002d117054ce91",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
-      "destino": "05_ML/slides.pdf",
-      "origem": "05_ML/slides.md",
-      "sha256": "7f3a96c56741610dbb867a150f40206b1f70b0d3c0199898a4a346c31f5c7f4e",
-      "paginas": 12,
-      "estado": "criado"
+      "destino": "06_Cloud/codigo/citizentech_cloud/__init__.py",
+      "origem": "app/cloud/src/citizentech_cloud/__init__.py",
+      "sha256": "7f70dc652f606bf9874ff937dd8cb8c745d4378f97826abe0ba2c0cf3345553a",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/banco.py",
+      "origem": "app/cloud/src/citizentech_cloud/banco.py",
+      "sha256": "00e5942f06f36360dd1c601657d18b8101986309edcb0f0d6a541d564518e5b5",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/lambda_function.py",
+      "origem": "app/cloud/src/citizentech_cloud/lambda_function.py",
+      "sha256": "05321dafa1c69165fbdb9a88385fdee21a7d9742ca21b87f4253ed5c05e1c1fa",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/limiares.json",
+      "origem": "app/config/limiares.json",
+      "sha256": "283065ebfc3a3511fcb39e1eb155133e943ee1968e7941511cb143828eab427e",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/risco.py",
+      "origem": "app/cloud/src/citizentech_cloud/risco.py",
+      "sha256": "105399585017af5b84408af157750fe3a7a917dd6abeb6a02a67f10c0525cd8e",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/sentimento.py",
+      "origem": "app/cloud/src/citizentech_cloud/sentimento.py",
+      "sha256": "645ae0f5444ff60f37059a19ea5db17477bd4bf997485ab37d0bdd7f8b6713c3",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/servidor_local.py",
+      "origem": "app/cloud/src/citizentech_cloud/servidor_local.py",
+      "sha256": "4b145fe91ae6c5353ef63ef69b9662e61c2e849c08d1711e01654c289ae357f9",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/codigo/citizentech_cloud/simulador.py",
+      "origem": "app/cloud/src/citizentech_cloud/simulador.py",
+      "sha256": "3f0a91a81e4658ded9921a31831989e17b57ffe5af9c2f6b6d4577b8d854598f",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/lambda_function.py",
+      "origem": "app/cloud/src/citizentech_cloud/lambda_function.py",
+      "sha256": "05321dafa1c69165fbdb9a88385fdee21a7d9742ca21b87f4253ed5c05e1c1fa",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/simulador_dispositivo.py",
+      "origem": "app/cloud/src/citizentech_cloud/simulador.py",
+      "sha256": "3f0a91a81e4658ded9921a31831989e17b57ffe5af9c2f6b6d4577b8d854598f",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "06_Cloud/tabela_ocorrencias.sql",
+      "origem": "app/cloud/sql/ocorrencias.sql",
+      "sha256": "7b96db430514e76e4f03fb6c95e793ed0ec3c9b999df6cb2f5b9bc5a7476597c",
+      "paginas": null,
+      "estado": "inalterado"
     },
     {
       "destino": "07_RedesNeurais/notebook.ipynb",
       "origem": "app/ml/notebooks/rna_mercado.ipynb",
       "sha256": "af80a380dd55b46bd5fe25d872ee0ac45c760bf839d9f0d06f91a541079c1dcf",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
       "destino": "08_Estatistica/analise.py",
       "origem": "app/ml/src/citizentech_ml/estatistica/analise_portatil.py",
       "sha256": "9adc6cb555d91b0b19f4969f7f76e8f7e6d9a750b38688649f608309a12bacc6",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
       "destino": "08_Estatistica/base_municipal.csv",
       "origem": "DADOS/estatistica/20261115_d11_aceite/base_municipal.csv",
       "sha256": "5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee",
       "paginas": null,
-      "estado": "criado"
-    },
-    {
-      "destino": "08_Estatistica/relatorio.pdf",
-      "origem": "08_Estatistica/relatorio.md",
-      "sha256": "9a6a7c9d6b9c353e463db8904fd8d7fa8dbc254ef4bce332cc0f0681b20ba174",
-      "paginas": 21,
-      "estado": "criado"
+      "estado": "inalterado"
     },
     {
       "destino": "08_Estatistica/requirements.txt",
       "origem": "(declarado)",
       "sha256": "0d384f3d5ef487878d9dedf78e5336bb0aaa8434f252dbcf38b043870f7e42ab",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     }
   ]
 }
