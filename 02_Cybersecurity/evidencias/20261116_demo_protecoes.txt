@@ -1,0 +1,45 @@
+# Demonstração executada pelo orquestrador contra a API local (bancos de teste em Docker: Oracle Free e Mongo).
+# Comando (em app/tools): uv run python demo_protecoes.py --base http://127.0.0.1:8000  ->  exit 0
+# Segredos de sessão, JWT_SECRET e DEVICE_KEY gerados em memória; nenhum valor impresso. Dados pessoais do item 8 são fictícios.
+
+=== Demonstra├º├úo de prote├º├Áes CitizenTech ÔÇö 2026-11-16T19:25:26Z ÔÇö API http://127.0.0.1:8000 ===
+[1] Pol├¡tica de senha: cadastro com senha de 8 caracteres: HTTP 400 (esperado 400) OK
+      resposta: {'erro': 'Requisicao invalida', 'detalhes': 'A senha deve conter entre 10 e 128 caracteres.'}
+[2] Cadastro com senha forte (hash Argon2id no Oracle): HTTP 201 (esperado 201) OK
+[3] Login (cookies emitidos; valores omitidos): HTTP 200 (esperado 200) OK
+      sessao: HttpOnly; Max-Age=3600; Path=/; SameSite=lax; Secure | csrf_token: Max-Age=3600; Path=/; SameSite=lax; Secure
+[4] Acesso a /me sem cookie de sess├úo: HTTP 401 (esperado 401) OK
+      resposta: {'erro': 'Nao autenticado', 'detalhes': 'Cookie de sessao ausente.'}
+[5] Token de sess├úo com assinatura adulterada: HTTP 401 (esperado 401) OK
+      resposta: {'erro': 'Nao autenticado', 'detalhes': 'Sessao invalida ou expirada.'}
+[6] POST autenticado SEM cabe├ºalho X-CSRF-Token: HTTP 403 (esperado 403) OK
+      resposta: {'erro': 'Acesso proibido', 'detalhes': 'Token CSRF invalido ou ausente.'}
+[7] Mesmo POST com X-CSRF-Token (double-submit): HTTP 201 (esperado 201) OK
+[8] Minimiza├º├úo: texto com dados pessoais FICT├ìCIOS ├® redigido antes de gravar: HTTP 201 (esperado 201) OK
+      texto gravado: 'Analista de processos. Contato: [EMAIL], telefone [TELEFONE], CPF [CPF]. Mapeei fluxos em BPMN e reduzi o tempo de ciclo.'
+      reda├º├Áes: {'email': 1, 'telefone': 1, 'cpf': 1} ┬À PII ausente do texto gravado: True
+[9] Usu├írio B tenta ler o curr├¡culo do usu├írio A (IDOR): HTTP 404 (esperado 404) OK
+      resposta: {'erro': 'Recurso nao encontrado', 'detalhes': 'Curriculo nao encontrado.'}
+[10] Dono l├¬ o pr├│prio curr├¡culo: HTTP 200 (esperado 200) OK
+[11a] Consentimento 'curriculo_llm' concedido (texto ainda N├âO confirmado): HTTP 201 (esperado 201) OK
+[11b] Envio ├á IA antes de o usu├írio confirmar o texto redigido (D22): HTTP 403 (esperado 403) OK
+      resposta: {'erro': 'Acesso negado', 'detalhes': 'Curriculo ainda nao foi confirmado pelo usuario.'}
+[12] Leitura de sensor sem X-Device-Key: HTTP 401 (esperado 401) OK
+      resposta: {'erro': 'Nao autorizado', 'detalhes': 'Chave de dispositivo ausente ou invalida.'}
+[13] Leitura de sensor com chave errada: HTTP 401 (esperado 401) OK
+      resposta: {'erro': 'Nao autorizado', 'detalhes': 'Chave de dispositivo ausente ou invalida.'}
+[14] Logout: HTTP 204 (esperado 204) OK
+[15] Reuso do cookie antigo ap├│s logout: HTTP 401 (esperado 401) OK
+      resposta: {'erro': 'Nao autenticado', 'detalhes': 'Sessao encerrada previamente (logout realizado).'}
+[16] For├ºa bruta: logins errados em sequ├¬ncia at├® o bloqueio: HTTP 429 (esperado 429) OK
+      sequ├¬ncia de status: [401, 401, 401, 429] ┬À resposta final: {'erro': 'Muitas requisicoes', 'detalhes': 'Limite de tentativas de login excedido. Tente novamente mais tarde.'}
+      o limite ├® de 5 tentativas por minuto por e-mail E por IP; os 2 logins anteriores deste IP tamb├®m contam
+      e-mails de demonstra├º├úo (contas descart├íveis): demo-cyber-a-0af069f7@exemplo.test, demo-cyber-b-0af069f7@exemplo.test
+=== Resultado: falhas=0 (0 = todas as verifica├º├Áes bateram com o esperado) ===
+
+# Conferência no Oracle de teste (schema CT_TESTE_*), mesma sessão, sem expor o hash inteiro:
+usuario=demo-cyber-a-0af069f7@exemplo.test | senha_hash (prefixo de parametros)=$argon2id$v=19$m=65536,t=3,p=4$... | tamanho=97 caracteres | senha em texto puro: nao armazenada
+consentimento finalidade=perfil versao_termo=v1.0 revogado_em=None
+consentimento finalidade=curriculo_llm versao_termo=v1.0 revogado_em=None
+
+# Log do servidor da API durante a demonstração: 54 linhas; ocorrências dos dados pessoais fictícios do item 8 (e-mail, telefone, CPF) no log: 0.
