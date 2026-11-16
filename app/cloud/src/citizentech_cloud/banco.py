@@ -99,7 +99,11 @@ def obter_conexao():
     try:
         return pg8000.dbapi.connect(**config)
     except Exception as e:
-        logger.error("Erro ao conectar ao banco de dados: %s", type(e).__name__)
+        # SQLSTATE (ex.: 28P01 senha, 3D000 banco inexistente) diagnostica sem expor segredo
+        sqlstate = e.args[0].get("C") if e.args and isinstance(e.args[0], dict) else None
+        logger.error(
+            "Erro ao conectar ao banco de dados: %s sqlstate=%s", type(e).__name__, sqlstate
+        )
         raise BancoIndisponivelError("Falha de conexao com o banco de dados") from e
 
 

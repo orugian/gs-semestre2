@@ -12,6 +12,10 @@ from datetime import datetime
 from citizentech_cloud import banco, risco, sentimento
 
 logger = logging.getLogger("citizentech_cloud.lambda_function")
+# O runtime Python da AWS deixa a raiz em WARNING; o enunciado exige as linhas INFO no CloudWatch.
+logging.getLogger("citizentech_cloud").setLevel(
+    os.environ.get("CITIZENTECH_LOG_LEVEL", "INFO").upper()
+)
 
 
 def _resposta(status: int, corpo: dict) -> dict:

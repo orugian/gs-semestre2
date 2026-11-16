@@ -1,0 +1,32 @@
+# Consultas no RDS PostgreSQL (banco citizentech, conexao sslmode=verify-full) - 2026-11-16 15:38:29 (UTC-3)
+Endpoint omitido; executado pelo orquestrador.
+
+== Consulta 1: ultimas leituras gravadas na nuvem
+ id |   dispositivo_id   | tipo_dispositivo |    metrica    | valor | nivel_risco  | alerta | autenticado | analise_status |           criado_em           
+----+--------------------+------------------+---------------+-------+--------------+--------+-------------+----------------+-------------------------------
+ 11 | lab-iot-bancada-01 | desconhecido     | distancia_cm  |    12 | atencao      | f      | t           | sem_relato     | 2026-11-16 18:38:26.381643+00
+ 10 | esp32-ponte-sul-01 | esp32            | nivel_rio_cm  | 268.9 | desconhecido | f      | f           | indisponivel   | 2026-11-16 18:38:25.298884+00
+  9 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    50 | critico      | t      | t           | indisponivel   | 2026-11-16 18:38:24.638875+00
+  8 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    46 | critico      | t      | t           | indisponivel   | 2026-11-16 18:38:22.899295+00
+  7 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    42 | atencao      | f      | t           | indisponivel   | 2026-11-16 18:38:21.178904+00
+  6 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    38 | atencao      | f      | t           | indisponivel   | 2026-11-16 18:38:19.418982+00
+  5 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    34 | normal       | f      | t           | indisponivel   | 2026-11-16 18:38:17.721351+00
+  4 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    30 | normal       | f      | t           | indisponivel   | 2026-11-16 18:38:15.999178+00
+  3 | lab-iot-bancada-01 | sensor_bancada   | distancia_cm  |    25 | normal       | f      | f           | indisponivel   | 2026-11-16 18:38:14.961652+00
+  2 | lab-iot-bancada-01 | sensor_bancada   | temperatura_c |    25 | normal       | f      | f           | indisponivel   | 2026-11-16 18:38:13.219253+00
+(10 rows)
+
+== Consulta 2: ocorrencias criticas (geram alerta ao cidadao)
+ id |   dispositivo_id   |    metrica    | valor |           criado_em           
+----+--------------------+---------------+-------+-------------------------------
+  9 | lab-iot-bancada-01 | temperatura_c |    50 | 2026-11-16 18:38:24.638875+00
+  8 | lab-iot-bancada-01 | temperatura_c |    46 | 2026-11-16 18:38:22.899295+00
+(2 rows)
+
+== Consulta 3: resumo por dispositivo
+   dispositivo_id   | leituras | media  | pico  | criticas | nao_autenticadas 
+--------------------+----------+--------+-------+----------+------------------
+ lab-iot-bancada-01 |        9 |  33.56 |    50 |        2 |                2
+ esp32-ponte-sul-01 |        1 | 268.90 | 268.9 |        0 |                1
+(2 rows)
+

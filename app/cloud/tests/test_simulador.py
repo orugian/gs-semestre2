@@ -145,3 +145,56 @@ def test_simulador_imprime_erro_quando_status_maior_ou_igual_400(servidor_http_e
     assert "HTTP 400" in captured.out
     assert "Valor invalido" in captured.out
     assert "temperatura fora da faixa permitida" in captured.out
+
+
+class HandlerRotas(BaseHTTPRequestHandler):
+    caminhos: list[str] = []
+
+    def do_POST(self):
+        HandlerRotas.caminhos.append(self.path)
+        self.rfile.read(int(self.headers.get("Content-Length", 0)))
+        if self.path.rstrip("/") == "/ocorrencias":
+            codigo, corpo = 201, {"id": 1, "nivel_risco": "normal", "alerta": False}
+        else:
+            codigo, corpo = 404, {"erro": "Nao encontrado", "detalhes": "rota"}
+        dados = json.dumps(corpo).encode("utf-8")
+        self.send_response(codigo)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(dados)
+
+    def log_message(self, format, *args):
+        pass
+
+
+@pytest.fixture
+def servidor_rotas():
+    HandlerRotas.caminhos = []
+    servidor = HTTPServer(("127.0.0.1", 0), HandlerRotas)
+    thread = threading.Thread(target=servidor.serve_forever, daemon=True)
+    thread.start()
+    yield f"http://127.0.0.1:{servidor.server_address[1]}"
+    servidor.shutdown()
+    servidor.server_close()
+
+
+@pytest.mark.parametrize("sufixo", ["", "/", "/ocorrencias", "/ocorrencias/"])
+def test_url_base_da_function_url_recebe_rota_ocorrencias(servidor_rotas, sufixo, capsys):
+    """A Function URL vem sem caminho (como no simulador do professor): anexar /ocorrencias."""
+    codigo = simulador.main(
+        ["--url", servidor_rotas + sufixo, "--cenario", "normal", "--leituras", "1",
+         "--intervalo", "0"]
+    )
+    assert HandlerRotas.caminhos == ["/ocorrencias"]
+    assert codigo == 0
+    assert "HTTP 201" in capsys.readouterr().out
+
+
+def test_simulador_retorna_1_e_nao_diz_sucesso_quando_ha_erro(servidor_http_erro400, capsys):
+    codigo = simulador.main(
+        ["--url", servidor_http_erro400, "--cenario", "normal", "--leituras", "1",
+         "--intervalo", "0"]
+    )
+    saida = capsys.readouterr().out
+    assert codigo == 1
+    assert "concluida com sucesso" not in saida
