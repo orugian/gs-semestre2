@@ -1,11 +1,14 @@
 import {useEffect, useState} from 'react';
 import {Heading} from '@astryxdesign/core/Heading';
 import {TabList, Tab} from '@astryxdesign/core/TabList';
+import {InternationalizationProvider} from '@astryxdesign/core/i18n';
+import ptBR from '@astryxdesign/core/locales/pt-BR.generated.js';
 import {Theme} from '@astryxdesign/core/theme';
 import {neutralTheme} from '@astryxdesign/theme-neutral/built';
 import {formatarUrlNavegacao, lerEstadoUrl} from './mercado/formatacao';
 import {TelaMercado} from './mercado/TelaMercado';
 import {PainelTecnico} from './mercado/PainelTecnico';
+import {AreaJornada} from './jornada/AreaJornada';
 
 export default function App() {
   const [inicial] = useState(() => {
@@ -23,7 +26,7 @@ export default function App() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const novaUrl = formatarUrlNavegacao(
-        {aba: aba as 'mercado' | 'painel_tecnico', destino, uf},
+        {aba: aba as 'mercado' | 'painel_tecnico' | 'jornada', destino, uf},
         window.location.pathname || '/'
       );
       const urlAtual = `${window.location.pathname || '/'}${window.location.search}${window.location.hash}`;
@@ -53,6 +56,7 @@ export default function App() {
   }, []);
 
   return (
+    <InternationalizationProvider locale="pt-BR" messages={{'pt-BR': ptBR}}>
     <Theme theme={neutralTheme}>
       <main className="mx-auto flex max-w-5xl flex-col gap-6 p-4 sm:p-6 w-full max-w-full min-w-0">
         <header className="flex flex-col gap-2">
@@ -62,6 +66,7 @@ export default function App() {
         <TabList value={aba} onChange={setAba} role="tablist">
           <Tab value="mercado" label="Mercado" panelId="painel-mercado" />
           <Tab value="painel_tecnico" label="Painel técnico" panelId="painel-tecnico" />
+          <Tab value="jornada" label="Minha transição" panelId="painel-jornada" />
         </TabList>
 
         {aba === 'mercado' ? (
@@ -71,15 +76,18 @@ export default function App() {
             uf={uf}
             onUfChange={setUf}
           />
-        ) : (
+        ) : aba === 'painel_tecnico' ? (
           <PainelTecnico
             destino={destino}
             onDestinoChange={setDestino}
             uf={uf}
             onUfChange={setUf}
           />
+        ) : (
+          <AreaJornada />
         )}
       </main>
     </Theme>
+    </InternationalizationProvider>
   );
 }

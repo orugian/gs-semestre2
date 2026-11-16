@@ -187,7 +187,7 @@ export function gerarIndicesTicks(
 }
 
 export interface EstadoNavegacao {
-  aba: 'mercado' | 'painel_tecnico';
+  aba: 'mercado' | 'painel_tecnico' | 'jornada';
   destino: string;
   uf: string;
 }
@@ -220,7 +220,12 @@ export function lerEstadoUrl(search: string, hash: string): EstadoNavegacao {
       ? paramUf
       : ESTADO_NAVEGACAO_PADRAO.uf;
 
-  const aba = hash === '#painel-tecnico' ? 'painel_tecnico' : 'mercado';
+  const aba =
+    hash === '#painel-tecnico'
+      ? 'painel_tecnico'
+      : hash === '#minha-transicao'
+      ? 'jornada'
+      : 'mercado';
 
   return {aba, destino, uf};
 }
@@ -236,7 +241,12 @@ export function formatarUrlNavegacao(
   params.set('destino', estado.destino);
   params.set('uf', estado.uf);
 
-  const hash = estado.aba === 'painel_tecnico' ? '#painel-tecnico' : '';
+  const hash =
+    estado.aba === 'painel_tecnico'
+      ? '#painel-tecnico'
+      : estado.aba === 'jornada'
+      ? '#minha-transicao'
+      : '';
   const search = `?${params.toString()}`;
 
   return `${pathname}${search}${hash}`;
