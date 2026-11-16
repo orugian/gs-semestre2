@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Estatistica D11 - evidencia municipal real</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>Estatística D11 — evidência da análise municipal real</h1>
+<p><strong>Status:</strong> análise preliminar verificada; não é o pacote final de submissão. Os modelos não são vereditos sobre transição de carreira nem probabilidades individuais de emprego.</p>
+<h2>População e procedência</h2>
+<p>Novo Caged, <strong>SP, seis grupos ocupacionais, todas as escolaridades</strong>; municípios com≥10 admissões em2024 no recorte, conforme pré-registro aprovado antes da análise. Snapshots por competência:2024até202412 e2025até202512, sem arquivos/revisões2026. São <strong>229 municípios,229 casos completos</strong> para as duas explicativas autorizadas; nenhuma perda municipal por salário/percentual ausente.</p>
+<p>O salário é o <strong>mensal declarado</strong>, nominal, dentro dos seis grupos; valores ausentes/não positivos/infinito não entram na média salarial, mas as admissões são preservadas. A média usa somas e denominadores válidos assinados, não média de médias. MOV+FOR−EXC corrige também escolaridade, soma e denominador salarial. %superior declarado usa graus9/10/11/80 sobre todas as admissões, com desconhecidos à parte. Não houve corte de outliers.</p>
+<p><strong>CSV congelado:</strong> SHA-256 <code>5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee</code>, sob <code>.dados/estatistica/20261115_d11_aceite/</code>, com manifesto dos72 arquivos2024/25. São2.216.198 linhas previamente filtradas por CBO na ingestão, não microdados nacionais completos. A execução não abriu arquivo2026.</p>
+<p>O dicionário oficial contém646 entradas de prefixo35: <strong>645 municípios e359999=Sp-Ignorado</strong>. Os229 códigos da base pertencem aos645 municípios; não foi necessário remover ou alterar linha da base. A primeira expectativa de645 entradas no dicionário foi corrigida após identificar essa categoria especial, não para mudar resultados.</p>
+<h2>Normal assumida e diagnóstico complementar — R08</h2>
+<p>Variável dos itens probabilísticos: admissões2025 por município no recorte. Média=687,3231; mediana=53; σpopulacional(ddof0)=5740,5799.</p>
+<p>Sob a <strong>Normal assumida pelo enunciado</strong>, P(X<média)=0,5000 e P(X>mediana)=0,543993. São probabilidades do modelo paramétrico, não frequências empíricas ou probabilidades individuais de contratação.</p>
+<p><img alt="Histogramas e QQ Normal, escalas original e log1p,229 municípios, seis destinos, dados2025" src="20261115_d11_diagnosticos.png" /></p>
+<p>A forte cauda direita é visível. Shapiro: W=0,08441,p=9,69076×10⁻³² na escala original; em log(1+x),W=0,94280,p=8,00650×10⁻⁸. A transformação melhora a legibilidade, <strong>não comprova Normalidade</strong>. A Normal teórica também admite contagens negativas, um limite relevante para estes dados. O complemento não substituiu os itens obrigatórios nem foi usado para selecionar população, sementes ou significância.</p>
+<h2>TestesZ literais</h2>
+<p>Amostras sem reposição da população observada, seeds42 e43, σda referência(ddof0), erro-padrãoσ/√n. Não foi aplicada correção para população finita; trata-se do modelo didático de referência explicitado, não de uma nova coleta independente.</p>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">α</th>
+<th>Alternativa</th>
+<th style="text-align: right;">p-valor</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Menor,seed42</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">6%</td>
+<td>μ&lt;μreferência</td>
+<td style="text-align: right;">0,324213</td>
+<td>Não rejeita H0</td>
+</tr>
+<tr>
+<td>Maior,seed43</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">9%</td>
+<td>μ&gt;μreferência</td>
+<td style="text-align: right;">0,659389</td>
+<td>Não rejeita H0</td>
+</tr>
+</tbody>
+</table>
+<p>Não rejeitar H0 não prova igualdade de médias nem Normalidade. Não se mudou n,α,seed ou população para obter significância.</p>
+<h2>OLS — resultado fraco é resultado válido</h2>
+<p>Y=admissões2025; explicativas medidas em2024. Previsões pontuais usam um <strong>cenário com medianas dos atributos</strong>, não um município observado nem inferência de contratação individual.</p>
+<table>
+<thead>
+<tr>
+<th>Ajuste</th>
+<th>Equação arredondada</th>
+<th style="text-align: right;">R²</th>
+<th style="text-align: right;">F</th>
+<th style="text-align: right;">pF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simples</td>
+<td>Y=686,6573+0,0000988475×salário2024</td>
+<td style="text-align: right;">0,000000363</td>
+<td style="text-align: right;">0,00008231</td>
+<td style="text-align: right;">0,992769</td>
+</tr>
+<tr>
+<td>Múltipla</td>
+<td>Y=−1582,2304+0,0034×salário2024+54,2337×%superior2024</td>
+<td style="text-align: right;">0,021458</td>
+<td style="text-align: right;">2,477885</td>
+<td style="text-align: right;">0,086198</td>
+</tr>
+</tbody>
+</table>
+<p>O salário isolado praticamente não explica a variação do volume municipal; as duas explicativas explicam apenas cerca de2,15%. Não há base para chamar o ajuste de boa previsão geral ou interpretar os coeficientes causalmente. Reportamos pF sem escolher um novoα após observar os valores. Covariâncias, Pearson, coeficientes completos e previsões estão no <a href="20261115_d11_aceite.json">JSON de aceite</a>. Diagnósticos completos de resíduos, dispersões e discussão acadêmica final ainda precisam ser incorporados à entrega.</p>
+<h2>Logística — teste estratificado R07, não in-sample</h2>
+<p>Alvo: admissões2025&gt;admissões2024. X contém <strong>somente salário médio2024 e %superior2024</strong>, sem participação municipal fabricada. Ajuste em183 municípios; teste em46, split80/20 estratificado,seed44,limiar0,5. IDs de treino/teste são disjuntos e estão no JSON.</p>
+<table>
+<thead>
+<tr>
+<th>Real \ Previsto</th>
+<th style="text-align: right;">Não cresceu(0)</th>
+<th style="text-align: right;">Cresceu(1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Não cresceu(0)</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td>Cresceu(1)</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">17</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Acurácia de teste=25/46=54,3478%.</strong> O desempenho é limitado e a matriz evidencia muitos falsos positivos; não sustenta um veredito de carreira. Não houve troca de seed, limiar, atributos ou população após a avaliação. O teste municipal estratificado desta análise não é o holdout temporal2026 de ML, que permanece fechado.</p>
+<h2>Conferência executada e pendências</h2>
+<ul>
+<li><code>uv run pytest -q -rs -o addopts=''</code> em <code>main</code> → <strong>227passed</strong>, <code>uv run ruff check .</code> → <strong>All checks passed</strong>, seguido da CLI de base real → saída0 (<code>pwsh-114</code>).</li>
+<li>Conferência independente das contagens, escolaridade e médias salariais de2024/25 em São Paulo355030,Campinas350950 e São José dos Campos354990, recalculadas de fontes canônicas por código vetorizado, sem o agregador de produção → passou.</li>
+<li>Recálculo de Z/p/seeds; reexecução independente do Logit somente nos IDs de treino e reprodução da matriz/acurácia nos IDs de teste → todas as asserções passaram, saída0 (<code>pwsh-118</code>).</li>
+<li>Histogramas, QQ e Shapiro reais executados (<code>pwsh-119</code>); rótulos corrigidos após inspeção visual, com asserção de diagnóstico numérico inalterado.</li>
+</ul>
+<p><strong>Ainda não entregue:</strong> pacote acadêmico portátil <code>.py</code>+<code>.csv</code>+PDF completo via empacotador, gráficos de dispersão/resíduos e demais revisões finais. Os arquivos-modelo do professor não foram alterados. O CSV original e os Parquets foram preservados; nenhuma edição manual de dado foi usada para melhorar o resultado.</p>
+</body>
+</html>

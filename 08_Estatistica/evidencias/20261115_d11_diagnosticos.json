@@ -1,0 +1,13 @@
+{
+  "n": 229,
+  "teste": "Shapiro-Wilk",
+  "natureza": "diagnostico complementar; Normal assumida mantida nos itens obrigatorios",
+  "original": {
+    "estatistica_w": 0.08440802288442595,
+    "p_valor": 9.690758191616247e-32
+  },
+  "log1p": {
+    "estatistica_w": 0.9428020875333206,
+    "p_valor": 8.006500774210932e-08
+  }
+}
