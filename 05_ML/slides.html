@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>slides</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>Previsão de Demanda de Admissões Formais no Mercado de Tecnologia</h1>
+<h2>Projeto CitizenTech — Machine Learning &amp; Modelling (GS 2026.2)</h2>
+<p><strong>Integrantes (nome completo + RM):</strong> [HUMANO — preencher]</p>
+<ul>
+<li><strong>Problema:</strong> Apoio à transição de carreira para profissionais graduados por meio de estimativas de admissões formais.</li>
+<li><strong>Público:</strong> Profissionais com ensino superior completo em processo de transição ou requalificação para tecnologia.</li>
+<li><strong>Fonte Oficial:</strong> Microdados do Novo Caged (Ministério do Trabalho e Emprego — MTE).</li>
+<li><strong>Alvo:</strong> Admissões formais acumuladas no trimestre móvel seguinte (t+1 a t+3) por destino profissional e UF.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Problema e Público</h1>
+<ul>
+<li><strong>Contexto da Transição de Carreira:</strong></li>
+<li>Profissionais com ensino superior enfrentam incertezas ao migrar para a área tecnológica.</li>
+<li>Os microdados públicos existem, mas não chegam ao profissional em formato comparável por ocupação e território.</li>
+<li><strong>Definição Operacional do Problema:</strong></li>
+<li>Estimar o volume de admissões formais com superior completo no trimestre seguinte (A(t+1) + A(t+2) + A(t+3)).</li>
+<li>Recorte em 3 grupos ocupacionais de destino (CBO) × 27 Unidades da Federação.</li>
+<li><strong>Público-Alvo:</strong></li>
+<li>Pessoas graduadas em transição de carreira que buscam direcionamento informado por dados.</li>
+<li>Usuários que necessitam de contexto territorial realista sobre movimentações formais do mercado de trabalho.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Motivação</h1>
+<ul>
+<li><strong>Assimetria de Informação:</strong></li>
+<li>Sem um indicador comparável, a escolha tende a se apoiar em percepções gerais sobre o mercado (premissa do projeto, não medida aqui).</li>
+<li>Falta de ferramentas que traduzam registros administrativos públicos em indicadores analíticos acessíveis.</li>
+<li><strong>Transparência e Honestidade Metodológica:</strong></li>
+<li>Evitar promessas infundadas ou abordagens deterministas.</li>
+<li>Oferecer uma métrica observável de fluxo no emprego formal para balizar o planejamento de estudos e transição.</li>
+<li><strong>Impacto Social:</strong></li>
+<li>Objetivo (não medido nesta entrega): dar contexto territorial de admissões formais para apoiar o planejamento da transição.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Base de Dados</h1>
+<ul>
+<li><strong>Origem dos Dados:</strong></li>
+<li>Microdados administrativos do Novo Caged (MTE), abrangendo admissões e desligamentos formais com nível superior.</li>
+<li><strong>Recorte MVP (R29):</strong></li>
+<li>Três grupos de ocupações tecnológicas: <code>analista_dados_bi</code>, <code>analista_monitoramento_iot</code> e <code>analista_processos</code>.</li>
+<li>27 UFs brasileiras, gerando 81 séries temporais mensais de 202001 a 202509 (5.589 observações no painel).</li>
+<li><strong>Critério de Densidade (D04a):</strong></li>
+<li>Média mínima de 10 admissões no alvo durante o período de treino.</li>
+<li>55 séries elegíveis (26 séries excluídas por baixa densidade); 495 observações no conjunto de validação externa.</li>
+<li><strong>Governança Temporal (D10):</strong></li>
+<li>Histórico 2020 reservado exclusivamente para lags; fit de 202101 a 202409; embargo de 202410 a 202412; validação de 202501 a 202509; holdout 2026 estritamente fechado.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Arquitetura Simplificada</h1>
+<pre><code>[Microdados Novo Caged / MTE] (FTP Público Mensal)
+             │
+             ▼
+[Módulo de Ingestão &amp; Recorte MVP] (Filtro CBO TI + Superior Completo)
+             │
+             ▼
+[Painel Mensal de Features] (Lags 1, 2, 3, 12 + Janelas Móveis + Alvo t+1..t+3)
+             │
+             ▼
+[Camada de Modelagem]
+  ├── Baselines de Referência (Persistência e Sazonal Ano Anterior)
+  ├── Modelos Clássicos (Ridge, Random Forest, HistGradientBoosting)
+  └── Rede Neural Artificial (MLP PyTorch [64, 32])
+             │
+             ▼
+[Exportador de Snapshot Integrado] (citizentech_ml.mercado.exportar)
+             │
+             ▼
+[API FastAPI &amp; Painel Técnico R06] (`GET /mercado/{destino}/modelos`)
+</code></pre>
+<div class="quebra-pagina"></div>
+
+<h1>Modelos Comparados</h1>
+<ul>
+<li><strong>Baselines Heurísticos de Referência:</strong></li>
+<li><em>Persistência:</em> replica a soma de admissões dos 3 meses mais recentes (<code>admissoes_soma_3m</code>).</li>
+<li><em>Sazonal:</em> replica as admissões do mesmo trimestre no ano anterior (<code>admissoes_sazonal_ano_anterior</code>).</li>
+<li><strong>Modelos Clássicos de Machine Learning:</strong></li>
+<li><em>Ridge Regression:</em> modelo linear com regularização L2 para controle de multicolinearidade entre lags temporais.</li>
+<li><em>Random Forest Regressor:</em> ensemble de árvores de decisão capaz de capturar não-linearidades e interações entre UFs e ocupações.</li>
+<li><em>HistGradientBoosting Regressor:</em> boosting baseado em histogramas para modelagem rápida e robusta a dispersões.</li>
+<li><strong>Referência Neural:</strong></li>
+<li><em>Multi-Layer Perceptron (MLP):</em> arquitetura com 2 camadas ocultas [64, 32], regularização via Dropout e Early Stopping.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Otimização e Hiperparâmetros</h1>
+<ul>
+<li><strong>Protocolo de Validação Cruzada:</strong></li>
+<li><code>RandomizedSearchCV</code> temporal com 3 folds expandidos e embargo temporal de 3 meses entre treino e teste de cada fold.</li>
+<li>Prevenção rigorosa contra vazamento temporal (data leakage): imputação mediana e padronização calculadas estritamente dentro de cada fold.</li>
+<li><strong>Hiperparâmetros Selecionados pelo CV:</strong></li>
+<li><em>Ridge:</em> α = 100,0 (forte regularização L2 necessária pela alta correlação entre lags).</li>
+<li><em>Random Forest:</em> <code>n_estimators = 100</code>, <code>max_depth = 12</code>, <code>min_samples_leaf = 3</code>.</li>
+<li><em>HistGradientBoosting:</em> <code>max_leaf_nodes = 15</code>, <code>learning_rate = 0,1</code>, <code>l2_regularization = 0,0</code>.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Métricas de Desempenho (Validação Externa 2025)</h1>
+<p>Avaliação em 55 séries elegíveis (495 pontos temporais de 202501 a 202509):</p>
+<table>
+<thead>
+<tr>
+<th>Modelo</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">WAPE</th>
+<th style="text-align: right;">MASE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Baseline Persistência</strong></td>
+<td style="text-align: right;">35,45</td>
+<td style="text-align: right;">103,58</td>
+<td style="text-align: right;">12,56%</td>
+<td style="text-align: right;">0,798</td>
+</tr>
+<tr>
+<td><strong>Baseline Sazonal</strong></td>
+<td style="text-align: right;"><strong>33,60</strong></td>
+<td style="text-align: right;">91,38</td>
+<td style="text-align: right;"><strong>11,90%</strong></td>
+<td style="text-align: right;">0,833</td>
+</tr>
+<tr>
+<td><strong>Ridge Regression</strong></td>
+<td style="text-align: right;">34,26</td>
+<td style="text-align: right;"><strong>84,42</strong></td>
+<td style="text-align: right;">12,14%</td>
+<td style="text-align: right;">1,220</td>
+</tr>
+<tr>
+<td><strong>Random Forest</strong></td>
+<td style="text-align: right;">35,63</td>
+<td style="text-align: right;">135,60</td>
+<td style="text-align: right;">12,62%</td>
+<td style="text-align: right;"><strong>0,726</strong></td>
+</tr>
+<tr>
+<td><strong>HistGradientBoosting</strong></td>
+<td style="text-align: right;">39,74</td>
+<td style="text-align: right;">132,10</td>
+<td style="text-align: right;">14,08%</td>
+<td style="text-align: right;">0,770</td>
+</tr>
+<tr>
+<td><em>MLP A (Referência RNA)</em></td>
+<td style="text-align: right;"><em>31,65</em></td>
+<td style="text-align: right;"><em>73,67</em></td>
+<td style="text-align: right;"><em>11,21%</em></td>
+<td style="text-align: right;"><em>1,136</em></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Validação 2025 em SP: realizado vs previsões por modelo" src="evidencias/figuras/real_vs_previsto_sp.png" /></p>
+<p><em>Constatação central:</em> Nenhum modelo clássico superou o Baseline Sazonal em MAE. A MLP apresentou o menor erro (−5,78% vs sazonal).</p>
+<div class="quebra-pagina"></div>
+
+<h1>Importância das Variáveis</h1>
+<ul>
+<li><strong>Comportamento das Variáveis Preditivas:</strong></li>
+<li>Dominância expressiva das variáveis autorregressivas recentes: no Random Forest, destacam-se <code>admissoes_soma_3m</code> (0,1845), <code>admissoes_lag_1</code> (0,1472), <code>admissoes_media_3m</code> (0,1400), <code>admissoes_lag_2</code> (0,1398) e <code>desligamentos</code> (0,1394).</li>
+<li>No Ridge, os maiores coeficientes padronizados absolutos são <code>admissoes</code> (174,03), <code>admissoes_media_3m</code> (109,43) e <code>admissoes_soma_3m</code> (109,43).</li>
+<li>A feature <code>admissoes_sazonal_ano_anterior</code> tem importância residual no Random Forest (0,0008); totais nacionais não são incluídos no rol de preditores numéricos do modelo.</li>
+<li><strong>Leitura Metodológica Crítica:</strong></li>
+<li>As variáveis refletem forte inércia estrutural do emprego formal nas ocupações de tecnologia.</li>
+<li>As relações identificadas são de caráter estritamente preditivo estatístico, não configurando inferência de causalidade econômica.</li>
+<li><strong>Visualização das Importâncias:</strong></li>
+<li>Gráfico abaixo (gerado pelo notebook a partir dos artefatos).</li>
+</ul>
+<p><img alt="Importância das variáveis: Random Forest e coeficientes padronizados do Ridge" src="evidencias/figuras/importancia_features.png" /></p>
+<div class="quebra-pagina"></div>
+
+<h1>Modelo Final e Decisão Honesta de Promoção</h1>
+<ul>
+<li><strong>Regra de Decisão do Projeto (D10a):</strong></li>
+<li>Um modelo é promovido ao número mostrado ao usuário só se o MAE de validação ficar ≥ 5% abaixo do melhor baseline E o desvio do WAPE entre folds for menor que o ganho; a decisão final depende da avaliação no holdout 2026, que está fechado.</li>
+<li><strong>Diagnóstico Transparente:</strong></li>
+<li>Os modelos clássicos não superaram o Baseline Sazonal (MAE 33,60 vs Ridge 34,26 e RF 35,63).</li>
+<li>A MLP obteve MAE 31,65 na validação 2025 (−5,78% vs sazonal), atendendo isoladamente apenas à 1ª condição; isso não configura promoção, exigindo a verificação completa de estabilidade e o teste no holdout fechado de 2026.</li>
+<li><strong>Decisão Operacional:</strong></li>
+<li>O aplicativo em produção expõe as estimativas do <strong>Baseline Sazonal</strong> por integridade metodológica e governança.</li>
+<li>A <strong>MLP A</strong> permanece como modelo candidato em observação técnica no painel técnico R06.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Demonstração da Aplicação Prática</h1>
+<ul>
+<li><strong>Exemplo Real no Estado de São Paulo (Origem 202509):</strong></li>
+<li><code>analista_dados_bi</code> (SP): mês atual = 1.994; persistência (soma 3m) = 6.419; sazonal = 4.696; Ridge = 6.412,2; RF = 4.835,9; HGB = 4.983,3; MLP = 6.214,6; realizado = 5.305.</li>
+<li><code>analista_monitoramento_iot</code> (SP): mês atual = 121; persistência (soma 3m) = 421; sazonal = 329; Ridge = 424,0; RF = 390,0; HGB = 371,5; MLP = 420,6; realizado = 391.</li>
+<li><code>analista_processos</code> (SP): mês atual = 645; persistência (soma 3m) = 2.006; sazonal = 1.672; Ridge = 2.073,2; RF = 1.621,0; HGB = 1.723,2; MLP = 1.905,1; realizado = 1.658.</li>
+<li><strong>Como o Usuário Utiliza a Informação:</strong></li>
+<li>O profissional em transição consulta as admissões estimadas no seu estado e ocupação como indicativo de dinamismo territorial.</li>
+<li>As estimativas servem como métrica contextual de orientação, e não como veredito ou garantia individual de contratação.</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h1>Alinhamento aos Objetivos de Desenvolvimento Sustentável (ODS)</h1>
+<ul>
+<li><strong>ODS 4 — Educação de Qualidade (Meta 4.4):</strong></li>
+<li>Aumentar substancialmente o número de jovens e adultos com competências técnicas e profissionais relevantes para emprego e trabalho decente.</li>
+<li>A ferramenta direciona o esforço formativo para áreas de tecnologia com demanda formal mensurável.</li>
+<li><strong>ODS 8 — Trabalho Decente e Crescimento Econômico (Metas 8.5 e 8.6):</strong></li>
+<li>Alcançar emprego pleno e produtivo para mulheres e homens, reduzindo a proporção de jovens e adultos sem ocupação ou formação.</li>
+<li>Proporciona transparência de mercado para apoiar trajetórias de requalificação produtiva.</li>
+<li><strong>ODS 10 — Redução das Desigualdades:</strong></li>
+<li>Democratização do acesso à inteligência analítica de dados do mercado de trabalho formal, historicamente restrita a grandes consultorias.</li>
+</ul>
+</body>
+</html>

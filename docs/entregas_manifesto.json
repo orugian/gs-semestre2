@@ -1,0 +1,54 @@
+{
+  "gerado_em": "2026-11-16T13:39:02Z",
+  "itens": [
+    {
+      "destino": "05_ML/notebook.ipynb",
+      "origem": "app/ml/notebooks/ml_mercado.ipynb",
+      "sha256": "4b1600307cf7c225a7d5f7722433f657cad2d46e2bdd80ba23002d117054ce91",
+      "paginas": null,
+      "estado": "atualizado"
+    },
+    {
+      "destino": "05_ML/slides.pdf",
+      "origem": "05_ML/slides.md",
+      "sha256": "7f3a96c56741610dbb867a150f40206b1f70b0d3c0199898a4a346c31f5c7f4e",
+      "paginas": 12,
+      "estado": "criado"
+    },
+    {
+      "destino": "07_RedesNeurais/notebook.ipynb",
+      "origem": "app/ml/notebooks/rna_mercado.ipynb",
+      "sha256": "af80a380dd55b46bd5fe25d872ee0ac45c760bf839d9f0d06f91a541079c1dcf",
+      "paginas": null,
+      "estado": "atualizado"
+    },
+    {
+      "destino": "08_Estatistica/analise.py",
+      "origem": "app/ml/src/citizentech_ml/estatistica/analise_portatil.py",
+      "sha256": "9adc6cb555d91b0b19f4969f7f76e8f7e6d9a750b38688649f608309a12bacc6",
+      "paginas": null,
+      "estado": "atualizado"
+    },
+    {
+      "destino": "08_Estatistica/base_municipal.csv",
+      "origem": "DADOS/estatistica/20261115_d11_aceite/base_municipal.csv",
+      "sha256": "5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee",
+      "paginas": null,
+      "estado": "criado"
+    },
+    {
+      "destino": "08_Estatistica/relatorio.pdf",
+      "origem": "08_Estatistica/relatorio.md",
+      "sha256": "9a6a7c9d6b9c353e463db8904fd8d7fa8dbc254ef4bce332cc0f0681b20ba174",
+      "paginas": 21,
+      "estado": "criado"
+    },
+    {
+      "destino": "08_Estatistica/requirements.txt",
+      "origem": "(declarado)",
+      "sha256": "0d384f3d5ef487878d9dedf78e5336bb0aaa8434f252dbcf38b043870f7e42ab",
+      "paginas": null,
+      "estado": "atualizado"
+    }
+  ]
+}
