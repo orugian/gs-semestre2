@@ -12,6 +12,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "scipy>=1.17.1",
     "statsmodels>=0.15.0",
+    "torch>=2.15.0",
 ]
 
 [dependency-groups]
@@ -34,3 +35,11 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
