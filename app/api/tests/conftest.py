@@ -43,7 +43,7 @@ def resetar_limitador_entre_testes():
 
 
 def pytest_runtest_setup(item):
-    """Verifica se teste marcado com oracle possui credenciais configuradas."""
+    """Verifica se teste marcado com oracle ou mongo possui credenciais configuradas."""
     if "oracle" in item.keywords:
         dsn = os.environ.get("ORACLE_DSN")
         user = os.environ.get("ORACLE_USER")
@@ -53,6 +53,16 @@ def pytest_runtest_setup(item):
         if not (user.startswith("CT_") and "TESTE" in user.upper()):
             pytest.fail(
                 "Usuario Oracle inseguro para testes: deve comecar com CT_ e conter TESTE."
+            )
+
+    if "mongo" in item.keywords:
+        uri = os.environ.get("MONGODB_URI")
+        db = os.environ.get("MONGODB_DB")
+        if not (uri and db):
+            pytest.skip("Mongo de teste não configurado")
+        if "teste" not in db.lower():
+            pytest.fail(
+                "Banco MongoDB inseguro para testes: nome deve conter 'teste'."
             )
 
 

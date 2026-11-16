@@ -9,6 +9,7 @@ from fastapi import FastAPI
 
 from citizentech.auth.rotas import router as auth_router
 from citizentech.consentimentos.rotas import router as consentimentos_router
+from citizentech.curriculo.rotas import router as curriculo_router
 from citizentech.erros import registrar_manipuladores_de_erro
 from citizentech.leituras.rotas import router as leituras_router
 from citizentech.limiares import carregar_limiares
@@ -35,9 +36,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     yield
 
-    # 3. Shutdown: encerra o worker de forma limpa
+    # 3. Shutdown: encerra o worker de forma limpa e fecha cliente MongoDB
     if gerenciador:
         await gerenciador.parar()
+
+    try:
+        from citizentech.curriculo.repositorio import fechar_cliente_mongo
+
+        fechar_cliente_mongo()
+    except Exception:
+        pass
 
 
 def criar_app() -> FastAPI:
@@ -47,6 +55,7 @@ def criar_app() -> FastAPI:
     aplicacao.include_router(auth_router)
     aplicacao.include_router(consentimentos_router)
     aplicacao.include_router(mercado_router)
+    aplicacao.include_router(curriculo_router)
 
     @aplicacao.get("/health")
     def health() -> dict:

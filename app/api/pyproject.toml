@@ -10,6 +10,10 @@ dependencies = [
     "oracledb>=26.1.0",
     "portalocker>=4.4.2",
     "pyjwt>=2.15.1",
+    "pymongo>=4.20.0",
+    "pypdf>=7.1.0",
+    "python-docx>=1.2.0",
+    "python-multipart>=0.0.34",
     "uvicorn[standard]>=0.32,<1",
 ]
 
@@ -32,6 +36,7 @@ testpaths = ["tests"]
 addopts = "-q"
 markers = [
     "oracle: testes que dependem do banco de dados Oracle",
+    "mongo: testes que dependem do banco de dados MongoDB",
 ]
 
 [tool.ruff]
