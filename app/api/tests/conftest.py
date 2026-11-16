@@ -97,12 +97,17 @@ def aplicar_ddl_oracle_teste():
     caminho_ddl_004 = (
         Path(__file__).resolve().parents[2] / "db" / "ddl" / "004_avaliacao.sql"
     )
+    caminho_ddl_005 = (
+        Path(__file__).resolve().parents[2] / "db" / "ddl" / "005_plano.sql"
+    )
     if not caminho_ddl_001.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_001}")
     if not caminho_ddl_002.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_002}")
     if not caminho_ddl_003.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_003}")
+    if not caminho_ddl_005.is_file():
+        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_005}")
     if not caminho_ddl_004.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_004}")
 
@@ -115,12 +120,21 @@ def aplicar_ddl_oracle_teste():
                 cursor.execute("SELECT 1 FROM intencao WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM comparacao WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM comparacao_destino WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM caminho_escolhido WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM plano WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM checkpoint WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM tentativa WHERE ROWNUM = 1")
                 return
             except oracledb.DatabaseError:
                 pass
 
-            for caminho_ddl in (caminho_ddl_001, caminho_ddl_002, caminho_ddl_003, caminho_ddl_004):
+            for caminho_ddl in (
+                caminho_ddl_001,
+                caminho_ddl_002,
+                caminho_ddl_003,
+                caminho_ddl_004,
+                caminho_ddl_005,
+            ):
                 conteudo = caminho_ddl.read_text(encoding="utf-8")
                 for bloco in conteudo.split(";"):
                     linhas = [

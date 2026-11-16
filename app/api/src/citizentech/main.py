@@ -21,6 +21,7 @@ from citizentech.limiares import carregar_limiares
 from citizentech.mercado.rotas import router as mercado_router
 from citizentech.outbox.banco import reconciliar_com_csv
 from citizentech.outbox.worker import GerenciadorWorkerOutbox
+from citizentech.plano.rotas import router as plano_router
 
 logger = logging.getLogger("citizentech.main")
 
@@ -65,6 +66,7 @@ def criar_app() -> FastAPI:
     aplicacao.include_router(intencao_router)
     aplicacao.include_router(destinos_router)
     aplicacao.include_router(comparacao_router)
+    aplicacao.include_router(plano_router)
     aplicacao.include_router(avaliacao_router)
 
     @aplicacao.get("/health")
