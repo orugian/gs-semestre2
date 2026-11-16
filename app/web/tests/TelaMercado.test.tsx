@@ -331,4 +331,38 @@ describe('TelaMercado', () => {
       expect(r.className).toContain('overflow-x-auto');
     });
   });
-});
+  test('amostra Adzuna disponível mostra contagens, atribuição e data, separada do Caged (D05a)', async () => {
+    const comAmostra = {
+      ...mercadoElegivel,
+      amostra_adzuna: {
+        disponivel: true,
+        natureza: 'amostra_pontual',
+        motivo: 'Amostra pontual Adzuna de 16/11/2026: contagem de anúncios indexados no dia da coleta.',
+        fonte: 'Adzuna API (anúncios agregados de terceiros)',
+        atribuicao: 'Jobs by Adzuna (https://www.adzuna.com.br)',
+        unidade: 'anúncios publicados que correspondem ao termo de busca',
+        populacao: 'Anúncios indexados pela Adzuna no Brasil no dia da coleta.',
+        coletado_em: '2026-11-16T13:30:00Z',
+        itens: [
+          {territorio: 'SP', termo_busca: 'analista de dados', contagem_anuncios: 274},
+          {territorio: 'BR', termo_busca: 'analista de dados', contagem_anuncios: 1036},
+          {territorio: 'RJ', termo_busca: 'analista de dados', contagem_anuncios: null},
+        ],
+      },
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ok: true, status: 200, json: async () => comAmostra} as Response)
+    );
+
+    render(<TelaMercado destino="analista_dados_bi" uf="SP" onUfChange={() => {}} />);
+
+    expect(await screen.findByText('Amostra pontual Adzuna')).toBeTruthy();
+    expect(screen.getByText('Jobs by Adzuna (https://www.adzuna.com.br)')).toBeTruthy();
+    expect(screen.getByText(comAmostra.amostra_adzuna.motivo)).toBeTruthy();
+    expect(screen.getByText('1.036')).toBeTruthy();
+    expect(screen.getByText('274')).toBeTruthy();
+    expect(screen.getByText('não disponível')).toBeTruthy();
+    expect(screen.queryByText('Amostra Adzuna indisponível')).toBeNull();
+    expect((document.body.textContent ?? '').toLowerCase()).not.toContain('vaga');
+  });});

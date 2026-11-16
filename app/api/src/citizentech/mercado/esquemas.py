@@ -74,12 +74,26 @@ class AbstencaoSecao(BaseModel):
     contexto_regional: ContextoRegionalSecao
 
 
+class ItemAmostraAdzuna(BaseModel):
+    """Contagem de anúncios de um território na coleta única (ausente = null, nunca 0)."""
+
+    territorio: str
+    termo_busca: str
+    contagem_anuncios: int | None
+
+
 class AmostraAdzuna(BaseModel):
-    """Situação da coleta Adzuna na versão atual (D05a)."""
+    """Amostra pontual Adzuna (D05a): snapshot único, separado do Caged, fora do treino."""
 
     disponivel: bool
     natureza: str
     motivo: str
+    fonte: str | None = None
+    atribuicao: str | None = None
+    unidade: str | None = None
+    populacao: str | None = None
+    coletado_em: str | None = None
+    itens: list[ItemAmostraAdzuna] = []
 
 
 class RespostaMercado(BaseModel):

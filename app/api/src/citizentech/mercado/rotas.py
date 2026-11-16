@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
+from citizentech.mercado.adzuna import montar_amostra_adzuna
 from citizentech.mercado.esquemas import (
     AbstencaoSecao,
-    AmostraAdzuna,
     ContextoRegionalSecao,
     CriterioPromocao,
     ModeloPainelTecnico,
@@ -216,11 +216,7 @@ def obter_mercado(destino: str, uf: str = "SP") -> RespostaMercado:
             ),
         )
 
-    amostra_adzuna = AmostraAdzuna(
-        disponivel=False,
-        natureza="amostra_pontual",
-        motivo="Snapshot Adzuna não coletado nesta versão (D05a).",
-    )
+    amostra_adzuna = montar_amostra_adzuna(destino)
 
     avisos = [
         (

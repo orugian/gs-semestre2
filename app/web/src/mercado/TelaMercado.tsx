@@ -315,8 +315,34 @@ export function TelaMercado({
             </Card>
           ) : null}
 
-          {/* Situação da Amostra Adzuna (D05a) */}
-          {!dados.amostra_adzuna.disponivel && (
+          {/* Amostra pontual Adzuna (D05a): separada do Caged, fora do treino */}
+          {dados.amostra_adzuna.disponivel ? (
+            <Card variant="muted" padding={4}>
+              <div className="flex flex-col gap-2">
+                <Heading level={4}>Amostra pontual Adzuna</Heading>
+                <Text type="body">{dados.amostra_adzuna.motivo}</Text>
+                <MetadataList orientation="vertical" columns="multi">
+                  <MetadataListItem label="Natureza">Amostra pontual</MetadataListItem>
+                  <MetadataListItem label="Fonte">{dados.amostra_adzuna.fonte}</MetadataListItem>
+                  <MetadataListItem label="Unidade">{dados.amostra_adzuna.unidade}</MetadataListItem>
+                  <MetadataListItem label="População">
+                    {dados.amostra_adzuna.populacao}
+                  </MetadataListItem>
+                  {dados.amostra_adzuna.itens.map((item) => (
+                    <MetadataListItem
+                      key={item.territorio}
+                      label={`${item.territorio === 'BR' ? 'Brasil' : item.territorio} — "${item.termo_busca}"`}
+                    >
+                      {item.contagem_anuncios === null
+                        ? 'não disponível'
+                        : formatarNumero(item.contagem_anuncios)}
+                    </MetadataListItem>
+                  ))}
+                </MetadataList>
+                <Text type="supporting">{dados.amostra_adzuna.atribuicao}</Text>
+              </div>
+            </Card>
+          ) : (
             <Card variant="muted" padding={4}>
               <div className="flex flex-col gap-1">
                 <Heading level={4}>Amostra Adzuna indisponível</Heading>
