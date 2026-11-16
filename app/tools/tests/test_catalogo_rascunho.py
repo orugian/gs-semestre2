@@ -100,7 +100,8 @@ def test_metadados_e_cbo_iguais_ao_catalogo(
         assert data.get("destino_id") == did
         assert data.get("nome") == cbo_destinos[did]["nome"]
         assert data.get("cbo6") == cbo_destinos[did]["cbo6"]
-        assert data.get("status") == "rascunho"
+        # Revisão humana do grupo registrada em 16/11/2026 (substitui o estado de rascunho D2).
+        assert data.get("status") == "aprovado"
         assert data.get("curadoria_natureza") == "inferida_pendente_revisao"
 
 
@@ -293,29 +294,32 @@ def test_politica_avaliacao_proposta_e_pendencia_humana(
         assert math.isclose(p_llm, 0.5), f"Peso da LLM deve ser 0.5 em {did}"
         assert math.isfinite(p_obj) and math.isfinite(p_llm)
 
-        # R29: mínimos de aprovação são nulos no rascunho (pendência da decisão humana em D3)
-        assert pol.get("minimo_objetiva") is None, (
-            f"minimo_objetiva deve ser nulo no rascunho {did}"
-        )
-        assert pol.get("minimo_llm") is None, f"minimo_llm deve ser nulo no rascunho {did}"
+        # Mínimos de aprovação fixados pela revisão humana (16/11/2026): finitos em (0, 1]
+        for chave in ("minimo_objetiva", "minimo_llm"):
+            minimo = pol.get(chave)
+            assert isinstance(minimo, (int, float)) and not isinstance(minimo, bool), (
+                f"{chave} deve ser numérico após a revisão humana em {did}"
+            )
+            assert math.isfinite(minimo) and 0 < minimo <= 1, f"{chave} fora de (0, 1] em {did}"
 
         # D21: no máximo 3 tentativas a cada 24 horas
         tentativas = pol.get("politica_tentativas", {})
         assert tentativas.get("max_tentativas_24h") == 3
 
-        # Revisão humana explicitamente pendente
+        # Revisão humana registrada com revisor e data ISO-8601 com fuso
         rev = data.get("revisao_humana", {})
-        assert rev.get("status") == "pendente"
-        assert rev.get("revisor") is None
-        assert rev.get("revisado_em") is None
-        assert "15/11/2026 às 18h (America/Sao_Paulo)" in rev.get("observacoes", "")
+        assert rev.get("status") == "aprovado"
+        assert isinstance(rev.get("revisor"), str) and rev["revisor"].strip()
+        assert re.fullmatch(
+            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}", str(rev.get("revisado_em"))
+        ), f"revisado_em inválido em {did}"
 
-        # Checklist de revisão presente e pendente
+        # Checklist de revisão completo e integralmente aprovado (nenhum item pulado)
         chk = data.get("checklist_revisao", {})
         assert isinstance(chk, dict) and len(chk) >= 5
         for item_nome, item_status in chk.items():
-            assert item_status == "pendente", (
-                f"Checklist {item_nome} em {did} não pode ser aprovado previamente"
+            assert item_status == "aprovado", (
+                f"Checklist {item_nome} em {did} não está aprovado"
             )
 
 

@@ -16,7 +16,7 @@
 | **S15a tela web Mercado + Painel técnico** | **integrada 16/11** | `6662ff3` |
 | **E05 notebooks ML/RNA + slides ML** | **integrada 16/11** | `13cb0a2` |
 | S9 currículo/PII · S10 extração · S11 comparação · S12 plano · S13 avaliação · S14 laboratório | **não iniciadas** | — |
-| S4 Lambda/RDS · firmware Wokwi | **não iniciadas** (dependem de gates humanos) | — |
+| S4 Lambda/RDS · firmware Wokwi | **não iniciadas** — gates liberados em 16/11 (Learner Lab ativo, Wokwi autorizado) | — |
 | S15 final (jornada E2E Playwright + axe) | não iniciada | — |
 | Empacotador de entregas + PDFs finais | não iniciado | — |
 
@@ -32,7 +32,7 @@
 | Notebooks E05 | Reexecutados pelo orquestrador (saída 0); números das tabelas = artefatos; slides com números amarrados por teste; RNA confere 495 linhas por chave. | Cópia para `05_ML/notebook.ipynb`/`07_RedesNeurais/notebook.ipynb` pendente (empacotador); PDF dos slides pendente; vídeos humanos. |
 | Auth S5 | Oracle real na época (208 passed). | UI de login ausente. |
 | CTP/outbox | API, CSV, idempotência. | ESP32/Wokwi e Lambda/RDS reais não integrados. |
-| Catálogo | 6 YAMLs rascunho; MVP com 3 destinos (R29). | **Nenhuma rubrica revisada por humano.** |
+| Catálogo | 6 YAMLs **aprovados pelo grupo em 16/11** (mínimos 0,5/0,5); MVP continua com 3 destinos (R29). Tools 20 passed após ajuste dos testes ao estado aprovado. | `escopo_mvp.json` ainda marca `revisao_humana_pendente` (ver §7). |
 
 ## 3. Resultados científicos (não misturar coortes)
 
@@ -53,7 +53,8 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 - **Credenciais (valores só em `app/.env`, nunca impressos):**
   - Oracle local: `ORACLE_USER`/`ORACLE_PASSWORD` (app) e `ORACLE_ADMIN_PASSWORD` (SYSTEM) **funcionam** (conferido 10h). Para os testes de integração foi criado o schema isolado **`CT_TESTE_S9`**, credenciais em `ORACLE_TESTE_USER`/`ORACLE_TESTE_PASSWORD`. Para rodar os testes `oracle`, exportar no processo `ORACLE_USER=$ORACLE_TESTE_USER` e `ORACLE_PASSWORD=$ORACLE_TESTE_PASSWORD` (o conftest exige usuário `CT_*TESTE*`). O schema `CT_TESTE_S5` antigo continua existindo, com senha perdida — não usar.
   - **MongoDB Atlas:** `MONGODB_URI` preenchido (host/usuário de `CONECTION_STRING` + senha fornecida pelo usuário em 16/11), IP 179.145.44.234/32 liberado; **ping ok** às ~10h, banco `GS_FIAP` (valor de `MONGODB_DB`) ainda **sem coleções**.
-  - **Oracle FIAP:** ainda **ORA-01017** (10h); o usuário não lembra a senha → reset pelo portal/suporte FIAP (gate humano).
+  - **Oracle FIAP:** fora de escopo por decisão do usuário (16/11); evidências só no Oracle local.
+  - Revalidar tudo sem expor valores: em `app`, `uv run --no-project --with python-dotenv --with pg8000 --with oracledb --with pymongo python ..\..\.kaiser\ferramentas\validar_env.py` (10h25: OpenRouter ok, US$ 7 de limite quase intactos; HF 402; Lambda reaproveitada responde 'Hello World'; RDS 5432 inacessível; Oracle local app/teste ok; Atlas ok).
   - Ler o `.env` só por script que imprime status, nunca valores (padrão `../.kaiser/ferramentas/validar_env.py`).
 
 ## 5. Git, processos e worktrees (conferido 09h15)
@@ -75,7 +76,7 @@ Jobs próprios152/168/290(autoria/reconciliação),166/174/179/277/292/293/300(b
 
 **A. Verificações:** ~~API com Oracle~~ ✅ 221 passed; ~~Cloud/Tools~~ ✅ 50/20 passed (10h). Pendente: **axe** na tela de mercado (Playwright + `@axe-core/playwright` via `pnpm add -D` em `app/web`) — primeiro teste E2E da S15.
 
-**A2. Autorizações recebidas em 16/11 ~10h (usar dentro do escopo):** push para `gs-semestre2`; OpenRouter real em smoke tests (teto US$ 7; registrar custo); snapshot Adzuna (≤12 chamadas pelo contador D05a); Wokwi para o firmware — **avisar o usuário quando for preciso conectar o ESP32 físico na máquina**; AWS para S4 (Learner Lab precisa estar ativo — confirmar com o usuário no momento do deploy, sem AWS CLI até aprovação de instalação). Model cards podem ir ao Atlas real (`MONGODB_DB`).
+**A2. Autorizações recebidas em 16/11 ~10h (usar dentro do escopo):** push para `gs-semestre2`; OpenRouter real em smoke tests (teto US$ 7; registrar custo); snapshot Adzuna (≤12 chamadas pelo contador D05a); Wokwi para o firmware — **avisar o usuário quando for preciso conectar o ESP32 físico na máquina**; AWS para S4 (**Learner Lab ativo desde 16/11**; sessões do Learner Lab expiram — se a Lambda/RDS pararem de responder, pedir ao usuário para reiniciar o lab; sem AWS CLI até aprovação de instalação). Model cards podem ir ao Atlas real (`MONGODB_DB`).
 
 **B. Caminho crítico do produto (atrasado ≥1 dia):**
 4. **S9 currículo/PII** (fatia de risco: RED reproduzido pelo orquestrador + revisão independente `agy --mode plan`): `POST /me/experiencias`, `POST /me/curriculo` (PDF/DOCX ≤2 MB, pypdf/python-docx), redação de PII, `POST /me/curriculo/confirmar-envio`; nada vai à LLM sem confirmação (D07a, D22, R18, T15). Persistência do texto redigido: Mongo de teste local (27018) nos testes; Atlas real só com credencial.
@@ -94,12 +95,17 @@ Jobs próprios152/168/290(autoria/reconciliação),166/174/179/277/292/293/300(b
 
 ## 7. Pendências humanas
 
-- **Revisar as 3 rubricas** do MVP ([roteiro](<../app/catalogo/README.md>) §4) — bloqueia qualidade de S10/S13.
-- ~~Senha Atlas + IP~~ ✅ (16/11). **Recomendado trocar a senha do usuário do Atlas**, porque foi digitada no chat; depois atualizar só o `app/.env`.
-- **Oracle FIAP:** redefinir a senha (portal/suporte FIAP) e gravar em `ORACLE_FIAP_PASSWORD` no `app/.env`. Sem isso, as evidências de Data Science ficam só no Oracle local.
-- Learner Lab ativo para Lambda/RDS (S4); HF sem créditos (402) — decidir créditos ou alternativa para sentimento.
-- ~~Autorizações OpenRouter/Adzuna/push~~ ✅ (16/11). Conectar o ESP32 físico quando o agente avisar.
-- Data Modeler (D25), ideia da live, vídeos (ML ≤5 min, RNA obrigatório, Cyber ≤5, Cloud ≤5, AIC ≤7 com rosto), envio no Portal, prints do console AWS.
+**Decisões do usuário em 16/11 ~10h20:**
+- ✅ **Rubricas revisadas e aprovadas pelo grupo** (os 6 YAMLs: `status: aprovado`, revisor "grupo", 16/11 10h05, checklist completo aprovado, **mínimos 0,5 objetiva e 0,5 LLM**). Os testes do catálogo foram ajustados para o estado aprovado (não enfraquecidos: agora exigem mínimos numéricos em (0,1], revisor, data com fuso e checklist 100% aprovado). Pendência técnica: `app/catalogo/escopo_mvp.json` ainda tem `status_rubricas: revisao_humana_pendente` e `recorte.py` exige esse valor — **não alterar** sem nova fatia, porque o hash do escopo (`sha256_escopo`) está gravado nos artefatos e snapshot; tratar em S10/S13 via campo próprio do catálogo, registrando a decisão.
+- ✅ **Senha do Atlas:** mantém a enviada no chat (decisão do usuário; risco aceito).
+- ✅ **Oracle FIAP fora de escopo:** evidências de Data Science **somente no Oracle local** (Docker 23ai, DDL 19c). Não tentar mais o FIAP; relatórios devem dizer isso.
+- ✅ **AWS Academy (Learner Lab) iniciado e funcionando.** Deploy S4 (Lambda + RDS reaproveitados, autorizados em 12/11) liberado. **Prints do console:** o agente gera a lista exata (tela, filtro, o que deve aparecer) e o usuário captura. Sem AWS CLI: deploy pelo console com instruções ao usuário, ou instalar CLI só com aprovação. RDS estava com 5432 inacessível em 12/11 e 16/11 (SG fechado) — abrir janela de teste via instrução ao usuário (D09).
+- ✅ **Sentimento (D23/T11):** decisão delegada ao próximo agente. HF sem créditos (402). Opções a avaliar e registrar: (a) manter HF com `resultado=indisponivel` gracioso (já previsto em §3.3 do plano), (b) Amazon Comprehend no Learner Lab, (c) comprar créditos HF. Critério: menor custo/risco que cumpra o enunciado de Cloud; nunca entra na nota.
+
+**Ainda com o usuário:**
+- Conectar o ESP32 físico quando o agente avisar (Wokwi autorizado).
+- Prints do console AWS conforme lista que o agente fornecer.
+- Data Modeler (D25) sobre o DDL do Oracle local, ideia da live, vídeos (ML ≤5 min, RNA obrigatório, Cyber ≤5, Cloud ≤5, AIC ≤7 com rosto), nomes/RMs onde houver "[HUMANO — preencher]", envio no Portal.
 
 ## 8. Decisões locais válidas
 

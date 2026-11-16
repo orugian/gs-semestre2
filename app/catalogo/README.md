@@ -2,9 +2,9 @@
 
 Este diretório contém os rascunhos estruturados dos **seis destinos profissionais** do projeto CitizenTech, elaborados em conformidade com o Contrato D2 e as decisões de arquitetura e produto **D02, D05, D06, D07, D21, D23 e R29**.
 
-> [!WARNING]
-> **ESTADO DE RASCUNHO — USO BLOQUEADO PARA APLICAÇÃO FINAL (R29)**
-> Estes arquivos são rascunhos técnicos gerados para fundamentar a **Revisão Humana D3** da equipe (prevista para até 15/11/2026 às 18:00 UTC-3). O status de todos os destinos é `rascunho`, a revisão humana está como `pendente` e os limiares mínimos de aprovação (`minimo_objetiva` e `minimo_llm`) estão explicitamente definidos como `null`. **A API e os motores de avaliação não devem carregar estes arquivos como avaliação liberada/concluída.**
+> [!NOTE]
+> **REVISÃO HUMANA CONCLUÍDA EM 16/11/2026 (10h05, UTC−3)**
+> O grupo revisou e aprovou os seis destinos: `status: aprovado`, `revisao_humana.status: aprovado`, revisor "grupo", checklist integralmente aprovado e mínimos de aprovação **0,5 (objetiva) e 0,5 (LLM)**. A revisão ocorreu depois do prazo D3 (15/11 às 18h), por isso o corte R29 para **três destinos no MVP** continua valendo; os outros três seguem aprovados como conteúdo, fora do escopo do app. O texto abaixo descreve o processo de revisão a partir do rascunho original.
 
 ---
 
@@ -74,7 +74,9 @@ O grupo deve realizar a revisão colaborativa dos arquivos YAML seguindo o check
 
 ---
 
-## 5. O que Impede o Uso pelo Aplicativo no Momento Atual?
+## 5. Travas de uso (histórico do rascunho — todas resolvidas em 16/11/2026)
+
+As condições abaixo bloqueavam o uso enquanto os arquivos eram rascunho. Após a revisão humana, nenhuma delas se aplica; o carregador continua obrigado a verificá-las (fail-safe) caso um destino volte ao estado de rascunho.
 
 1. `status: rascunho`: Indica que os dados não foram homologados formalmente.
 2. `revisao_humana.status: pendente`: O fluxo de governança exige aprovação explícita do grupo até D3.

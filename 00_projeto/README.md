@@ -19,11 +19,11 @@ Prazo de todas as entregas: **19/11/2026 às23h55** (Portal do Aluno).
 
 Profissionais já graduados e experientes encontram informações fragmentadas ao comparar transições de carreira. CitizenTech pretende organizar experiência, distinguir competências declaradas e demonstradas, comparar até três caminhos e orientar preparação com fontes e limites explícitos. Não é seleção de candidatos, promessa de recolocação ou previsão individual de contratação.
 
-O recorte atual do MVP é **Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua**. O corte R29 não aprovou rubricas nem eliminou o material dos outros destinos. Estatística mantém seis grupos ocupacionais por decisão científica expressa. ODS4 e10 são principais; não há impacto social comprovado apenas por implementar software.
+O recorte atual do MVP é **Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua**. As rubricas dos seis destinos foram revisadas e aprovadas pelo grupo em 16/11 (mínimos 0,5/0,5); como isso ocorreu após o prazo D3, o recorte R29 de três destinos no MVP permanece, sem eliminar o material dos outros. Estatística mantém seis grupos ocupacionais por decisão científica expressa. ODS4 e10 são principais; não há impacto social comprovado apenas por implementar software.
 
 ## Implementação não é entrega concluída
 
-**Implementado e verificado até 16/11:** API local de leituras, outbox/idempotência, autenticação/consentimentos (Oracle real na etapa S5), ingestão/features Caged, modelos ML/RNA, análise municipal real, **API de mercado** (`/mercado/{destino}` com abstenção e metadados; `/mercado/{destino}/modelos` com os 6 modelos, nenhum promovido), **tela web de Mercado e Painel técnico**, **programa estatístico portátil com relatório** e **notebooks ML/RNA executados com slides**. Regressão em 16/11: ML 266, API 193 (sem os 28 testes Oracle), Web 17 + build.
+**Implementado e verificado até 16/11:** API local de leituras, outbox/idempotência, autenticação/consentimentos (Oracle real na etapa S5), ingestão/features Caged, modelos ML/RNA, análise municipal real, **API de mercado** (`/mercado/{destino}` com abstenção e metadados; `/mercado/{destino}/modelos` com os 6 modelos, nenhum promovido), **tela web de Mercado e Painel técnico**, **programa estatístico portátil com relatório** e **notebooks ML/RNA executados com slides**. Regressão em 16/11: ML 266, API 221 com Oracle local, Cloud 50, Tools 20, Web 17 + build.
 
 **Ainda faltam:** jornada de currículo/PII/LLM/comparação/plano/avaliação/laboratório, firmware e Cloud reais, login na web, E2E, empacotamento das entregas e PDFs finais, relatórios de Cyber/CTP/Data Science/AICSS/Cloud. O app ainda não funciona ponta a ponta.
 
@@ -40,6 +40,6 @@ O contrato HTTP é o do plano§3 e dos [schemas da API](<../app/api/src/citizent
 
 ## Dependências humanas e segurança
 
-Revisão das três rubricas, acessos de infraestrutura, Data Modeler, ideia efetiva da live, vídeos e envio no Portal continuam pendentes. Não inventar o conteúdo da live nem resultados de uso por participantes.
+Decisões de 16/11: rubricas aprovadas, Atlas acessível, AWS Learner Lab ativo e evidências de banco relacional **somente no Oracle local** (Oracle FIAP fora de escopo). Continuam pendentes: Data Modeler, prints do console AWS (sob instrução do agente), ideia efetiva da live, vídeos e envio no Portal. Não inventar o conteúdo da live nem resultados de uso por participantes.
 
 **Holdout fechado, nenhum modelo promovido.** Segredos não pertencem ao chat/relatórios; não apagar dados nem liberar envio da outbox antiga à nuvem. APIs pagas, recursos AWS, limpeza de dados e push exigem autorização conforme o estado e o CLAUDE. Documentos-modelo do professor são referências e não devem ser editados como implementação própria.

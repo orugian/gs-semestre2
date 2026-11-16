@@ -10,14 +10,14 @@ cbo6:
   - "202115"
   - "300105"
   - "313410"
-status: "rascunho"
+status: "aprovado"
 curadoria_natureza: "inferida_pendente_revisao"
 
 revisao_humana:
-  status: "pendente"
-  revisor: null
-  revisado_em: null
-  observacoes: "Rascunho inicial gerado para revisão humana do grupo até D3 (15/11/2026 às 18h (America/Sao_Paulo))."
+  status: "aprovado"
+  revisor: "grupo"
+  revisado_em: "2026-11-16T10:05:00-03:00"
+  observacoes: "Homologado pelo grupo em 16/11/2026. Mínimos de aprovação fixados em 0.5 para objetiva e 0.5 para LLM."
 
 populacao:
   descricao: "Profissionais responsáveis pela telemetria, instrumentação industrial, integração de dispositivos IoT, monitoramento contínuo de sinais físicos e diagnóstico de anomalias em plantas operacionais."
@@ -237,8 +237,8 @@ politica_avaliacao_proposta:
   pesos:
     objetiva: 0.5
     llm: 0.5
-  minimo_objetiva: null
-  minimo_llm: null
+  minimo_objetiva: 0.5
+  minimo_llm: 0.5
   criterio_demonstracao: "Ambas as partes (objetiva e dissertativa via LLM) precisam atingir os mínimos a serem definidos pela revisão humana para que a competência seja considerada demonstrada no nível básico."
   fallback_llm:
     comportamento: "parcial"
@@ -251,10 +251,10 @@ politica_avaliacao_proposta:
   vedacao_sentimento: "O sentimento ou estilo pessoal NUNCA entra na composição da nota (D23)."
 
 checklist_revisao:
-  pertinencia_ocupacional: "pendente"
-  carater_obrigatorio_requisitos: "pendente"
-  adequacao_enunciados_gabaritos: "pendente"
-  rubricas_e_ancoras: "pendente"
-  minimos_aprovacao: "pendente"
-  acessibilidade_e_inclusao: "pendente"
-  fontes_e_versao_esco: "pendente"
+  pertinencia_ocupacional: "aprovado"
+  carater_obrigatorio_requisitos: "aprovado"
+  adequacao_enunciados_gabaritos: "aprovado"
+  rubricas_e_ancoras: "aprovado"
+  minimos_aprovacao: "aprovado"
+  acessibilidade_e_inclusao: "aprovado"
+  fontes_e_versao_esco: "aprovado"
