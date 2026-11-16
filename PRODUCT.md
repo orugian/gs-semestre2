@@ -24,8 +24,8 @@ Projeto acadêmico FIAP GS2026.2, nove disciplinas, prazo19/11/2026às23h55. Est
 
 ## Capabilities and Constraints
 
-- API local, outbox, autenticação/consentimentos, ingestão/features e experimentos científicos estão implementados nos limites do estado.
-- Interface atual é esqueleto; serving/model cards e jornada profissional/LLM/Cloud/firmware/E2E não estão concluídos.
+- API local (com telemetria, autenticação e snapshot retrospectivo de mercado R06/T17), outbox durável, ingestão Caged segregada, notebooks ML/RNA e programa estatístico portátil estão implementados nos limites do estado.
+- Interface web parcial possui abas de Mercado e Painel técnico; persistência de model cards no MongoDB Atlas, empacotador de entregas acadêmicas e jornada profissional/LLM/Cloud/firmware/E2E não estão concluídos.
 - MVP de produto: três destinos R29. Estatística: seis destinos/todas as escolaridades. Não misturar coortes.
 - Holdout2026 fechado; nenhum modelo promovido. Ganho de validação não garante emprego nem promoção automática.
 - Panorama: um HTML estático autossuficiente com CSS local, sem rede, dependências novas, dados ao vivo ou autenticação. Não alterar `app/web` para produzi-lo.

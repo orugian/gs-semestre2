@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CitizenTech: caderno de continuidade</title>
+  <style>
+    /* Reset e Configurações Básicas */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 17px;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      color: #0f172a;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #0f172a;
+      background-color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Quebra defensiva de texto para evitar overflow horizontal */
+    p, li, dd, td, th, h1, h2, h3, h4, span, div {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    code, pre, .mono, a {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    /* Tipografia Editorial */
+    h1, h2, h3, h4 {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      color: #0f172a;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      line-height: 1.3;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      line-height: 1.4;
+      margin-top: 1.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-top: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    p, ul, ol {
+      max-width: 72ch;
+      margin-bottom: 1.1rem;
+    }
+
+    li {
+      margin-bottom: 0.45rem;
+    }
+
+    ul, ol {
+      padding-left: 1.4rem;
+    }
+
+    /* Numeração Tabular */
+    .num, table td, table th {
+      font-variant-numeric: tabular-nums;
+    }
+
+    code, pre, .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: max(12px, 0.88em);
+    }
+
+    code {
+      background-color: #f1f5f9;
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Links e Interações */
+    a {
+      color: #1e3a8a;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    a:hover {
+      color: #0f172a;
+    }
+
+    a:focus-visible {
+      outline: 2px solid #1e3a8a;
+      outline-offset: 2px;
+    }
+
+    ::selection {
+      background-color: #e0e7ff;
+      color: #0f172a;
+    }
+
+    /* Link de Salto Acessível */
+    .skip-link {
+      position: absolute;
+      top: -9999px;
+      left: 1rem;
+      background-color: #0f172a;
+      color: #ffffff;
+      padding: 0.6rem 1rem;
+      z-index: 10000;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .skip-link:hover { color: #ffffff; }
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    /* Estrutura da Página */
+    .page-wrapper {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3.5rem 1rem;
+    }
+
+    .brand-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand-title-area {
+      margin-bottom: 1rem;
+    }
+
+    .brand-subtitle {
+      font-size: 1.05rem;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    /* Bloco de Síntese Visível no Primeiro Viewport */
+    .header-synthesis {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .synthesis-title {
+      font-family: Georgia, serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .synthesis-list {
+      list-style: disc;
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #1e293b;
+    }
+
+    .synthesis-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .synthesis-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.75rem;
+      padding: 0.75rem 1rem;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #334155;
+    }
+
+    .meta-item strong {
+      color: #0f172a;
+    }
+
+    /* Grid Principal */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* Navegação / Sumário */
+    .toc-sidebar {
+      position: sticky;
+      top: 1.5rem;
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    .toc-collapsible {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 0.85rem;
+    }
+
+    .toc-title {
+      font-family: Georgia, serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.35rem 0.5rem;
+      color: #334155;
+      text-decoration: none;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      border-radius: 3px;
+    }
+
+    .toc-link:hover {
+      color: #0f172a;
+      background-color: #f1f5f9;
+    }
+
+    .toc-link:focus-visible {
+      outline: 2px solid #1e3a8a;
+      outline-offset: 1px;
+    }
+
+    .toc-desktop { display: block; }
+    .toc-collapsible { display: none; }
+    @media (max-width: 960px) { .toc-desktop { display: none; } .toc-collapsible { display: block; } }
+    #matriz-disciplinas table { min-width: 1050px; table-layout: fixed; }
+    #matriz-disciplinas th:first-child { width: 160px; }
+    #matriz-disciplinas th:nth-child(2) { width: 95px; }
+    @media print { #matriz-disciplinas table { min-width: 0; table-layout: auto; } }
+
+    /* Comportamento Desktop do Sumário */
+    @media (min-width: 961px) {
+      .toc-summary {
+        display: block;
+        cursor: default;
+        list-style: none;
+        pointer-events: none;
+        margin-bottom: 0.65rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid #cbd5e1;
+      }
+
+      .toc-summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .toc-collapsible:not([open]) > .toc-list,
+      .toc-collapsible[open] > .toc-list {
+        display: block !important;
+      }
+    }
+
+    /* Comportamento Mobile do Sumário: nativo details/summary compacto */
+    @media (max-width: 960px) {
+      .layout-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+      }
+
+      .toc-sidebar {
+        position: static;
+        max-height: none;
+        margin-bottom: 1rem;
+      }
+
+      .toc-summary {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 44px;
+        font-family: Georgia, serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #0f172a;
+      }
+
+      .toc-summary::after {
+        content: "";
+        width: 0.45rem; height: 0.45rem; margin-left: 0.75rem;
+        border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+        transform: rotate(45deg);
+      }
+
+      .toc-collapsible[open] .toc-summary::after {
+        transform: rotate(225deg);
+      }
+
+      .toc-list {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e2e8f0;
+      }
+    }
+
+    /* Conteúdo Principal */
+    .main-content {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2rem 2.25rem 2.75rem 2.25rem;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* Painéis Semânticos Neutros */
+    .notice-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background-color: #f8fafc;
+      padding: 0.9rem 1.15rem;
+      margin: 1.25rem 0;
+      max-width: 72ch;
+    }
+
+    .notice-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .notice-box p {
+      margin-bottom: 0.45rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .notice-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Emblemas de Estado com Texto Explícito */
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.2;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .badge-verified {
+      background-color: #f0fdf4;
+      color: #14532d;
+      border-color: #166534;
+    }
+
+    .badge-pending {
+      background-color: #fffbeb;
+      color: #78350f;
+      border-color: #92400e;
+    }
+
+    .badge-planned {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      border-color: #475569;
+    }
+
+    .badge-human {
+      background-color: #f5f3ff;
+      color: #4c1d95;
+      border-color: #6b21a8;
+    }
+
+    /* Tabelas Densas com Rolagem Dedicada */
+    .table-scroll {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1.25rem 0 1.75rem 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background-color: #ffffff;
+    }
+
+    .table-scroll:focus-visible {
+      outline: 2px solid #1e3a8a;
+      outline-offset: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      text-align: left;
+    }
+
+    caption {
+      font-family: Georgia, serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      color: #0f172a;
+      background-color: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    th, td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #0f172a;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cell-right {
+      text-align: right;
+    }
+
+    /* Matriz de Disciplinas: Tabela Estruturada e Confortável */
+    .table-matriz {
+      min-width: 680px;
+    }
+
+    .table-matriz td, .table-matriz th {
+      padding: 0.65rem 0.75rem;
+    }
+
+    /* Diagrama Arquitetural Responsivo em HTML/CSS */
+    .arch-container {
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background-color: #ffffff;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .arch-heading {
+      font-family: Georgia, serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .arch-track {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .arch-track:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0;
+    }
+
+    .arch-track-title {
+      font-family: Georgia, serif;
+      font-size: 0.925rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.65rem;
+    }
+
+    .arch-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 0.65rem;
+    }
+
+    .arch-node {
+      flex: 1 1 190px;
+      min-width: 170px;
+      max-width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 0.65rem 0.75rem;
+      background-color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.35rem;
+    }
+
+    .arch-node.state-verified {
+      border-color: #166534;
+      background-color: #f0fdf4;
+    }
+
+    .arch-node.state-pending {
+      border-color: #92400e;
+      background-color: #fffbeb;
+      border-style: dashed;
+    }
+
+    .arch-node.state-planned {
+      border-color: #64748b;
+      background-color: #f8fafc;
+      border-style: dotted;
+    }
+
+    .arch-node-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    .arch-node-desc {
+      font-size: 0.78rem;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    .arch-node-badge {
+      align-self: flex-start;
+      margin-top: auto;
+    }
+
+    .arch-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.45rem;
+      color: #475569;
+      text-align: center;
+      border-radius: 3px;
+      background-color: #f1f5f9;
+      align-self: center;
+    }
+
+    .arch-legend {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: #334155;
+    }
+
+    .arch-legend strong {
+      color: #0f172a;
+    }
+
+    .arch-legend-list {
+      list-style: disc;
+      padding-left: 1.2rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0;
+    }
+
+    .arch-legend-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    .arch-legend-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .arch-text-equivalent {
+      margin-top: 1.25rem;
+      padding: 1rem 1.15rem;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .arch-text-equivalent h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+
+    .arch-text-equivalent ol {
+      padding-left: 1.2rem;
+      margin-bottom: 0;
+    }
+
+    .arch-text-equivalent li {
+      margin-bottom: 0.5rem;
+    }
+
+    .arch-text-equivalent li:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Responsividade em Telas Menores */
+    @media (max-width: 640px) {
+      .page-wrapper {
+        padding: 1rem 0.65rem 2.5rem 0.65rem;
+      }
+
+      .main-content {
+        padding: 1.25rem 0.85rem;
+      }
+
+      h1 {
+        font-size: 1.65rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        margin-top: 2rem;
+      }
+
+      .brand-meta {
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .arch-flow {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .arch-connector {
+        align-self: flex-start;
+      }
+    }
+
+    /* Mídia de Impressão */
+    @media print {
+      body {
+        background-color: #ffffff;
+        color: #000000;
+        font-size: 10pt;
+      }
+
+      .page-wrapper {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      .skip-link, .toc-sidebar {
+        display: none !important;
+      }
+
+      .layout-grid {
+        display: block !important;
+      }
+
+      .main-content {
+        border: none !important;
+        padding: 0 !important;
+      }
+
+      h2 {
+        page-break-before: always;
+      }
+
+      table, .notice-box, .arch-container {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      a {
+        color: #000000;
+        text-decoration: underline;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+  <div class="page-wrapper">
+    <header class="brand-header">
+      <div class="brand-title-area">
+        <h1>CitizenTech: caderno de continuidade</h1>
+        <p class="brand-subtitle">Retrato técnico e arquitetural de engenharia para retomada de desenvolvimento — FIAP GS 2026.2</p>
+      </div>
+
+      <!-- Síntese Técnica Obrigatória Visível no Primeiro Viewport -->
+      <div class="header-synthesis">
+        <div class="synthesis-title">Síntese Operacional do Ponto de Parada (Snapshot 16/11/2026 às 09h15 UTC−3)</div>
+        <ul class="synthesis-list">
+          <li><strong>Mercado já integrado, aplicação parcial:</strong> API, tela e Painel técnico existem; login e jornada completa ainda faltam.</li>
+          <li><strong>Frente científica executada:</strong> Notebooks ML/RNA e Estatística portátil existem; pacotes acadêmicos finais ainda pendentes.</li>
+          <li><strong>Holdout2026 fechado por protocolo:</strong> Não abrir nem retunar com2025. O diretório misto de Parquets exige cuidado.</li>
+          <li><strong>Nenhum modelo promovido:</strong> O app mostra o sazonal como estimativa retrospectiva2025; promoção ainda não decidida.</li>
+          <li><strong>Próximo: S9 currículo/PII.</strong> Antes, conferir gates Oracle e QA. Este caderno é estático, não monitoramento ao vivo.</li>
+        </ul>
+      </div>
+
+      <div class="brand-meta">
+        <div class="meta-item"><strong>Base funcional:</strong> <code class="mono">13cb0a2</code> (regressão <code class="mono">5d311e7</code>)</div>
+        <div class="meta-item"><strong>Documentação consolidada:</strong> <code class="mono">dd55e48</code></div>
+        <div class="meta-item"><strong>Snapshot:</strong> 16/11/2026 às 09h15 (UTC−3)</div>
+        <div class="meta-item"><strong>Prazo de entrega:</strong> 19/11/2026 às 23h55 (aprox. 3,6 dias)</div>
+        <div class="meta-item"><strong>Ambiente:</strong> Offline local (<code class="mono">file://</code>)</div>
+      </div>
+    </header>
+
+    <div class="layout-grid">
+      <!-- Navegação / Sumário Analítico -->
+      <nav class="toc-sidebar" aria-label="Sumário analítico do documento">
+        <div class="toc-desktop"><div class="toc-title">Sumário do Caderno</div><ul class="toc-list">
+          <li><a href="#visao-produto" class="toc-link">1. Visão do Produto e Limites</a></li>
+          <li><a href="#ponto-parada" class="toc-link">2. Ponto de Parada e Snapshot</a></li>
+          <li><a href="#arquitetura" class="toc-link">3. Mapa da Arquitetura</a></li>
+          <li><a href="#estado-tecnico" class="toc-link">4. Estado Técnico por Frente</a></li>
+          <li><a href="#resultados-cientificos" class="toc-link">5. Resultados de ML, RNA e Estatística</a></li>
+          <li><a href="#matriz-disciplinas" class="toc-link">6. Matriz das 9 Disciplinas</a></li>
+          <li><a href="#proximos-gates" class="toc-link">7. Próximos Gates Ordenados</a></li>
+          <li><a href="#riscos-invariantes" class="toc-link">8. Riscos e Invariantes</a></li>
+          <li><a href="#fontes-referencias" class="toc-link">9. Fontes de Verdade e Referências</a></li>
+        </ul></div>
+        <details class="toc-collapsible">
+          <summary class="toc-summary"><span class="toc-title">Sumário do Caderno</span></summary>
+          <ul class="toc-list">
+            <li><a href="#visao-produto" class="toc-link">1. Visão do Produto e Limites</a></li>
+            <li><a href="#ponto-parada" class="toc-link">2. Ponto de Parada e Snapshot</a></li>
+            <li><a href="#arquitetura" class="toc-link">3. Mapa da Arquitetura</a></li>
+            <li><a href="#estado-tecnico" class="toc-link">4. Estado Técnico por Frente</a></li>
+            <li><a href="#resultados-cientificos" class="toc-link">5. Resultados de ML, RNA e Estatística</a></li>
+            <li><a href="#matriz-disciplinas" class="toc-link">6. Matriz das 9 Disciplinas</a></li>
+            <li><a href="#proximos-gates" class="toc-link">7. Próximos Gates Ordenados</a></li>
+            <li><a href="#riscos-invariantes" class="toc-link">8. Riscos e Invariantes</a></li>
+            <li><a href="#fontes-referencias" class="toc-link">9. Fontes de Verdade e Referências</a></li>
+          </ul>
+        </details>
+      </nav>
+
+      <!-- Conteúdo Principal -->
+      <main id="main-content" class="main-content">
+        <!-- 1. Visão do Produto e Limites -->
+        <section id="visao-produto">
+          <h2>1. Visão Honesta do Produto</h2>
+          <p>
+            O CitizenTech é uma ferramenta de apoio analítico à transição de carreira de profissionais graduados e experientes. Seu objetivo central é confrontar trajetórias ocupacionais pregressas com dados do mercado formal de trabalho brasileiro (Novo Caged), apontando lacunas de formação e orientando rotas de qualificação estruturadas.
+          </p>
+          <div class="notice-box">
+            <div class="notice-title">Fronteiras Éticas e Metodológicas do Escopo</div>
+            <p>
+              O sistema <strong>não promete recolocação profissional</strong>, não calcula pontuação única ("score mágico" de empregabilidade) e não converte autodeclarações em competências automaticamente comprovadas. O produto atua na orientação diagnóstica e no planejamento consciente do trabalhador.
+            </p>
+          </div>
+          <p>
+            Em conformidade com a decisão formal R29, o escopo do Mínimo Produto Viável (MVP) contempla estritamente <strong>três destinos ocupacionais</strong>:
+          </p>
+          <ul>
+            <li><strong>Dados / BI:</strong> modelagem analítica, engenharia de dados e suporte à decisão corporativa.</li>
+            <li><strong>Monitoramento / IoT:</strong> telemetria operacional, automação preditiva e controle de infraestrutura.</li>
+            <li><strong>Processos / Melhoria Contínua:</strong> engenharia de processos, otimização de fluxos operacionais e qualidade.</li>
+          </ul>
+          <p>
+            <strong>Esclarecimento sobre coortes e recortes:</strong> A análise realizada na disciplina de Estatística (D11) examinou <em>seis grupos ocupacionais</em> abrangendo <em>todas as escolaridades</em> no Estado de São Paulo. Esses seis grupos constituem um <strong>recorte científico aprovado no plano diretor</strong> para responder a requisitos acadêmicos específicos. Eles <strong>não representam expansão nem retorno de escopo</strong> do MVP de produto. As rotas futuras da interface e os modelos em produção devem seguir estritamente os três destinos de R29 consumindo o arquivo de manifesto <code class="mono">escopo_mvp.json</code>.
+          </p>
+        </section>
+
+        <!-- 2. Ponto de Parada e Snapshot Operacional -->
+        <section id="ponto-parada">
+          <h2>2. Ponto de Parada e Snapshot Operacional</h2>
+          <p>
+            Este caderno constitui um retrato técnico estático consolidado no instante temporal de <strong>16/11/2026 às 09h15 (UTC−3)</strong>, a cerca de <strong>3,6 dias</strong> do encerramento oficial da entrega acadêmica (19/11/2026 às 23h55).
+          </p>
+          <div class="notice-box">
+            <div class="notice-title">Identificadores de Linha de Base (Baseline Commits)</div>
+            <p>
+              A base de código funcional foi consolidada no commit <code class="mono">13cb0a2</code> (com registro de regressão integrado em <code class="mono">5d311e7</code>). A consolidação documental deste panorama foi registrada no commit <code class="mono">dd55e48</code>.
+            </p>
+          </div>
+          <p>
+            Para assegurar alinhamento técnico imediato na equipe e nas próximas sessões de desenvolvimento, destacam-se os seguintes fatos operacionais:
+          </p>
+          <ul>
+            <li><strong>Aplicação parcial, não integrada ponta a ponta:</strong> O sistema possui mercado implementado (API de snapshot, tela web e painel técnico), autenticação e leituras CTP. Contudo, faltam currículo/PII, extração, comparação, plano, avaliação prática, laboratório, nuvem AWS, firmware Wokwi e a jornada E2E integrada. Este caderno não monitora serviços em execução.</li>
+            <li><strong>Frontend web parcial com abas de Mercado e Painel técnico (S15a integrada):</strong> A interface gráfica (<code class="mono">app/web</code>) não é mais apenas esqueleto; implementa abas ativas de Mercado e Painel técnico com gráficos comparativos e visualização de abstenções (bundle de 737 kB). Telas de login/autenticação e a jornada profissional do usuário ainda não foram iniciadas.</li>
+            <li><strong>API de backend com rotas de Mercado e Snapshot (S8 integrada):</strong> O servidor FastAPI (<code class="mono">app/api</code>) serve endpoints públicos <code class="mono">GET /mercado/{destino}</code> e <code class="mono">GET /mercado/{destino}/modelos</code> com regras R06, abstenção T06 (26 séries) e metadados T17. Publica snapshot retrospectivo de 2025 derivado dos artefatos em disco, sem realizar inferência online em tempo real.</li>
+            <li><strong>Nenhum modelo promovido a produção:</strong> Todos os modelos (clássicos e redes neurais) foram avaliados na validação de 2025; o status de promoção permanece <code class="mono">nao_decidida</code>. A aplicação exibe a estimativa do baseline sazonal anual rotulada como "estimativa retrospectiva (2025)". Model cards constam no snapshot, mas a persistência no MongoDB Atlas depende de credenciais e liberação de IP.</li>
+            <li><strong>Holdout de 2026 fechado por protocolo:</strong> Os dados de 2026 do Novo Caged estão presentes em arquivos Parquet no diretório misto (os dados brutos originais foram limpos), porém permanecem fechados por protocolo metodológico para prevenir contaminação. Não há barreira física no sistema operacional; retunar modelos com base nos resultados de 2025 é terminantemente proibido. Loaders legados não devem ser executados no diretório misto.</li>
+            <li><strong>Validade das suítes de teste registradas:</strong> As contagens de teste registradas nesta documentação derivam da regressão executada por outra frente no commit <code class="mono">5d311e7</code> (ML: 266 passed; API: 193 passed sem Oracle; Web: 17 passed). Vinte e oito testes de API que dependem de Oracle real não foram executados pós-S8 (Oracle parado); suítes de Cloud (50) e Tools (20) são históricas. As suítes de produto citadas não foram reexecutadas por esta linha documental; a verificação própria do HTML é registrada separadamente.</li>
+          </ul>
+        </section>
+
+        <!-- 3. Mapa da Arquitetura do Sistema -->
+        <section id="arquitetura">
+          <h2>3. Mapa da Arquitetura do Sistema</h2>
+          <p>
+            O mapa a seguir organiza a arquitetura do CitizenTech em três trilhas de execução, distinguindo as ligações verificadas em testes locais daquelas que permanecem pendentes ou apenas planejadas.
+          </p>
+
+          <div class="arch-container">
+            <div class="arch-heading">Mapa Arquitetural de Engenharia do CitizenTech</div>
+
+            <!-- Trilha 1: Mercado & Modelos -->
+            <div class="arch-track">
+              <div class="arch-track-title">Trilha 1: Inteligência de Mercado e Modelagem Preditiva (Novo Caged / ML / RNA)</div>
+              <div class="arch-flow">
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Estoque &amp; Painel Segregado</div>
+                  <div class="arch-node-desc">239 Parquets históricos (inclui 2026). Treino em painel segregado: Fit 2021-01 a 2024-09, Validação 2025-01 a 2025-09, lags de 2020.</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local</span>
+                </div>
+                <div class="arch-connector">→ Features / Modelos CPU</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Treino de Modelos em CPU</div>
+                  <div class="arch-node-desc">Baselines (persistência, sazonal), Ridge, RF, HistGradientBoosting e MLP PyTorch (CPU, arquiteturas A/B). Notebooks em <code class="mono">app/ml/notebooks/</code>.</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local</span>
+                </div>
+                <div class="arch-connector">→ Serialização</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Artefatos Locais em Disco</div>
+                  <div class="arch-node-desc"><code class="mono">.dados/artefatos/</code> com manifestos e hashes SHA-256 (garantia de integridade local).</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local</span>
+                </div>
+                <div class="arch-connector">→ Snapshot / API Retrospectiva</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Snapshot &amp; API de Mercado</div>
+                  <div class="arch-node-desc">Snapshot 2025 (55 séries estimadas / 26 abstenções) e endpoints FastAPI <code class="mono">GET /mercado/{destino}</code> e <code class="mono">/modelos</code> com R06/T06/T17.</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local (S8)</span>
+                </div>
+                <div class="arch-connector">→ Visualização Web</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Tela Web Mercado &amp; Painel</div>
+                  <div class="arch-node-desc">Abas Mercado e Painel técnico em <code class="mono">app/web</code> com gráficos e abstenções; bundle 737 kB; sem login/E2E.</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local (S15a)</span>
+                </div>
+                <div class="arch-connector">Ramo da API ⇢ Mongo (pendente)</div>
+                <div class="arch-node state-pending">
+                  <div class="arch-node-title">MongoDB Atlas</div>
+                  <div class="arch-node-desc">Model cards presentes no snapshot; a gravação será feita pelo backend, não pela Web. MongoDB Atlas aguarda credenciais e liberação de IP.</div>
+                  <span class="badge badge-pending arch-node-badge">Pendente Atlas</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trilha 2: Telemetria, Segurança & Cloud -->
+            <div class="arch-track">
+              <div class="arch-track-title">Trilha 2: Telemetria IoT, Segurança e Nuvem (CTP / Cybersecurity / Cloud)</div>
+              <div class="arch-flow">
+                <div class="arch-node state-pending">
+                  <div class="arch-node-title">ESP32 / Wokwi Didático</div>
+                  <div class="arch-node-desc">3 cenários didáticos (LED, buzzer, sentinela -127). Simulação didática industrial, não fonte do mercado. Sem firmware próprio no momento.</div>
+                  <span class="badge badge-pending arch-node-badge">Pendente Integração</span>
+                </div>
+                <div class="arch-connector">⇢ HTTP / X-Device-Key</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">FastAPI Telemetria &amp; Auth</div>
+                  <div class="arch-node-desc">POST/GET <code class="mono">/leituras</code>, validações 400/401/429, JWT HttpOnly, Argon2id, CSRF e consentimento LGPD.</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local</span>
+                </div>
+                <div class="arch-connector">→ Persistência Local</div>
+                <div class="arch-node state-verified">
+                  <div class="arch-node-title">Armazenamento Local</div>
+                  <div class="arch-node-desc">Oracle Free · DDL 19c (Docker S5) e Outbox SQLite durável em WAL (<code class="mono">outbox.db</code>, 77 eventos retidos).</div>
+                  <span class="badge badge-verified arch-node-badge">Verificado Local</span>
+                </div>
+                <div class="arch-connector">⇢ Nuvem AWS (Pendente)</div>
+                <div class="arch-node state-pending">
+                  <div class="arch-node-title">Nuvem AWS (Lambda &amp; RDS)</div>
+                  <div class="arch-node-desc">Função Lambda assíncrona, tabelas SQL no RDS PostgreSQL e Function URL pública.</div>
+                  <span class="badge badge-pending arch-node-badge">Pendente Deploy (S4)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trilha 3: Transição Profissional, IA e Jornada E2E -->
+            <div class="arch-track">
+              <div class="arch-track-title">Trilha 3: Transição Profissional, IA Generativa e Jornada Completa (AIC / LLM)</div>
+              <div class="arch-flow">
+                <div class="arch-node state-planned">
+                  <div class="arch-node-title">Entrada de Currículo</div>
+                  <div class="arch-node-desc">Recepção de trajetória profissional e competências autodeclaradas pelo graduado/experiente.</div>
+                  <span class="badge badge-planned arch-node-badge">Planejado (S9)</span>
+                </div>
+                <div class="arch-connector">⋯ Higienização PII</div>
+                <div class="arch-node state-planned">
+                  <div class="arch-node-title">Sanitização PII &amp; LGPD</div>
+                  <div class="arch-node-desc">Redação defensiva de dados sensíveis antes de qualquer tráfego externo (não é garantia absoluta) e confirmação do usuário.</div>
+                  <span class="badge badge-planned arch-node-badge">Planejado (S9)</span>
+                </div>
+                <div class="arch-connector">⋯ Diagnóstico ESCO</div>
+                <div class="arch-node state-planned">
+                  <div class="arch-node-title">Extração, Comparação &amp; Plano</div>
+                  <div class="arch-node-desc">Extração CBO-ESCO (S10), comparação diagnóstica (S11) e geração de plano formativo estruturado (S12).</div>
+                  <span class="badge badge-planned arch-node-badge">Planejado (S10-S12)</span>
+                </div>
+                <div class="arch-connector">⋯ Avaliação 50/50</div>
+                <div class="arch-node state-planned">
+                  <div class="arch-node-title">Avaliação Prática (LLM)</div>
+                  <div class="arch-node-desc">Exercícios práticos via API (teto de 3 tentativas em 24h) e nota de 50% objetiva e 50% resposta aberta por LLM, com mínimos por parte.</div>
+                  <span class="badge badge-planned arch-node-badge">Planejado (S13)</span>
+                </div>
+                <div class="arch-connector">⇢ Interface Web E2E</div>
+                <div class="arch-node state-planned">
+                  <div class="arch-node-title">Interface Web E2E &amp; Login</div>
+                  <div class="arch-node-desc">Telas de autenticação/login e fluxo completo ponta a ponta na interface web em React 19 / Astryx com testes E2E Playwright e axe.</div>
+                  <span class="badge badge-planned arch-node-badge">Planejado (S15)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Legenda da Arquitetura -->
+            <div class="arch-legend">
+              <strong>Convenções de Engenharia e Legenda de Estados:</strong>
+              <ul class="arch-legend-list">
+                <li><strong>Verificado Local (borda sólida verde):</strong> Componente e integração validados em testes automatizados com bases de dados ou fixtures locais.</li>
+                <li><strong>Pendente (borda tracejada âmbar):</strong> Implementação de regras locais existente ou hardware/serviço externo aguardando deploy, conexão final ou serving.</li>
+                <li><strong>Planejado (borda pontilhada ardósia):</strong> Módulo especificado na arquitetura, mas com codificação ainda não iniciada (fatias S9–S15).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="arch-text-equivalent">
+            <h3>Descrição Textual Acessível da Arquitetura</h3>
+            <ol>
+              <li>
+                <strong>Trilha de Mercado e Séries Temporais:</strong> Um estoque histórico de 239 arquivos Parquet canônicos está disponível. O treinamento foi executado em painel segregado de desenvolvimento (Fit 2021-01 a 2024-09, Validação 2025-01 a 2025-09, lags de 2020) em CPU, abrangendo estimadores clássicos e redes neurais MLP PyTorch, com notebooks reexecutados em <code class="mono">app/ml/notebooks/</code>. Os artefatos gerados estão gravados em <code class="mono">.dados/artefatos/</code> com manifestos e hashes SHA-256 de integridade local. A fatia S8 integrou o snapshot de mercado e os endpoints públicos <code class="mono">GET /mercado/{destino}</code> e <code class="mono">/modelos</code> na FastAPI. A fatia S15a integrou as abas de Mercado e Painel técnico na interface web. A gravação persistente de model cards no MongoDB Atlas permanece <em>pendente de credenciais</em>.
+              </li>
+              <li>
+                <strong>Trilha de Telemetria, Segurança e Nuvem:</strong> A FastAPI implementa endpoints locais de leituras de telemetria, autenticação JWT HttpOnly com Argon2id, proteção CSRF e consentimentos LGPD, comunicando-se com banco Oracle Free · DDL 19c de teste e outbox SQLite durável em modo WAL (<code class="mono">outbox.db</code>). O envio assíncrono para a nuvem AWS (Lambda e RDS PostgreSQL) está <em>pendente de deploy (S4)</em>. O dispositivo ESP32/Wokwi atua como <em>simulação didática industrial</em> e não como fornecedor de dados de mercado; o firmware próprio ainda não foi construído.
+              </li>
+              <li>
+                <strong>Trilha de Transição Profissional e LLM:</strong> A recepção de currículo, sanitização defensiva de PII com confirmação prévia obrigatória, extração e comparação de competências com o catálogo CBO-ESCO, plano de qualificação, avaliação prática com teto de 3 tentativas em 24h (critério 50/50) e a interface web completa com login e testes E2E Playwright/axe constituem <em>trabalho planejado não iniciado</em>.
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- 4. Estado Técnico por Frente de Desenvolvimento -->
+        <section id="estado-tecnico">
+          <h2>4. Estado Técnico por Frente de Desenvolvimento</h2>
+          <p>
+            As suítes de teste do CitizenTech são organizadas por componente desacoplado, garantindo isolamento de dependências e ambientes limpos.
+          </p>
+          <div class="notice-box">
+            <div class="notice-title">Esclarecimento Fundamental sobre Contagens de Testes Registradas</div>
+            <p>
+              Os quantitativos registrados nas documentações derivam de execuções históricas e da regressão mais recente registrada por outra frente no commit <code class="mono">5d311e7</code>: <strong>266 testes de ML/RNA</strong> passados com ruff limpo; <strong>193 testes de API</strong> passados com <code class="mono">-m "not oracle"</code> (sendo que <strong>28 testes que dependem de Oracle real não foram executados</strong> pós-S8 porque o Oracle estava parado); <strong>17 testes de Web</strong> passados com typecheck e build concluídos; <strong>50 testes de regras de Cloud</strong> e <strong>20 testes de Tools</strong> históricos não reexecutados. A contagem de 208 testes de API com Oracle refere-se à fatia histórica S5, e não a uma nova execução pós-S8. Nenhuma suíte de testes foi executada durante a criação deste documento HTML.
+            </p>
+          </div>
+
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Tabela do estado técnico detalhado por frente de desenvolvimento">
+            <table>
+              <caption>Tabela 1 — Panorama do estado técnico por componente e limites operacionais ativos</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Frente de Desenvolvimento</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Implementado / Evidência Verificada</th>
+                  <th scope="col">Limite que Permanece / Débito Técnico</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Base Técnica e Ferramental</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Gerenciamento por <code class="mono">uv</code> por componente, runtime Python 3.11, Docker de teste e pipeline Edge headless para compilação PDF.</td>
+                  <td>Testes de fumaça da infraestrutura não equivalem à validação dos fluxos de negócio.</td>
+                </tr>
+                <tr>
+                  <td><strong>Telemetria CTP (<code class="mono">app/api</code>)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Endpoints <code class="mono">POST/GET /leituras</code>, validações de payload (400, 401, 429), indicador de risco, sentinela -127 e exportação CSV.</td>
+                  <td>Conexão do firmware ESP32/Wokwi real com a API ainda não foi exercitada ponta a ponta.</td>
+                </tr>
+                <tr>
+                  <td><strong>Outbox Assíncrona (S3)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>SQLite durável em modo WAL, reconciliação de estados, idempotência e reprocessamento com imagem de contêiner testada.</td>
+                  <td>Lambda e RDS reais da AWS não integrados; 77 eventos de teste retidos na base local que não podem ser enviados nem apagados.</td>
+                </tr>
+                <tr>
+                  <td><strong>Autenticação e Segurança (S5)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Autenticação JWT com cookies HttpOnly, token CSRF, hashing Argon2id e consentimento LGPD; 208 testes com Oracle Free · DDL 19c real na época da S5.</td>
+                  <td>Telas de autenticação/login no frontend ausentes; 28 testes Oracle não executados na regressão pós-S8 (Oracle parado).</td>
+                </tr>
+                <tr>
+                  <td><strong>Ingestão Novo Caged (S6)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>239 Parquets validados de 243 fontes, descarte de atributos sensíveis e conformidade temporal as-of de movimentações.</td>
+                  <td>Dados de 2026 presentes no diretório misto; trancados por protocolo metodológico para prevenir contaminação.</td>
+                </tr>
+                <tr>
+                  <td><strong>Features e Modelos ML/RNA (S7 / E05)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Alinhamento temporal as-of, embargo de 3 meses, baselines, Ridge, RF, HGB e MLP PyTorch (CPU) treinados; notebooks fontes reexecutados (<code class="mono">app/ml/notebooks/</code>) e slides em <code class="mono">05_ML/slides.md</code>.</td>
+                  <td>Avaliação no holdout 2026 pendente; nenhum modelo promovido; cópia para pastas de entrega e vídeos pendentes.</td>
+                </tr>
+                <tr>
+                  <td><strong>Mercado API e Snapshot (S8)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Endpoints <code class="mono">GET /mercado/{destino}</code> e <code class="mono">/modelos</code> com regras R06, abstenção T06 (26 séries) e metadados T17; snapshot derivado dos artefatos sem inferência online.</td>
+                  <td>Model cards presentes no snapshot, mas gravação em MongoDB Atlas pendente de credenciais e liberação de IP.</td>
+                </tr>
+                <tr>
+                  <td><strong>Interface Web (S15a)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Abas Mercado e Painel técnico ativas em <code class="mono">app/web</code> com navegação sincronizada na URL, gráficos comparativos e abstenções; 17 testes passados.</td>
+                  <td>Bundle de 737 kB; sem páginas de login, sem upload de currículo, sem testes de acessibilidade axe e sem testes E2E com Playwright.</td>
+                </tr>
+                <tr>
+                  <td><strong>Estatística Aplicada (D11 / E08)</strong></td>
+                  <td><span class="badge badge-verified">Verificado</span></td>
+                  <td>Programa portátil autônomo <code class="mono">analise_portatil.py</code> reproduz JSON D11 em 16 checagens, 8 figuras (incluindo dispersões e resíduos), relatório <code class="mono">08_Estatistica/relatorio.md</code> e PDF de teste de 21 páginas.</td>
+                  <td>Cópia para <code class="mono">08_Estatistica/analise.py</code> e base CSV pendente de empacotamento; PDF final e preenchimento de nomes/RMs pendentes.</td>
+                </tr>
+                <tr>
+                  <td><strong>Catálogo Ocupacional ESCO</strong></td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Seis arquivos YAML rascunhados com vínculos CBO-ESCO e histórico documental preservado.</td>
+                  <td>Nenhuma das três rubricas do MVP recebeu aprovação formal de revisor humano.</td>
+                </tr>
+                <tr>
+                  <td><strong>Cloud, IoT e Inteligência Artificial</strong></td>
+                  <td><span class="badge badge-planned">Planejado</span></td>
+                  <td>Regras locais de risco em <code class="mono">app/cloud/src/risco.py</code> (50 testes locais) e limiares definidos em arquivo JSON unificado.</td>
+                  <td>Fatia S4 a implementar (sem processador serverless próprio no momento), deploy no AWS Learner Lab, firmware Wokwi e pipeline de LLM (S9–S15) não iniciados.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. Resultados Reais das Frentes Científicas -->
+        <section id="resultados-cientificos">
+          <h2>5. Resultados Reais das Frentes Científicas</h2>
+          <p>
+            Esta seção detalha os achados empíricos consolidados das frentes de Machine Learning, Redes Neurais e Estatística Aplicada, rejeitando resumos cosméticos ou gráficos de progresso artificial.
+          </p>
+
+          <!-- 5.1 Séries Temporais do Mercado -->
+          <h3>5.1 Modelos Preditivos de Séries Temporais (ML e RNA)</h3>
+          <p>
+            Os modelos foram treinados sobre a série temporal de admissões formais de profissionais com nível superior completo ou pós-graduação no Novo Caged, particionados por Unidade Federativa nos 3 grupos do MVP (Dados/BI, Monitoramento/IoT e Processos).
+          </p>
+          <ul>
+            <li><strong>Intervalo de Treinamento (Fit):</strong> Janeiro de 2021 a Setembro de 2024 (dados de 2020 empregados exclusivamente para cálculo de defasagens / lags).</li>
+            <li><strong>Intervalo de Validação Externa:</strong> Janeiro de 2025 a Setembro de 2025, com aplicação de janela de embargo temporal de 3 meses.</li>
+            <li><strong>Amostra Avaliada:</strong> 55 séries elegíveis de um universo de 81 (filtro de densidade exigindo pelo menos 10 admissões no histórico), totalizando exatamente <strong>495 observações trimestrais</strong> (55 séries × 9 trimestres móveis).</li>
+            <li><strong>Unidade de Medida:</strong> Volume de admissões formais por trimestre móvel por par Grupo Ocupacional × UF.</li>
+          </ul>
+
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Tabela de resultados dos modelos preditivos na validação de 2025">
+            <table>
+              <caption>Tabela 2 — Desempenho comparativo dos modelos preditivos no conjunto de validação de 2025 (495 observações)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Modelo / Arquitetura</th>
+                  <th scope="col" class="cell-right">MAE</th>
+                  <th scope="col" class="cell-right">RMSE</th>
+                  <th scope="col" class="cell-right">WAPE (%)</th>
+                  <th scope="col" class="cell-right">Ganho Relativo vs Sazonal</th>
+                  <th scope="col">Situação Operacional</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Persistência Ingênua (Baseline)</strong></td>
+                  <td class="cell-right">35,45253</td>
+                  <td class="cell-right">103,5830</td>
+                  <td class="cell-right">12,5588%</td>
+                  <td class="cell-right">−5,53%</td>
+                  <td>Referência ingênua</td>
+                </tr>
+                <tr>
+                  <td><strong>Sazonal Anual (Baseline Oficial)</strong></td>
+                  <td class="cell-right">33,59596</td>
+                  <td class="cell-right">91,3838</td>
+                  <td class="cell-right">11,9011%</td>
+                  <td class="cell-right">Referência (0,00%)</td>
+                  <td>Referência formal exibida no app</td>
+                </tr>
+                <tr>
+                  <td><strong>Regressão Ridge</strong></td>
+                  <td class="cell-right">34,25765</td>
+                  <td class="cell-right">84,4189</td>
+                  <td class="cell-right">12,1355%</td>
+                  <td class="cell-right">−1,97%</td>
+                  <td>Não supera baseline sazonal</td>
+                </tr>
+                <tr>
+                  <td><strong>Random Forest Regressor</strong></td>
+                  <td class="cell-right">35,63387</td>
+                  <td class="cell-right">135,6003</td>
+                  <td class="cell-right">12,6230%</td>
+                  <td class="cell-right">−6,07%</td>
+                  <td>Não supera baseline sazonal</td>
+                </tr>
+                <tr>
+                  <td><strong>HistGradientBoosting</strong></td>
+                  <td class="cell-right">39,73936</td>
+                  <td class="cell-right">132,1033</td>
+                  <td class="cell-right">14,0774%</td>
+                  <td class="cell-right">−18,29%</td>
+                  <td>Não supera baseline sazonal</td>
+                </tr>
+                <tr>
+                  <td><strong>Rede Neural MLP (Configuração A)</strong></td>
+                  <td class="cell-right"><strong>31,65446</strong></td>
+                  <td class="cell-right"><strong>73,6720</strong></td>
+                  <td class="cell-right"><strong>11,2133%</strong></td>
+                  <td class="cell-right"><strong>+5,77896%</strong></td>
+                  <td>Melhor erro na validação 2025</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="notice-box">
+            <div class="notice-title">Interpretação Crítica dos Resultados de Modelagem</div>
+            <p>
+              1. <strong>Validade dos Modelos Clássicos:</strong> Os estimadores tabulares tradicionais (Ridge, Random Forest e HistGradientBoosting) apresentaram erro médio superior ao baseline sazonal anual. Este comportamento é cientificamente válido e reflete a volatilidade das séries regionais, não constituindo motivo para retreinamento artificial ou manipulação de hiperparâmetros.<br>
+              2. <strong>Seleção da MLP:</strong> A arquitetura MLP A (camadas densas de 64 e 32 neurônios, taxa de dropout 0,1, taxa de aprendizado 0,001 e refit de 55 épocas) foi selecionada estritamente na <em>validação cruzada interna do treino</em>, e não após observar os resultados do teste de 2025.<br>
+              3. <strong>Critério D10a e Retenção de Promoção:</strong> O critério D10a exige MAE de validação pelo menos 5% menor que o melhor baseline (nesta validação, o sazonal) e desvio de WAPE entre folds menor que o ganho. Esse critério é uma regra interna de decisão, não constituindo teste de hipóteses ou significância estatística, e não demonstra estabilidade temporal definitiva. <strong>Nenhum modelo foi promovido a produção</strong> (<code class="mono">status_promocao="nao_decidida"</code>). O app exibe a estimativa retrospectiva do baseline sazonal. A avaliação final depende de autorização expressa e execução de script único no holdout de 2026, sem abertura neste momento.
+            </p>
+          </div>
+
+          <!-- 5.2 Estatística Municipal D11 -->
+          <h3>5.2 Análise Estatística Municipal (D11 — Estado de São Paulo)</h3>
+          <p>
+            O módulo analítico investigou a dinâmica de contratações nos municípios paulistas contemplando <strong>seis grupos ocupacionais e todas as escolaridades</strong>, conforme pré-registro metodológico.
+          </p>
+          <ul>
+            <li><strong>População Analisada:</strong> 229 municípios que registraram 10 ou mais admissões no recorte em 2024, todos com dados completos em ambas as explicativas autorizadas (salário médio mensal declarado em 2024 e proporção de admissões com ensino superior completo em 2024).</li>
+            <li><strong>Base Territorial:</strong> O dicionário oficial do Estado de São Paulo compreende 645 municípios regulares e o código 359999 (Sp-Ignorado, ausente na base tratada). Todos os 229 municípios pertencem aos 645 municípios válidos.</li>
+            <li><strong>Valores Extremos Preservados:</strong> Dois municípios apresentaram salários médios atípicos mantidos estritamente por pré-registro metodológico (código 352885 com R$ 527.726,85 e código 351210 com R$ 86.712,01), sem remoção discricionária.</li>
+          </ul>
+
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Tabela de resultados dos testes estatísticos e modelos paramétricos da disciplina D11">
+            <table>
+              <caption>Tabela 3 — Parâmetros, testes de hipóteses e modelagem da análise municipal de São Paulo (229 municípios)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Método Analítico</th>
+                  <th scope="col">Parâmetros / Configuração</th>
+                  <th scope="col">Resultado Numérico Observado</th>
+                  <th scope="col">Conclusão Metodológica</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Distribuição Marginal vs Normal</strong></td>
+                  <td>Admissões 2025: Média = 687,32; Mediana = 53,00; Desvio-padrão = 5.740,58.</td>
+                  <td>Shapiro-Wilk original: W = 0,08441, p = 9,69×10⁻³². Em escala log(1+x): W = 0,94280, p = 8,01×10⁻⁸.</td>
+                  <td>Normalidade apenas assumida por exigência formal do enunciado; distribuição real exibe forte assimetria e cauda pesada. Dispersões e resíduos foram gerados pelo programa portátil E08 (8 figuras).</td>
+                </tr>
+                <tr>
+                  <td><strong>Teste Z 1 (Unilateral Menor)</strong></td>
+                  <td>n = 20 municípios, semente 42, α = 6%, desvio populacional da referência.</td>
+                  <td>Estatística de teste correspondente; p-valor = 0,324213.</td>
+                  <td><strong>Não rejeita H0</strong> (p &gt; 0,06). A média amostral não é significativamente inferior à média populacional.</td>
+                </tr>
+                <tr>
+                  <td><strong>Teste Z 2 (Unilateral Maior)</strong></td>
+                  <td>n = 25 municípios, semente 43, α = 9%, desvio populacional da referência.</td>
+                  <td>Estatística de teste correspondente; p-valor = 0,659389.</td>
+                  <td><strong>Não rejeita H0</strong> (p &gt; 0,09). A média amostral não é significativamente superior à média populacional.</td>
+                </tr>
+                <tr>
+                  <td><strong>Regressão Linear Simples (OLS)</strong></td>
+                  <td>Y = admissões 2025; X = salário médio 2024. Ajuste por mínimos quadrados.</td>
+                  <td>Y = 686,6573 + 0,00009885 × Salário; R² = 3,626×10⁻⁷; Estatística F = 0,000082; pF = 0,992769.</td>
+                  <td>Ajuste nulo. O salário médio isolado não possui capacidade de predição sobre o volume total de contratações municipais.</td>
+                </tr>
+                <tr>
+                  <td><strong>Regressão Linear Múltipla (OLS)</strong></td>
+                  <td>Y = admissões 2025; X1 = salário 2024, X2 = % com ensino superior 2024.</td>
+                  <td>Y = −1582,2304 + 0,0034 × Salário + 54,2337 × %Superior; R² = 0,021458; pF = 0,086198.</td>
+                  <td>Ajuste fraco preservado integralmente. As duas variáveis econômicas explicam apenas cerca de 2,15% da variação observada.</td>
+                </tr>
+                <tr>
+                  <td><strong>Regressão Logística Binária</strong></td>
+                  <td>Alvo: Crescimento de admissões (2025 &gt; 2024). Partição 80/20 estratificada (seed 44).</td>
+                  <td>Treino: 183 municípios; Teste: 46 municípios. Matriz no teste: VN=8, FP=14, FN=7, VP=17. Acurácia = 25/46 = 54,3478%.</td>
+                  <td>Acurácia marginal ligeiramente superior ao lançamento de moeda (54,35%), com elevado volume de falsos positivos.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>Conclusão da frente estatística:</strong> A fragilidade dos ajustes lineares e logísticos em nível municipal demonstra que dados agregados de contratação não devem ser utilizados para inferir probabilidades individuais de recolocação profissional, ratificando os princípios de produto do CitizenTech.
+          </p>
+        </section>
+
+        <!-- 6. Matriz de Conformidade das 9 Disciplinas -->
+        <section id="matriz-disciplinas">
+          <h2>6. Matriz de Conformidade das 9 Disciplinas</h2>
+          <p>
+            A matriz consolida as entregas acadêmicas obrigatórias previstas no plano diretor, correlacionando o trabalho realizado, os débitos pendentes e a necessidade de intervenção humana. Em estrita conformidade técnica, <strong>nenhuma disciplina é declarada como concluída ou entregue</strong>, pois todas dependem de empacotamento formal, gravação audiovisual ou deploy final.
+          </p>
+
+          <p>Tabela larga: deslize horizontalmente, ou foque a região e use as setas, para ler evidências, pendências e mínimos formais.</p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Tabela da matriz de conformidade das 9 disciplinas acadêmicas">
+            <table class="table-matriz">
+              <caption>Tabela 4 — Matriz de obrigações das 9 disciplinas do projeto Global Solution 2026.2</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Disciplina &amp; Enunciado</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Implementado &amp; Evidências</th>
+                  <th scope="col">Faltante &amp; Próximos Passos</th>
+                  <th scope="col">Mínimo Formal &amp; Ação Humana</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>01 AICSS</strong><br>
+                    <a href="../01_AICSS/ENUNCIADO.md">01 AICSS: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Projeto conceitual e especificações dos 3 cenários (normal, atenção, crítico), regras na API e payload com chave X-Device-Key. (Nota: <code class="mono">app/iot</code> não tem firmware próprio; código do professor é didático).</td>
+                  <td>Desenvolvimento do firmware Wokwi C++, simulação dos 3 cenários (LED, buzzer, sentinela -127), conexão com a API e capturas do Serial Monitor.</td>
+                  <td>
+                    Relatório <code class="mono">relatorio.md</code> + pasta <code class="mono">evidencias/*.html</code> (Serial, JSON, CSV).<br>
+                    <span class="badge badge-human">Dependência humana</span> Demonstração manual no Wokwi e geração das capturas.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>02 Cybersecurity</strong><br>
+                    <a href="../02_Cybersecurity/ENUNCIADO.md">02 Cybersecurity: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Autenticação JWT/cookies HttpOnly, token CSRF, hashing Argon2id, chave X-Device-Key, consentimentos LGPD e varredura gitleaks (S5).</td>
+                  <td>Fatia S9 (higienização defensiva de PII e confirmação prévia pré-LLM), testes de segurança da jornada, relatório técnico e gravação de vídeo.</td>
+                  <td>
+                    Relatório técnico em PDF (limite estrito: máx. 15 páginas) + vídeo ≤ 5 min.<br>
+                    <span class="badge badge-human">Dependência humana</span> Gravação do vídeo e validação da paginação do PDF.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>03 Data Science</strong><br>
+                    <a href="../03_DataScience/ENUNCIADO.md">03 Data Science: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Scripts DDL compatíveis com Oracle 19c, 208 testes com Oracle Free de teste (S5) e justificativa da separação Oracle/Mongo.</td>
+                  <td>Modelagem visual lógica e relacional no Data Modeler; persistência de model cards no MongoDB Atlas; execução no Oracle FIAP com coleta de logs.</td>
+                  <td>
+                    DDL 19c + Diagramas Lógico e Relacional no Oracle Data Modeler [OBRIGATÓRIO] + evidências Oracle FIAP.<br>
+                    <span class="badge badge-human">Dependência humana</span> Construção no Data Modeler e teste no Oracle FIAP.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>04 CTP Python</strong><br>
+                    <a href="../04_CTP_Python/ENUNCIADO.md">04 CTP Python: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Endpoints <code class="mono">POST/GET /leituras</code>, validações 400/401/429, indicador de risco, persistência CSV e testes locais.</td>
+                  <td>Finalização da redação do documento explicativo e empacotamento dos relatórios de teste em HTML.</td>
+                  <td>
+                    Documento técnico (<code class="mono">documento.md</code>) + evidências em HTML + suíte de testes. (Nota: enunciado local não exige vídeo).<br>
+                    <span class="badge badge-human">Dependência humana</span> Revisão textual final e validação dos arquivos.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>05 Machine Learning</strong><br>
+                    <a href="../05_ML/ENUNCIADO.md">05 Machine Learning: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Pipeline <code class="mono">app/ml</code>, baselines, modelos clássicos, validação 2025; notebooks fontes reexecutados (<code class="mono">ml_mercado.ipynb</code>); slides em <code class="mono">05_ML/slides.md</code> (PDF teste 12 págs).</td>
+                  <td>Empacotador copiar para <code class="mono">05_ML/notebook.ipynb</code>, compilação do PDF final dos slides e vídeo explicativo de até 5 minutos.</td>
+                  <td>
+                    Notebook executado (<code class="mono">notebook.ipynb</code>) + slides em PPT ou PDF + vídeo de até 5 minutos.<br>
+                    <span class="badge badge-human">Dependência humana</span> Gravação do vídeo (≤ 5 min) e revisão dos slides.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>06 Cloud</strong><br>
+                    <a href="../06_Cloud/ENUNCIADO.md">06 Cloud: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Regras locais de risco em <code class="mono">app/cloud/src/risco.py</code> (50 testes locais) e limiares compartilhados. (Não há processador serverless próprio ou deploy final implementados).</td>
+                  <td>Fatia S4 (processador serverless Lambda), scripts SQL no RDS PostgreSQL, deploy no AWS Learner Lab, Function URL pública, 4 capturas e vídeo.</td>
+                  <td>
+                    README técnico + 4 capturas da infraestrutura AWS + Function URL ativa + vídeo ≤ 5 min.<br>
+                    <span class="badge badge-human">Dependência humana</span> Provisionamento manual no AWS Learner Lab, coleta de telas e gravação do vídeo.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>07 Redes Neurais</strong><br>
+                    <a href="../07_RedesNeurais/ENUNCIADO.md">07 Redes Neurais: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>MLP PyTorch CPU (arquiteturas A/B), seleção da configuração A no CV do treino, refit 55 épocas, validação 2025; notebook fonte reexecutado (<code class="mono">rna_mercado.ipynb</code>); API de mercado integrada (S8).</td>
+                  <td>Empacotador copiar para <code class="mono">07_RedesNeurais/notebook.ipynb</code>, serving em MongoDB Atlas e gravação do vídeo obrigatório.</td>
+                  <td>
+                    Notebook (<code class="mono">notebook.ipynb</code>) + demonstração de inferência + vídeo obrigatório (vale 1,0 ponto na grade).<br>
+                    <span class="badge badge-human">Dependência humana</span> Gravação do vídeo obrigatório e validação das curvas.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>08 Estatística</strong><br>
+                    <a href="../08_Estatistica/ENUNCIADO.md">08 Estatística: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Base municipal de SP (229 municípios), testes Z, regressões OLS e Logit; programa portátil <code class="mono">analise_portatil.py</code> reproduziu JSON D11 em 16 checagens com 8 figuras (incluindo dispersões e resíduos); relatório <code class="mono">08_Estatistica/relatorio.md</code> (PDF teste 21 págs).</td>
+                  <td>Empacotador copiar <code class="mono">analise.py</code> e CSV para pasta de entrega, geração do PDF final e preenchimento de nomes/RMs.</td>
+                  <td>
+                    Envio direto de três arquivos: <code class="mono">.pdf</code> + <code class="mono">.py</code> + <code class="mono">.csv</code> (−2 pontos se formato incorreto).<br>
+                    <span class="badge badge-human">Dependência humana</span> Conferência dos arquivos descompactados e submissão no Portal.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>09 AIC</strong><br>
+                    <a href="../09_AIC/ENUNCIADO.md">09 AIC: Enunciado</a>
+                  </td>
+                  <td><span class="badge badge-pending">Parcial</span></td>
+                  <td>Concepção da jornada de transição, mapeamento dos ODS da ONU (4, 10 e 8) e backlog do projeto.</td>
+                  <td>Diagramas conceituais UML, consolidação da jornada completa, evidências de integração E2E e gravação do vídeo final.</td>
+                  <td>
+                    Vídeo de até 7 minutos, com rosto visível, sem música de fundo e identificação dos membros.<br>
+                    <span class="badge badge-human">Dependência humana</span> Gravação audiovisual (≤ 7 min, rosto visível, sem música).
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="notice-box">
+            <div class="notice-title">Notas Cruciais contra Ambiguidade Acadêmica</div>
+            <ul>
+              <li><strong>03 Data Science:</strong> O uso do Oracle SQL Developer Data Modeler para os modelos lógico e relacional é obrigatório pelo professor. Evidências do Docker local não substituem o teste no servidor Oracle FIAP.</li>
+              <li><strong>04 CTP Python:</strong> O enunciado oficial local <em>não exige gravação de vídeo</em>, requerendo apenas o documento técnico e as evidências de teste em HTML.</li>
+              <li><strong>05 Machine Learning:</strong> Exige slides em PPT ou PDF e vídeo demonstrativo de até 5 minutos; neste projeto o fluxo previsto gera PDF.</li>
+              <li><strong>07 Redes Neurais:</strong> O vídeo demonstrativo é <em>critério avaliativo obrigatório com nota explícita</em> (vale 1,0 ponto na grade da disciplina).</li>
+              <li><strong>08 Estatística:</strong> Os arquivos <code class="mono">.pdf</code>, <code class="mono">.py</code> e <code class="mono">.csv</code> devem ser submetidos diretamente no Portal sem compactação (penalidade formal de 2,0 pontos caso enviados de forma divergente).</li>
+              <li><strong>09 AIC:</strong> O vídeo final possui duração máxima de 7 minutos, exige identificação dos membros, <em>rosto visível em câmera</em> e <em>ausência total de música de fundo</em>.</li>
+              <li><strong>02 Cybersecurity:</strong> O relatório final gerado via Edge headless não pode ultrapassar 15 páginas, acompanhado de vídeo de até 5 minutos.</li>
+              <li><strong>06 Cloud:</strong> A demonstração de nuvem depende de inicialização manual do ambiente temporário no AWS Learner Lab, gerando 4 capturas de tela e gravação de até 5 minutos.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 7. Próximos Gates de Desenvolvimento -->
+        <section id="proximos-gates">
+          <h2>7. Ordem dos Próximos Gates de Desenvolvimento</h2>
+          <p>
+            Os próximos gates priorizam as verificações baratas e o caminho crítico. Frentes independentes podem correr em paralelo; acessos, infraestrutura e revisões humanas precisam estar resolvidos antes de cada atividade que dependa deles:
+          </p>
+          <ol>
+            <li>
+              <strong>Gate 1 — Verificações e Regressões Pendentes (Prioridade Imediata, Baixo Custo)</strong>
+              <p>
+                Subir os contêineres de teste e rodar a suíte da API com Oracle real ativo (<code class="mono">uv run pytest -q</code> em <code class="mono">app/api</code>) para validar os 28 testes marcados como <code class="mono">oracle</code> que não foram executados pós-S8 (caso a credencial do schema temporário não responda, registrar formalmente como dependência humana). Reexecutar as suítes de <code class="mono">app/cloud</code> (50 testes) e <code class="mono">app/tools</code> (20 testes). Executar testes de acessibilidade com <code class="mono">axe</code> sobre a tela web de mercado (<code class="mono">app/web</code>) como primeiro teste E2E.
+              </p>
+            </li>
+            <li>
+              <strong>Gate 2 — Caminho Crítico do Produto: Fatia S9 (PII Prioritário) e Sequência da Jornada</strong>
+              <p>
+                Implementação da fatia prioritária S9 (fatia de risco com RED reproduzido pelo orquestrador e revisão independente via <code class="mono">agy --mode plan</code>): endpoints <code class="mono">POST /me/experiencias</code>, <code class="mono">POST /me/curriculo</code> (PDF/DOCX ≤ 2 MB com pypdf/python-docx), sanitização defensiva de PII e confirmação prévia obrigatória do usuário (<code class="mono">POST /me/curriculo/confirmar-envio</code>; nenhum dado trafega para LLM sem confirmação). Persistência de texto redigido em MongoDB de teste local. <strong>Antes de avançar com o catálogo real em S10 ou S13, a equipe deve revisar e homologar as três rubricas do MVP</strong> (gate humano de qualidade, não uma tarefa só do encerramento). Em seguida, avançar na sequência lógica: S10 (extração de competências declaradas via catálogo ESCO), S11 (comparação diagnóstica em domínio puro), S12 (geração de plano formativo estruturado), S13 (avaliação prática com critério 50/50 e teto de 3 tentativas em 24h) e S14 (laboratório de transição).
+              </p>
+            </li>
+            <li>
+              <strong>Gate 3 — Interface Web e Jornada E2E (S15 Final)</strong>
+              <p>
+                Construção das páginas de autenticação/login no frontend, upload de currículo com interface de revisão e confirmação de PII, exibição dos diagnósticos de competência e visualização de planos. Conexão completa da jornada ponta a ponta com persona demo e validação automatizada via Playwright e axe.
+              </p>
+            </li>
+            <li>
+              <strong>Gate 4 — Empacotamento das Entregas Acadêmicas e Relatórios Técnicos</strong>
+              <p>
+                Implementação do script empacotador <code class="mono">app/tools/empacotar_entregas.py</code> (D6 do plano): copiar <code class="mono">analise_portatil.py</code> para <code class="mono">08_Estatistica/analise.py</code>, base CSV para a pasta da disciplina, e sincronizar os notebooks fontes para <code class="mono">05_ML/notebook.ipynb</code> e <code class="mono">07_RedesNeurais/notebook.ipynb</code>. Compilação dos PDFs finais (relatório de Estatística e slides de ML) com contagem de páginas e sem LaTeX. Preenchimento dos relatórios das demais disciplinas (<code class="mono">02_Cybersecurity/relatorio.md</code> ≤ 15 págs, <code class="mono">04_CTP_Python/documento.md</code>, <code class="mono">03_DataScience/relatorio.md</code>, <code class="mono">01_AICSS/relatorio.md</code>, <code class="mono">06_Cloud/README.md</code>).
+              </p>
+            </li>
+            <li>
+              <strong>Gate 5 — Infraestrutura Externa e Model Cards no MongoDB</strong>
+              <p>
+                Implementação da gravação de model cards contra MongoDB de teste local (porta 27018) e posterior sincronização com MongoDB Atlas assim que houver credencial liberada. Implementação da fatia S4 (processador serverless Lambda na AWS), scripts SQL no RDS PostgreSQL, Function URL pública no AWS Learner Lab e coleta das 4 capturas de tela. Construção do firmware C++ próprio no Wokwi para o ESP32 e coleta dos logs do Serial Monitor.
+              </p>
+            </li>
+            <li>
+              <strong>Gate 6 — Pendências Humanas, Gravação Audiovisual e Submissões no Portal</strong>
+              <p>
+                As três rubricas já precisam ter sido homologadas antes de S10/S13, conforme Gate 2. Modelagem lógica e relacional no Oracle Data Modeler e teste com logs no Oracle FIAP. Gravação dos 5 vídeos obrigatórios pelas disciplinas (ML ≤ 5 min, RNA obrigatório, Cyber ≤ 5 min, Cloud ≤ 5 min, AIC ≤ 7 min com rosto). Conferência estrita dos arquivos e submissão individualizada das 9 frentes no Portal FIAP até 19/11/2026 às 23h55.
+              </p>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 8. Riscos e Invariantes Operacionais -->
+        <section id="riscos-invariantes">
+          <h2>8. Riscos e Invariantes Operacionais</h2>
+          <p>
+            Para assegurar a integridade do repositório, o respeito às normas de proteção de dados e a repetibilidade científica até o prazo final, as seguintes regras são invariantes:
+          </p>
+          <ul>
+            <li><strong>Holdout de 2026 Fechado por Protocolo:</strong> A partição de teste temporal de 2026 do Caged não pode ser aberta, filtrada ou inspecionada antes da avaliação final de homologação. É expressamente proibido reajustar hiperparâmetros de modelos com base no desempenho observado em 2025.</li>
+            <li><strong>Proteção Absoluta contra Vazamento de Segredos:</strong> Nenhuma credencial de banco, token de API externa (OpenRouter, Adzuna, HuggingFace), chave de criptografia ou arquivo <code class="mono">.env</code> pode ser versionado no Git ou exposto em relatórios e conversas. Toda integração local utiliza variáveis de ambiente ou o arquivo documentado <code class="mono">.env.example</code>.</li>
+            <li><strong>Revisão Humana de Rubricas de Competência:</strong> As três rubricas mantidas no escopo do MVP de produto dependem de homologação manual de conteúdo; nenhum algoritmo tem permissão para aprovar unilateralmente os requisitos de transição.</li>
+            <li><strong>Dependência Operacional de Acessos Externos:</strong> Recursos como MongoDB Atlas, instâncias do Oracle FIAP e instâncias temporárias do AWS Learner Lab dependem de credenciais e permissões sob custódia humana.</li>
+            <li><strong>Invariabilidade da Outbox Local Antiga:</strong> O arquivo SQLite em <code class="mono">.dados/runtime/outbox.db</code> contém 77 eventos de teste retidos durante o desenvolvimento das fases anteriores. Esse arquivo não pode ser transmitido para a nuvem nem excluído arbitrariamente sem autorização expressa.</li>
+            <li><strong>Preservação de Dados:</strong> Nenhuma exclusão em lote ou movimentação destrutiva pode ser realizada fora do diretório temporário autorizado, preservando a rastreabilidade das fontes de dados.</li>
+          </ul>
+        </section>
+
+        <!-- 9. Fontes de Verdade e Referências Documentais -->
+        <section id="fontes-referencias">
+          <h2>9. Fontes de Verdade e Referências Documentais</h2>
+          <p>
+            Todas as afirmações de fato, limites e números expressos neste panorama derivam de artefatos de evidência reais consolidados na base de código do projeto. Os links a seguir constituem caminhos relativos funcionais para consulta direta no repositório:
+          </p>
+          <ul>
+            <li><a href="estado.md">docs/estado.md</a> — Registro operacional detalhado do checkpoint funcional, commits e suítes de teste.</li>
+            <li><a href="plano_desenvolvimento.md">docs/plano_desenvolvimento.md</a> — Plano diretor acadêmico com mapa de entregas (§8) e diretrizes metodológicas.</li>
+            <li><a href="../PRODUCT.md">PRODUCT.md</a> — Definição das fronteiras do produto, usuários-alvo e limites éticos do CitizenTech.</li>
+            <li><a href="../DESIGN.md">DESIGN.md</a> — Diretrizes estéticas, cromáticas e tipográficas do padrão Impeccable para documentação técnica.</li>
+            <li><a href="../app/api/src/citizentech/mercado/rotas.py">app/api/src/citizentech/mercado/rotas.py</a> — Implementação dos endpoints públicos de mercado e snapshot retrospectivo 2025 (S8).</li>
+            <li><a href="../app/web/src/mercado/TelaMercado.tsx">app/web/src/mercado/TelaMercado.tsx</a> — Implementação da interface web com abas de Mercado e Painel técnico (S15a).</li>
+            <li><a href="../app/ml/notebooks/ml_mercado.ipynb">app/ml/notebooks/ml_mercado.ipynb</a> — Notebook fonte de Machine Learning com baselines e modelos clássicos reexecutados (E05).</li>
+            <li><a href="../app/ml/notebooks/rna_mercado.ipynb">app/ml/notebooks/rna_mercado.ipynb</a> — Notebook fonte de Redes Neurais com treino e validação da arquitetura MLP PyTorch (E05).</li>
+            <li><a href="../05_ML/slides.md">05_ML/slides.md</a> — Estrutura de slides de apresentação de Machine Learning com números amarrados por testes (E05).</li>
+            <li><a href="../app/ml/src/citizentech_ml/estatistica/analise_portatil.py">app/ml/src/citizentech_ml/estatistica/analise_portatil.py</a> — Programa estatístico portátil e autônomo com geração de 8 figuras (E08).</li>
+            <li><a href="../08_Estatistica/relatorio.md">08_Estatistica/relatorio.md</a> — Relatório técnico completo da análise estatística dos municípios paulistas sem dependência de LaTeX (E08).</li>
+            <li><a href="../08_Estatistica/evidencias/20261116_analise_portatil.json">08_Estatistica/evidencias/20261116_analise_portatil.json</a> — Registro serializado com 16 checagens de validação numérica dos testes Z, OLS e Logit (E08).</li>
+            <li><a href="../05_ML/evidencias/20261115_modelos_mvp_aceite.md">05_ML/evidencias/20261115_modelos_mvp_aceite.md</a> — Relatório analítico do aceite dos experimentos de Machine Learning e Redes Neurais em 2025.</li>
+            <li><a href="../05_ML/evidencias/20261115_modelos_mvp_aceite.pdf">05_ML/evidencias/20261115_modelos_mvp_aceite.pdf</a> — Documento preliminar de evidências gerado em formato PDF para a frente de ML/RNA.</li>
+            <li><a href="../05_ML/evidencias/20261115_modelos_mvp_aceite.json">05_ML/evidencias/20261115_modelos_mvp_aceite.json</a> — Registro serializado com valores completos de MAE, RMSE, WAPE e recálculos de validação cruzada.</li>
+            <li><a href="../08_Estatistica/evidencias/20261115_d11_aceite.md">08_Estatistica/evidencias/20261115_d11_aceite.md</a> — Parecer de conformidade da análise estatística dos 229 municípios paulistas.</li>
+            <li><a href="../08_Estatistica/evidencias/20261115_d11_aceite.pdf">08_Estatistica/evidencias/20261115_d11_aceite.pdf</a> — Documento preliminar de evidências gerado em formato PDF para a disciplina de Estatística.</li>
+            <li><a href="../08_Estatistica/evidencias/20261115_d11_aceite.json">08_Estatistica/evidencias/20261115_d11_aceite.json</a> — Dados brutos das matrizes de covariância, coeficientes de regressão e partição de treino/teste de D11.</li>
+            <li><a href="../02_Cybersecurity/evidencias/20261115_s5_aceite_integracao.md">02_Cybersecurity/evidencias/20261115_s5_aceite_integracao.md</a> — Registro de auditoria do aceite da camada de autenticação e proteção contra vulnerabilidades (S5).</li>
+            <li><a href="../app/catalogo/escopo_mvp.json">app/catalogo/escopo_mvp.json</a> — Manifesto do corte do MVP: IDs dos três destinos e status de revisão humana. Não contém CBOs ou competências ESCO; esses mapeamentos ficam nas fontes de catálogo separadas.</li>
+          </ul>
+          <div class="notice-box">
+            <div class="notice-title">Declaração Metodológica sobre Modelos Didáticos</div>
+            <p>
+              Os materiais didáticos, roteiros e códigos de exemplo disponibilizados pelos professores das nove cadeiras da FIAP atuam exclusivamente como referências conceituais e guias de formatação acadêmica. O código de produção, os pipelines de treinamento, as análises de dados e as evidências técnicas do CitizenTech constituem trabalho original e independente do grupo de desenvolvimento.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
