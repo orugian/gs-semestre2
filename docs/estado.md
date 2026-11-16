@@ -2,7 +2,30 @@
 
 > Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
 
-**Checkpoint funcional:** `main` em `396b81d` + este commit documental, conferido em **16/11/2026 às ~10h05 (UTC−3)**. Prazo **19/11/2026 às 23h55** — **~3,6 dias**. **Push autorizado pelo usuário** para `gs-semestre2` (https://github.com/orugian/gs-semestre2): feito às 09h47 até `c6ee6e1` (gitleaks limpo no intervalo); repetir após cada integração. `origin` (insonia999) **não** recebe push. A aplicação **ainda não funciona ponta a ponta**: existe mercado (API + tela + painel técnico), autenticação e leituras CTP; faltam currículo/PII, extração, comparação, plano, avaliação, laboratório, nuvem, firmware e jornada E2E.
+## 0. Sessão 16/11 tarde — checkpoint ~11h05 (mais recente; prevalece sobre o restante)
+
+**`main` em `16ed68f`, enviado a `gs-semestre2` (gitleaks limpo no intervalo).** Integrados nesta sessão, com aceite executado pelo orquestrador:
+
+| Fatia | Commit | Evidência executada |
+|---|---|---|
+| **E09 empacotador** `app/tools/empacotar_entregas.py` | `3e813e2` | tools 32 passed + ruff; execução real: `05_ML/notebook.ipynb`, `07_RedesNeurais/notebook.ipynb`, `08_Estatistica/{analise.py,base_municipal.csv,requirements.txt}` = cópias; `08_Estatistica/relatorio.pdf` 21 págs. com 8/8 imagens; `05_ML/slides.pdf` 12 págs. com 2/2 imagens; `--verificar` → 0; contraexemplo `--dados` errado → 2 sem escrita. CSV marcado `-text` no `.gitattributes` (blob SHA = `5dbc73ac…a7ee`). PDFs ainda com `[HUMANO — preencher]` (nomes/RMs). Manifesto `docs/entregas_manifesto.json`. |
+| **S8b model cards + Adzuna** | `8a2a303` | TDD pelo orquestrador (RED por asserção). ML 274 passed (1 skip = teste Mongo, rodado verde à parte com Mongo local); API 225 passed com Oracle; web 18 passed + typecheck + build. **Atlas real:** coleção `model_cards` com 6 docs (`<modelo>:20261115_r29_aceite`, `status_promocao=nao_decidida`, SHA do snapshot `9c093f93…`); reexecução idempotente. **Adzuna real:** 6 chamadas (3 destinos MVP × SP/BR), todas 200, **contador 1→7** (teto 12), `../.dados/adzuna/20261116/` (brutos + `resumo_adzuna.json` + manifesto SHA), chave ausente dos arquivos (0 ocorrências). Contagens: dados/BI SP 274 · BR 1036; monitoramento/IoT ("automação industrial") SP 230 · BR 2402; processos SP 196 · BR 1329. API serve com `CITIZENTECH_ADZUNA_SNAPSHOT=../.dados/adzuna/20261116` como "amostra pontual Adzuna de 16/11/2026". Termos em `app/catalogo/termos_adzuna.json`. |
+| **S11 comparação (domínio)** | `16ed68f` | agy; 19 testes + regressão API sem Oracle 216 passed + ruff (orquestrador); contraexemplo executado (declarada + parcial → desconhecida; repetido → ValueError). Rotas `/me/comparacoes` ainda não existem. |
+
+**Em andamento (jobs do harness):**
+- `pwsh-444`: agy **S9-curriculo rodada 2** em `../GS-wt/S9-curriculo` (contrato `../.kaiser/contratos/S9-curriculo-r2.md`). Rodada 1: 259 passed segundo o agente; **RED reproduzido pelo orquestrador** (worktree temporário: `assert 501 == 400` e `assert 501 == 201`); revisão independente `../.kaiser/reports/S9-curriculo-rev.md` com 9 achados — **aceitos** 1–8 (falsos positivos de endereço: "Python, R e SQL, 3 anos" virava `[ENDERECO]`; endereço sem vírgula escapa; cabeçalho redige cargo e deixa o nome real; telefone com match parcial; MongoClient por requisição sem fechar; PDF corrompido → 500; memória na extração; testes de log/2 MB/disco fracos), **9 aceito como risco documentado** (spool multipart do Starlette). Reproduzidos pelo orquestrador: casos 1, 3, 4.
+- `pwsh-439`: agy **S4-lambda** em `../GS-wt/S4-lambda` (contrato `../.kaiser/contratos/S4-lambda.md`); Postgres de teste 5433 de pé.
+- Pronto para disparar após o merge do S9: **S10-extracao** (`../.kaiser/contratos/S10-extracao.md`).
+
+**Decisão local (D23, delegada ao agente):** sentimento por **Amazon Comprehend** (`detect_sentiment`, `pt`) via `SENTIMENTO_PROVEDOR=comprehend` (padrão), com HF mantido como alternativa (`hf`) e `desligado`; qualquer falha → `analise_status=indisponivel` sem derrubar a ingestão. Motivo: HF retorna 402 (sem créditos); Comprehend é o caminho B do enunciado de Cloud e roda dentro do Learner Lab sem custo extra para o grupo. **Não verificado:** se a `LabRole` do Learner Lab permite `comprehend:DetectSentiment` — se negar, o fallback gracioso mantém a ingestão e o README declara a limitação.
+
+**Bundle CA do RDS** baixado em `../.kaiser/tmp/rds-global-bundle.pem` (174 560 bytes, 114 certificados, SHA-256 `90a6f1a7…f21b`) para o pacote da Lambda.
+
+**Docker:** Oracle, Mongo e Postgres de teste de pé (necessários para S9/S10/S4). Disco 23,6 GB (11h).
+
+---
+
+**Checkpoint funcional anterior:** `main` em `396b81d` + este commit documental, conferido em **16/11/2026 às ~10h05 (UTC−3)**. Prazo **19/11/2026 às 23h55** — **~3,6 dias**. **Push autorizado pelo usuário** para `gs-semestre2` (https://github.com/orugian/gs-semestre2): feito às 09h47 até `c6ee6e1` (gitleaks limpo no intervalo); repetir após cada integração. `origin` (insonia999) **não** recebe push. A aplicação **ainda não funciona ponta a ponta**: existe mercado (API + tela + painel técnico), autenticação e leituras CTP; faltam currículo/PII, extração, comparação, plano, avaliação, laboratório, nuvem, firmware e jornada E2E.
 
 ## 1. Ponto de parada
 
