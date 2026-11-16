@@ -1154,6 +1154,28 @@ def carregar_modelo_rna(
                 f"hexadecimal válido de 64 caracteres."
             )
 
+    # Validação de melhor_config e hidden_layers antes de ler checkpoint (RV-RNA-02)
+    info_melhor = manifesto.get("melhor_config")
+    if not isinstance(info_melhor, dict):
+        raise ValueError(
+            "Manifesto inválido: 'melhor_config' ausente ou inválido (esperado dict)."
+        )
+    params_melhor = info_melhor.get("params")
+    if not isinstance(params_melhor, dict):
+        raise ValueError(
+            "Manifesto inválido: 'melhor_config.params' ausente ou inválido (esperado dict)."
+        )
+    hidden_layers = params_melhor.get("hidden_layers")
+    if (
+        not isinstance(hidden_layers, list)
+        or len(hidden_layers) == 0
+        or not all(isinstance(x, int) and x > 0 and not isinstance(x, bool) for x in hidden_layers)
+    ):
+        raise ValueError(
+            "Manifesto inválido: 'hidden_layers' deve ser lista não-vazia de inteiros > 0."
+        )
+    dropout = float(params_melhor.get("dropout", 0.0))
+
     # Validação do checkpoint
     caminho_pt = dir_base / "checkpoint_rna.pt"
     if not caminho_pt.exists():
@@ -1186,11 +1208,6 @@ def carregar_modelo_rna(
     prep = PreprocessadorRNA.from_dict(dados_prep)
 
     # Reconstrução e carregamento seguro do checkpoint em CPU
-    info_melhor = manifesto.get("melhor_config", {})
-    params_melhor = info_melhor.get("params", {})
-    hidden_layers = params_melhor.get("hidden_layers", [64, 32])
-    dropout = float(params_melhor.get("dropout", 0.0))
-
     modelo = MLPRegressor(
         input_dim=prep.dimensao_entrada,
         hidden_layers=hidden_layers,

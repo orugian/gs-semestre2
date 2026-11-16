@@ -208,3 +208,79 @@ def test_carregar_modelo_rna_recusa_manifesto_sem_hashes_obrigatorios(tmp_path: 
 
     with pytest.raises(ValueError, match="[Hh]ash|[Mm]anifesto"):
         carregar_modelo_rna(dir_saida)
+
+
+def test_rv_rna_02_carregar_modelo_recusa_melhor_config_invalido(tmp_path: Path):
+    """RV-RNA-02: manifesto sem melhor_config ou com formato invalido gera ValueError."""
+    p_painel = _criar_painel_mvp_arquivo(tmp_path / "dados" / "painel.parquet")
+    dir_saida = tmp_path / "saida_rv_rna_02"
+
+    executar_treino_rna_cli(
+        caminho_painel=p_painel,
+        dir_saida=dir_saida,
+        max_epochs=2,
+        patience=2,
+        seed=42,
+    )
+
+    caminho_meta = dir_saida / "metricas.json"
+    with caminho_meta.open("r", encoding="utf-8") as f:
+        meta_original = json.load(f)
+
+    # 1. Caso 'melhor_config' é string em vez de dict: deve gerar ValueError
+    meta_str = dict(meta_original)
+    meta_str["melhor_config"] = "A"
+    caminho_meta.write_text(json.dumps(meta_str), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="melhor_config"):
+        carregar_modelo_rna(dir_saida)
+
+    # 2. Caso 'melhor_config' ausente: deve gerar ValueError
+    meta_sem = dict(meta_original)
+    del meta_sem["melhor_config"]
+    caminho_meta.write_text(json.dumps(meta_sem), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="melhor_config"):
+        carregar_modelo_rna(dir_saida)
+
+    # 3. Caso 'params' ausente ou sem hidden_layers validos: deve gerar ValueError
+    meta_sem_params = dict(meta_original)
+    meta_sem_params["melhor_config"] = {"nome": "A"}
+    caminho_meta.write_text(json.dumps(meta_sem_params), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="params|hidden_layers"):
+        carregar_modelo_rna(dir_saida)
+
+
+def test_rv_rna_01_comparacao_cv_baselines_com_chaves_normalizadas(tmp_path: Path):
+    """RV-RNA-01: comparacao_cv para persistencia e sazonal contem mae_medio e mase_medio."""
+    p_painel = _criar_painel_mvp_arquivo(tmp_path / "dados" / "painel.parquet")
+    dir_saida = tmp_path / "saida_rv_rna_01"
+
+    p_metricas, _ = executar_treino_rna_cli(
+        caminho_painel=p_painel,
+        dir_saida=dir_saida,
+        max_epochs=2,
+        patience=2,
+        seed=42,
+    )
+
+    with p_metricas.open("r", encoding="utf-8") as f:
+        meta = json.load(f)
+
+    comp_cv = meta["comparacao_baseline"]["cv_treino"]
+    assert "persistencia" in comp_cv
+    assert "sazonal" in comp_cv
+
+    for b in ["persistencia", "sazonal"]:
+        info_b = comp_cv[b]
+        assert "mae_medio" in info_b
+        assert info_b["mae_medio"] is not None
+        assert "mae_desvio" in info_b
+        assert "wape_medio" in info_b
+        assert "wape_desvio" in info_b
+        assert "mase_medio" in info_b
+        assert "mase_desvio" in info_b
+
+
+
