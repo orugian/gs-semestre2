@@ -1,6 +1,6 @@
 -- CitizenTech: projeção relacional do catálogo curado (FIAP GS 2026.2)
 -- Dialeto Oracle 19c (sem BOOLEAN, sem IF NOT EXISTS, sem domínios).
--- A fonte de verdade do catálogo continua nos YAML de app/catalogo; estas tabelas são carregadas
+-- A fonte de verdade do catálogo continua nos YAML de app/catalogo. Estas tabelas são carregadas
 -- por app/tools/carregar_catalogo_oracle.py para consultas relacionais (Data Science).
 
 CREATE TABLE destino (

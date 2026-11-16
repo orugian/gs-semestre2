@@ -1,0 +1,209 @@
+# Consultas de evidência — Oracle local (Docker Free 23ai, DDL 19c), schema do app
+# Executado em 2026-11-16T21:58:00Z por app/tools/executar_consultas_oracle.py; usuário e senha do schema omitidos.
+
+== C1. Catálogo: ocupações CBO de cada destino (JOIN + agregação de texto)
+SELECT d.id AS destino,
+       d.no_escopo_mvp AS mvp,
+       COUNT(o.cbo6) AS ocupacoes,
+       LISTAGG(o.cbo6, ', ') WITHIN GROUP (ORDER BY o.cbo6) AS cbo6
+FROM destino d
+JOIN destino_ocupacao dox ON dox.destino_id = d.id
+JOIN ocupacao_cbo o ON o.cbo6 = dox.cbo6
+GROUP BY d.id, d.no_escopo_mvp
+ORDER BY d.no_escopo_mvp DESC, d.id
+
+destino                    | mvp | ocupacoes | cbo6                                                          
+---------------------------+-----+-----------+---------------------------------------------------------------
+analista_dados_bi          | S   | 6         | 142330, 211205, 211210, 211215, 211220, 261215                
+analista_monitoramento_iot | S   | 7         | 202105, 202110, 202115, 202120, 212415, 300105, 313410        
+analista_processos         | S   | 6         | 214905, 214910, 214925, 214930, 391105, 391210                
+analista_suporte_infra     | N   | 5         | 212310, 212315, 212410, 212420, 317210                        
+desenvolvedor_sistemas     | N   | 8         | 212205, 212215, 212405, 212425, 212430, 317105, 317110, 317120
+gerente_projetos_produto   | N   | 2         | 142520, 142605                                                
+(6 linhas)
+
+== C2. Requisitos por destino: obrigatórios × opcionais e quantos são conhecimento (agregação)
+SELECT rd.destino_id AS destino,
+       SUM(CASE WHEN rd.obrigatorio = 'S' THEN 1 ELSE 0 END) AS obrigatorios,
+       SUM(CASE WHEN rd.obrigatorio = 'N' THEN 1 ELSE 0 END) AS opcionais,
+       SUM(CASE WHEN ce.tipo = 'conhecimento' THEN 1 ELSE 0 END) AS de_conhecimento
+FROM requisito_destino rd
+JOIN competencia_esco ce ON ce.esco_id = rd.esco_id
+GROUP BY rd.destino_id
+ORDER BY rd.destino_id
+
+destino                    | obrigatorios | opcionais | de_conhecimento
+---------------------------+--------------+-----------+----------------
+analista_dados_bi          | 6            | 2         | 2              
+analista_monitoramento_iot | 6            | 2         | 3              
+analista_processos         | 6            | 2         | 1              
+analista_suporte_infra     | 7            | 1         | 1              
+desenvolvedor_sistemas     | 6            | 2         | 3              
+gerente_projetos_produto   | 7            | 1         | 2              
+(6 linhas)
+
+== C3. Competências ESCO compartilhadas por mais de um destino (GROUP BY + HAVING)
+SELECT ce.titulo AS competencia,
+       COUNT(DISTINCT rd.destino_id) AS destinos
+FROM competencia_esco ce
+JOIN requisito_destino rd ON rd.esco_id = ce.esco_id
+GROUP BY ce.titulo
+HAVING COUNT(DISTINCT rd.destino_id) > 1
+ORDER BY destinos DESC, competencia
+
+competencia                                           | destinos
+------------------------------------------------------+---------
+identificar os requisitos dos clientes                | 4       
+analisar dados                                        | 3       
+elaborar documentação técnica                         | 3       
+executar processos de garantia da qualidade dos dados | 3       
+resolver problemas de sistemas de TIC                 | 3       
+SQL                                                   | 2       
+analisar os processos empresariais                    | 2       
+efetuar análise de riscos                             | 2       
+gerir sistemas de recolha de dados                    | 2       
+gestão ágil de projetos                               | 2       
+monitorizar o desempenho dos sistemas                 | 2       
+protocolos de comunicação de TIC                      | 2       
+realizar apresentação visual de dados                 | 2       
+(13 linhas)
+
+== C4. Competências revisadas pela persona de demonstração, com o requisito correspondente em cada destino (JOIN de 4 tabelas)
+SELECT ce.titulo AS competencia,
+       cu.revisao,
+       cu.estado_evidencia,
+       rd.destino_id AS destino,
+       rd.obrigatorio
+FROM competencia_usuario cu
+JOIN usuario u ON u.id = cu.usuario_id
+JOIN competencia_esco ce ON ce.esco_id = cu.esco_id
+LEFT JOIN requisito_destino rd ON rd.esco_id = cu.esco_id
+WHERE u.persona_demo = 'S'
+ORDER BY cu.revisao, ce.titulo, rd.destino_id
+
+competencia                           | revisao    | estado_evidencia | destino                    | obrigatorio
+--------------------------------------+------------+------------------+----------------------------+------------
+protocolos de comunicação de TIC      | confirmada | declarada        | analista_monitoramento_iot | S          
+protocolos de comunicação de TIC      | confirmada | declarada        | analista_suporte_infra     | S          
+sensores                              | confirmada | declarada        | analista_monitoramento_iot | S          
+efetuar análise de riscos             | nao_possuo | declarada        | analista_processos         | S          
+efetuar análise de riscos             | nao_possuo | declarada        | gerente_projetos_produto   | S          
+resolver problemas de sistemas de TIC | rejeitada  | declarada        | analista_monitoramento_iot | S          
+resolver problemas de sistemas de TIC | rejeitada  | declarada        | analista_suporte_infra     | S          
+resolver problemas de sistemas de TIC | rejeitada  | declarada        | desenvolvedor_sistemas     | S          
+(8 linhas)
+
+== C5. Obrigatórios de cada destino do MVP que a persona ainda não confirmou (subconsulta NOT EXISTS)
+SELECT rd.destino_id AS destino,
+       rd.id_local AS requisito_obrigatorio
+FROM requisito_destino rd
+JOIN destino d ON d.id = rd.destino_id AND d.no_escopo_mvp = 'S'
+WHERE rd.obrigatorio = 'S'
+  AND NOT EXISTS (
+        SELECT 1
+        FROM competencia_usuario cu
+        JOIN usuario u ON u.id = cu.usuario_id
+        WHERE u.persona_demo = 'S'
+          AND cu.esco_id = rd.esco_id
+          AND cu.revisao = 'confirmada')
+ORDER BY rd.destino_id, rd.ordem
+
+destino                    | requisito_obrigatorio               
+---------------------------+-------------------------------------
+analista_dados_bi          | analisar_dados                      
+analista_dados_bi          | identificar_padroes_estatisticos    
+analista_dados_bi          | realizar_apresentacao_visual_dados  
+analista_dados_bi          | garantia_qualidade_dados            
+analista_dados_bi          | sql                                 
+analista_dados_bi          | identificar_requisitos_clientes     
+analista_monitoramento_iot | internet_das_coisas                 
+analista_monitoramento_iot | gerir_sistemas_recolha_dados        
+analista_monitoramento_iot | monitorizar_desempenho_sistemas     
+analista_monitoramento_iot | resolver_problemas_sistemas_tic     
+analista_processos         | processos_empresariais              
+analista_processos         | criar_modelos_processos_empresariais
+analista_processos         | analisar_processos_empresariais     
+analista_processos         | identificar_requisitos_clientes     
+analista_processos         | realizar_apresentacao_visual_dados  
+analista_processos         | efetuar_analise_riscos              
+(16 linhas)
+
+== C6. Tentativas do exercício diagnóstico com classificação da melhor por pessoa e exercício (função analítica RANK)
+SELECT t.exercicio_id,
+       t.criado_em,
+       t.nota_objetiva,
+       t.nota_llm,
+       t.nota_final,
+       t.resultado,
+       RANK() OVER (PARTITION BY t.usuario_id, t.exercicio_id
+                    ORDER BY t.nota_final DESC NULLS LAST, t.criado_em DESC) AS posicao_melhor
+FROM tentativa t
+JOIN usuario u ON u.id = t.usuario_id
+WHERE u.persona_demo = 'S'
+ORDER BY t.exercicio_id, posicao_melhor
+
+exercicio_id                     | criado_em                  | nota_objetiva | nota_llm | nota_final | resultado   | posicao_melhor
+---------------------------------+----------------------------+---------------+----------+------------+-------------+---------------
+ex_analista_monitoramento_iot_01 | 2026-11-16 21:57:29.996023 | 0.75          | 1.0      | 0.875      | demonstrada | 1             
+(1 linha)
+
+== C7. Comparações salvas: leitura de campos do JSON de cada destino (JSON_VALUE, 19c)
+SELECT c.criado_em,
+       cd.ordem,
+       cd.destino_id AS destino,
+       cd.situacao_obrigatorios,
+       JSON_VALUE(cd.resultado_json, '$.dimensoes.requisitos.contagem.declarada') AS declaradas,
+       JSON_VALUE(cd.resultado_json, '$.dimensoes.requisitos.contagem.desconhecida') AS desconhecidas,
+       JSON_VALUE(cd.resultado_json, '$.dimensoes.mercado.ultimo_observado.valor') AS ultimo_mes_admissoes,
+       JSON_VALUE(cd.resultado_json, '$.dimensoes.mercado.referencia_temporal') AS periodo_observado
+FROM comparacao c
+JOIN comparacao_destino cd ON cd.comparacao_id = c.id
+JOIN usuario u ON u.id = c.usuario_id
+WHERE u.persona_demo = 'S'
+ORDER BY c.criado_em, cd.ordem
+
+criado_em           | ordem | destino                    | situacao_obrigatorios            | declaradas | desconhecidas | ultimo_mes_admissoes | periodo_observado
+--------------------+-------+----------------------------+----------------------------------+------------+---------------+----------------------+------------------
+2026-11-16 21:57:21 | 1     | analista_monitoramento_iot | ha_obrigatorios_nao_demonstrados | 2          | 6             | 121                  | 202001–202509    
+2026-11-16 21:57:21 | 2     | analista_processos         | ha_obrigatorios_nao_demonstrados | 0          | 7             | 645                  | 202001–202509    
+2026-11-16 21:57:21 | 3     | analista_dados_bi          | ha_obrigatorios_nao_demonstrados | 0          | 8             | 1994                 | 202001–202509    
+2026-11-16 21:57:30 | 1     | analista_monitoramento_iot | todos_demonstrados               | 0          | 1             | 121                  | 202001–202509    
+(4 linhas)
+
+== C8. Progresso do plano ativo por tipo de checkpoint (JOIN + agregação condicional)
+SELECT ce.destino_id AS destino,
+       ck.tipo,
+       COUNT(*) AS checkpoints,
+       SUM(CASE WHEN ck.status = 'concluido' THEN 1 ELSE 0 END) AS concluidos,
+       SUM(CASE WHEN ck.obrigatorio = 'S' THEN 1 ELSE 0 END) AS de_requisito_obrigatorio
+FROM caminho_escolhido ce
+JOIN plano p ON p.caminho_id = ce.id
+JOIN checkpoint ck ON ck.plano_id = p.id
+JOIN usuario u ON u.id = ce.usuario_id
+WHERE u.persona_demo = 'S' AND ce.status = 'ativo'
+GROUP BY ce.destino_id, ck.tipo
+ORDER BY ce.destino_id, MIN(ck.ordem)
+
+destino                    | tipo        | checkpoints | concluidos | de_requisito_obrigatorio
+---------------------------+-------------+-------------+------------+-------------------------
+analista_monitoramento_iot | demonstrar  | 2           | 1          | 2                       
+analista_monitoramento_iot | estudar     | 6           | 0          | 4                       
+analista_monitoramento_iot | praticar    | 6           | 0          | 4                       
+analista_monitoramento_iot | laboratorio | 1           | 0          | 0                       
+analista_monitoramento_iot | exercicio   | 1           | 0          | 1                       
+(5 linhas)
+
+== C9. Consentimentos ativos por finalidade (LGPD) entre todas as contas do ambiente de demonstração
+SELECT finalidade,
+       COUNT(*) AS concedidos,
+       SUM(CASE WHEN revogado_em IS NULL THEN 1 ELSE 0 END) AS ativos
+FROM consentimento
+GROUP BY finalidade
+ORDER BY finalidade
+
+finalidade        | concedidos | ativos
+------------------+------------+-------
+curriculo_llm     | 1          | 1     
+laboratorio_nuvem | 1          | 1     
+perfil            | 1          | 1     
+(3 linhas)

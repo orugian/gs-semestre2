@@ -1,0 +1,265 @@
+# Consultas de evidência — MongoDB Atlas do projeto (banco do app; URI omitida)
+# Executado em 2026-11-16T21:59:10Z com: mongosh --file app/db/mongo/evidencias_mongo.js (via container citizentech-mongo-1)
+# Nenhuma consulta devolve texto de currículo ou de resposta.
+
+== M1. Documentos por coleção
+[
+  {
+    colecao: 'avaliacoes_llm',
+    documentos: 1
+  },
+  {
+    colecao: 'curriculos_redigidos',
+    documentos: 1
+  },
+  {
+    colecao: 'extracoes_llm',
+    documentos: 1
+  },
+  {
+    colecao: 'model_cards',
+    documentos: 6
+  },
+  {
+    colecao: 'respostas_abertas',
+    documentos: 1
+  }
+]
+
+== M2. curriculos_redigidos por origem e status
+[
+  {
+    _id: {
+      origem: 'texto',
+      status: 'confirmado'
+    },
+    total: 1,
+    emails_redigidos: 1,
+    telefones_redigidos: 1
+  }
+]
+
+== M3. extracoes_llm por modelo
+[
+  {
+    _id: 'deepseek/deepseek-v4.1-flash-1017',
+    extracoes: 1,
+    media_candidatas: 4,
+    fora_da_lista: 0,
+    sem_trecho: 0,
+    trecho_nao_encontrado: 0
+  }
+]
+
+== M4. model_cards
+[
+  {
+    modelo: 'hist_gradient_boosting',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'modelos.joblib': '5e2c92ca8f8b420e088e97e20bce475f94ba2778598ed6cb66e62dc4d65ba057',
+      'previsoes.parquet': 'ec909a9940addc676cb98d8d88e879ea148311ddcabec39d3bbf2818389b3ba8',
+      'previsoes.csv': 'd7c432b88fb48a463a34023ef78eb29d78051e90040c4f15c9b6a7cfa9cb1136',
+      'metricas.json': '07aaf5720bd613ff60eda95db48e8fb2abd15c30e31289a6520c06b1a15b71ca'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'classico',
+    versoes: {
+      sklearn: '1.9.1'
+    }
+  },
+  {
+    modelo: 'mlp',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'checkpoint_rna.pt': 'aabd42971e64628e3266a4642bad03c24efde7aa67bd3de6df7bb5d7ffe6fd1f',
+      'preprocessador.json': 'b143e1eee7d4c545858eaa1c7e10a0c0a450ed2935362b85fa648c1a51624776',
+      'previsoes.parquet': '19ea120477dc39e89554bfcaf1de0e446a06d8200684121f9327d1e18c388a56',
+      'previsoes.csv': '8ed84a46126905d57c1322c9a5169941c962e640d42350e1c815e7453e97d5f5',
+      'curvas.csv': 'a31029dc78d82a0ae40b5ae3c4e1c96a5741dfcfc037e89e944bb18ee7af1efe',
+      'curvas.png': 'c2e0f37313d97c8c0a04701d0ef6696c85ee43c3f00a1308e64eb9c43169800b'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'rna',
+    versoes: {}
+  },
+  {
+    modelo: 'persistencia',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'modelos.joblib': '5e2c92ca8f8b420e088e97e20bce475f94ba2778598ed6cb66e62dc4d65ba057',
+      'previsoes.parquet': 'ec909a9940addc676cb98d8d88e879ea148311ddcabec39d3bbf2818389b3ba8',
+      'previsoes.csv': 'd7c432b88fb48a463a34023ef78eb29d78051e90040c4f15c9b6a7cfa9cb1136',
+      'metricas.json': '07aaf5720bd613ff60eda95db48e8fb2abd15c30e31289a6520c06b1a15b71ca'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'baseline',
+    versoes: {
+      sklearn: '1.9.1'
+    }
+  },
+  {
+    modelo: 'random_forest',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'modelos.joblib': '5e2c92ca8f8b420e088e97e20bce475f94ba2778598ed6cb66e62dc4d65ba057',
+      'previsoes.parquet': 'ec909a9940addc676cb98d8d88e879ea148311ddcabec39d3bbf2818389b3ba8',
+      'previsoes.csv': 'd7c432b88fb48a463a34023ef78eb29d78051e90040c4f15c9b6a7cfa9cb1136',
+      'metricas.json': '07aaf5720bd613ff60eda95db48e8fb2abd15c30e31289a6520c06b1a15b71ca'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'classico',
+    versoes: {
+      sklearn: '1.9.1'
+    }
+  },
+  {
+    modelo: 'ridge',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'modelos.joblib': '5e2c92ca8f8b420e088e97e20bce475f94ba2778598ed6cb66e62dc4d65ba057',
+      'previsoes.parquet': 'ec909a9940addc676cb98d8d88e879ea148311ddcabec39d3bbf2818389b3ba8',
+      'previsoes.csv': 'd7c432b88fb48a463a34023ef78eb29d78051e90040c4f15c9b6a7cfa9cb1136',
+      'metricas.json': '07aaf5720bd613ff60eda95db48e8fb2abd15c30e31289a6520c06b1a15b71ca'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'classico',
+    versoes: {
+      sklearn: '1.9.1'
+    }
+  },
+  {
+    modelo: 'sazonal',
+    periodo_treino: [
+      '202101',
+      '202409'
+    ],
+    periodo_validacao: [
+      '202501',
+      '202509'
+    ],
+    seed: 42,
+    sha256_artefatos: {
+      'modelos.joblib': '5e2c92ca8f8b420e088e97e20bce475f94ba2778598ed6cb66e62dc4d65ba057',
+      'previsoes.parquet': 'ec909a9940addc676cb98d8d88e879ea148311ddcabec39d3bbf2818389b3ba8',
+      'previsoes.csv': 'd7c432b88fb48a463a34023ef78eb29d78051e90040c4f15c9b6a7cfa9cb1136',
+      'metricas.json': '07aaf5720bd613ff60eda95db48e8fb2abd15c30e31289a6520c06b1a15b71ca'
+    },
+    status_promocao: 'nao_decidida',
+    tipo: 'baseline',
+    versoes: {
+      sklearn: '1.9.1'
+    }
+  }
+]
+
+== M5. avaliacoes_llm: nível médio por critério
+[
+  {
+    _id: {
+      exercicio: 'ex_analista_monitoramento_iot_01',
+      criterio: 'crit_hipoteses_diagnostico'
+    },
+    avaliacoes: 1,
+    nivel_medio: 2
+  },
+  {
+    _id: {
+      exercicio: 'ex_analista_monitoramento_iot_01',
+      criterio: 'crit_metodologia_isolamento'
+    },
+    avaliacoes: 1,
+    nivel_medio: 2
+  },
+  {
+    _id: {
+      exercicio: 'ex_analista_monitoramento_iot_01',
+      criterio: 'crit_resiliencia_e_seguranca'
+    },
+    avaliacoes: 1,
+    nivel_medio: 2
+  }
+]
+
+== M6. respostas_abertas por usuário
+[
+  {
+    _id: 'f2304bb0c1b44285bedbcd6553c6951d',
+    respostas: 1,
+    ultima: '2026-11-16T21:57:29Z'
+  }
+]
+
+== M7. Índices por coleção
+[
+  {
+    colecao: 'avaliacoes_llm',
+    indices: [
+      '_id_'
+    ]
+  },
+  {
+    colecao: 'curriculos_redigidos',
+    indices: [
+      '_id_'
+    ]
+  },
+  {
+    colecao: 'extracoes_llm',
+    indices: [
+      '_id_'
+    ]
+  },
+  {
+    colecao: 'model_cards',
+    indices: [
+      '_id_'
+    ]
+  },
+  {
+    colecao: 'respostas_abertas',
+    indices: [
+      '_id_'
+    ]
+  }
+]
