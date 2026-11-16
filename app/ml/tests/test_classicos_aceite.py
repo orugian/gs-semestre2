@@ -18,15 +18,18 @@ from citizentech_ml.treinar_classicos import (
 def painel_aceite():
     linhas = []
     for i, mes in enumerate(pd.period_range("2021-01", "2025-09", freq="M")):
-        for j, destino in enumerate([
-            "analista_dados_bi", "analista_monitoramento_iot", "analista_processos"
-        ]):
+        for j, destino in enumerate(
+            ["analista_dados_bi", "analista_monitoramento_iot", "analista_processos"]
+        ):
             for uf in ["35", "33"]:
                 nivel = float(20 + j * 10 + i % 7)
                 linha = {c: nivel for c in COLUNAS_FEATURES if "_total" not in c}
                 linha.update(
-                    competencia=mes.strftime("%Y%m"), destino=destino, uf=uf,
-                    mes=mes.month, alvo=nivel * 3 + i % 3,
+                    competencia=mes.strftime("%Y%m"),
+                    destino=destino,
+                    uf=uf,
+                    mes=mes.month,
+                    alvo=nivel * 3 + i % 3,
                     admissoes_soma_3m=nivel * 3,
                     admissoes_sazonal_ano_anterior=nivel * 3 - 1,
                 )
@@ -70,10 +73,13 @@ def test_manifesto_nao_pode_omitir_hash_do_modelo_antes_de_desserializar(tmp_pat
     (tmp_path / "metricas.json").write_bytes(metricas)
     (tmp_path / "modelos.joblib").write_bytes(b"nao e um pickle confiavel")
     (tmp_path / "manifesto.json").write_text(
-        json.dumps({
-            "versao_manifesto": "1.0",
-            "arquivos": {"metricas.json": hashlib.sha256(metricas).hexdigest()},
-        }), encoding="utf-8",
+        json.dumps(
+            {
+                "versao_manifesto": "1.0",
+                "arquivos": {"metricas.json": hashlib.sha256(metricas).hexdigest()},
+            }
+        ),
+        encoding="utf-8",
     )
     chamadas = []
 
@@ -97,10 +103,12 @@ def test_manifesto_com_caminho_inseguro_falha(tmp_path):
         "../metricas.json": dummy_hash,
     }
     (tmp_path / "manifesto.json").write_text(
-        json.dumps({
-            "versao_manifesto": "1.0",
-            "arquivos": arquivos_inseguros,
-        }),
+        json.dumps(
+            {
+                "versao_manifesto": "1.0",
+                "arquivos": arquivos_inseguros,
+            }
+        ),
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="[Mm]anifesto|caminho inseguro|inválido"):
@@ -113,14 +121,16 @@ def test_manifesto_com_entrada_removida_ou_extra_falha(tmp_path):
 
     # 1. Omissão de previsoes.parquet
     (tmp_path / "manifesto.json").write_text(
-        json.dumps({
-            "versao_manifesto": "1.0",
-            "arquivos": {
-                "modelos.joblib": dummy_hash,
-                "previsoes.csv": dummy_hash,
-                "metricas.json": dummy_hash,
-            },
-        }),
+        json.dumps(
+            {
+                "versao_manifesto": "1.0",
+                "arquivos": {
+                    "modelos.joblib": dummy_hash,
+                    "previsoes.csv": dummy_hash,
+                    "metricas.json": dummy_hash,
+                },
+            }
+        ),
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="[Mm]anifesto|omissão"):
@@ -128,16 +138,18 @@ def test_manifesto_com_entrada_removida_ou_extra_falha(tmp_path):
 
     # 2. Arquivo extra não autorizado
     (tmp_path / "manifesto.json").write_text(
-        json.dumps({
-            "versao_manifesto": "1.0",
-            "arquivos": {
-                "modelos.joblib": dummy_hash,
-                "previsoes.parquet": dummy_hash,
-                "previsoes.csv": dummy_hash,
-                "metricas.json": dummy_hash,
-                "script_externo.py": dummy_hash,
-            },
-        }),
+        json.dumps(
+            {
+                "versao_manifesto": "1.0",
+                "arquivos": {
+                    "modelos.joblib": dummy_hash,
+                    "previsoes.parquet": dummy_hash,
+                    "previsoes.csv": dummy_hash,
+                    "metricas.json": dummy_hash,
+                    "script_externo.py": dummy_hash,
+                },
+            }
+        ),
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="[Mm]anifesto|extras|desconhecidos"):
@@ -228,3 +240,24 @@ def test_comparacao_baselines_e_hash_metadata(resultado_aceite, tmp_path):
         "previsoes.csv",
         "metricas.json",
     }
+
+
+def test_relatorio_declara_cv_nao_aninhada(resultado_aceite):
+    assert resultado_aceite["relatorio"].get("cv_aninhada") is False
+
+
+def test_estimador_isolado_tambem_bloqueia_fit_de_holdout(painel_aceite):
+    from citizentech_ml.classicos import EstimadorClassicoElegivel
+
+    entrada = painel_aceite.copy()
+    entrada["competencia"] = "202601"
+    with pytest.raises(ValueError, match="2026|[Hh]oldout"):
+        EstimadorClassicoElegivel().fit(entrada, entrada["alvo"])
+
+
+def test_metricas_explicam_quantas_series_compuseram_mase(resultado_aceite):
+    rel = resultado_aceite["relatorio"]
+    for conjunto in [*rel["folds"], rel["validacao_externa"]]:
+        for met in conjunto["modelos"].values():
+            assert "series_com_escala" in met and "series_sem_escala" in met
+            assert met["series_com_escala"] + met["series_sem_escala"] == len(met["tabela_series"])

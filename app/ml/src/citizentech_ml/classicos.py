@@ -81,6 +81,10 @@ class EstimadorClassicoElegivel(BaseEstimator, RegressorMixin):
         if not colunas_id.issubset(X.columns):
             raise ValueError(f"X deve conter colunas de identificação: {sorted(colunas_id)}")
 
+        competencias = X["competencia"].astype(str).map(validar_competencia)
+        if (competencias >= "202601").any():
+            raise ValueError("Fit de holdout 2026 proibido nesta fatia (D10).")
+
         y_serie = pd.Series(y, index=X.index, name="alvo")
         valores_y = y_serie.dropna().to_numpy(dtype=float)
         if len(valores_y) > 0:
@@ -348,6 +352,8 @@ def _avaliar_previsoes_conjunto(
             "macro_mae": None,
             "mase": None,
             "mase_motivo": "sem_amostras_validas",
+            "series_com_escala": 0,
+            "series_sem_escala": 0,
             "previsoes_negativas": 0,
             "tabela_series": [],
         }
@@ -404,6 +410,8 @@ def _avaliar_previsoes_conjunto(
         "macro_mae": resumo_base["macro_mae"],
         "mase": mase_agregado,
         "mase_motivo": mase_motivo,
+        "series_com_escala": len(mases_validos),
+        "series_sem_escala": len(resumo_base["tabela_series"]) - len(mases_validos),
         "previsoes_negativas": n_neg,
         "tabela_series": resumo_base["tabela_series"],
     }
@@ -741,9 +749,7 @@ def treinar_classicos(
             "periodo": ["202501", "202509"],
             "series_elegiveis": len(series_elegiveis_global),
             "baselines": (
-                rel_baselines["validacao"]["baselines"]
-                if rel_baselines.get("validacao")
-                else {}
+                rel_baselines["validacao"]["baselines"] if rel_baselines.get("validacao") else {}
             ),
             "modelos": {},
         }
@@ -852,6 +858,7 @@ def treinar_classicos(
         "hiperparametros_e_cv": cv_detalhes,
         "folds": folds_info,
         "resumo_cv": resumo_cv_modelos,
+        "cv_aninhada": False,
         "diagnostico_fit": diagnostico_fit,
         "validacao_externa": validacao_externa_dict,
         "ausentes_treino": ausentes_treino,
@@ -867,6 +874,11 @@ def treinar_classicos(
         "importancias_rf": modelos_finais["random_forest"].importancias_,
         "limites": [
             "Modelos treinados exclusivamente com origens 202101-202409 (D10).",
+            (
+                "CV nao-aninhada: hiperparametros selecionados nos mesmos folds reportados; "
+                "metricas sujeitas a vies otimista de selecao, nao uma estimativa independente "
+                "de generalizacao. Validacao externa separada somente quando explicitada."
+            ),
             (
                 "Previsões negativas preservadas brutas para métricas; "
                 "política de clipagem pertence ao serving."
