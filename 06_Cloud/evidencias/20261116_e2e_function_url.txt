@@ -1,0 +1,38 @@
+# Teste ponta a ponta contra a Function URL real (AWS Learner Lab, us-east-1) - 2026-11-16 15:37:56 (UTC-3)
+Executado pelo orquestrador; URL e chave omitidas.
+
+## GET /health
+HTTP 200 {"status": "ok", "banco": "ok", "ia_provedor": "comprehend"}
+
+## 1) Simulador CitizenTech - cenario normal, 2 leituras, sem chave (autenticado=false)
+=== Simulador: cenario=normal, envios=2, url=<FUNCTION_URL>/ocorrencias ===
+[1/2] temperatura_c=25.0 -> HTTP 201 | ID=2 | risco=normal | sentimento=None | alerta=False
+[2/2] distancia_cm=25.0 -> HTTP 201 | ID=3 | risco=normal | sentimento=None | alerta=False
+=== Simulacao concluida com sucesso ===
+
+## 2) Simulador CitizenTech - cenario evolucao ate o critico, 6 leituras, com X-Device-Key
+=== Simulador: cenario=evolucao, envios=6, url=<FUNCTION_URL>/ocorrencias ===
+[1/6] temperatura_c=30.0 -> HTTP 201 | ID=4 | risco=normal | sentimento=None | alerta=False
+[2/6] temperatura_c=34.0 -> HTTP 201 | ID=5 | risco=normal | sentimento=None | alerta=False
+[3/6] temperatura_c=38.0 -> HTTP 201 | ID=6 | risco=atencao | sentimento=None | alerta=False
+[4/6] temperatura_c=42.0 -> HTTP 201 | ID=7 | risco=atencao | sentimento=None | alerta=False
+[5/6] temperatura_c=46.0 -> HTTP 201 | ID=8 | risco=critico | sentimento=None | alerta=True
+[6/6] temperatura_c=50.0 -> HTTP 201 | ID=9 | risco=critico | sentimento=None | alerta=True
+=== Simulacao concluida com sucesso ===
+
+## 3) Payload do simulador oficial do professor (nivel_rio_cm, sem header, sem evento_id)
+HTTP 201 {"id": 10, "evento_id": null, "dispositivo_id": "esp32-ponte-sul-01", "metrica": "nivel_rio_cm", "valor": 268.9, "nivel_risco": "desconhecido", "alerta": false, "autenticado": false, "sentimento": null, "confianca": null, "analise_status": "indisponivel"}
+
+## 4) Leitura invalida (sem metrica/valor) -> 400
+HTTP 400 
+
+## 5) Chave invalida -> 401
+HTTP 401 
+
+## 6) Duplicata identica (mesmo evento_id) -> 200; conteudo diferente -> 409
+HTTP 201 {"id": 11, "evento_id": "e2e-568683d35f3d", "dispositivo_id": "lab-iot-bancada-01", "metrica": "distancia_cm", "valor": 12.0, "nivel_risco": "atencao", "alerta": false, "autenticado": true, "sentimento": null, "confianca": null, "analise_status": "sem_relato"}
+HTTP 200 {"id": 11, "evento_id": "e2e-568683d35f3d", "dispositivo_id": "lab-iot-bancada-01", "metrica": "distancia_cm", "valor": 12.0, "nivel_risco": "atencao", "alerta": false, "autenticado": true, "sentimento": null, "confianca": null, "analise_status": "sem_relato", "duplicata": true}
+HTTP 409 
+
+## 7) GET /ocorrencias?limite=5
+HTTP 200 {"ocorrencias": [{"id": 11, "dispositivo_id": "lab-iot-bancada-01", "tipo_dispositivo": "desconhecido", "latitude": null, "longitude": null, "metrica": "distancia_cm", "valor": 12.0, "relato": null, "sentimento": null, "confianca": null, "nivel_risco": "atencao", "medido_em": "2026-11-16T18:40:00+00:00", "criado_em": "2026-11-16T18:38:26.381643+00:00", "evento_id": "e2e-568683d35f3d", "autenticado": true, "unidade": "cm", "sessao_laboratorio_id": null, "ciclo_id": null, "alerta": false, "analise_status": "sem_relato"}, {"id": 10, "dispositivo_id": "esp32-ponte-sul-01", "tipo_dispositivo": "esp32", "latitude": -23.189612, "longitude": -45.884073, "metrica": "nivel_rio_cm", "valor": 268.9, "relato": "A agua subiu muito rapido, ja cobriu a calcada", "sentimento": null, "confianca": null, "nivel_risco": "desconhecido", "medido_em": null, "criado_em": "2026-11-16T18:38:25.298884+00:00", "evento_id": null, "autenticado": false, "unidade": null, "sessao_laboratorio_id": null, "ciclo_id": null, "alerta": false, "analise_status": "indisponivel"}, {"id": 9, "dispositivo_id": "lab-iot-bancada-01", "tipo_dispositivo": "sensor_bancada", "latitude": -23.5505, "longitude": -46.6333, "metrica": "temperatura_c", "valor": 50.0, "relato": "Monitoramento em bancada - temperatura em evolucao (50.0 C)", "sentimento": null, "confianca": null, "nivel_risco": "critico", "medido_em": "2026-11-16T18:38:02+00:00", "criado_em": "2026-11-16T18:38:24.638875+00:00", "evento_id": "d84171f7-1eaf-4f10-b35e-e381ad8f1716", "autenticado": true, "unidade": "C", "sessao_laboratorio_id": null, "ciclo_id": null, "alerta": true, "analise_status": "indisponivel"}, {"id": 8, "dispositivo_id": "lab-iot-bancada-01", "tipo_dispositivo": "sensor_bancada", "latitude": -23.5505, "longitude": -46.6333, "metrica": "temperatura_c", "valor": 46.0, "relato": "Monitoramento em bancada - temperatura em evolucao (46.0 C)", "sentimento": null, "confianca": null, "nivel_risco": "critico", "medido_em": "2026-11-16T18:38:02+00:00", "criado_em": "2026-11-16T18:38:22.899295+00:00", "evento_id": "98714a30-c242-4664-b2da-03f6f9574a96", "autenticado": true, "unidade": "C", "sessao_laboratorio_id": null, "ciclo_id": null, "alerta": true, "analise_status": "indisponivel"}, {"id": 7, "dispositivo_id": "lab-iot-bancada-01", "tipo_dispositivo": "sensor_bancada", "latitude": -23.5505, "longitude": -46.6333, "metrica": "temperatura_c", "valor": 42.0, "relato": "Monitoramento em bancada - temperatura em evolucao (42.0 C)", "sentimento": null, "confianca": null, "nivel_risco": "atencao", "medido_em": "2026-11-16T18:38:02+00:00", "criado_em": "2026-11-16T18:38:21.178904+00:00", "evento_id": "052e6e21-2615-4cb0-b22d-fcb9d333943e", "autenticado": true, "unidade": "C", "sessao_laboratorio_id": null, "ciclo_id": null, "alerta": false, "analise_status": "indisponivel"}]}

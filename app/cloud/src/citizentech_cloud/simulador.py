@@ -152,19 +152,26 @@ def main(argv: list[str] | None = None) -> int:
             "Aviso: --com-chave especificado, mas DEVICE_KEY nao esta definida no ambiente.\n"
         )
 
+    # A Function URL vem sem caminho (como no simulador do professor): a rota e /ocorrencias.
+    destino = args.url.rstrip("/")
+    if not destino.endswith("/ocorrencias"):
+        destino += "/ocorrencias"
+
     leituras = gerar_leituras(args.cenario, args.leituras, args.sem_relato)
     print(
-        f"=== Simulador: cenario={args.cenario}, envios={len(leituras)}, url={args.url} ==="
+        f"=== Simulador: cenario={args.cenario}, envios={len(leituras)}, url={destino} ==="
     )
 
+    falhas = 0
     for i, payload in enumerate(leituras, start=1):
-        status, resp = enviar(args.url, payload, chave=chave)
+        status, resp = enviar(destino, payload, chave=chave)
         resp_id = resp.get("id")
         risco = resp.get("nivel_risco", "N/A")
         sentimento = resp.get("sentimento", "N/A")
         alerta = resp.get("alerta", False)
 
         if status >= 400:
+            falhas += 1
             erro = resp.get("erro", "N/A")
             detalhes = resp.get("detalhes", "")
             msg_erro = f"erro={erro}"
@@ -184,6 +191,9 @@ def main(argv: list[str] | None = None) -> int:
         if i < len(leituras) and args.intervalo > 0:
             time.sleep(args.intervalo)
 
+    if falhas:
+        print(f"=== Simulacao concluida com {falhas} envio(s) recusado(s) ===")
+        return 1
     print("=== Simulacao concluida com sucesso ===")
     return 0
 
