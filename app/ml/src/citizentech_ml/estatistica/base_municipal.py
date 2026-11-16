@@ -231,6 +231,17 @@ def agregar_base_municipal(
     - População final: municípios com admissoes_2024 >= 10.
     """
     mapa_cbo = validar_mapa_destinos(mapa)
+    politicas = {
+        "convencao_disponibilidade": "mensal por competencia",
+        "limite_disponibilidade_2024": "202412",
+        "limite_disponibilidade_2025": "202512 (maturacao limitada, sem arquivos 2026)",
+        "populacao_criterio": "admissoes_2024 >= 10 nos seis destinos em SP",
+        "salario": (
+            "salario mensal declarado nominal sem correcao inflacionaria ou corte de outliers"
+        ),
+        "superior_graus": sorted(GRAUS_SUPERIOR),
+        "escolaridade_desconhecida_graus": [99, None],
+    }
 
     if not isinstance(microdados, pd.DataFrame):
         raise TypeError("microdados deve ser um DataFrame pandas.")
@@ -281,6 +292,7 @@ def agregar_base_municipal(
             "n_populacao_final": 0,
             "n_excluidos_menos_10": 0,
             "contadores": contadores,
+            "politicas": politicas,
         }
         return df_vazio, relatorio_vazio
 
@@ -560,17 +572,7 @@ def agregar_base_municipal(
         "n_populacao_final": len(populacao_municipios),
         "n_excluidos_menos_10": len(todos_municipios) - len(populacao_municipios),
         "contadores": contadores,
-        "politicas": {
-            "convencao_disponibilidade": "mensal por competencia",
-            "limite_disponibilidade_2024": "202412",
-            "limite_disponibilidade_2025": "202512 (maturacao limitada, sem arquivos 2026)",
-            "populacao_criterio": "admissoes_2024 >= 10 nos seis destinos em SP",
-            "salario": (
-                "salario mensal declarado nominal sem correcao inflacionaria ou corte de outliers"
-            ),
-            "superior_graus": sorted(GRAUS_SUPERIOR),
-            "escolaridade_desconhecida_graus": [99, None],
-        },
+        "politicas": politicas,
     }
 
     return base_df, relatorio

@@ -103,3 +103,17 @@ def test_metadados_internos_divergentes_do_nome_da_fonte_sao_recusados(tmp_path,
     linha[campo] = valor
     with pytest.raises(ValueError, match="[Ff]onte|[Dd]iverg|competencia_arquivo|arquivo_tipo"):
         carregar_base_municipal(tmp_path, mapa, leitor=lambda p: pd.DataFrame([linha]))
+
+
+def test_base_vazia_tambem_preserva_politicas_cientificas_no_manifesto():
+    from citizentech_ml.estatistica.base_municipal import COLUNAS_MINIMAS
+
+    mapa = {
+        "destinos": {
+            nome: {"cbo6": [str(100001 + i)]}
+            for i, nome in enumerate(sorted(SEIS_DESTINOS_OFICIAIS))
+        }
+    }
+    base, rel = agregar_base_municipal(pd.DataFrame(columns=COLUNAS_MINIMAS), mapa)
+    assert base.empty
+    assert rel.get("politicas", {}).get("limite_disponibilidade_2024") == "202412"
