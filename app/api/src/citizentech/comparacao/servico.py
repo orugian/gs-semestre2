@@ -82,8 +82,13 @@ def resumo_mercado_para_comparacao(destino_id: str, uf: str | None) -> dict[str,
     ultimo_valor = ultimo["admissoes"]
     elegivel = bool(serie_alvo.get("elegivel", False))
 
+    valor_texto = (
+        f"{ultimo_valor:.0f}"
+        if float(ultimo_valor).is_integer()
+        else f"{float(ultimo_valor):.1f}".replace(".", ",")
+    )
     resumo_texto = (
-        f"Último mês observado ({ultimo['competencia']}): {ultimo_valor} "
+        f"Último mês observado ({ultimo['competencia']}): {valor_texto} "
         "admissões formais estimadas no grupo e território (Novo Caged)."
     )
 

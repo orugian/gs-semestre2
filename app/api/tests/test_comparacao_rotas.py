@@ -382,6 +382,8 @@ def test_comparacao_mercado_e_preferencias(tmp_path: Path, monkeypatch):
     # No snapshot padrão, o último observado válido para analista_dados_bi/SP é 20.0 em 202501
     assert mercado_d["ultimo_observado"]["competencia"] == "202501"
     assert mercado_d["ultimo_observado"]["valor"] == 20.0
+    # Texto em pt-BR: número inteiro sem ".0" (o valor numérico continua no campo estruturado)
+    assert "(202501): 20 admissões" in mercado_d["resumo"]
 
 
 @pytest.mark.oracle
