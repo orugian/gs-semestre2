@@ -1,172 +1,85 @@
 # Estado do desenvolvimento — CitizenTech
 
-> **Panorama reconstruído em 16/11, encerramento ~12h55:** [guia visual](<panorama_projeto.html>) integrado em `53f4c50` (autoria `de18cf4`), substituindo a versão rejeitada por densidade. Cinco áreas, arquitetura conectada, nove matérias mestre/detalhe e estados técnico/pacote/equipe/envio separados. Snapshot funcional do guia: **18e72aa, ~11h34**, com S9 backend integrado; não é monitoramento ao vivo.
->
-> **Aceite documental executado:** Node/CDP/Edge em main (`pwsh-11` →0):5 larguras,5 áreas,9 matérias em desktop/mobile,teclado/hash/Back/Forward,35 links,0 rede/errosJS,9 painéis+9 âncoras semJS. RED anterior5376 palavras; abertura nova285 no desktop/262 mobile. R1/R2 e revisão heurística independente corrigiram conteúdo, mapa e carga cognitiva; não é aprovação humana do visual nem regressão do produto. [Provas e limites](<../09_AIC/evidencias/20261116_redesenho_panorama_aceite.md>).
->
-> **Higiene:** todos os jobs desta tarefa coletados; worktree/branch DOC-redesenho limpos removidos após integração. S4/S10/S5-auth e S5-red preservados; nenhum dado/segredo/recurso remoto alterado. Disco23,1GiB após limpar somente perfis/temporários próprios; verificador arquivado em `.kaiser/reports/DOC-redesenho-verificador.md`, fora do Git. O tmp global de outras frentes não foi esvaziado. Próximo desta tarefa: usuário abrir o guia e avaliar compreensão; próxima fatia funcional continua sob a outra frente, sem refazer S9/E09/S8b/S11 domínio.
-
-> Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
-
-## 0b. S4 na AWS real — 16/11 ~15h40 (mais recente)
-
-**Deploy feito pelo usuário no console; verificação executada pelo orquestrador.** RDS: o identificador `cp1-cloud` é a **instância**, não um banco (só existiam `postgres`/`rdsadmin`). Criado o banco **`citizentech`**, aplicado `app/cloud/sql/ocorrencias.sql` e o usuário **`app_ingest`** (INSERT/SELECT; DELETE negado, verificado). Senha do `app_ingest` em `../.dados/cloud/segredo_app_ingest.txt` (fora do git, nunca exibida). Lambda `cp2-hello-world` com o zip da S4b (`../.dados/cloud/funcao_lambda_20261116.zip`), `DB_NAME=citizentech`, `DB_USER=app_ingest`, `DB_SSLMODE=verify-full`. A primeira tentativa falhou com `sqlstate=3D000` (DB_NAME antigo), diagnosticada pelo log novo.
-**Evidências versionadas:** [e2e](<../06_Cloud/evidencias/20261116_e2e_function_url.txt>) (health banco ok; simulador normal 2×201 sem chave; evolução 30→50 °C, 6×201, atenção em 38/42, **crítico com alerta em 46/50**; payload oficial do professor 201 `desconhecido`/`autenticado=false`; 400 inválido; 401 chave errada; duplicata 200; conflito 409; GET lista) e [consulta RDS](<../06_Cloud/evidencias/20261116_consulta_rds.txt>) (10 linhas, 2 críticas). **Sentimento:** Comprehend → `ClientError (AccessDenied)` na LabRole (informado pelo usuário a partir do CloudWatch) → `analise_status=indisponivel` com ingestão intacta, exatamente o fallback exigido; o README de Cloud deve declarar isso (HF 402 também indisponível). S4b `main` cloud 115 passed (logs INFO no runtime, sqlstate no erro, simulador anexa `/ocorrencias` e sai 1 em erro).
-**Pendente do usuário:** prints 1 (env vars com valores ocultos), 3 (CloudWatch do stream 18:38 UTC), Function URL e RDS connectivity → salvar em `06_Cloud/evidencias/`. **SG 5432 aberto a 0.0.0.0/0** (D09: exceção acadêmica documentada; manter até a correção).
-
-## 0a. Frente de desenvolvimento — checkpoint 16/11 ~14h30
-
-**`main` em `0362cc0`, enviado a `gs-semestre2` (gitleaks limpo).** Integrados após o checkpoint das 11h:
-
-| Fatia | Evidência executada pelo orquestrador |
-|---|---|
-| **S9 currículo/PII** | RED reproduzido em worktree temporário (`assert 501 == 400`, `assert 501 == 201`); revisão independente `../.kaiser/reports/S9-curriculo-rev.md` (9 achados; 1–8 corrigidos na rodada 2; 9 = risco documentado: spool multipart do Starlette). Contraexemplos reexecutados (ex.: "Python, R e SQL, 3 anos" intacto; nome na 3ª linha → `[NOME]`; `12345678901` → `[CPF]` inteiro). API em `main`: **290 passed, 0 skip** (Oracle `CT_TESTE_S9` + Mongo local). |
-| **S4 Lambda** | Rodada 1 + revisão independente (`../.kaiser/reports/S4-lambda-rev.md`, 12 achados; 1–6 e 9–11 corrigidos na rodada 2; 7 LGPD do relato no CloudWatch = risco declarado; 8 sem efeito). Orquestrador corrigiu: validação de `metrica`/`tipo_dispositivo`/`medido_em` (contraexemplos davam 201 com lixo ou 503), HF padrão = router, timeouts do boto3, caminho do CA no zip, `CREATE ROLE` com `\gexec` (validado com psql real). Cloud em `main`: **108 passed**. Zip de deploy `../.dados/cloud/funcao_lambda_20261116.zip` (SHA `b42d367f…57f2`, 722 816 bytes; handler `lambda_function.lambda_handler`; pg8000 puro, `limiares.json`, `citizentech_cloud/global-bundle.pem`). **Nada executado na AWS ainda.** |
-| **S10 extração LLM** | agy + correções do orquestrador: trecho só com marcador de redação (`[EMAIL]`) era aceito como evidência → descartado; **orçamento de tokens**: com `max_tokens=2000` o modelo padrão esgotava no raciocínio (`finish_reason=length`, `content` vazio, verificado) → `max_tokens=6000` + `reasoning.max_tokens=2000`. **Smoke real OpenRouter** (persona fictícia, com tentativa de injeção): modelo padrão na 1ª tentativa, 7 candidatas da lista fechada, 0 descartes, injeção sem efeito. **Gasto acumulado da conta: US$ 0,0168 de 7** (via `/key`). Suíte S10: 329 passed, 0 skip. |
-| **E01 firmware Wokwi** | `app/iot/firmware/` (sketch + `logica.h` testada no host com g++ + `limiares.h` gerado de `limiares.json` + `diagram.json` DS18B20/HC-SR04/LED/buzzer); tools 41 passed. **Não compilado para ESP32 nem simulado no Wokwi** (sem toolchain local). |
-
-**Decisão S4 (D23):** sentimento por **Amazon Comprehend** (`SENTIMENTO_PROVEDOR=comprehend`); HF disponível como `hf` (402 hoje). Se a LabRole negar `comprehend:DetectSentiment`, a ingestão continua com `analise_status=indisponivel` e o README declara.
-
-**Próximo:** (1) usuário faz o deploy S4 no console pela lista do chat (16/11 ~14h30) e envia prints; orquestrador então roda o simulador contra a Function URL e grava evidências; (2) rotas `/me/comparacoes` + `/me/intencao` e telas web (login, currículo, competências, comparação); (3) relatórios Cyber, CTP, Data Science (DDL 001+002 no Oracle local + consultas + Mongo); (4) S12 → S13 → S14; (5) rodar o firmware no Wokwi.
-
-**Incidente:** o Docker Desktop caiu (~14h05); reiniciado, serviços de teste de pé, volumes preservados. Disco 22,5 GB (14h26). Processo `agy` PID 30832 (09h23) pertence à frente do panorama — não encerrado por esta frente.
-
----
-
-## 0. Sessão 16/11 tarde — checkpoint ~11h05
-
-**`main` em `16ed68f`, enviado a `gs-semestre2` (gitleaks limpo no intervalo).** Integrados nesta sessão, com aceite executado pelo orquestrador:
-
-| Fatia | Commit | Evidência executada |
-|---|---|---|
-| **E09 empacotador** `app/tools/empacotar_entregas.py` | `3e813e2` | tools 32 passed + ruff; execução real: `05_ML/notebook.ipynb`, `07_RedesNeurais/notebook.ipynb`, `08_Estatistica/{analise.py,base_municipal.csv,requirements.txt}` = cópias; `08_Estatistica/relatorio.pdf` 21 págs. com 8/8 imagens; `05_ML/slides.pdf` 12 págs. com 2/2 imagens; `--verificar` → 0; contraexemplo `--dados` errado → 2 sem escrita. CSV marcado `-text` no `.gitattributes` (blob SHA = `5dbc73ac…a7ee`). PDFs ainda com `[HUMANO — preencher]` (nomes/RMs). Manifesto `docs/entregas_manifesto.json`. |
-| **S8b model cards + Adzuna** | `8a2a303` | TDD pelo orquestrador (RED por asserção). ML 274 passed (1 skip = teste Mongo, rodado verde à parte com Mongo local); API 225 passed com Oracle; web 18 passed + typecheck + build. **Atlas real:** coleção `model_cards` com 6 docs (`<modelo>:20261115_r29_aceite`, `status_promocao=nao_decidida`, SHA do snapshot `9c093f93…`); reexecução idempotente. **Adzuna real:** 6 chamadas (3 destinos MVP × SP/BR), todas 200, **contador 1→7** (teto 12), `../.dados/adzuna/20261116/` (brutos + `resumo_adzuna.json` + manifesto SHA), chave ausente dos arquivos (0 ocorrências). Contagens: dados/BI SP 274 · BR 1036; monitoramento/IoT ("automação industrial") SP 230 · BR 2402; processos SP 196 · BR 1329. API serve com `CITIZENTECH_ADZUNA_SNAPSHOT=../.dados/adzuna/20261116` como "amostra pontual Adzuna de 16/11/2026". Termos em `app/catalogo/termos_adzuna.json`. |
-| **S11 comparação (domínio)** | `16ed68f` | agy; 19 testes + regressão API sem Oracle 216 passed + ruff (orquestrador); contraexemplo executado (declarada + parcial → desconhecida; repetido → ValueError). Rotas `/me/comparacoes` ainda não existem. |
-
-**Em andamento (jobs do harness):**
-- `pwsh-444`: agy **S9-curriculo rodada 2** em `../GS-wt/S9-curriculo` (contrato `../.kaiser/contratos/S9-curriculo-r2.md`). Rodada 1: 259 passed segundo o agente; **RED reproduzido pelo orquestrador** (worktree temporário: `assert 501 == 400` e `assert 501 == 201`); revisão independente `../.kaiser/reports/S9-curriculo-rev.md` com 9 achados — **aceitos** 1–8 (falsos positivos de endereço: "Python, R e SQL, 3 anos" virava `[ENDERECO]`; endereço sem vírgula escapa; cabeçalho redige cargo e deixa o nome real; telefone com match parcial; MongoClient por requisição sem fechar; PDF corrompido → 500; memória na extração; testes de log/2 MB/disco fracos), **9 aceito como risco documentado** (spool multipart do Starlette). Reproduzidos pelo orquestrador: casos 1, 3, 4.
-- `pwsh-439`: agy **S4-lambda** em `../GS-wt/S4-lambda` (contrato `../.kaiser/contratos/S4-lambda.md`); Postgres de teste 5433 de pé.
-- Pronto para disparar após o merge do S9: **S10-extracao** (`../.kaiser/contratos/S10-extracao.md`).
-
-**Decisão local (D23, delegada ao agente):** sentimento por **Amazon Comprehend** (`detect_sentiment`, `pt`) via `SENTIMENTO_PROVEDOR=comprehend` (padrão), com HF mantido como alternativa (`hf`) e `desligado`; qualquer falha → `analise_status=indisponivel` sem derrubar a ingestão. Motivo: HF retorna 402 (sem créditos); Comprehend é o caminho B do enunciado de Cloud e roda dentro do Learner Lab sem custo extra para o grupo. **Não verificado:** se a `LabRole` do Learner Lab permite `comprehend:DetectSentiment` — se negar, o fallback gracioso mantém a ingestão e o README declara a limitação.
-
-**Bundle CA do RDS** baixado em `../.kaiser/tmp/rds-global-bundle.pem` (174 560 bytes, 114 certificados, SHA-256 `90a6f1a7…f21b`) para o pacote da Lambda.
-
-**Docker:** Oracle, Mongo e Postgres de teste de pé (necessários para S9/S10/S4). Disco 23,6 GB (11h).
-
----
-
-**Checkpoint funcional anterior:** `main` em `396b81d` + este commit documental, conferido em **16/11/2026 às ~10h05 (UTC−3)**. Prazo **19/11/2026 às 23h55** — **~3,6 dias**. **Push autorizado pelo usuário** para `gs-semestre2` (https://github.com/orugian/gs-semestre2): feito às 09h47 até `c6ee6e1` (gitleaks limpo no intervalo); repetir após cada integração. `origin` (insonia999) **não** recebe push. A aplicação **ainda não funciona ponta a ponta**: existe mercado (API + tela + painel técnico), autenticação e leituras CTP; faltam currículo/PII, extração, comparação, plano, avaliação, laboratório, nuvem, firmware e jornada E2E.
+> Primeiro arquivo da próxima sessão. Snapshot documental de **16/11/2026 ~16h (UTC−3)**, não monitoramento ao vivo. Prazo **19/11/2026 às 23h55** (~3,3 dias). Histórico detalhado: `git show 27a06a4:docs/estado.md` (camadas de 16/11 tarde), `git show d2ddec4:docs/estado.md` (até 15/11); trilha de agentes em `../.kaiser/{contratos,reports}/`. Handoff desta sessão: `C:\Users\orugi\AppData\Local\Temp\handoff_citizentech_20261116_noite.md`.
 
 ## 1. Ponto de parada
 
-| Fatia | Situação | Commit de integração |
+**`main` = este commit documental sobre `d9a544b`, enviado a `gs-semestre2` (gitleaks limpo no intervalo).** `origin` (insonia999) não recebe push.
+
+**Regressão em `main` executada pelo orquestrador às ~15h55:** `app/api` **329 passed, 0 skip** (Oracle `CT_TESTE_S9` + Mongo local) · `app/cloud` **115 passed** (Postgres 5433) · `app/tools` **41 passed** · `app/web` **18 passed** · ruff limpo em api/cloud/tools. `app/ml` 274 passed (16/11 manhã, não rerodado à tarde: nada de ML mudou desde então).
+
+| Bloco | Situação | Evidência / limite |
 |---|---|---|
-| S0–S3 base, limiares, leituras CTP, outbox | integradas (sessões anteriores) | — |
-| S5 autenticação/consentimentos | integrada; Oracle real 208 passed na época | `c391eac` |
-| S6 ingestão Caged, S7 features/split, ML/RNA/D11 | integradas; nenhum modelo promovido | `1a47a1a`, `a3a6866` |
-| **S8 mercado API + snapshot + painel R06** | **integrada 16/11** | `a49682f` |
-| **E08 Estatística portátil + relatório** | **integrada 16/11** | `181ba51` |
-| **S15a tela web Mercado + Painel técnico** | **integrada 16/11** | `6662ff3` |
-| **E05 notebooks ML/RNA + slides ML** | **integrada 16/11** | `13cb0a2` |
-| S9 currículo/PII · S10 extração · S11 comparação · S12 plano · S13 avaliação · S14 laboratório | **não iniciadas** | — |
-| S4 Lambda/RDS · firmware Wokwi | **não iniciadas** — gates liberados em 16/11 (Learner Lab ativo, Wokwi autorizado) | — |
-| S15 final (jornada E2E Playwright + axe) | não iniciada | — |
-| Empacotador de entregas + PDFs finais | não iniciado | — |
+| S0–S3, S5, S6, S7, S8, E05, E08, S15a | integrados (sessões anteriores) | ver git e `05_ML/`, `08_Estatistica/` |
+| **E09 empacotador** | integrado | `05_ML/notebook.ipynb`, `07_RedesNeurais/notebook.ipynb`, `08_Estatistica/{analise.py,base_municipal.csv,requirements.txt,relatorio.pdf}`, `05_ML/slides.pdf` são cópias geradas; `docs/entregas_manifesto.json`. PDFs ainda com `[HUMANO — preencher]`. **Reexecutar no fim** (`uv run python empacotar_entregas.py --dados ..\..\..\.dados`, depois `--verificar`). |
+| **S8b model cards + Adzuna** | integrado | Atlas `model_cards` 6 docs; Adzuna `../.dados/adzuna/20261116/` (6 chamadas, contador **7/12**); `/mercado` mostra "amostra pontual Adzuna de 16/11/2026" com `CITIZENTECH_ADZUNA_SNAPSHOT`. |
+| **S9 currículo/PII** | integrado (backend) | RED reproduzido; revisão independente 9 achados (8 corrigidos, 1 risco documentado). `POST /me/experiencias`, `POST /me/curriculo`, `GET /me/curriculo/{id}`, `POST /me/curriculo/confirmar-envio`. **Sem tela.** |
+| **S10 extração LLM** | integrado (backend) | `POST /me/competencias/extrair`, `GET /me/competencias`, `PATCH /me/competencias/{id}`; DDL `app/db/ddl/002_competencias.sql`. Smoke real OpenRouter ok (modelo padrão, 7 candidatas). **Sem tela.** Revisão independente não feita (não obrigatória). |
+| **S11 comparação** | **só domínio** | `citizentech.comparacao.dominio.comparar_destinos`; integração com S10 via `competencias_para_comparacao`. **Falta rota `POST /me/comparacoes` e tela.** |
+| **S4 Lambda/RDS** | **integrado e verificado na AWS real** | Evidências `06_Cloud/evidencias/`: `20261116_e2e_function_url.txt`, `20261116_consulta_rds.txt`, `20261116_cloudwatch_3.png`, `20261116_lambda_variaveis_ambiente.png` (segredos tarjados). **Faltam prints CloudWatch 1 e 2** (perdidos por erro do orquestrador ao mover; ver §6). Sentimento: Comprehend **AccessDenied** na LabRole → `analise_status=indisponivel` (fallback exigido funcionando). |
+| **E01 firmware Wokwi** | integrado (código) | `app/iot/firmware/` (lógica testada no host com g++; `limiares.h` gerado). **Não compilado para ESP32, não simulado no Wokwi.** |
+| S12 plano · S13 avaliação · S14 laboratório | **não iniciados** | contratos a escrever |
+| Telas web: login, intenção, currículo, competências, comparação, plano, exercício, laboratório | **não iniciadas** | só existem Mercado + Painel técnico |
+| S15 jornada E2E (Playwright + axe) | não iniciada | |
+| Relatórios: Cyber, CTP, Data Science, AICSS, Cloud README, AIC, roteiros de vídeo | **não iniciados** (modelos com TODO) | ver §4 |
 
-**Regressão em `main` em 16/11:** `app/ml` 266 passed + ruff (madrugada); `app/web` 17 passed + typecheck + build (madrugada); **`app/api` 221 passed, 0 skip, com Oracle real** (10h, schema `CT_TESTE_S9`); **`app/cloud` 50 passed** e **`app/tools` 20 passed**, ruff limpo (10h). Fase 0 concluída.
+## 2. Resultados científicos (inalterados; não misturar coortes)
 
-## 2. O que está verificado (e o limite de cada item)
+**ML/RNA (R29):** 3 destinos × UF, superior+; validação 202501–202509; MAE persistência 35,45253 · sazonal 33,59596 · Ridge 34,25765 · RF 35,63387 · HGB 39,73936 · MLP A 31,65446. **Nenhum modelo promovido**; holdout 2026 fechado. [Evidência](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>).
+**D11:** Z p 0,324 e 0,659 (não rejeitam H0); OLS R² 3,6×10⁻⁷ e 0,0215; logística 54,35%. [Relatório](<../08_Estatistica/relatorio.md>).
 
-| Frente | Evidência | Limite |
-|---|---|---|
-| Mercado S8 | Snapshot real exportado e conferido por script independente (`../.kaiser/tmp/conferir_snapshot_s8.py`): 55 séries com estimativa, 26 abstenções; MAE dos 6 modelos igual à evidência de 15/11. HTTP real: SP 200 com metadados T17, AC 200 abstenção + contexto Norte, 404 fora do MVP, 400 `uf=XX`. | Model cards só dentro do snapshot, **não no MongoDB** (Atlas sem senha). RED do agente não reproduzido pelo orquestrador. |
-| Tela S15a | Render real no Edge (API local + `vite preview`), 1280 px e 390 px, SP/AC/painel técnico. | Sem axe/Playwright. Bundle 737 kB. Não está numa jornada (sem login/currículo). |
-| Estatística E08 | Programa portátil reproduz exatamente o JSON D11 de 15/11 (16 checagens); 8 figuras; relatório sem LaTeX; PDF de teste 21 págs. | PDF final, cópia `analise.py`/CSV nas pastas de entrega e nomes/RMs pendentes. |
-| Notebooks E05 | Reexecutados pelo orquestrador (saída 0); números das tabelas = artefatos; slides com números amarrados por teste; RNA confere 495 linhas por chave. | Cópia para `05_ML/notebook.ipynb`/`07_RedesNeurais/notebook.ipynb` pendente (empacotador); PDF dos slides pendente; vídeos humanos. |
-| Auth S5 | Oracle real na época (208 passed). | UI de login ausente. |
-| CTP/outbox | API, CSV, idempotência. | ESP32/Wokwi e Lambda/RDS reais não integrados. |
-| Catálogo | 6 YAMLs **aprovados pelo grupo em 16/11** (mínimos 0,5/0,5); MVP continua com 3 destinos (R29). Tools 20 passed após ajuste dos testes ao estado aprovado. | `escopo_mvp.json` ainda marca `revisao_humana_pendente` (ver §7). |
+## 3. Ativos e operação
 
-## 3. Resultados científicos (não misturar coortes)
+- Dados: painel MVP `../.dados/caged/painel/r29_20261115_2041/`, artefatos `../.dados/artefatos/{classicos,rna}/20261115_r29_aceite/`, snapshot mercado `../.dados/mercado/20261116_r29_aceite/` (SHA `9c093f93…`), base D11 `../.dados/estatistica/20261115_d11_aceite/`, Adzuna `../.dados/adzuna/20261116/`, Cloud `../.dados/cloud/` (zip da Lambda `funcao_lambda_20261116.zip` SHA `f1828467…e954`, `rds-global-bundle.pem`, `segredo_app_ingest.txt`, `privado/` com prints originais **com segredos — nunca versionar**).
+- **Não** subir a API com `FUNCTION_URL` + `CITIZENTECH_DADOS` real (`../.dados/runtime/outbox.db*` tem 77 eventos antigos; preservar).
+- Docker: Oracle, Mongo e Postgres de teste **de pé** (volumes preservados). Caiu uma vez em 16/11; reiniciar com `Start-Process 'C:\Program Files\Docker\Docker\Docker Desktop.exe'` e `docker compose -f app\docker-compose.yml --profile teste up -d --wait`.
+- Credenciais: só em `app/.env`, ler por script que não imprime valores. Para testes Oracle exportar `ORACLE_USER/PASSWORD` = `ORACLE_TESTE_*`; Mongo de teste `mongodb://citizentech_teste:<MONGO_TESTE_PASSWORD>@localhost:27018/?authSource=admin` com `MONGODB_DB` contendo `teste`.
+- AWS (Learner Lab): Lambda `CP-2` (log group `/aws/lambda/CP-2`), RDS instância `cp1-cloud`, banco `citizentech`, usuário `app_ingest`, SG 5432 aberto (D09, manter até a correção). Se o lab expirar, `/health` mostra banco indisponível → pedir ao usuário para reiniciar o lab.
+- Gastos: OpenRouter **US$ 0,0168 de 7** (consultar `GET https://openrouter.ai/api/v1/key`); Adzuna **7/12**.
+- Worktrees preservados de outra frente: `../GS-wt/S5-auth`, `../GS-wt/S5-red` (este com alterações locais — não limpar). Processo `agy` PID 30832 (09h23) é da frente do panorama — não encerrar.
+- Disco: 22,0 GB livres (15h49).
 
-**ML/RNA (produto, R29):** 3 destinos × UF, superior+; fit 202101–202409, validação 202501–202509; 55/81 séries elegíveis, 495 linhas. MAE validação: persistência 35,45253 · sazonal 33,59596 · Ridge 34,25765 · RF 35,63387 · HGB 39,73936 · MLP A 31,65446 (−5,78% vs sazonal). **Nenhum modelo promovido**: D10a exige também estabilidade do WAPE e a decisão final depende do holdout 2026, fechado. App exibe o sazonal rotulado "estimativa retrospectiva (2025)". [Evidência](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>).
+## 4. Próxima sessão — tarefas em ordem
 
-**D11 (Estatística):** 6 destinos, todas as escolaridades, 229 municípios SP. Z: p 0,324 (n20/α6%) e 0,659 (n25/α9%), não rejeitam H0. OLS R² 3,6×10⁻⁷ e 0,0215. Logística teste 54,35% ([[8,14],[7,17]]). Dois salários médios extremos (352885 R$ 527.726,85; 351210 R$ 86.712,01) mantidos por pré-registro, sem análise de sensibilidade. [Relatório](<../08_Estatistica/relatorio.md>), [JSON](<../08_Estatistica/evidencias/20261116_analise_portatil.json>).
+**Caminho crítico (produto ponta a ponta):**
+1. **S11b rotas** `PUT /me/intencao` + `POST /me/comparacoes` `{destinos:[≤3]}` (cookie+CSRF; usa catálogo aprovado + `competencias_para_comparacao` + mercado do snapshot como repasse; persistência Oracle `comparacao`/`comparacao_destino` em `003_*.sql`). Explicação LLM fundamentada é opcional e só se houver tempo (D07; nunca calcula números).
+2. **S15b telas web** (agy, `app/web`, usar skill `impeccable`): login/registro, consentimentos, intenção, currículo (upload/colar → revisão do texto redigido → confirmar), competências (confirmar/rejeitar/não possuo), comparação de até 3 destinos por dimensões. Smoke real no Edge com API local.
+3. **S12 plano** (domínio + rota): lacunas → atividades por pré-requisito + checkpoints.
+4. **S13 avaliação** (fatia de risco: RED reproduzido + revisão independente): `GET /destinos/{id}/exercicio` sem gabarito, `POST /me/tentativas` 50/50, LLM fora → "parcial", "discordo", 4ª tentativa em 24 h → 429, `temperature=0`, cache por hash (D06, D21, R23, T08).
+5. **S14 laboratório**: `POST /me/laboratorio/sessoes` → código; leituras da sessão; relato ≤280 redigido segue pela outbox.
+6. **S15 E2E**: Playwright + axe com persona demo sinalizada.
 
-## 4. Ativos e proteção operacional
+**Entregas acadêmicas (paralelo, escopos disjuntos):**
+7. `06_Cloud/README.md` (cenário: monitoramento de bancada de laboratório; limiares de `limiares.json`; caminho de IA B Comprehend com AccessDenied documentado + HF 402; ODS; passo a passo; Function URL e endpoint sem senha) — evidências já existem.
+8. `02_Cybersecurity/relatorio.md` → PDF ≤15 págs. (S5 auth/CSRF/429, S9 PII parcial (D22, R18), S10 injeção T15, S4 D09a chave opcional/401/429/idempotência, SG aberto como exceção D09, LGPD do relato no CloudWatch, desenho de produção).
+9. `03_DataScience/relatorio.md` + `oracle.sql`/`mongodb.js` (cópias de `app/db`): DDL 001+002(+003), consultas de evidência (JOIN, agregação, subconsulta, ranking) **executadas no Oracle local**, coleções Mongo reais (`curriculos_redigidos`, `extracoes_llm`, `model_cards`). Oracle FIAP fora de escopo (declarar).
+10. `04_CTP_Python/documento.md` (leituras/CSV/outbox/idempotência; modo isolado R16) e cópias de código pelo empacotador.
+11. `01_AICSS/relatorio.md` (sensores como instrumento de avaliação prática; 3 cenários; o que é simulado) — depende de rodar o firmware no Wokwi.
+12. Firmware: rodar no Wokwi (VS Code + extensão, `host.wokwi.internal:8000`) contra a API local com `DEVICE_KEY` da demo; gravar evidências dos 3 cenários.
+13. Roteiros `*/video.md`, `09_AIC` (relatório/roteiro), revisão geral de conformidade acadêmica (agy `--mode plan`) antes do D7, empacotador final + PDFs.
 
-Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`../GS-wt`.
+**Não verificado / dívidas registradas:** axe nunca rodado; bundle web 737 kB; revisão independente de S10 não feita; Comprehend negado (limitação de conta); prints CloudWatch 1–2 a refazer; `escopo_mvp.json` com `status_rubricas` desatualizado de propósito (não alterar; S10 lê o status de cada YAML).
 
-- Painel DEV MVP `../.dados/caged/painel/r29_20261115_2041/painel_mvp.parquet` (SHA `33a89898…c22c5`); DEV 6 destinos `../.dados/caged/painel/painel_desenvolvimento.parquet` (SHA `8e653b00…4eb9e`).
-- Artefatos `../.dados/artefatos/{classicos,rna}/20261115_r29_aceite/` (manifestos com hash = integridade local, não autenticidade).
-- **Snapshot de mercado** `../.dados/mercado/20261116_r29_aceite/` (SHA `snapshot_mercado.json` `9c093f93091fbda4bb4bdc796cd9eee9823da4005dfa22616950dba8d37540a3`). Servir com `CITIZENTECH_MERCADO_SNAPSHOT` apontando para esse diretório.
-- Base D11 `../.dados/estatistica/20261115_d11_aceite/base_municipal.csv` (SHA `5dbc73ac…a7ee`).
-- **Não** reconstruir painel com o loader legado sobre `caged/parquet` (diretório misto com 2026). **Não** subir a API com `FUNCTION_URL` e `CITIZENTECH_DADOS` real: `../.dados/runtime/outbox.db*` tem 77 eventos antigos de teste (preservar; remoção só com aprovação).
-- Docker: **Oracle local de pé** (healthy, 10h); Postgres e Mongo de teste parados; volumes preservados. Parar o Oracle (`docker compose -f app\docker-compose.yml --profile teste stop`) quando nenhuma fatia usar banco.
-- **Credenciais (valores só em `app/.env`, nunca impressos):**
-  - Oracle local: `ORACLE_USER`/`ORACLE_PASSWORD` (app) e `ORACLE_ADMIN_PASSWORD` (SYSTEM) **funcionam** (conferido 10h). Para os testes de integração foi criado o schema isolado **`CT_TESTE_S9`**, credenciais em `ORACLE_TESTE_USER`/`ORACLE_TESTE_PASSWORD`. Para rodar os testes `oracle`, exportar no processo `ORACLE_USER=$ORACLE_TESTE_USER` e `ORACLE_PASSWORD=$ORACLE_TESTE_PASSWORD` (o conftest exige usuário `CT_*TESTE*`). O schema `CT_TESTE_S5` antigo continua existindo, com senha perdida — não usar.
-  - **MongoDB Atlas:** `MONGODB_URI` preenchido (host/usuário de `CONECTION_STRING` + senha fornecida pelo usuário em 16/11), IP 179.145.44.234/32 liberado; **ping ok** às ~10h, banco `GS_FIAP` (valor de `MONGODB_DB`) ainda **sem coleções**.
-  - **Oracle FIAP:** fora de escopo por decisão do usuário (16/11); evidências só no Oracle local.
-  - Revalidar tudo sem expor valores: em `app`, `uv run --no-project --with python-dotenv --with pg8000 --with oracledb --with pymongo python ..\..\.kaiser\ferramentas\validar_env.py` (10h25: OpenRouter ok, US$ 7 de limite quase intactos; HF 402; Lambda reaproveitada responde 'Hello World'; RDS 5432 inacessível; Oracle local app/teste ok; Atlas ok).
-  - Ler o `.env` só por script que imprime status, nunca valores (padrão `../.kaiser/ferramentas/validar_env.py`).
+## 5. Guardrails
 
-## 5. Git, processos e worktrees (conferido 09h15)
+Holdout 2026 fechado; não retunar com 2025; não promover modelo; não reiniciar fatias integradas; não apagar dados; não ler/imprimir valores do `.env`; push só para `gs-semestre2` com gitleaks antes; OpenRouter ≤ US$ 7; Adzuna ≤ 12 (restam 5); AWS só com Learner Lab ativo; mínimos acadêmicos nunca cortados (D16).
 
-- Worktrees preservados: `../GS-wt/S5-auth` (`b94b0de`) e `../GS-wt/S5-red` (`112042d`). **DOC-panorama integrado em `c6ee6e1` e worktree/branch limpos removidos às09h44**; não há mais autoria pendente desse HTML. Conferência09h52:main eS5-auth limpos;S5-red temM`app/api/src/citizentech/main.py` e??`app/api/tests/test_auth.py`, não modificados por esta linha documental — preservar, não limpar/commitar cegamente.
-- O processo `agy` PID 16884 (sessão documental do panorama) **terminou** antes das 10h05; nenhum agy ativo.
-- Nenhum job/servidor ativo; portas 8000/5173 livres. Oracle local de pé (ver §4).
-- Disco: 24,1 GB livres (10h).
+## 6. Pendências humanas
 
-### Encerramento documental —16/11 às09h44
+- **Refazer 2 prints do CloudWatch** (os arquivos `cloudwatch-1.png` e `cloudwatch-2.png` foram sobrescritos por erro do orquestrador ao mover para a pasta privada): stream de 18:38 UTC mostrando `WARNING LEITURA DESCARTADA` + `CHAVE INVALIDA` (print 1) e `ALERTA CIDADAO` + `GRAVADO NO RDS` (print 2). Salvar em `06_Cloud/evidencias/` — o orquestrador tarja o e-mail e versiona.
+- Prints ainda não feitos: **Function URL** (Auth type NONE) e **RDS → Connectivity & security** (endpoint, publicly accessible, regra 5432).
+- Manter o SG 5432 aberto até o fim da correção (D09) e reiniciar o Learner Lab se expirar.
+- Wokwi: abrir o projeto `app/iot/firmware` no VS Code com a extensão Wokwi (licença gratuita) quando o agente pedir; ESP32 físico só se o agente avisar.
+- Data Modeler (D25) sobre o DDL do Oracle local; nomes/RMs nos `[HUMANO — preencher]`; vídeos (ML ≤5, RNA, Cyber ≤5, Cloud ≤5, AIC ≤7 com rosto); ideia da live; envio no Portal (Estatística: `.pdf` + `.py` + `.csv`).
 
-[Panorama visual offline](<panorama_projeto.html>) publicado, reconciliado com as integraçõesS8/E05/E08/S15a da outra frente. Snapshotfuncional09h15, não monitoramento vivo. Próxima implementação continua**S9 após gates**; nada de reiniciarS8 ou refazer os notebooks. [Aceite/evidências](<../09_AIC/evidencias/20261116_panorama_aceite.md>): RED de ausência porAssertionError;8checagens próprias emmain passed; Edge real no arquivo publicado em1440/768/390/360,sem expansão horizontal do corpo,teclado/hover verificados,zero recursos remotos,contraste de texto computado mínimo6,917:1. Revisão independente leu toda superfície+6capturas;P2 de rubricas tardias corrigido e resolução confirmada. Não é auditoriaaxe integral nem regressão do app.
+## 7. Decisões locais válidas
 
-Jobs próprios152/168/290(autoria/reconciliação),166/174/179/277/292/293/300(browser) concluídos/coletados,sem job próprio restante; falhas de primeira rodada registradas,não omitidas. Não se matou oPID16884 nem se deduziu origem além do registro anterior. Nenhuma alteração emapp/ por esta linha documental,nenhum holdout/segredo acessado,push ou dado apagado. Disco24,1GB às09h43. Temporários globais de outras sessões não foram esvaziados para evitar perda concorrente; provas finais estão versionadas.
-
-[Handoff atual no temporário do sistema](<C:/Users/orugi/AppData/Local/Temp/handoff_citizentech_20261116_0915.md>),com prompt atualizado no chat; substitui o inicial que ainda apontavaS8. [PRODUCT](<../PRODUCT.md>)/[DESIGN](<../DESIGN.md>) tratam o caderno, não uma nova identidade para o appAstryx.
-
-## 6. Próxima sessão — tarefas em ordem
-
-**A. Verificações:** ~~API com Oracle~~ ✅ 221 passed; ~~Cloud/Tools~~ ✅ 50/20 passed (10h). Pendente: **axe** na tela de mercado (Playwright + `@axe-core/playwright` via `pnpm add -D` em `app/web`) — primeiro teste E2E da S15.
-
-**A2. Autorizações recebidas em 16/11 ~10h (usar dentro do escopo):** push para `gs-semestre2`; OpenRouter real em smoke tests (teto US$ 7; registrar custo); snapshot Adzuna (≤12 chamadas pelo contador D05a); Wokwi para o firmware — **avisar o usuário quando for preciso conectar o ESP32 físico na máquina**; AWS para S4 (**Learner Lab ativo desde 16/11**; sessões do Learner Lab expiram — se a Lambda/RDS pararem de responder, pedir ao usuário para reiniciar o lab; sem AWS CLI até aprovação de instalação). Model cards podem ir ao Atlas real (`MONGODB_DB`).
-
-**B. Caminho crítico do produto (atrasado ≥1 dia):**
-4. **S9 currículo/PII** (fatia de risco: RED reproduzido pelo orquestrador + revisão independente `agy --mode plan`): `POST /me/experiencias`, `POST /me/curriculo` (PDF/DOCX ≤2 MB, pypdf/python-docx), redação de PII, `POST /me/curriculo/confirmar-envio`; nada vai à LLM sem confirmação (D07a, D22, R18, T15). Persistência do texto redigido: Mongo de teste local (27018) nos testes; Atlas real só com credencial.
-5. **S10 extração** (LLM com fake na fronteira; lista fechada de IDs ESCO; T07). OpenRouter real só com autorização (quota US$ 7).
-6. **S11 comparação** (domínio puro; obrigatório não atendido não some; `desconhecida`≠`lacuna`; ≤3 destinos).
-7. S12 plano → S13 avaliação (risco) → S14 laboratório → telas web correspondentes → **S15 jornada E2E** com persona demo.
-
-**C. Entregas acadêmicas (paralelo, sem sobreposição de arquivos):**
-8. **Empacotador** `app/tools/empacotar_entregas.py` (D6 do plano): copia `analise_portatil.py`→`08_Estatistica/analise.py`, `base_municipal.csv`→`08_Estatistica/`, notebooks→`05_ML/notebook.ipynb` e `07_RedesNeurais/notebook.ipynb`, gera PDFs (relatório Estatística, slides ML) com figuras em caminhos relativos corretos, contagem de páginas. Hoje esses alvos ainda são os **modelos do professor com TODO**.
-9. Relatórios ainda vazios/TODO: `02_Cybersecurity/relatorio.md` (≤15 págs. PDF; S5 tem evidência), `04_CTP_Python/documento.md`, `03_DataScience/relatorio.md` (+ DDL/Mongo), `01_AICSS/relatorio.md`, `06_Cloud/README.md`, roteiros `*/video.md`. Escrever só o que está implementado; o restante rotulado como planejado.
-10. Model cards no MongoDB: implementar gravação idempotente (testes no Mongo local 27018) e publicar no Atlas real (credencial disponível desde 16/11).
-11. Snapshot Adzuna (D05a): até 12 chamadas, JSON bruto em `../.dados/adzuna/AAAAMMDD/` com hash, contador em `../.dados/adzuna/contador_chamadas.json`; exibir como "amostra pontual" no `/mercado` (hoje "indisponível").
-12. Firmware Wokwi (`app/iot`): DS18B20/HC-SR04/LED/buzzer, 3 cenários, `POST /leituras` com `X-Device-Key`; simulação no Wokwi primeiro; ESP32 físico só quando o usuário for avisado.
-
-**D. Guardrails:** holdout 2026 fechado; não retunar com 2025; não promover modelo; não ler/imprimir valores do `.env`; push só para `gs-semestre2`; APIs pagas dentro dos tetos autorizados; mínimos acadêmicos nunca cortados (D16). Worktree `../GS-wt/S5-red` tem alterações locais não commitadas — preservar.
-
-## 7. Pendências humanas
-
-**Decisões do usuário em 16/11 ~10h20:**
-- ✅ **Rubricas revisadas e aprovadas pelo grupo** (os 6 YAMLs: `status: aprovado`, revisor "grupo", 16/11 10h05, checklist completo aprovado, **mínimos 0,5 objetiva e 0,5 LLM**). Os testes do catálogo foram ajustados para o estado aprovado (não enfraquecidos: agora exigem mínimos numéricos em (0,1], revisor, data com fuso e checklist 100% aprovado). Pendência técnica: `app/catalogo/escopo_mvp.json` ainda tem `status_rubricas: revisao_humana_pendente` e `recorte.py` exige esse valor — **não alterar** sem nova fatia, porque o hash do escopo (`sha256_escopo`) está gravado nos artefatos e snapshot; tratar em S10/S13 via campo próprio do catálogo, registrando a decisão.
-- ✅ **Senha do Atlas:** mantém a enviada no chat (decisão do usuário; risco aceito).
-- ✅ **Oracle FIAP fora de escopo:** evidências de Data Science **somente no Oracle local** (Docker 23ai, DDL 19c). Não tentar mais o FIAP; relatórios devem dizer isso.
-- ✅ **AWS Academy (Learner Lab) iniciado e funcionando.** Deploy S4 (Lambda + RDS reaproveitados, autorizados em 12/11) liberado. **Prints do console:** o agente gera a lista exata (tela, filtro, o que deve aparecer) e o usuário captura. Sem AWS CLI: deploy pelo console com instruções ao usuário, ou instalar CLI só com aprovação. RDS estava com 5432 inacessível em 12/11 e 16/11 (SG fechado) — abrir janela de teste via instrução ao usuário (D09).
-- ✅ **Sentimento (D23/T11):** decisão delegada ao próximo agente. HF sem créditos (402). Opções a avaliar e registrar: (a) manter HF com `resultado=indisponivel` gracioso (já previsto em §3.3 do plano), (b) Amazon Comprehend no Learner Lab, (c) comprar créditos HF. Critério: menor custo/risco que cumpra o enunciado de Cloud; nunca entra na nota.
-
-**Ainda com o usuário:**
-- Conectar o ESP32 físico quando o agente avisar (Wokwi autorizado).
-- Prints do console AWS conforme lista que o agente fornecer.
-- Data Modeler (D25) sobre o DDL do Oracle local, ideia da live, vídeos (ML ≤5 min, RNA obrigatório, Cyber ≤5, Cloud ≤5, AIC ≤7 com rosto), nomes/RMs onde houver "[HUMANO — preencher]", envio no Portal.
-
-## 8. Decisões locais válidas
-
-- Limiares só em [limiares.json](<../app/config/limiares.json>); validação HTTP 400; DDL Oracle 19c; domínio em pt-BR sem acento.
-- `status_promocao="nao_decidida"` enquanto o holdout estiver fechado; app exibe o baseline de menor MAE de validação.
-- Snapshot de mercado é derivado dos artefatos sem desserializar modelos (só hash + JSON/parquet); a API verifica o SHA do snapshot antes de servir.
-- Notebooks de entrega têm fonte em `app/ml/notebooks/`; programa estatístico em `app/ml/src/citizentech_ml/estatistica/analise_portatil.py`. Pastas `0X_*` recebem cópias pelo empacotador.
-- O gerador de PDF (`app/tools/md_para_pdf.py`) **não renderiza LaTeX**: documentos de entrega usam Unicode.
-- Componentes web: não usar cores fixas `text-neutral-*` (tema escuro do Astryx); Tailwind só para layout.
-- Nenhum score único, nenhuma probabilidade individual de contratação; PII só vai à LLM redigida e confirmada; sentimento não entra na nota.
+- Limiares só em [limiares.json](<../app/config/limiares.json>); HTTP 400 para validação; DDL Oracle 19c; domínio pt-BR sem acento.
+- `status_promocao="nao_decidida"`; app exibe o baseline de menor MAE de validação.
+- Sentimento (D23): Comprehend por padrão, HF alternativo; falha → `indisponivel`; nunca entra em nota.
+- OpenRouter: `max_tokens=6000` + `reasoning.max_tokens=2000`, `temperature=0`, `data_collection=deny`, `require_parameters=true`; `content` vazio = falha → retry → fallback.
+- Lista fechada ESCO = união dos requisitos dos YAMLs com `revisao_humana.status == "aprovado"` dos destinos de `escopo_mvp.json`.
+- Trecho de evidência só com marcadores de redação é descartado.
+- Simulador Cloud anexa `/ocorrencias` à Function URL; Lambda força logs INFO e loga `sqlstate` em falha de conexão.
+- PDF sem LaTeX; componentes web sem cores fixas `text-neutral-*`; Tailwind só para layout.
+- Sem score único; PII só vai à LLM redigida e confirmada.
