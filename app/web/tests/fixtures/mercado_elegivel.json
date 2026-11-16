@@ -1,0 +1,55 @@
+{
+  "destino": "analista_dados_bi",
+  "uf": "SP",
+  "uf_codigo": "35",
+  "observado": {
+    "natureza": "observado",
+    "fonte": "Novo Caged — microdados públicos do MTE (PDET)",
+    "populacao": "Admissões formais com ensino superior completo ou mais nas ocupações CBO curadas de cada destino",
+    "unidade": "admissões por mês",
+    "referencia_temporal": {
+      "inicio": "202001",
+      "fim": "202509"
+    },
+    "serie": [
+      {
+        "competencia": "202508",
+        "valor": 2194.0
+      },
+      {
+        "competencia": "202509",
+        "valor": 1994.0
+      }
+    ]
+  },
+  "previsto": {
+    "natureza": "previsto_retrospectivo",
+    "fonte": "Estimativa retrospectiva baseada em modelos validados no Novo Caged",
+    "populacao": "Admissões formais com ensino superior completo ou mais nas ocupações CBO curadas de cada destino",
+    "unidade": "admissões somadas nos 3 meses seguintes à competência de origem",
+    "referencia_temporal": {
+      "inicio": "202501",
+      "fim": "202509"
+    },
+    "modelo_exibido": "sazonal",
+    "status_promocao": "nao_decidida",
+    "serie": [
+      {
+        "competencia_origem": "202501",
+        "previsao": 5112.0,
+        "realizado": 5459.0
+      }
+    ]
+  },
+  "abstencao": null,
+  "amostra_adzuna": {
+    "disponivel": false,
+    "natureza": "amostra_pontual",
+    "motivo": "Snapshot Adzuna não coletado nesta versão (D05a)."
+  },
+  "avisos": [
+    "Números medem admissões formais estimadas no grupo e território registradas no Novo Caged (PDET), sem constituir oportunidade aberta ou chance individual.",
+    "Previsões disponíveis são retrospectivas (competências de 2025); 2026 está reservado à avaliação final no holdout fechado.",
+    "Nenhum modelo de aprendizado foi promovido para substituir o baseline de referência (status de promoção: não decidida)."
+  ]
+}
