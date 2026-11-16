@@ -1,0 +1,542 @@
+{
+  "alvo": "C:\\Users\\orugi\\Documents\\Projetos\\FIAP\\GS\\info-gs-diciplinas\\docs\\panorama_projeto.html",
+  "paineisFallback": 9,
+  "ancorasFallback": 9,
+  "snapshot": "2026-11-16T15:52:52.953Z",
+  "palavrasIniciais": 285,
+  "layouts": [
+    {
+      "solicitado": 1440,
+      "inner": 1440,
+      "scroll": 1440,
+      "client": 1440,
+      "scale": 1,
+      "bodyFont": "16px",
+      "overflow": "hidden"
+    },
+    {
+      "solicitado": 1280,
+      "inner": 1280,
+      "scroll": 1280,
+      "client": 1280,
+      "scale": 1,
+      "bodyFont": "16px",
+      "overflow": "hidden"
+    },
+    {
+      "solicitado": 768,
+      "inner": 768,
+      "scroll": 753,
+      "client": 753,
+      "scale": 1,
+      "bodyFont": "16px",
+      "overflow": "hidden"
+    },
+    {
+      "solicitado": 390,
+      "inner": 390,
+      "scroll": 390,
+      "client": 390,
+      "scale": 1,
+      "bodyFont": "16px",
+      "overflow": "hidden"
+    },
+    {
+      "solicitado": 360,
+      "inner": 360,
+      "scroll": 360,
+      "client": 360,
+      "scale": 1,
+      "bodyFont": "16px",
+      "overflow": "hidden"
+    }
+  ],
+  "interacoes": [
+    {
+      "largura": 1440,
+      "area": "Visão geral",
+      "palavras": 285,
+      "hash": "#visao-geral",
+      "foco": "H2",
+      "atual": [
+        "#visao-geral",
+        "#visao-geral"
+      ],
+      "headings": [
+        "Visão Geral do Projeto"
+      ]
+    },
+    {
+      "largura": 1440,
+      "area": "Sistema",
+      "palavras": 283,
+      "hash": "#sistema",
+      "foco": "H2",
+      "atual": [
+        "#sistema",
+        "#sistema"
+      ],
+      "headings": [
+        "Arquitetura e Fluxos do Sistema"
+      ]
+    },
+    {
+      "largura": 1440,
+      "area": "Disciplinas\n            9",
+      "palavras": 240,
+      "hash": "#disciplinas",
+      "foco": "H2",
+      "atual": [
+        "#disciplinas",
+        "#disciplinas"
+      ],
+      "headings": [
+        "Matérias e Entregas por Disciplina"
+      ]
+    },
+    {
+      "largura": 1440,
+      "area": "Próximos passos",
+      "palavras": 416,
+      "hash": "#proximos-passos",
+      "foco": "H2",
+      "atual": [
+        "#proximos-passos",
+        "#proximos-passos"
+      ],
+      "headings": [
+        "Roteiro de Próximos Passos"
+      ]
+    },
+    {
+      "largura": 1440,
+      "area": "Fontes",
+      "palavras": 345,
+      "hash": "#fontes",
+      "foco": "H2",
+      "atual": [
+        "#fontes",
+        "#fontes"
+      ],
+      "headings": [
+        "Documentação, Enunciados e Métricas"
+      ]
+    },
+    {
+      "largura": 390,
+      "area": "Visão geral",
+      "palavras": 262,
+      "hash": "#visao-geral",
+      "foco": "H2",
+      "atual": [
+        "#visao-geral",
+        "#visao-geral"
+      ],
+      "headings": [
+        "Visão Geral do Projeto"
+      ]
+    },
+    {
+      "largura": 390,
+      "area": "Sistema",
+      "palavras": 270,
+      "hash": "#sistema",
+      "foco": "H2",
+      "atual": [
+        "#sistema",
+        "#sistema"
+      ],
+      "headings": [
+        "Arquitetura e Fluxos do Sistema"
+      ]
+    },
+    {
+      "largura": 390,
+      "area": "Disciplinas\n            9",
+      "palavras": 233,
+      "hash": "#disciplinas",
+      "foco": "H2",
+      "atual": [
+        "#disciplinas",
+        "#disciplinas"
+      ],
+      "headings": [
+        "Matérias e Entregas por Disciplina"
+      ]
+    },
+    {
+      "largura": 390,
+      "area": "Próximos passos",
+      "palavras": 403,
+      "hash": "#proximos-passos",
+      "foco": "H2",
+      "atual": [
+        "#proximos-passos",
+        "#proximos-passos"
+      ],
+      "headings": [
+        "Roteiro de Próximos Passos"
+      ]
+    },
+    {
+      "largura": 390,
+      "area": "Fontes",
+      "palavras": 332,
+      "hash": "#fontes",
+      "foco": "H2",
+      "atual": [
+        "#fontes",
+        "#fontes"
+      ],
+      "headings": [
+        "Documentação, Enunciados e Métricas"
+      ]
+    }
+  ],
+  "disciplinas": [
+    {
+      "largura": 1440,
+      "label": "01 AICSS\n                Em andamento\n              \n              IoT e Sistemas Embarcados",
+      "palavras": 240
+    },
+    {
+      "largura": 1440,
+      "label": "02 Cyber\n                Backend integrado\n              \n              Segurança e LGPD",
+      "palavras": 252
+    },
+    {
+      "largura": 1440,
+      "label": "03 Data Science\n                Base integrada\n              \n              Bancos de Dados e Modelagem",
+      "palavras": 249
+    },
+    {
+      "largura": 1440,
+      "label": "04 CTP\n                Base integrada\n              \n              Pensamento Computacional",
+      "palavras": 221
+    },
+    {
+      "largura": 1440,
+      "label": "05 ML\n                Pacote gerado\n              \n              Machine Learning Tradicional",
+      "palavras": 249
+    },
+    {
+      "largura": 1440,
+      "label": "06 Cloud\n                Em andamento\n              \n              Computação em Nuvem Serverless",
+      "palavras": 294
+    },
+    {
+      "largura": 1440,
+      "label": "07 RNA\n                Pacote gerado\n              \n              Redes Neurais Artificiais",
+      "palavras": 232
+    },
+    {
+      "largura": 1440,
+      "label": "08 Estatística\n                Pacote gerado\n              \n              Análise Inferencial Municipal",
+      "palavras": 248
+    },
+    {
+      "largura": 1440,
+      "label": "09 AIC\n                Em andamento\n              \n              Arquitetura e Integração",
+      "palavras": 277
+    },
+    {
+      "largura": 390,
+      "label": "01 AICSS — IoT e Sistemas Embarcados [Em andamento]",
+      "palavras": 233
+    },
+    {
+      "largura": 390,
+      "label": "02 Cyber — Segurança e LGPD [Backend integrado]",
+      "palavras": 245
+    },
+    {
+      "largura": 390,
+      "label": "03 Data Science — Bancos de Dados [Base integrada]",
+      "palavras": 242
+    },
+    {
+      "largura": 390,
+      "label": "04 CTP — Pensamento Computacional [Base integrada]",
+      "palavras": 214
+    },
+    {
+      "largura": 390,
+      "label": "05 ML — Machine Learning [Pacote gerado]",
+      "palavras": 242
+    },
+    {
+      "largura": 390,
+      "label": "06 Cloud — Nuvem Serverless [Em andamento]",
+      "palavras": 287
+    },
+    {
+      "largura": 390,
+      "label": "07 RNA — Redes Neurais Artificiais [Pacote gerado]",
+      "palavras": 225
+    },
+    {
+      "largura": 390,
+      "label": "08 Estatística — Análise Inferencial [Pacote gerado]",
+      "palavras": 241
+    },
+    {
+      "largura": 390,
+      "label": "09 AIC — Arquitetura e Integração [Em andamento]",
+      "palavras": 270
+    }
+  ],
+  "foco": {
+    "tag": "A",
+    "label": "Pular para o conteúdo principal",
+    "href": "#conteudo-principal",
+    "outline": "rgb(255, 255, 255) solid 2px",
+    "offset": "2px"
+  },
+  "back": "#sistema",
+  "linksVerificados": 35,
+  "recursosRemotos": 0,
+  "errosJS": [],
+  "contrastes": [
+    {
+      "largura": 1440,
+      "area": "Visão geral",
+      "trechos": 50,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "area": "Sistema",
+      "trechos": 74,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "area": "Disciplinas\n            9",
+      "trechos": 71,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "area": "Próximos passos",
+      "trechos": 71,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "area": "Fontes",
+      "trechos": 69,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "01 AICSS\n                Em andamento\n              \n              IoT e Sistemas Embarcados",
+      "trechos": 71,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "02 Cyber\n                Backend integrado\n              \n              Segurança e LGPD",
+      "trechos": 67,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "03 Data Science\n                Base integrada\n              \n              Bancos de Dados e Modelagem",
+      "trechos": 67,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "04 CTP\n                Base integrada\n              \n              Pensamento Computacional",
+      "trechos": 65,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "05 ML\n                Pacote gerado\n              \n              Machine Learning Tradicional",
+      "trechos": 68,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "06 Cloud\n                Em andamento\n              \n              Computação em Nuvem Serverless",
+      "trechos": 66,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "07 RNA\n                Pacote gerado\n              \n              Redes Neurais Artificiais",
+      "trechos": 67,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "08 Estatística\n                Pacote gerado\n              \n              Análise Inferencial Municipal",
+      "trechos": 73,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "materia": "09 AIC\n                Em andamento\n              \n              Arquitetura e Integração",
+      "trechos": 68,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "area": "Visão geral",
+      "trechos": 43,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "area": "Sistema",
+      "trechos": 69,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "area": "Disciplinas\n            9",
+      "trechos": 40,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "area": "Próximos passos",
+      "trechos": 66,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "area": "Fontes",
+      "trechos": 64,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "01 AICSS — IoT e Sistemas Embarcados [Em andamento]",
+      "trechos": 40,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "02 Cyber — Segurança e LGPD [Backend integrado]",
+      "trechos": 36,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "03 Data Science — Bancos de Dados [Base integrada]",
+      "trechos": 36,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "04 CTP — Pensamento Computacional [Base integrada]",
+      "trechos": 34,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "05 ML — Machine Learning [Pacote gerado]",
+      "trechos": 37,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "06 Cloud — Nuvem Serverless [Em andamento]",
+      "trechos": 35,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "07 RNA — Redes Neurais Artificiais [Pacote gerado]",
+      "trechos": 36,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "08 Estatística — Análise Inferencial [Pacote gerado]",
+      "trechos": 42,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "materia": "09 AIC — Arquitetura e Integração [Em andamento]",
+      "trechos": 37,
+      "minFont": 12,
+      "minContrast": 4.793762273711369,
+      "erros": []
+    },
+    {
+      "area": "#sistema",
+      "estado": "detalhes abertos",
+      "trechos": 108,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    },
+    {
+      "area": "#fontes",
+      "estado": "detalhes abertos",
+      "trechos": 122,
+      "minFont": 12,
+      "minContrast": 5.168555560022562,
+      "erros": []
+    }
+  ],
+  "palavrasFallback": 2477
+}

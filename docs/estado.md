@@ -1,5 +1,11 @@
 # Estado do desenvolvimento — CitizenTech
 
+> **Panorama reconstruído em 16/11, encerramento ~12h55:** [guia visual](<panorama_projeto.html>) integrado em `53f4c50` (autoria `de18cf4`), substituindo a versão rejeitada por densidade. Cinco áreas, arquitetura conectada, nove matérias mestre/detalhe e estados técnico/pacote/equipe/envio separados. Snapshot funcional do guia: **18e72aa, ~11h34**, com S9 backend integrado; não é monitoramento ao vivo.
+>
+> **Aceite documental executado:** Node/CDP/Edge em main (`pwsh-11` →0):5 larguras,5 áreas,9 matérias em desktop/mobile,teclado/hash/Back/Forward,35 links,0 rede/errosJS,9 painéis+9 âncoras semJS. RED anterior5376 palavras; abertura nova285 no desktop/262 mobile. R1/R2 e revisão heurística independente corrigiram conteúdo, mapa e carga cognitiva; não é aprovação humana do visual nem regressão do produto. [Provas e limites](<../09_AIC/evidencias/20261116_redesenho_panorama_aceite.md>).
+>
+> **Higiene:** todos os jobs desta tarefa coletados; worktree/branch DOC-redesenho limpos removidos após integração. S4/S10/S5-auth e S5-red preservados; nenhum dado/segredo/recurso remoto alterado. Disco23,1GiB após limpar somente perfis/temporários próprios; verificador arquivado em `.kaiser/reports/DOC-redesenho-verificador.md`, fora do Git. O tmp global de outras frentes não foi esvaziado. Próximo desta tarefa: usuário abrir o guia e avaliar compreensão; próxima fatia funcional continua sob a outra frente, sem refazer S9/E09/S8b/S11 domínio.
+
 > Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
 
 ## 0. Sessão 16/11 tarde — checkpoint ~11h05 (mais recente; prevalece sobre o restante)
