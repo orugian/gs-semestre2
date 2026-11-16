@@ -4,6 +4,10 @@
 
 **Checkpoint funcional:** `main` em `d2ddec4`, conferido em16/11/2026 às00h30 (UTC−3), sem mudanças pendentes naquele instante. Prazo: **19/11/2026 às23h55** —3,98 dias na conferência. A aplicação **ainda não está integrada ponta a ponta**. Esta atualização é documental; não houve nova execução das suítes nesta tarefa de handoff.
 
+## Tarefa documental em andamento nesta sessão
+
+Handoff e prompt de retomada já entregues ao usuário. Documentação reorganizada em `1c9f75a`; PRODUCT.md e DESIGN.md, de escopo documental, em `7fd8769`. Usuário confirmou caderno interno offline/responsivo, não apresentação comercial nem alteração da interface do app. **Autoria do HTML:** primeira chamada `pwsh-152` concluída/coletada;6testes estáticos próprios passaram, mas leitura/render encontrou falsos feitos(firmware/PII/Cloud), rótulos científicos incorretos, fronteira do holdout mal descrita e diagrama mobile ilegível. Em correção na segunda/última rodada: **job `pwsh-168`**, agy, mesmo worktree `../GS-wt/DOC-panorama`, branch `fatia/DOC-panorama`, escrita exclusiva `docs/panorama_projeto.html`. BrowserR1 `pwsh-166` coletado: Edge real, foco/contraste sem achados, porém mobile solicitou390/360 e layout expandiu528; verificador fortalecido, nenhum aceite declarado. RED próprio: arquivo ausente→AssertionError,1failed;6testes estáticos em `.kaiser/tmp/test_panorama_documental.py`. Auditoria independente somente leitura confirmou links/estado inicial/quota antigos; corrigidos conforme CLAUDE e57links locais próprios verificados sem quebrados. Aguardar R2, repetir render/aceite e integrar. Há somente este job próprio ativo; processo agy de origem não confirmada foi preservado, sem exceder2.
+
 ## 1. Ponto de parada
 
 - S0–S3, S5, ingestão S6, features/split S7 e experimentos ML/RNA/D11 estão integrados em `main`, com as limitações abaixo.
@@ -11,7 +15,7 @@
 - ML/RNA foram treinados e avaliados em dados reais segregados; artefatos reabertos e previsões/métricas conferidas independentemente. **Nenhum modelo foi promovido.**
 - D11 foi executada em229 municípios de SP; análises e diagnósticos reais conferidos. PDFs de evidência ML/RNA e Estatística:3 páginas cada, **preliminares**, não pacotes acadêmicos finais.
 - **Holdout2026 fechado.** Não retunar com os resultados já vistos de2025. Nenhum push nesta retomada, nenhum segredo lido e nenhum dado/schema/volume apagado.
-- Frontend atual: somente esqueleto Astryx; confirmado por leitura de [App.tsx](<app/web/src/App.tsx>). A API principal só inclui leituras, autenticação, consentimentos e saúde; [main.py](<app/api/src/citizentech/main.py>) ainda não inclui Mercado/LLM/jornada profissional.
+- Frontend atual: somente esqueleto Astryx; confirmado por leitura de [App.tsx](<../app/web/src/App.tsx>). A API principal só inclui leituras, autenticação, consentimentos e saúde; [main.py](<../app/api/src/citizentech/main.py>) ainda não inclui Mercado/LLM/jornada profissional.
 
 ## 2. O que está verificado
 
@@ -31,7 +35,7 @@ Outras regressões registradas na etapa anterior: Cloud50passed; Tools20passed; 
 
 ## 3. Recortes e resultados — não misturar coortes
 
-**Produto R29:** três destinos: Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua. O corte não aprova rubricas e não apaga os outros três rascunhos. Rotas futuras e UI devem consumir [escopo_mvp.json](<app/catalogo/escopo_mvp.json>).
+**Produto R29:** três destinos: Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua. O corte não aprova rubricas e não apaga os outros três rascunhos. Rotas futuras e UI devem consumir [escopo_mvp.json](<../app/catalogo/escopo_mvp.json>).
 
 **ML/RNA:** superior/pós, três destinos×UF. Histórico2020 apenas para lags; fit202101–202409; validação202501–202509. Embargo, densidade e promoção D10/D04a/D10a inalterados. Validação:55 séries elegíveis de81;495 linhas.
 
@@ -44,7 +48,7 @@ Outras regressões registradas na etapa anterior: Cloud50passed; Tools20passed; 
 | HistGradientBoosting |39,73936|
 | MLP A |31,65446|
 
-MLP A foi escolhida no **CV do treino**, refit55 épocas. Ganho de MAE5,77896% vs sazonal; **não é promoção automática nem superioridade estatística demonstrada**. Os clássicos não superaram o sazonal. [Evidência ML/RNA](<05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [recálculo JSON](<05_ML/evidencias/20261115_modelos_mvp_aceite.json>).
+MLP A foi escolhida no **CV do treino**, refit55 épocas. Ganho de MAE5,77896% vs sazonal; **não é promoção automática nem superioridade estatística demonstrada**. Os clássicos não superaram o sazonal. [Evidência ML/RNA](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [recálculo JSON](<../05_ML/evidencias/20261115_modelos_mvp_aceite.json>).
 
 **D11:** seis destinos e **todas as escolaridades**, SP, população com≥10 admissões2024; snapshots202412/202512, sem revisões2026. Duas explicativas autorizadas: salário mensal declarado2024 e %superior2024; participação municipal removida por aprovação humana. Pré-registro integral no plano§1.1.
 
@@ -52,7 +56,7 @@ MLP A foi escolhida no **CV do treino**, refit55 épocas. Ganho de MAE5,77896% v
 - Z: n20/α6%,seed42,p0,324213; n25/α9%,seed43,p0,659389; ambos não rejeitamH0. Normal **assumida** nos itens obrigatórios, não comprovada; Shapiro original p9,69×10⁻³² e log1p p8,01×10⁻⁸.
 - OLS: R² simples3,626×10⁻⁷; múltipla0,021458 — resultados fracos preservados.
 - Logística:183 treino/46 teste,80/20 estratificado,seed44,limiar0,5; matriz[[8,14],[7,17]],acurácia54,3478%. Teste municipal não é o holdout temporal de ML.
-- [Evidência D11](<08_Estatistica/evidencias/20261115_d11_aceite.md>) e [JSON real](<08_Estatistica/evidencias/20261115_d11_aceite.json>).
+- [Evidência D11](<../08_Estatistica/evidencias/20261115_d11_aceite.md>) e [JSON real](<../08_Estatistica/evidencias/20261115_d11_aceite.json>).
 
 ## 4. Ativos e proteção operacional
 
@@ -78,7 +82,7 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 
 ## 6. Próxima sessão — ordem recomendada
 
-1. Ritual de [CLAUDE.md](<CLAUDE.md>): data/prazo, este estado, git/worktrees/processos; Docker só quando a fatia exigir. Não ler segredos nem iniciar outra ingestão/treino.
+1. Ritual de [CLAUDE.md](<../CLAUDE.md>): data/prazo, este estado, git/worktrees/processos; Docker só quando a fatia exigir. Não ler segredos nem iniciar outra ingestão/treino.
 2. **S8 Mercado API/model cards/R06:** ler plano§3 e§4, conferir gates Mongo/Oracle/artefatos e fechar o contrato público. Corrigir dívidas RV-RNA-01/02: `_medio`/`_media`, resumo MASE de referências, validação de `melhor_config`. Usar só artefatos próprios/raiz confiável; planejar pinning externo. **Não promover pela única condição de ganho de MAE.**
 3. Em paralelo, frente documental/científica sem sobreposição: notebooks ML/RNA importando app/ml, execução completa, slides e análise crítica; finalizar Estatística com dispersões/Pearson/resíduos e programa portátil. Empacotar código/CSV/PDF por ferramentas, sem editar modelos do professor.
 4. Reavaliar cronograma: S9(currículo/PII),S10(extração),S11(comparação) do D3 ainda faltam; S4/Cloud e firmware precisam de gates humanos. S12–S15 e jornadaE2E não estão iniciadas. Não declarar todas essas frentes em execução.
@@ -86,7 +90,7 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 
 ## 7. Pendências humanas / restrições
 
-- Revisar as **três** rubricas mantidas; [roteiro do catálogo](<app/catalogo/README.md>)§4. Seis YAMLs ainda são rascunhos, mínimos/revisor não aprovados.
+- Revisar as **três** rubricas mantidas; [roteiro do catálogo](<../app/catalogo/README.md>)§4. Seis YAMLs ainda são rascunhos, mínimos/revisor não aprovados.
 - Configurar acessos pelo ambiente, nunca enviar segredos ao chat: Atlas/URI/IP; Oracle FIAP; Learner Lab/RDS; opção HF(créditos) ou Comprehend; AWS CLI ou console. Status conhecidos são de12/11, **não revalidados** agora.
 - Adzuna: snapshot só após aprovação, teto do projeto12 chamadas/contador — disponibilidade da conta não aumenta esse teto.
 - Definir responsáveis pelos vídeos, ideia real da live, Data Modeler e Portal. Formatos/limites no plano§8; PDFs preliminares não equivalem a submissão final.
@@ -95,7 +99,7 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 
 ## 8. Decisões locais que continuam válidas
 
-- Limiares de produto só em [limiares.json](<app/config/limiares.json>); validaçãoHTTP400; OracleDDL19c; domínio em português sem acento.
+- Limiares de produto só em [limiares.json](<../app/config/limiares.json>); validaçãoHTTP400; OracleDDL19c; domínio em português sem acento.
 - CTP: X-Device-Key, estadosOK/ALERTA/ERRO, sentinela exata−127; POST201novo/200idêntico/409conflito. Risco normal/atencao/critico é distinto do estado do firmware.
 - As-of: MOV/FOR=max(dec,arquivo);EXC=max(dec,exc,arquivo). Ausência de cobertura não vira zero. Parquets conservam linhas legítimas repetidas; não deduplicar arbitrariamente.
 - Ingestão usa56CBOs(34dosdestinos+22reserva), sem atributos sensíveis; CBOs/fontes/curadoria preservados. Para D11 usar snapshot mínimo de mapa em `.kaiser/snapshots/D11_mapa_cbo_seis.json`, sem carregar catálogo completo por padrão.
