@@ -17,6 +17,7 @@ import torch
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from citizentech_ml.mercado.exportar import normalizar_resumo_cv
 from citizentech_ml.recorte import carregar_escopo_mvp, recortar_painel_mvp
 from citizentech_ml.rede_neural import CONFIGS_PADRAO, treinar_rna
 
@@ -205,6 +206,9 @@ def executar_treino_rna_cli(
     melhor_nome = resultado["melhor_config"]
     melhor_cfg_info = resultado["configs"][melhor_nome]
 
+    info_pers = rel_baselines.get("persistencia") or {}
+    info_saz = rel_baselines.get("sazonal") or {}
+
     comparacao_cv = {
         "MLP": {
             "nome": melhor_nome,
@@ -215,8 +219,14 @@ def executar_treino_rna_cli(
             "mase_medio": melhor_cfg_info.get("mase_medio"),
             "mase_desvio": melhor_cfg_info.get("mase_desvio"),
         },
-        "persistencia": rel_baselines.get("persistencia"),
-        "sazonal": rel_baselines.get("sazonal"),
+        "persistencia": {
+            **info_pers,
+            **normalizar_resumo_cv(info_pers, folds=info_pers.get("folds")),
+        },
+        "sazonal": {
+            **info_saz,
+            **normalizar_resumo_cv(info_saz, folds=info_saz.get("folds")),
+        },
     }
 
     comparacao_val = None

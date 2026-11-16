@@ -12,6 +12,7 @@ from citizentech.consentimentos.rotas import router as consentimentos_router
 from citizentech.erros import registrar_manipuladores_de_erro
 from citizentech.leituras.rotas import router as leituras_router
 from citizentech.limiares import carregar_limiares
+from citizentech.mercado.rotas import router as mercado_router
 from citizentech.outbox.banco import reconciliar_com_csv
 from citizentech.outbox.worker import GerenciadorWorkerOutbox
 
@@ -45,6 +46,7 @@ def criar_app() -> FastAPI:
     aplicacao.include_router(leituras_router)
     aplicacao.include_router(auth_router)
     aplicacao.include_router(consentimentos_router)
+    aplicacao.include_router(mercado_router)
 
     @aplicacao.get("/health")
     def health() -> dict:
