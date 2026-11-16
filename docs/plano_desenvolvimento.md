@@ -172,7 +172,7 @@ Cada linha é uma fatia **RED → GREEN → REFACTOR**, testada pela interface p
 | S5 Auth | registrar/login, cookie, **T14** (A não lê B → 404), **T16** (429; sem segredo em erro), **CSRF: mutação sem `X-CSRF-Token` → 403** (R20) | API |
 | S6 Ingestão Caged | **T01**, **T02** (duplicatas MOV/FOR/EXC), **T03** (ausente ≠ zero), procedência com hash; **atributos sensíveis (idade, sexo, raça/cor, deficiência) descartados na ingestão** (R05) | ml |
 | S7 Features/split | **T04** (embargo: nenhuma linha de treino com alvo além da fronteira), **T05** (alterar o futuro não muda as features do passado), **T18**: um FOR declarado depois de *t* não altera as features em *t* (R02); **T19**: série abaixo do limiar de densidade é excluída (R03) | ml |
-| S8 Mercado API | **T06** (série insuficiente → abstém), **T17** (metadados obrigatórios na resposta) | API |
+| S8 Mercado API | **T06** (série insuficiente → abstém), **T17** (metadados obrigatórios na resposta) — ✅ integrada 16/11 (`a49682f`); tela em S15a (`6662ff3`); model cards no Mongo pendentes | API |
 | S9 Currículo/PII | PII redigida antes da LLM; **nada chega à LLM sem a confirmação do usuário** (R18); arquivo > 2 MB → 400; original não persistido; **T15** | API |
 | S10 Extração | Só IDs da lista fechada; item sem trecho de origem é descartado; **T07** | API |
 | S11 Comparação | Obrigatório não atendido nunca some em média; desconhecido ≠ lacuna; ≤ 3 destinos | domínio |
@@ -320,4 +320,4 @@ Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delega
 
 ## 11. Próximo passo
 
-**Checkpoint16/11:** a fase inicial, S5 e experimentosML/RNA/D11 já estão integrados; não reiniciar S0/S1 nem retunar com2025. Próxima fatia recomendada: **S8 Mercado API/model cards/R06**, após ler§3 e conferir acessos/interfaces. Em paralelo sem sobreposição, finalizar notebooks/entregáveis científicos. S9–S11, Cloud/firmware e S12–S15 ainda precisam ser executados conforme dependências e gates humanos. [Estado atual](<estado.md>) é a entrada operacional; holdout permanece fechado e não há autorização de push.
+**Checkpoint 16/11 09h:** além da fase inicial, S5 e experimentos ML/RNA/D11, foram integrados **S8** (mercado API + snapshot + R06), **S15a** (tela web de mercado e painel técnico), entrega de **Estatística** (programa portátil + relatório) e **notebooks ML/RNA + slides**. Não reiniciar fatias concluídas nem retunar com 2025. Próximas: **S9 → S10 → S11** (caminho crítico, atrasado), em paralelo o **empacotador de entregas** e relatórios pendentes; S12–S14, Cloud/firmware e S15 E2E conforme dependências e gates humanos. [Estado atual](<estado.md>) é a entrada operacional; holdout permanece fechado e não há autorização de push.

@@ -1,120 +1,96 @@
 # Estado do desenvolvimento — CitizenTech
 
-> Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites/adjudicações: `git show d2ddec4:docs/estado.md` e trilha retida em `../.kaiser/reports/`.
+> Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
 
-**Checkpoint funcional:** `main` em `13cb0a2` (16/11/2026, ~04h, UTC−3). Prazo **19/11/2026 23h55**. Desde o checkpoint anterior entraram **S8** (mercado API + snapshot + R06), **E08** (estatística portátil + relatório), **S15a** (tela web de mercado + painel técnico) e **E05** (notebooks ML/RNA + slides) — detalhes na §5a. Regressão em `main` nesta sessão: **ml 266 passed, api 193 passed (28 oracle deselecionados), web 17 passed + build, ruff limpo**. A aplicação **ainda não é ponta a ponta**: faltam S9–S14 (currículo/PII, extração, comparação, plano, avaliação, laboratório), S4/Cloud, firmware e a jornada E2E. As linhas 1–2 abaixo são de 16/11 00h30 e foram parcialmente superadas pela §5a.
-
-## Tarefa documental em andamento nesta sessão
-
-Handoff e prompt de retomada já entregues ao usuário. Documentação reorganizada em `1c9f75a`; PRODUCT.md e DESIGN.md, de escopo documental, em `7fd8769`. Usuário confirmou caderno interno offline/responsivo, não apresentação comercial nem alteração da interface do app. **Autoria do HTML:** primeira chamada `pwsh-152` concluída/coletada;6testes estáticos próprios passaram, mas leitura/render encontrou falsos feitos(firmware/PII/Cloud), rótulos científicos incorretos, fronteira do holdout mal descrita e diagrama mobile ilegível. Em correção na segunda/última rodada: **job `pwsh-168`**, agy, mesmo worktree `../GS-wt/DOC-panorama`, branch `fatia/DOC-panorama`, escrita exclusiva `docs/panorama_projeto.html`. BrowserR1 `pwsh-166` coletado: Edge real, foco/contraste sem achados, porém mobile solicitou390/360 e layout expandiu528; verificador fortalecido, nenhum aceite declarado. RED próprio: arquivo ausente→AssertionError,1failed;6testes estáticos em `.kaiser/tmp/test_panorama_documental.py`. Auditoria independente somente leitura confirmou links/estado inicial/quota antigos; corrigidos conforme CLAUDE e57links locais próprios verificados sem quebrados. Aguardar R2, repetir render/aceite e integrar. Há somente este job próprio ativo; processo agy de origem não confirmada foi preservado, sem exceder2.
+**Checkpoint funcional:** `main` em `5d311e7` + este commit documental, conferido em **16/11/2026 às 09h15 (UTC−3)**, árvore limpa. Prazo **19/11/2026 às 23h55** — **3,6 dias**. Nenhum push nesta sessão (`main` está 82+ commits à frente de `origin`). A aplicação **ainda não funciona ponta a ponta**: existe mercado (API + tela + painel técnico), autenticação e leituras CTP; faltam currículo/PII, extração, comparação, plano, avaliação, laboratório, nuvem, firmware e jornada E2E.
 
 ## 1. Ponto de parada
 
-- S0–S3, S5, ingestão S6, features/split S7 e experimentos ML/RNA/D11 estão integrados em `main`, com as limitações abaixo.
-- Última regressão integrada ML/RNA/Estatística: **227passed e ruff limpo**, execução15/16 de novembro (`pwsh-114`). API: **208passed,0skip com Oracle real**, na etapa S5. Não somar esses números como se fossem uma única execução.
-- ML/RNA foram treinados e avaliados em dados reais segregados; artefatos reabertos e previsões/métricas conferidas independentemente. **Nenhum modelo foi promovido.**
-- D11 foi executada em229 municípios de SP; análises e diagnósticos reais conferidos. PDFs de evidência ML/RNA e Estatística:3 páginas cada, **preliminares**, não pacotes acadêmicos finais.
-- **Holdout2026 fechado.** Não retunar com os resultados já vistos de2025. Nenhum push nesta retomada, nenhum segredo lido e nenhum dado/schema/volume apagado.
-- Frontend atual: somente esqueleto Astryx; confirmado por leitura de [App.tsx](<../app/web/src/App.tsx>). A API principal só inclui leituras, autenticação, consentimentos e saúde; [main.py](<../app/api/src/citizentech/main.py>) ainda não inclui Mercado/LLM/jornada profissional.
-
-## 2. O que está verificado
-
-| Frente | Implementado / evidência | Limite que permanece |
+| Fatia | Situação | Commit de integração |
 |---|---|---|
-| Base técnica | uv por componente, React/Astryx, limiares compartilhados, Docker de teste e geração PDF Edge | Smoke da base não significa jornada funcional |
-| CTP / leituras | POST/GET, validações400/401/429, indicadores, CSV e smoke HTTP local | ESP32/Wokwi real ainda não demonstrado |
-| Outbox S3 | SQLite durável, idempotência201/200/409, reconciliação, retry; imagem Docker exercitada | Lambda/RDS reais não integrados; processo único |
-| Auth S5 | JWT/cookie, CSRF, Argon2id, consentimentos por proprietário; Oracle real208passed | UI de login ausente; limitações de rate limit por processo/logout/enumeração documentadas |
-| Caged S6 |239 Parquets de243 fontes verificadas,4 ausências legítimas; descarte de atributos sensíveis | Ingestão histórica incluiu2026; isso **não** autoriza reabrir esses arquivos agora |
-| Features / ML | As-of, embargo, densidade por fold, baselines, Ridge/RF/HGB e MLP CPU com duas configurações | Serving, promoção, model cards MongoDB, notebooks/slides e avaliação final pendentes |
-| Estatística D11 |229 municípios, Z/OLS/Logit, teste municipal estratificado, histogramas/QQ/Shapiro/log1p | Script portátil, dispersões/resíduos e pacote PDF/PY/CSV final pendentes |
-| Catálogo | Seis rascunhos e fontes ESCO preservados | Nenhuma das três rubricas do MVP foi aprovada por humano |
-| Cloud / IoT / IA | Regras locais de risco e infraestrutura-base | S4, firmware próprio e S9–S15/jornada ainda pendentes |
+| S0–S3 base, limiares, leituras CTP, outbox | integradas (sessões anteriores) | — |
+| S5 autenticação/consentimentos | integrada; Oracle real 208 passed na época | `c391eac` |
+| S6 ingestão Caged, S7 features/split, ML/RNA/D11 | integradas; nenhum modelo promovido | `1a47a1a`, `a3a6866` |
+| **S8 mercado API + snapshot + painel R06** | **integrada 16/11** | `a49682f` |
+| **E08 Estatística portátil + relatório** | **integrada 16/11** | `181ba51` |
+| **S15a tela web Mercado + Painel técnico** | **integrada 16/11** | `6662ff3` |
+| **E05 notebooks ML/RNA + slides ML** | **integrada 16/11** | `13cb0a2` |
+| S9 currículo/PII · S10 extração · S11 comparação · S12 plano · S13 avaliação · S14 laboratório | **não iniciadas** | — |
+| S4 Lambda/RDS · firmware Wokwi | **não iniciadas** (dependem de gates humanos) | — |
+| S15 final (jornada E2E Playwright + axe) | não iniciada | — |
+| Empacotador de entregas + PDFs finais | não iniciado | — |
 
-Outras regressões registradas na etapa anterior: Cloud50passed; Tools20passed; Web1teste, typecheck/build. Não foram reexecutadas neste pedido documental.
+**Regressão executada em `main` em 16/11 (madrugada, após o último merge):** `app/ml` 266 passed + ruff limpo; `app/api` 193 passed com `-m "not oracle"` (28 testes Oracle **não executados** — Oracle parado); `app/web` 17 passed + typecheck + build. Cloud (50) e Tools (20) **não reexecutados** desde 15/11.
 
-## 3. Recortes e resultados — não misturar coortes
+## 2. O que está verificado (e o limite de cada item)
 
-**Produto R29:** três destinos: Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua. O corte não aprova rubricas e não apaga os outros três rascunhos. Rotas futuras e UI devem consumir [escopo_mvp.json](<../app/catalogo/escopo_mvp.json>).
+| Frente | Evidência | Limite |
+|---|---|---|
+| Mercado S8 | Snapshot real exportado e conferido por script independente (`../.kaiser/tmp/conferir_snapshot_s8.py`): 55 séries com estimativa, 26 abstenções; MAE dos 6 modelos igual à evidência de 15/11. HTTP real: SP 200 com metadados T17, AC 200 abstenção + contexto Norte, 404 fora do MVP, 400 `uf=XX`. | Model cards só dentro do snapshot, **não no MongoDB** (Atlas sem senha). RED do agente não reproduzido pelo orquestrador. |
+| Tela S15a | Render real no Edge (API local + `vite preview`), 1280 px e 390 px, SP/AC/painel técnico. | Sem axe/Playwright. Bundle 737 kB. Não está numa jornada (sem login/currículo). |
+| Estatística E08 | Programa portátil reproduz exatamente o JSON D11 de 15/11 (16 checagens); 8 figuras; relatório sem LaTeX; PDF de teste 21 págs. | PDF final, cópia `analise.py`/CSV nas pastas de entrega e nomes/RMs pendentes. |
+| Notebooks E05 | Reexecutados pelo orquestrador (saída 0); números das tabelas = artefatos; slides com números amarrados por teste; RNA confere 495 linhas por chave. | Cópia para `05_ML/notebook.ipynb`/`07_RedesNeurais/notebook.ipynb` pendente (empacotador); PDF dos slides pendente; vídeos humanos. |
+| Auth S5 | Oracle real na época (208 passed). | UI de login ausente. |
+| CTP/outbox | API, CSV, idempotência. | ESP32/Wokwi e Lambda/RDS reais não integrados. |
+| Catálogo | 6 YAMLs rascunho; MVP com 3 destinos (R29). | **Nenhuma rubrica revisada por humano.** |
 
-**ML/RNA:** superior/pós, três destinos×UF. Histórico2020 apenas para lags; fit202101–202409; validação202501–202509. Embargo, densidade e promoção D10/D04a/D10a inalterados. Validação:55 séries elegíveis de81;495 linhas.
+## 3. Resultados científicos (não misturar coortes)
 
-| Modelo | MAE de validação |
-|---|---:|
-| Persistência |35,45253|
-| Sazonal |33,59596|
-| Ridge |34,25765|
-| Random Forest |35,63387|
-| HistGradientBoosting |39,73936|
-| MLP A |31,65446|
+**ML/RNA (produto, R29):** 3 destinos × UF, superior+; fit 202101–202409, validação 202501–202509; 55/81 séries elegíveis, 495 linhas. MAE validação: persistência 35,45253 · sazonal 33,59596 · Ridge 34,25765 · RF 35,63387 · HGB 39,73936 · MLP A 31,65446 (−5,78% vs sazonal). **Nenhum modelo promovido**: D10a exige também estabilidade do WAPE e a decisão final depende do holdout 2026, fechado. App exibe o sazonal rotulado "estimativa retrospectiva (2025)". [Evidência](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>).
 
-MLP A foi escolhida no **CV do treino**, refit55 épocas. Ganho de MAE5,77896% vs sazonal; **não é promoção automática nem superioridade estatística demonstrada**. Os clássicos não superaram o sazonal. [Evidência ML/RNA](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [recálculo JSON](<../05_ML/evidencias/20261115_modelos_mvp_aceite.json>).
-
-**D11:** seis destinos e **todas as escolaridades**, SP, população com≥10 admissões2024; snapshots202412/202512, sem revisões2026. Duas explicativas autorizadas: salário mensal declarado2024 e %superior2024; participação municipal removida por aprovação humana. Pré-registro integral no plano§1.1.
-
--229 municípios,229 casos completos, nenhum município removido para melhorar ajuste. Dicionário:645 municípios+359999=Sp-Ignorado; a base não contém a categoria ignorada.
-- Z: n20/α6%,seed42,p0,324213; n25/α9%,seed43,p0,659389; ambos não rejeitamH0. Normal **assumida** nos itens obrigatórios, não comprovada; Shapiro original p9,69×10⁻³² e log1p p8,01×10⁻⁸.
-- OLS: R² simples3,626×10⁻⁷; múltipla0,021458 — resultados fracos preservados.
-- Logística:183 treino/46 teste,80/20 estratificado,seed44,limiar0,5; matriz[[8,14],[7,17]],acurácia54,3478%. Teste municipal não é o holdout temporal de ML.
-- [Evidência D11](<../08_Estatistica/evidencias/20261115_d11_aceite.md>) e [JSON real](<../08_Estatistica/evidencias/20261115_d11_aceite.json>).
+**D11 (Estatística):** 6 destinos, todas as escolaridades, 229 municípios SP. Z: p 0,324 (n20/α6%) e 0,659 (n25/α9%), não rejeitam H0. OLS R² 3,6×10⁻⁷ e 0,0215. Logística teste 54,35% ([[8,14],[7,17]]). Dois salários médios extremos (352885 R$ 527.726,85; 351210 R$ 86.712,01) mantidos por pré-registro, sem análise de sensibilidade. [Relatório](<../08_Estatistica/relatorio.md>), [JSON](<../08_Estatistica/evidencias/20261116_analise_portatil.json>).
 
 ## 4. Ativos e proteção operacional
 
 Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`../GS-wt`.
 
-- DEV seis destinos: `../.dados/caged/painel/painel_desenvolvimento.parquet`, SHA `8e653b0047ceed204d25bf7c0d9d28c8d7944bd4e75c7f65bf4ea09651b4eb9e`.
-- DEV MVP: `../.dados/caged/painel/r29_20261115_2041/painel_mvp.parquet`, SHA `33a898980916c841c325fb9e37b643484ee1d6f8b7017a19f52208de02e922c5`.
-- Modelos próprios: `../.dados/artefatos/classicos/20261115_r29_aceite/` e `../.dados/artefatos/rna/20261115_r29_aceite/`, com manifestos/hashes. Hash é integridade local, não autenticidade contra atacante que controla manifesto.
-- D11: `../.dados/estatistica/20261115_d11_aceite/base_municipal.csv` e manifesto; SHA CSV `5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee`.
-- D11 usa somente72 nomes canônicos2024/25, com gate antes de read/hash/footer, bloqueio de symlink/hardlink e vínculo nome×metadados. Perfil real:2.216.198 linhas R05/36,37MB comprimidos, não100M linhas nacionais. Iterrows é dívida de performance, não razão para mudar população.
-- **Não reconstruir DEV com o loader legado no diretório misto de Parquets:** ele pode abrir2026 antes de filtrar. Proteção em memória não é barreira de I/O.
-- **Não subir worker com dados reais e FUNCTION_URL:** `../.dados/runtime/outbox.db*` contém77 eventos antigos de teste. Arquivo preservado; remoção exige aprovação específica.
-- Oracle local foi parado, volumes preservados. Schema S5 autorizado foi criado sem tocar o anterior; senha gerada apenas em memória foi esquecida ao encerrar runner. Não tentar recuperá-la nem alegar sessão/credencial ativa. Nova necessidade de credencial/schema exige o gate humano adequado.
+- Painel DEV MVP `../.dados/caged/painel/r29_20261115_2041/painel_mvp.parquet` (SHA `33a89898…c22c5`); DEV 6 destinos `../.dados/caged/painel/painel_desenvolvimento.parquet` (SHA `8e653b00…4eb9e`).
+- Artefatos `../.dados/artefatos/{classicos,rna}/20261115_r29_aceite/` (manifestos com hash = integridade local, não autenticidade).
+- **Snapshot de mercado** `../.dados/mercado/20261116_r29_aceite/` (SHA `snapshot_mercado.json` `9c093f93091fbda4bb4bdc796cd9eee9823da4005dfa22616950dba8d37540a3`). Servir com `CITIZENTECH_MERCADO_SNAPSHOT` apontando para esse diretório.
+- Base D11 `../.dados/estatistica/20261115_d11_aceite/base_municipal.csv` (SHA `5dbc73ac…a7ee`).
+- **Não** reconstruir painel com o loader legado sobre `caged/parquet` (diretório misto com 2026). **Não** subir a API com `FUNCTION_URL` e `CITIZENTECH_DADOS` real: `../.dados/runtime/outbox.db*` tem 77 eventos antigos de teste (preservar; remoção só com aprovação).
+- Docker: os 3 containers estão parados (Oracle saiu às ~09h08 por terceiros); volumes preservados. Credencial temporária do schema S5 foi esquecida; nova credencial = gate humano.
 
-## 5. Git, processos e auditoria
+## 5. Git, processos e worktrees (conferido 09h15)
 
-- Commits de integração: S5 `c391eac`; R29 `d807e10`; Estatística `df28804`; clássicos `7d1d4db`; RNA `a3a6866`; base municipal `1a47a1a`; último checkpoint de evidências `d2ddec4`.
-- Worktrees S7 limpos/integrados e branches locais já removidos; fonte retida emmain. **Preservar original S5** `../GS-wt/S5-auth` em `b94b0de`, limpo; `../GS-wt/S5-red` em `112042d` mantido para reprodução.
-- Jobs antigos até123 encerrados/coletados; são histórico, não tarefas a aguardar. Na conferência documental00h30 apareceu um processo `agy` PID16884, criado15/11às23h22, **origem não confirmada**. Não há vínculo de repo/worktree nos argumentos; isso não comprova seu cwd. Não foi cancelado. Reconferir antes de delegar; máximo2agy.
-- Contratos, relatórios e snapshots de revisão em `.kaiser` foram mantidos. Adjudicações completas continuam no histórico d2ddec4 do estado; não reabrir fatias concluídas sem defeito concreto.
-- Gitleaks bloqueou falsos positivos em fixture JWT e chave estatística; corrigidos sem allowlist/skip e sem alterar métricas. Toda entrega documental será novamente varrida antes do commit.
-- Disco conferido:24,3GiB em16/11às00h30; avisar<6GiB, abortar ingestão<4GiB. Nenhuma limpeza de dados autorizada.
+- Worktrees: `../GS-wt/S5-auth` (`b94b0de`, **preservar**), `../GS-wt/S5-red` (`112042d`, preservar), `../GS-wt/DOC-panorama` (`7fd8769`, **outra sessão**: panorama HTML documental, `docs/panorama_projeto.html` não commitado, ainda sendo editado às 09h12). Não tocar.
+- Processo `agy` PID 16884 (pai: powershell do Windows Terminal, 15/11 23h22) = sessão documental do panorama. Não é desta linha de trabalho. Conta para o limite de 2 agy simultâneos.
+- Nenhum job/servidor desta sessão ativo; portas 8000/5173 livres.
+- Disco: 23,5 GB livres.
 
-## 5a. Em andamento — sessão de implementação 16/11 (paralela à tarefa documental acima)
+## 6. Próxima sessão — tarefas em ordem
 
-- **S8 integrada** em `main` (`a49682f`; fatia `2772689`): exportador `citizentech_ml.mercado.exportar` (snapshot JSON derivado dos artefatos, só hash+JSON/parquet, sem desserializar modelos) + API `GET /mercado/{destino}?uf=` (T06/T17) e `/mercado/{destino}/modelos` (R06, 6 modelos, nenhum promovido; exibido = baseline de menor MAE de validação = sazonal) + RV-RNA-01/02. Evidência desta sessão: testes S8 api13/ml37 passed; regressão em main **api193 passed (28 oracle deselecionados), ml241 passed, ruff limpo** (`pwsh-213`); export real DEV → conferência independente `.kaiser/tmp/conferir_snapshot_s8.py` ok (55 elegíveis/26 abstenções, MAE dos 6 bate com a evidência 15/11 e com recálculo direto); smoke HTTP via TestClient no snapshot real: SP 200 com metadados, AC 200 abstenção+contexto Norte, 404 fora do MVP, 400 `uf=XX`, `uf=sp` ok, nenhum termo proibido/NaN; artefato RNA real recarrega com a nova validação. RED do agente por asserção (501, AttributeError→ValueError, chave ausente) — não reproduzido pelo orquestrador (S8 fora da lista de fatias de risco). Revisão independente não obrigatória para S8.
-  - Snapshot oficial: `../.dados/mercado/20261116_r29_aceite/` (SHA `snapshot_mercado.json` `9c093f93091fbda4bb4bdc796cd9eee9823da4005dfa22616950dba8d37540a3`), conferido pelo script independente. Para servir: `CITIZENTECH_MERCADO_SNAPSHOT` apontando para esse diretório. Model cards não estão no Mongo (Atlas sem senha em 12/11; gate humano). UI do painel técnico: ver S15a.
-- **E08 integrada** em `main` (`181ba51`; fatia `04d1fa9`): programa portátil `app/ml/src/citizentech_ml/estatistica/analise_portatil.py` (sem importar `citizentech_ml`; fonte do `analise.py` de entrega), 8 figuras em `08_Estatistica/evidencias/figuras/`, JSON `20261116_analise_portatil.json` e `08_Estatistica/relatorio.md` reescrito. Evidência desta sessão: reexecução no CSV real → 16 checagens contra o JSON D11 de 15/11 sem divergência e JSON idêntico ao commitado; 9 testes; regressão ML em main **250 passed**, ruff limpo. Rodada 2 corrigiu LaTeX cru no PDF (o gerador não renderiza `$...$`), discutiu pontos extremos de salário (352885: 19 adm., R$527.726,85, 136,56× a mediana; 351210: R$86.712,01) mantidos por pré-registro, sem análise de sensibilidade (trabalho futuro), e vírgula decimal nas figuras. Orquestrador removeu 2 frases sem evidência. PDF de teste: 21 páginas, renderização conferida por screenshot. **PDF final:** gerar pelo empacotador com o `.md` e as figuras na mesma pasta relativa (gerar o PDF dentro de `evidencias/` quebra os caminhos das imagens). Pendentes humanos: nomes/RMs.
-- **S15a integrada** em `main` (`6662ff3`; fatia `5b86c84`): primeira tela real do app — aba **Mercado** (observado, estimativa retrospectiva vs realizado, abstenção T06 com contexto regional, metadados T17, avisos, Adzuna indisponível) e aba **Painel técnico** (6 modelos lado a lado, nenhum promovido, Badge no exibido, critério D10a, model cards). Deep-link: `http://localhost:5173/?destino=analista_dados_bi&uf=SP#painel-tecnico`. Evidência desta sessão: 17 testes Vitest, typecheck e build ok em main; render real no Edge com API local (`CITIZENTECH_MERCADO_SNAPSHOT` = snapshot oficial) + `vite preview` em 1280 px e 390 px (via iframe), SP, AC (abstenção) e painel técnico. Rodada 2 corrigiu realizado ausente no gráfico, ticks sobrepostos, status/ids crus, estouro mobile; o orquestrador removeu cores fixas (`text-neutral-*`) que deixavam a coluna Modelo ilegível no tema escuro.
-  - Limites/abertos: axe/Playwright E2E ainda não rodados (S15 final); bundle 737 kB (aviso de chunk); a série AC Monitoramento/IoT tem 69 meses observados = 0 (dado real, não fabricado); Mercado não aparece na jornada completa porque S9–S14 não existem.
-  - Como demonstrar: em `app/api`, `CITIZENTECH_MERCADO_SNAPSHOT=..\..\..\.dados\mercado\20261116_r29_aceite`, `CITIZENTECH_DADOS` apontando para pasta de runtime de teste, **sem `FUNCTION_URL`**, `uv run uvicorn citizentech.main:app --port 8000`; em `app/web`, `pnpm run build` e `pnpm exec vite preview` (abre em `localhost`, IPv6).
-- **E05 integrada** em `main` (`13cb0a2`; fatia `fd49be2`): notebooks executados `app/ml/notebooks/ml_mercado.ipynb` e `rna_mercado.ipynb` (fontes; o empacotador copia para `05_ML/notebook.ipynb` e `07_RedesNeurais/notebook.ipynb`), figuras em `05_ML/evidencias/figuras/` e `07_RedesNeurais/evidencias/figuras/`, `05_ML/slides.md` (PDF de teste: 12 páginas). `nbconvert`/`ipykernel` no grupo dev de `app/ml`. Rodada 1 foi **devolvida** porque os slides tinham números de demonstração **inventados** (ex.: "realizado 6.208/sazonal 6.130"; a saída real é realizado 5.305, sazonal 4.696, origem 202509 SP), D10a descrito como "superioridade estatística", feature `*_total` dita preditora e conferência da RNA por posição. Rodada 2 corrigiu e acrescentou teste que amarra os números dos slides às saídas; a RNA agora confere as 495 linhas por chave (diferença máx. 0). Evidência desta sessão: reexecução dos dois notebooks pelo orquestrador (saída 0), 16 testes, regressão ML 266 passed. O orquestrador embutiu as 2 figuras nos slides e trocou 3 frases de impacto não medido por formulações honestas. Pendentes humanos: nomes/RMs, vídeos ML e RNA.
-- (histórico) `pwsh-215`: agy E05-notebooks em `../GS-wt/E05-notebooks` (base `a49682f`): notebooks ML e RNA em `app/ml/notebooks/` importando `citizentech_ml`, sem retreino, leitura só do painel DEV e artefatos; slides `05_ML/slides.md`.
-- agy PID16884: pai é powershell interativo do Windows Terminal (15/11 23h22) — outra sessão (tarefa documental DOC-panorama acima); não é job desta sessão; preservado.
-- Decisão local: `status_promocao="nao_decidida"` porque D10a depende da avaliação final com holdout fechado; o app exibe o baseline de menor MAE de validação, rotulado `previsto_retrospectivo`.
+**A. Verificações que ficaram pendentes (fazer primeiro, baratas):**
+1. Subir serviços de teste (`docker compose -f app\docker-compose.yml --profile teste up -d --wait`) e rodar a suíte API **com Oracle** (`uv run pytest -q` em `app/api`) — os 28 testes `oracle` não rodaram após S8. Se a credencial do schema de teste não funcionar, registrar e pedir ao usuário; não recuperar senha.
+2. Reexecutar `app/cloud` e `app/tools` (`uv run pytest`, `uv run ruff check .`).
+3. Rodar **axe** sobre a tela de mercado (Playwright + `@axe-core/playwright` exige `pnpm add -D`, permitido dentro de `app/web`) — pode entrar como primeiro teste E2E da S15.
 
-## 6. Próxima sessão — ordem recomendada
+**B. Caminho crítico do produto (atrasado ≥1 dia):**
+4. **S9 currículo/PII** (fatia de risco: RED reproduzido pelo orquestrador + revisão independente `agy --mode plan`): `POST /me/experiencias`, `POST /me/curriculo` (PDF/DOCX ≤2 MB, pypdf/python-docx), redação de PII, `POST /me/curriculo/confirmar-envio`; nada vai à LLM sem confirmação (D07a, D22, R18, T15). Persistência do texto redigido: Mongo de teste local (27018) nos testes; Atlas real só com credencial.
+5. **S10 extração** (LLM com fake na fronteira; lista fechada de IDs ESCO; T07). OpenRouter real só com autorização (quota US$ 7).
+6. **S11 comparação** (domínio puro; obrigatório não atendido não some; `desconhecida`≠`lacuna`; ≤3 destinos).
+7. S12 plano → S13 avaliação (risco) → S14 laboratório → telas web correspondentes → **S15 jornada E2E** com persona demo.
 
-1. Ritual de [CLAUDE.md](<../CLAUDE.md>): data/prazo, este estado, git/worktrees/processos; Docker só quando a fatia exigir. Não ler segredos nem iniciar outra ingestão/treino.
-2. **Caminho crítico do produto (atrasado ≥1 dia vs cronograma D3/D4):** S9 currículo/PII (fatia de risco: revisão independente obrigatória) → S10 extração (LLM com fake na fronteira) → S11 comparação (domínio, sem score único). Depois S12 plano e S13 avaliação (risco). As rubricas dos 3 destinos ainda não foram revisadas por humano e bloqueiam a qualidade de S10/S13.
-3. Em paralelo, sem sobreposição: **empacotador** `app/tools/empacotar_entregas.py` (copia `analise_portatil.py`→`08_Estatistica/analise.py`, CSV D11, notebooks→`05_ML`/`07_RedesNeurais`, gera PDFs com figuras nos caminhos relativos certos) e relatório de Cyber (S5 já tem evidência). Model cards no Mongo dependem de credencial Atlas (gate humano).
-4. S4/Cloud e firmware precisam de gates humanos (AWS/Learner Lab, Wokwi). Jornada E2E Playwright+axe (S15 final) depois de S9–S13.
-5. Sem abrir o holdout, mudar split/densidade/promoção ou retunar com2025. Qualquer nova decisão científica/de produto segue aprovação humana; mínimos acadêmicos nunca são cortados.
+**C. Entregas acadêmicas (paralelo, sem sobreposição de arquivos):**
+8. **Empacotador** `app/tools/empacotar_entregas.py` (D6 do plano): copia `analise_portatil.py`→`08_Estatistica/analise.py`, `base_municipal.csv`→`08_Estatistica/`, notebooks→`05_ML/notebook.ipynb` e `07_RedesNeurais/notebook.ipynb`, gera PDFs (relatório Estatística, slides ML) com figuras em caminhos relativos corretos, contagem de páginas. Hoje esses alvos ainda são os **modelos do professor com TODO**.
+9. Relatórios ainda vazios/TODO: `02_Cybersecurity/relatorio.md` (≤15 págs. PDF; S5 tem evidência), `04_CTP_Python/documento.md`, `03_DataScience/relatorio.md` (+ DDL/Mongo), `01_AICSS/relatorio.md`, `06_Cloud/README.md`, roteiros `*/video.md`. Escrever só o que está implementado; o restante rotulado como planejado.
+10. Model cards no MongoDB: implementar gravação contra Mongo de teste; Atlas quando houver credencial.
 
-## 7. Pendências humanas / restrições
+**D. Guardrails:** holdout 2026 fechado; não retunar com 2025; não promover modelo; não ler `.env*`; não push sem ok; APIs pagas/AWS só com autorização; mínimos acadêmicos nunca cortados (D16).
 
-- Revisar as **três** rubricas mantidas; [roteiro do catálogo](<../app/catalogo/README.md>)§4. Seis YAMLs ainda são rascunhos, mínimos/revisor não aprovados.
-- Configurar acessos pelo ambiente, nunca enviar segredos ao chat: Atlas/URI/IP; Oracle FIAP; Learner Lab/RDS; opção HF(créditos) ou Comprehend; AWS CLI ou console. Status conhecidos são de12/11, **não revalidados** agora.
-- Adzuna: snapshot só após aprovação, teto do projeto12 chamadas/contador — disponibilidade da conta não aumenta esse teto.
-- Definir responsáveis pelos vídeos, ideia real da live, Data Modeler e Portal. Formatos/limites no plano§8; PDFs preliminares não equivalem a submissão final.
-- Decidir remoto oficial e exposição pública de nomes/RMs/material do professor. Push do dia13 é histórico; **não autoriza novo push**. Autorizações de AWS/credenciais precisam respeitar o escopo vigente.
-- Não apagar dados/outbox/schemas/volumes, não ler arquivos de segredos e não chamar APIs pagas sem autorização.
+## 7. Pendências humanas
 
-## 8. Decisões locais que continuam válidas
+- **Revisar as 3 rubricas** do MVP ([roteiro](<../app/catalogo/README.md>) §4) — bloqueia qualidade de S10/S13.
+- Credenciais no `app/.env` (nunca no chat): senha do `MONGODB_URI` Atlas + liberar IP; Oracle FIAP (ORA-01017 em 12/11); Learner Lab ativo (Lambda/RDS); HF sem créditos (402) — decidir créditos ou alternativa.
+- Autorizar: uso do OpenRouter nos smoke tests reais; snapshot Adzuna (≤12 chamadas) ou manter "indisponível"; push e para qual remoto.
+- Data Modeler (D25), ideia da live, vídeos (ML ≤5 min, RNA obrigatório, Cyber ≤5, Cloud ≤5, AIC ≤7 com rosto), envio no Portal, prints do console AWS.
 
-- Limiares de produto só em [limiares.json](<../app/config/limiares.json>); validaçãoHTTP400; OracleDDL19c; domínio em português sem acento.
-- CTP: X-Device-Key, estadosOK/ALERTA/ERRO, sentinela exata−127; POST201novo/200idêntico/409conflito. Risco normal/atencao/critico é distinto do estado do firmware.
-- As-of: MOV/FOR=max(dec,arquivo);EXC=max(dec,exc,arquivo). Ausência de cobertura não vira zero. Parquets conservam linhas legítimas repetidas; não deduplicar arbitrariamente.
-- Ingestão usa56CBOs(34dosdestinos+22reserva), sem atributos sensíveis; CBOs/fontes/curadoria preservados. Para D11 usar snapshot mínimo de mapa em `.kaiser/snapshots/D11_mapa_cbo_seis.json`, sem carregar catálogo completo por padrão.
-- Catálogo ESCO é curadoria inferida, não vínculo oficial; versão da ESCO ainda precisa ser fixada. Alegações de títulos CBO por fontes secundárias continuam limitadas.
-- Nenhum score único, probabilidade individual de contratação ou competência automaticamente demonstrada por experiência. PII só chega à LLM redigida e após confirmação explícita; sentimento não entra na nota.
+## 8. Decisões locais válidas
+
+- Limiares só em [limiares.json](<../app/config/limiares.json>); validação HTTP 400; DDL Oracle 19c; domínio em pt-BR sem acento.
+- `status_promocao="nao_decidida"` enquanto o holdout estiver fechado; app exibe o baseline de menor MAE de validação.
+- Snapshot de mercado é derivado dos artefatos sem desserializar modelos (só hash + JSON/parquet); a API verifica o SHA do snapshot antes de servir.
+- Notebooks de entrega têm fonte em `app/ml/notebooks/`; programa estatístico em `app/ml/src/citizentech_ml/estatistica/analise_portatil.py`. Pastas `0X_*` recebem cópias pelo empacotador.
+- O gerador de PDF (`app/tools/md_para_pdf.py`) **não renderiza LaTeX**: documentos de entrega usam Unicode.
+- Componentes web: não usar cores fixas `text-neutral-*` (tema escuro do Astryx); Tailwind só para layout.
+- Nenhum score único, nenhuma probabilidade individual de contratação; PII só vai à LLM redigida e confirmada; sentimento não entra na nota.

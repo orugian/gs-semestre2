@@ -22,12 +22,13 @@ O recorte atual do MVP é **Dados/BI, Monitoramento/IoT e Processos/Melhoria Con
 
 ## Implementação não é entrega concluída
 
-**Implementado e verificado na etapa de15/16 de novembro:** API local de leituras, outbox/idempotência, autenticação/consentimentos com Oracle real, ingestão/features Caged, modelos ML/RNA e análise municipal real. Última regressão integrada ML/RNA/Estatística:227testes; API208testes com Oracle na etapaS5. Esses números não são uma única suíte nem uma nova execução nesta atualização documental.
+**Implementado e verificado até 16/11:** API local de leituras, outbox/idempotência, autenticação/consentimentos (Oracle real na etapa S5), ingestão/features Caged, modelos ML/RNA, análise municipal real, **API de mercado** (`/mercado/{destino}` com abstenção e metadados; `/mercado/{destino}/modelos` com os 6 modelos, nenhum promovido), **tela web de Mercado e Painel técnico**, **programa estatístico portátil com relatório** e **notebooks ML/RNA executados com slides**. Regressão em 16/11: ML 266, API 193 (sem os 28 testes Oracle), Web 17 + build.
 
-**Ainda faltam:** servir os modelos com metadados/model cards, jornada de currículo/PII/LLM/comparação/plano/avaliação, firmware e Cloud reais, telas funcionais e E2E, notebooks/slides e pacotes acadêmicos finais. O frontend atual é um esqueleto; o app ainda não funciona ponta a ponta.
+**Ainda faltam:** jornada de currículo/PII/LLM/comparação/plano/avaliação/laboratório, firmware e Cloud reais, login na web, E2E, empacotamento das entregas e PDFs finais, relatórios de Cyber/CTP/Data Science/AICSS/Cloud. O app ainda não funciona ponta a ponta.
 
-- [Evidência real ML/RNA](<../05_ML/evidencias/20261115_modelos_mvp_aceite.pdf>) — PDF preliminar,3páginas.
-- [Evidência real Estatística](<../08_Estatistica/evidencias/20261115_d11_aceite.pdf>) — PDF preliminar,3páginas.
+- [Estado detalhado](<../docs/estado.md>) — o que foi verificado, como demonstrar o mercado e pendências.
+- [Evidência real ML/RNA](<../05_ML/evidencias/20261115_modelos_mvp_aceite.md>) · [notebook ML](<../app/ml/notebooks/ml_mercado.ipynb>) · [notebook RNA](<../app/ml/notebooks/rna_mercado.ipynb>) · [slides ML](<../05_ML/slides.md>).
+- [Relatório estatístico](<../08_Estatistica/relatorio.md>) — rascunho final; PDF ainda não empacotado.
 - [Aceite da S5](<../02_Cybersecurity/evidencias/20261115_s5_aceite_integracao.md>).
 
 ## Arquitetura e contrato único
