@@ -134,7 +134,7 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
                             ? 'neutral'
                             : 'error'
                         }
-                        label={comp.revisao.replace('_', ' ')}
+                        label={{pendente: 'pendente', confirmada: 'confirmada', rejeitada: 'rejeitada', nao_possuo: 'não possuo'}[comp.revisao] ?? comp.revisao}
                       />
                     </div>
                   </div>
