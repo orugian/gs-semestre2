@@ -193,6 +193,16 @@ $env:CITIZENTECH_LEITURAS_CSV = &quot;$PWD\leituras.csv&quot;     # onde o hist�
 $env:CITIZENTECH_OUTBOX_DB = &quot;$PWD\outbox.db&quot;
 uv run uvicorn citizentech.leituras.isolado:app --port 8001
 </code></pre>
+<p><strong>Alternativa sem o repositório completo</strong> (só a pasta da entrega, com <code>pip</code>): a cópia em <code>04_CTP_Python/codigo/</code> traz o pacote e o arquivo de limiares, e <code>04_CTP_Python/requirements.txt</code> lista as dependências.</p>
+<pre><code class="language-powershell">cd 04_CTP_Python
+python -m pip install -r requirements.txt
+cd codigo
+$env:CITIZENTECH_LIMIARES = &quot;$PWD\config\limiares.json&quot;
+$env:DEVICE_KEY = '&lt;chave da bancada&gt;'
+$env:CITIZENTECH_LEITURAS_CSV = &quot;$PWD\leituras.csv&quot;
+python -m uvicorn citizentech.leituras.isolado:app --port 8001
+</code></pre>
+<p>Os arquivos <code>app.py</code>, <code>armazenamento.py</code>, <code>processamento.py</code> e <code>testes.py</code> na raiz de <code>04_CTP_Python/</code> são o modelo em Flask fornecido no enunciado e <strong>não fazem parte</strong> da solução.</p>
 <p>Em outro terminal, com a mesma <code>DEVICE_KEY</code> no ambiente:</p>
 <pre><code class="language-powershell">cd app\tools
 uv run python demo_leituras_ctp.py --base http://127.0.0.1:8001     # 3 cenários + erros + GET

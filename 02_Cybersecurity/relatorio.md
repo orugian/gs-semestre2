@@ -87,7 +87,7 @@ Status: **D** = implementado e demonstrado neste relatório (§5) · **T** = imp
 | R3 | Logout real: incrementa a versão da sessão no banco e invalida todos os cookies emitidos | Autenticação | D |
 | R4 | Toda consulta filtra pelo dono; recurso de outra pessoa responde **404** (não revela existência) | Controle de acesso | D |
 | R1, R4 | SQL sempre com *bind variables* (Oracle) e parâmetros (PostgreSQL); nenhuma concatenação de entrada | Proteção da aplicação | T |
-| R1 | **Redação de dados pessoais** (nome no cabeçalho, e-mail, telefone, CPF, CEP, endereço, URLs de perfil) antes de gravar; o original não é persistido, só o texto redigido e o hash SHA-256 | Minimização | D |
+| R1 | **Redação de dados pessoais** (nome em linha `Nome:` ou sozinho numa das 3 primeiras linhas, e-mail, telefone, CPF, CEP, endereço, URLs de perfil) antes de gravar; o original não é persistido, só o texto redigido e o hash SHA-256 | Minimização | D |
 | R1 | O texto só vai à IA depois de a pessoa **ver, editar e confirmar** o texto redigido e com consentimento `curriculo_llm` ativo; provedor chamado com `data_collection=deny` | Privacidade | D (bloqueio) / T (envio) |
 | R1 | Logs sem texto de currículo, motivos, trechos, senhas ou tokens | Monitoramento | D (API) / T |
 | R5 | Currículo delimitado e declarado como **dado** no prompt; saída em JSON Schema estrito; validação local: só IDs da lista fechada, trecho obrigatório e **presente no texto**, duplicatas descartadas | Segurança de IA | T |
@@ -153,7 +153,7 @@ As proteções têm testes que rodam a cada mudança (regressão registrada em 1
 - Dados de mercado: microdados públicos do Novo Caged, usados só de forma agregada por ocupação e UF.
 
 **Quais dados sensíveis podem existir?**
-- O currículo pode conter, sem que a pessoa perceba, dado sensível do art. 5º, II (saúde, deficiência, religião, filiação sindical, origem racial) ou dado de terceiros. A redação automática **não detecta** essas categorias: ela trata identificadores diretos (nome no cabeçalho, e-mail, telefone, CPF, CEP, endereço, URLs). Por isso a pessoa revisa e edita o texto antes de qualquer envio, e a tela avisa que a redação é parcial.
+- O currículo pode conter, sem que a pessoa perceba, dado sensível do art. 5º, II (saúde, deficiência, religião, filiação sindical, origem racial) ou dado de terceiros. A redação automática **não detecta** essas categorias: ela trata identificadores diretos (nome em linha `Nome:` ou sozinho numa das 3 primeiras linhas, e-mail, telefone, CPF, CEP, endereço, URLs). Por isso a pessoa revisa e edita o texto antes de qualquer envio, e a tela avisa que a redação é parcial.
 - Nos microdados do Caged, idade, sexo, raça/cor e deficiência existem na fonte e são **descartados já na ingestão**; nenhum modelo usa esses campos.
 
 **Quais proteções serão aplicadas?**
@@ -198,7 +198,7 @@ O público em transição de carreira é alvo frequente de golpes com falsas opo
 **Riscos residuais conhecidos (não resolvidos no protótipo):**
 1. O limite de login fica em memória: com vários processos da API, cada um conta separado. Em produção: contador compartilhado (Redis) ou WAF.
 2. O cadastro responde de forma diferente quando o e-mail já existe (revela contas cadastradas); aceito para o protótipo, mitigado pelo limite de tentativas.
-3. A redação de dados pessoais é **parcial** (não detecta nomes no meio do texto nem dados sensíveis do art. 5º, II).
+3. A redação de dados pessoais é **parcial**: não detecta nomes no meio do texto, nem nome no cabeçalho junto com outro conteúdo (por exemplo, "Marina Souza — Analista de Dados"), nem dados sensíveis do art. 5º, II. A revisão humana antes do envio cobre essa lacuna.
 4. RDS público e Function URL sem autenticação obrigatória (R7, exceção acadêmica).
 5. Sem MFA, sem WAF, sem backup verificado e sem rotas de exportação e exclusão da conta.
 

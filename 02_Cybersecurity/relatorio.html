@@ -243,7 +243,7 @@ ESP32 / simulador ──X-Device-Key──&gt; API (/leituras) ──outbox─�
 </tr>
 <tr>
 <td>R1</td>
-<td><strong>Redação de dados pessoais</strong> (nome no cabeçalho, e-mail, telefone, CPF, CEP, endereço, URLs de perfil) antes de gravar; o original não é persistido, só o texto redigido e o hash SHA-256</td>
+<td><strong>Redação de dados pessoais</strong> (nome em linha <code>Nome:</code> ou sozinho numa das 3 primeiras linhas, e-mail, telefone, CPF, CEP, endereço, URLs de perfil) antes de gravar; o original não é persistido, só o texto redigido e o hash SHA-256</td>
 <td>Minimização</td>
 <td>D</td>
 </tr>
@@ -429,7 +429,7 @@ ESP32 / simulador ──X-Device-Key──&gt; API (/leituras) ──outbox─�
 - Laboratório IoT: leituras de temperatura e distância de uma bancada e um relato curto (até 280 caracteres).
 - Dados de mercado: microdados públicos do Novo Caged, usados só de forma agregada por ocupação e UF.</p>
 <p><strong>Quais dados sensíveis podem existir?</strong>
-- O currículo pode conter, sem que a pessoa perceba, dado sensível do art. 5º, II (saúde, deficiência, religião, filiação sindical, origem racial) ou dado de terceiros. A redação automática <strong>não detecta</strong> essas categorias: ela trata identificadores diretos (nome no cabeçalho, e-mail, telefone, CPF, CEP, endereço, URLs). Por isso a pessoa revisa e edita o texto antes de qualquer envio, e a tela avisa que a redação é parcial.
+- O currículo pode conter, sem que a pessoa perceba, dado sensível do art. 5º, II (saúde, deficiência, religião, filiação sindical, origem racial) ou dado de terceiros. A redação automática <strong>não detecta</strong> essas categorias: ela trata identificadores diretos (nome em linha <code>Nome:</code> ou sozinho numa das 3 primeiras linhas, e-mail, telefone, CPF, CEP, endereço, URLs). Por isso a pessoa revisa e edita o texto antes de qualquer envio, e a tela avisa que a redação é parcial.
 - Nos microdados do Caged, idade, sexo, raça/cor e deficiência existem na fonte e são <strong>descartados já na ingestão</strong>; nenhum modelo usa esses campos.</p>
 <p><strong>Quais proteções serão aplicadas?</strong>
 - <strong>Base legal e finalidade:</strong> consentimento específico, livre e revogável por finalidade (<code>perfil</code>, <code>curriculo_llm</code>, <code>laboratorio_nuvem</code>), com versão do termo registrada.
@@ -496,7 +496,7 @@ ESP32 / simulador ──X-Device-Key──&gt; API (/leituras) ──outbox─�
 <p><strong>Riscos residuais conhecidos (não resolvidos no protótipo):</strong>
 1. O limite de login fica em memória: com vários processos da API, cada um conta separado. Em produção: contador compartilhado (Redis) ou WAF.
 2. O cadastro responde de forma diferente quando o e-mail já existe (revela contas cadastradas); aceito para o protótipo, mitigado pelo limite de tentativas.
-3. A redação de dados pessoais é <strong>parcial</strong> (não detecta nomes no meio do texto nem dados sensíveis do art. 5º, II).
+3. A redação de dados pessoais é <strong>parcial</strong>: não detecta nomes no meio do texto, nem nome no cabeçalho junto com outro conteúdo (por exemplo, "Marina Souza — Analista de Dados"), nem dados sensíveis do art. 5º, II. A revisão humana antes do envio cobre essa lacuna.
 4. RDS público e Function URL sem autenticação obrigatória (R7, exceção acadêmica).
 5. Sem MFA, sem WAF, sem backup verificado e sem rotas de exportação e exclusão da conta.</p>
 <p><strong>Prioridades para produção:</strong> (1) RDS privado com RDS Proxy e Secrets Manager e chave obrigatória na Function URL (resolve R7); (2) MFA e aviso de golpes no produto (R8, R2); (3) detector de dados sensíveis e exclusão de conta (R1, LGPD); (4) limite distribuído e WAF (R6); (5) backup com teste de restauração (R10).</p>

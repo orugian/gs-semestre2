@@ -89,12 +89,13 @@ Proteções adicionais:
 | **Function URL** | `https://olzbq42krrvnxabsypfszez6qa0aehbm.lambda-url.us-east-1.on.aws/` (Auth type NONE; rotas `/health` e `/ocorrencias`) |
 | **Endpoint do RDS** (sem senha) | `cp1-cloud.cdbgtc0abxoh.us-east-1.rds.amazonaws.com:5432`, banco `citizentech`, TLS `verify-full` |
 | Script da tabela `ocorrencias` | `tabela_ocorrencias.sql` (cópia de `app/cloud/sql/ocorrencias.sql`) |
+| Handler da Lambda e simulador na raiz do módulo | `lambda_function.py` (cópia do handler final) e `simulador_dispositivo.py` (cópia de `simulador.py`). Os dois importam o pacote `citizentech_cloud` de `codigo/`; para rodar o simulador a partir de `06_Cloud/`: `$env:PYTHONPATH='codigo'; python simulador_dispositivo.py --cenario normal --leituras 2` (com `FUNCTION_URL` definido, como em §7.2). O handler depende do driver `pg8000`, que vai dentro do zip da função (§7.2) |
 | Código final da Lambda e do simulador | `codigo/` (cópia gerada de `app/cloud/src/citizentech_cloud/`: `lambda_function.py`, `risco.py`, `sentimento.py`, `banco.py`, `simulador.py`, `servidor_local.py`, `limiares.json`) |
 | Testes automatizados | `app/cloud/tests/` (115 testes; rodam contra PostgreSQL local em Docker) |
 | Evidências | `evidencias/` (§8) |
 | Vídeo (≤ 5 min) | [HUMANO — link] |
 
-> As cópias em `06_Cloud/codigo/` e `06_Cloud/tabela_ocorrencias.sql` são geradas pelo empacotador do projeto (`app/tools/empacotar_entregas.py`) a partir de `app/cloud/`. A fonte é `app/cloud/`.
+> As cópias em `06_Cloud/codigo/`, `lambda_function.py`, `simulador_dispositivo.py` e `tabela_ocorrencias.sql` são geradas pelo empacotador do projeto (`app/tools/empacotar_entregas.py`) a partir de `app/cloud/` e substituem os modelos do enunciado. A fonte é `app/cloud/`.
 
 **Disponibilidade para a correção.** O Learner Lab desliga os recursos ao fim de cada sessão. Se a Function URL ou o `/health` não responderem (ou mostrarem `"banco":"indisponivel"`), o laboratório expirou e o grupo precisa reiniciá-lo. O grupo mantém o laboratório ativo nas janelas de correção.
 

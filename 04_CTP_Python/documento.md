@@ -111,6 +111,20 @@ $env:CITIZENTECH_OUTBOX_DB = "$PWD\outbox.db"
 uv run uvicorn citizentech.leituras.isolado:app --port 8001
 ```
 
+**Alternativa sem o repositório completo** (só a pasta da entrega, com `pip`): a cópia em `04_CTP_Python/codigo/` traz o pacote e o arquivo de limiares, e `04_CTP_Python/requirements.txt` lista as dependências.
+
+```powershell
+cd 04_CTP_Python
+python -m pip install -r requirements.txt
+cd codigo
+$env:CITIZENTECH_LIMIARES = "$PWD\config\limiares.json"
+$env:DEVICE_KEY = '<chave da bancada>'
+$env:CITIZENTECH_LEITURAS_CSV = "$PWD\leituras.csv"
+python -m uvicorn citizentech.leituras.isolado:app --port 8001
+```
+
+Os arquivos `app.py`, `armazenamento.py`, `processamento.py` e `testes.py` na raiz de `04_CTP_Python/` são o modelo em Flask fornecido no enunciado e **não fazem parte** da solução.
+
 Em outro terminal, com a mesma `DEVICE_KEY` no ambiente:
 
 ```powershell
