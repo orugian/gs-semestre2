@@ -8,10 +8,12 @@ import {Text} from '@astryxdesign/core/Text';
 import {ErroApi} from '../api/cliente';
 import {RespostaExtracao} from '../api/competencias';
 import {obterMe, sair, Usuario} from '../api/conta';
+import {TelaComparacao} from './TelaComparacao';
 import {TelaCompetencias} from './TelaCompetencias';
 import {TelaConsentimentos} from './TelaConsentimentos';
 import {TelaCurriculo} from './TelaCurriculo';
 import {TelaEntrar} from './TelaEntrar';
+import {TelaIntencao} from './TelaIntencao';
 import {TEXTOS_JORNADA} from './textos';
 
 export function AreaJornada() {
@@ -122,8 +124,10 @@ export function AreaJornada() {
       <nav aria-label="Etapas da jornada">
         <Stepper activeStep={etapaAtiva} onStepClick={setEtapaAtiva}>
           <Step step={0} label={TEXTOS_JORNADA.etapas.consentimentos} />
-          <Step step={1} label={TEXTOS_JORNADA.etapas.curriculo} />
-          <Step step={2} label={TEXTOS_JORNADA.etapas.competencias} />
+          <Step step={1} label={TEXTOS_JORNADA.etapas.intencao} />
+          <Step step={2} label={TEXTOS_JORNADA.etapas.curriculo} />
+          <Step step={3} label={TEXTOS_JORNADA.etapas.competencias} />
+          <Step step={4} label={TEXTOS_JORNADA.etapas.comparacao} />
         </Stepper>
       </nav>
 
@@ -139,17 +143,28 @@ export function AreaJornada() {
         )}
 
         {etapaAtiva === 1 && (
-          <TelaCurriculo
+          <TelaIntencao
+            onAvancar={() => setEtapaAtiva(2)}
             onIrParaConsentimentos={() => setEtapaAtiva(0)}
-            onSugerirSucesso={(resp) => {
-              setExtracao(resp);
-              setEtapaAtiva(2);
-            }}
           />
         )}
 
         {etapaAtiva === 2 && (
+          <TelaCurriculo
+            onIrParaConsentimentos={() => setEtapaAtiva(0)}
+            onSugerirSucesso={(resp) => {
+              setExtracao(resp);
+              setEtapaAtiva(3);
+            }}
+          />
+        )}
+
+        {etapaAtiva === 3 && (
           <TelaCompetencias extracaoInicial={extracao} />
+        )}
+
+        {etapaAtiva === 4 && (
+          <TelaComparacao />
         )}
       </div>
     </div>

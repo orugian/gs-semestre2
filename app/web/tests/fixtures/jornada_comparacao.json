@@ -1,0 +1,176 @@
+{
+  "comparacao_id": "comp-789",
+  "criado_em": "2026-11-16T15:30:00Z",
+  "uf": "SP",
+  "destinos": [
+    {
+      "destino_id": "analista_processos",
+      "nome": "Analista de Processos/Melhoria Contínua",
+      "dimensoes": {
+        "requisitos": {
+          "itens": [
+            {
+              "id_local": "req-proc-1",
+              "esco_id": "http://data.europa.eu/esco/skill/gestao-processos",
+              "titulo": "Gestão de Processos de Negócio",
+              "obrigatorio": true,
+              "estado": "demonstrada",
+              "motivo": null,
+              "origem": "exercicio",
+              "trecho_origem": null,
+              "avisos": []
+            },
+            {
+              "id_local": "req-proc-2",
+              "esco_id": "http://data.europa.eu/esco/skill/mapeamento-fluxo",
+              "titulo": "Mapeamento e Modelagem de Processos",
+              "obrigatorio": true,
+              "estado": "desconhecida",
+              "motivo": "sem_informacao_suficiente",
+              "origem": null,
+              "trecho_origem": null,
+              "avisos": []
+            },
+            {
+              "id_local": "req-proc-3",
+              "esco_id": "http://data.europa.eu/esco/skill/metodologia-agil",
+              "titulo": "Metodologias Ágeis",
+              "obrigatorio": false,
+              "estado": "declarada",
+              "motivo": null,
+              "origem": "extracao_llm",
+              "trecho_origem": "Atuação com metodologia Kanban e Scrum em processos industriais.",
+              "avisos": ["entrada_conflitante"]
+            },
+            {
+              "id_local": "req-proc-4",
+              "esco_id": "http://data.europa.eu/esco/skill/six-sigma",
+              "titulo": "Six Sigma",
+              "obrigatorio": false,
+              "estado": "lacuna",
+              "motivo": "ausencia_informada_pelo_usuario",
+              "origem": null,
+              "trecho_origem": null,
+              "avisos": []
+            }
+          ],
+          "contagem": {
+            "demonstrada": 1,
+            "declarada": 1,
+            "desconhecida": 1,
+            "lacuna": 1
+          }
+        },
+        "obrigatorios_nao_atendidos": [
+          {
+            "id_local": "req-proc-2",
+            "titulo": "Mapeamento e Modelagem de Processos",
+            "estado": "desconhecida"
+          }
+        ],
+        "aproveitamento_experiencia": {
+          "declarados": ["req-proc-3"],
+          "demonstrados": ["req-proc-1"]
+        },
+        "mercado": {
+          "disponivel": true,
+          "natureza": "observado",
+          "fonte": "Novo Caged / MTE",
+          "populacao": "Trabalhadores formais celetistas no grupo CBO 2521",
+          "unidade": "admissões formais",
+          "uf": "SP",
+          "referencia_temporal": "202001–202509",
+          "ultimo_observado": {
+            "competencia": "202509",
+            "valor": 645.0
+          },
+          "elegivel_previsao": true,
+          "resumo": "Série com 69 competências mensais observadas em São Paulo.",
+          "detalhe_url": "/mercado/analista_processos?uf=SP"
+        },
+        "preferencias": {
+          "conflitos": [
+            "Horas semanais disponíveis (20h) inferiores à média observada no grupo."
+          ],
+          "observacoes": [
+            "Destino alinhado com atividades de melhoria contínua."
+          ]
+        }
+      },
+      "situacao_obrigatorios": "ha_obrigatorios_nao_demonstrados"
+    },
+    {
+      "destino_id": "analista_dados_bi",
+      "nome": "Analista de Dados/BI",
+      "dimensoes": {
+        "requisitos": {
+          "itens": [
+            {
+              "id_local": "req-dados-1",
+              "esco_id": "http://data.europa.eu/esco/skill/sql",
+              "titulo": "SQL e Modelagem de Dados",
+              "obrigatorio": true,
+              "estado": "declarada",
+              "motivo": null,
+              "origem": "extracao_llm",
+              "trecho_origem": "Construção de relatórios e consultas SQL.",
+              "avisos": []
+            },
+            {
+              "id_local": "req-dados-2",
+              "esco_id": "http://data.europa.eu/esco/skill/python-analise",
+              "titulo": "Python para Análise de Dados",
+              "obrigatorio": true,
+              "estado": "demonstrada",
+              "motivo": null,
+              "origem": "exercicio",
+              "trecho_origem": null,
+              "avisos": []
+            }
+          ],
+          "contagem": {
+            "demonstrada": 1,
+            "declarada": 1,
+            "desconhecida": 0,
+            "lacuna": 0
+          }
+        },
+        "obrigatorios_nao_atendidos": [
+          {
+            "id_local": "req-dados-1",
+            "titulo": "SQL e Modelagem de Dados",
+            "estado": "declarada"
+          }
+        ],
+        "aproveitamento_experiencia": {
+          "declarados": ["req-dados-1"],
+          "demonstrados": ["req-dados-2"]
+        },
+        "mercado": {
+          "disponivel": true,
+          "natureza": "observado",
+          "fonte": "Novo Caged / MTE",
+          "populacao": "Trabalhadores formais celetistas no grupo CBO 2124",
+          "unidade": "admissões formais",
+          "uf": "SP",
+          "referencia_temporal": "202001–202509",
+          "ultimo_observado": {
+            "competencia": "202509",
+            "valor": 1280.0
+          },
+          "elegivel_previsao": true,
+          "resumo": "Série com 69 competências mensais observadas em São Paulo.",
+          "detalhe_url": "/mercado/analista_dados_bi?uf=SP"
+        },
+        "preferencias": {
+          "conflitos": [],
+          "observacoes": [
+            "Carga horária compatível com a informada."
+          ]
+        }
+      },
+      "situacao_obrigatorios": "ha_obrigatorios_nao_demonstrados"
+    }
+  ],
+  "aviso": "Sem nota única: cada dimensão é apresentada separadamente e a decisão é sua."
+}

@@ -6,8 +6,10 @@ export const TEXTOS_JORNADA = {
 
   etapas: {
     consentimentos: 'Consentimentos',
+    intencao: 'Intenção',
     curriculo: 'Currículo',
     competencias: 'Competências',
+    comparacao: 'Comparação',
   },
 
   auth: {
@@ -48,7 +50,7 @@ export const TEXTOS_JORNADA = {
     revogadoEm: (data: string) => `Revogado em ${data}`,
     conceder: 'Conceder',
     revogar: 'Revogar',
-    avancarCurriculo: 'Continuar para o currículo',
+    avancarCurriculo: 'Continuar para a intenção',
   },
 
   curriculo: {
@@ -109,6 +111,122 @@ export const TEXTOS_JORNADA = {
       qtd === 1
         ? '1 sugestão foi descartada por não ter trecho correspondente no texto.'
         : `${qtd} sugestões foram descartadas por não terem trecho correspondente no texto.`,
+  },
+
+  intencao: {
+    titulo: 'Intenção profissional',
+    descricao:
+      'Informe suas metas profissionais, tempo disponível e localização para orientar suas opções de transição.',
+    atividades: {
+      titulo: 'Atividades desejadas',
+      descricao:
+        'Liste as atividades que você gostaria de realizar (até 10 atividades, cada uma com até 120 caracteres).',
+      nova: 'Nova atividade desejada',
+      adicionar: 'Adicionar atividade',
+      remover: 'Remover',
+      limite: 'Limite de até 10 atividades desejadas atingido.',
+      tamanhoInvalido: 'Cada atividade deve ter entre 1 e 120 caracteres.',
+      vazio: 'Nenhuma atividade adicionada ainda.',
+    },
+    motivos: {
+      titulo: 'Motivos da transição',
+      descricao:
+        'Explique seus motivos e expectativas (até 5 motivos, cada um com até 300 caracteres). Antes de salvar, tentamos ocultar dados de contato; o texto salvo aparece abaixo para você conferir.',
+      novo: 'Novo motivo',
+      adicionar: 'Adicionar motivo',
+      remover: 'Remover',
+      limite: 'Limite de até 5 motivos atingido.',
+      tamanhoInvalido: 'Cada motivo deve ter até 300 caracteres.',
+      vazio: 'Nenhum motivo adicionado ainda.',
+    },
+    horas: {
+      rotulo: 'Horas por semana disponíveis',
+      descricao: 'Informe quantas horas semanais você pode dedicar (entre 1 e 80 horas).',
+      erro: 'As horas por semana devem ser entre 1 e 80.',
+    },
+    orcamento: {
+      rotulo: 'Orçamento mensal para qualificação (R$)',
+      descricao:
+        'Opcional. Valor estimado que você pode investir mensalmente em capacitação (até R$ 100.000).',
+      erro: 'O orçamento mensal deve ser entre R$ 0 e R$ 100.000.',
+    },
+    uf: {
+      rotulo: 'Unidade Federativa (UF)',
+      descricao: 'Selecione o estado onde você reside ou deseja atuar.',
+      selecione: 'Selecione uma UF',
+      erro: 'Selecione uma UF válida.',
+    },
+    salvar: 'Salvar intenção',
+    salvando: 'Salvando intenção...',
+    salvoEm: (data: string) => `Salvo em ${data}`,
+    bloqueioPerfil:
+      'Para salvar sua intenção profissional, é necessário conceder a autorização de perfil e currículo.',
+    irParaConsentimentos: 'Ir para consentimentos',
+    avancar: 'Continuar para o currículo',
+  },
+
+  comparacao: {
+    titulo: 'Comparação de destinos',
+    descricao:
+      'Escolha de 1 a 3 destinos para comparar lado a lado requisitos, evidências, mercado formal observado e disponibilidade.',
+    selecao: {
+      titulo: 'Escolha até 3 destinos',
+      descricao: 'Selecione os destinos profissionais que deseja comparar.',
+      limiteMaximo: 'Você pode selecionar no máximo 3 destinos para comparar.',
+      nenhumSelecionado: 'Selecione pelo menos 1 destino para comparar.',
+      comparar: 'Comparar',
+      comparando: 'Comparando destinos...',
+      ufRotulo: 'UF para dados de mercado (opcional)',
+    },
+    avisoSemNota:
+      'Sem nota única: cada dimensão é apresentada separadamente e a decisão é sua.',
+    legenda: {
+      titulo: 'Legenda dos estados de evidência',
+      demonstrada:
+        'Demonstrada: evidência revisada por critério explícito (exercício)',
+      declarada: 'Declarada: informada pela pessoa, não comprovada',
+      desconhecida: 'Desconhecida: informação insuficiente, não inaptidão',
+      lacuna:
+        'Lacuna: ausência identificada (a pessoa disse que não possui, ou o exercício ficou abaixo do mínimo)',
+    },
+    novaComparacao: 'Nova comparação',
+    obrigatoriosNaoAtendidos: {
+      titulo: 'Obrigatórios ainda não atendidos',
+      todosDemonstrados: 'todos os obrigatórios demonstrados',
+    },
+    contagem: {
+      titulo: 'Balanço de evidências',
+      demonstrada: 'Demonstradas',
+      declarada: 'Declaradas',
+      desconhecida: 'Desconhecidas',
+      lacuna: 'Lacunas',
+    },
+    requisitos: {
+      titulo: 'Lista de requisitos por estado',
+      obrigatorio: 'obrigatório',
+      avisoConflito: 'informações conflitantes; revise suas competências',
+      motivos: {
+        sem_informacao_suficiente: 'sem informação suficiente',
+        ausencia_informada_pelo_usuario: 'você informou que não possui',
+        exercicio_abaixo_do_minimo: 'exercício abaixo do mínimo',
+        avaliacao_parcial_llm_indisponivel: 'avaliação parcial (IA indisponível)',
+      },
+    },
+    mercado: {
+      titulo: 'Mercado formal observado',
+      natureza: 'Observado',
+      rotuloValor: 'admissões formais estimadas no grupo e território',
+      verNoMercado: 'ver no Mercado',
+      motivosIndisponivel: {
+        uf_nao_informada: 'Informe a UF para ver o mercado observado',
+        snapshot_indisponivel: 'Dados de mercado indisponíveis no momento',
+        sem_serie_para_uf: 'Sem série observada para esta UF',
+      },
+    },
+    preferencias: {
+      titulo: 'Disponibilidade e preferências',
+      semConflitos: 'Nenhum conflito identificado com sua disponibilidade.',
+    },
   },
 };
 
