@@ -16,6 +16,7 @@ from citizentech.curriculo.rotas import router as curriculo_router
 from citizentech.destinos.rotas import router as destinos_router
 from citizentech.erros import registrar_manipuladores_de_erro
 from citizentech.intencao.rotas import router as intencao_router
+from citizentech.laboratorio.rotas import router as laboratorio_router
 from citizentech.leituras.rotas import router as leituras_router
 from citizentech.limiares import carregar_limiares
 from citizentech.mercado.rotas import router as mercado_router
@@ -68,6 +69,7 @@ def criar_app() -> FastAPI:
     aplicacao.include_router(comparacao_router)
     aplicacao.include_router(plano_router)
     aplicacao.include_router(avaliacao_router)
+    aplicacao.include_router(laboratorio_router)
 
     @aplicacao.get("/health")
     def health() -> dict:

@@ -71,6 +71,9 @@ class ClienteLambda:
             if registro.get(campo):
                 payload_nuvem[campo] = registro[campo]
 
+        if registro.get("relato_redigido"):
+            payload_nuvem["relato"] = str(registro["relato_redigido"])[:280]
+
         headers = {
             "Content-Type": "application/json",
             "X-Device-Key": self.chave_dispositivo,
