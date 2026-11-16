@@ -1,6 +1,28 @@
 # Estado do desenvolvimento — CitizenTech
 
-> Primeiro arquivo da próxima sessão. Snapshot documental de **16/11/2026 ~16h (UTC−3)**, não monitoramento ao vivo. Prazo **19/11/2026 às 23h55** (~3,3 dias). Histórico detalhado: `git show 27a06a4:docs/estado.md` (camadas de 16/11 tarde), `git show d2ddec4:docs/estado.md` (até 15/11); trilha de agentes em `../.kaiser/{contratos,reports}/`. Handoff desta sessão: `C:\Users\orugi\AppData\Local\Temp\handoff_citizentech_20261116_noite.md`.
+> Primeiro arquivo da próxima sessão. Snapshot documental de **16/11/2026 ~17h05 (UTC−3)**, não monitoramento ao vivo. Prazo **19/11/2026 às 23h55** (~3,3 dias). Histórico detalhado: `git show 18e7a14:docs/estado.md` (até 16/11 16h), `git show 27a06a4:docs/estado.md`, `git show d2ddec4:docs/estado.md`; trilha de agentes em `../.kaiser/{contratos,reports}/`.
+
+## 0. Sessão de 16/11 noite (camada mais recente; prevalece sobre §1–§4 onde conflitar)
+
+**Integrado em `main` e enviado a `gs-semestre2` (`2a0049e`, gitleaks limpo no intervalo):**
+- **S15b telas web** (`47a9d4c`): aba "Minha transição" com Entrar/Criar conta, Consentimentos, Currículo (colar/enviar → texto redigido editável → confirmar → só então "Sugerir competências") e Competências (confirmar/rejeitar/não possuo). Correções do orquestrador: editar depois de confirmar esconde "Sugerir" até reconfirmar (RED reproduzido: `expected <button> to be null`), textos sem prometer ocultação total, Astryx em pt-BR (`InternationalizationProvider`). `pnpm run test` 40 passed, build ok. **Smoke real no Edge** (playwright-core em `../.kaiser/tmp/smoke/smoke_s15b.mjs`, cookies Secure em localhost funcionam): registrar 201 → login 200 → 2 consentimentos 201 → experiências 201 sem e-mail/telefone → confirmar 200 → extrair 503 (API sem chave LLM; mensagem correta) → logout 204. **Tela de competências não vista no navegador** (precisa da LLM real).
+- **S11b rotas** (`b6fa38d`): `PUT/GET /me/intencao`, `GET /destinos` (whitelist, sem exercício), `POST /me/comparacoes` (≤3, sem score, mercado repassado do snapshot), `GET /me/comparacoes/{id}`; DDL `app/db/ddl/003_intencao_comparacao.sql`. `app/api` **342 passed, 0 skip**, ruff limpo (rodado pelo orquestrador no worktree e em `main`). Contraexemplos na API real (porta 8002): fora do escopo/4 destinos/UF inválida/campo extra → 400; sem `perfil` → 403; outro usuário → 404; GET = POST; `ultimo_observado` SP = `/mercado` (processos 645,0; dados/BI 1994,0 em 202509). Gitleaks pegou falso positivo (`texto_secreto` em teste) **depois** do commit local por erro do orquestrador (encadeou o commit); corrigido renomeando e refazendo o merge local antes do push (`reset --keep` em histórico não enviado).
+- **06_Cloud/README.md** completo com evidências reais; prints novos tarjados `20261116_function_url.png`, `20261116_rds_conectividade.png`, `20261116_rds_security_group.png` (originais copiados para `../.dados/cloud/privado/20261116_*_original.png`, SHA conferido; os 3 originais com e-mail seguem em `06_Cloud/evidencias/` excluídos via `.git/info/exclude` — o usuário pode apagá-los). Console mostra a variável `RATE_KIMIT_POR_MINUTO` (erro de digitação; efeito nulo, padrão 30).
+- **02_Cybersecurity/relatorio.md + .pdf (11 páginas)** com demonstração executada `app/tools/demo_protecoes.py` → `evidencias/20261116_demo_protecoes.txt` (16 verificações, 0 falhas; Argon2id m=65536,t=3,p=4 conferido no Oracle; PII fictícia 0 vezes no log).
+- **04_CTP_Python/documento.md + .pdf (8 páginas)** com `app/tools/demo_leituras_ctp.py` → `evidencias/20261116_demo_ctp.txt` e `20261116_historico_leituras.csv` (3 cenários normal/atenção/crítico, 200 reenvio, 409, 400, 401; indicadores temp média 37,0 e dist 14,0); 108 testes de leituras/outbox passaram.
+
+**Em andamento (processos destacados, ver `../.kaiser/tmp/lancar_<fatia>.log`):**
+- **S13-avaliacao** (agy PID 11120, 17h00, worktree `../GS-wt/S13-avaliacao`, contrato `../.kaiser/contratos/S13-avaliacao.md`, DDL reservado `004_avaliacao.sql`; integra `resultados_exercicio_para_comparacao` em `comparacao/servico.py`). Fatia de risco: no aceite, **reproduzir RED** em worktree temporário e **revisão independente** `agy --mode plan`.
+- **S15c-comparacao** (agy PID 29064, 17h02, worktree `../GS-wt/S15c-comparacao`): telas de Intenção e Comparação; etapas passam a 5. Aceite: testes + smoke Edge com `smoke_s15b.mjs` estendido.
+- API de teste do orquestrador ainda de pé na porta 8000 (código de `main` antes da S11b; wrapper PID 26924). Reiniciar com `subir_api_teste.ps1` para smokes novos.
+
+**Bloqueio / decisão pendente do usuário:** S12 (plano) precisa de fonte para "atividades por pré-requisito": o catálogo não tem grafo de pré-requisitos nem atividades. Pergunta enviada ao usuário em 16/11 ~17h05.
+
+**Decisões locais desta sessão:** consentimento `curriculo_llm` também cobre o envio da resposta aberta do exercício à LLM (S13), com redação de PII antes; comparação sem UF e sem intenção devolve mercado `uf_nao_informada`; DDL numerado por fatia (003 S11b, 004 S13, 005 livre para S12/S14).
+
+**Fatos de ambiente novos** (também em CLAUDE §14.3): `run_in_background` do harness não executa — usar `Start-Process` com `../.kaiser/ferramentas/lancar_agy.ps1`; `env_teste.ps1`; `subir_api_teste.ps1`; capturar saída Python com `[Console]::OutputEncoding=UTF8`.
+
+**Próximo passo exato:** aceitar S15c e S13 (com RED reproduzido e revisão independente) → S12 conforme a resposta do usuário → S14 laboratório → S15 E2E (Playwright com Edge `channel: 'msedge'` + axe, persona demo) → Data Science (DDL 001–004 + consultas no Oracle local + coleções Mongo) → firmware Wokwi + AICSS → roteiros → revisão de conformidade → empacotador (incluir cópias de `app/cloud` em `06_Cloud/codigo/` e de leituras em `04_CTP_Python/codigo/`) e PDFs.
 
 ## 1. Ponto de parada
 
