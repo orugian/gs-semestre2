@@ -3,6 +3,7 @@
 **Disciplina:** Computational Thinking with Python · **Global Solution 2026.2**
 
 **Integrantes (nome completo + RM):**
+
 - [HUMANO — preencher]
 
 <div class="quebra-pagina"></div>

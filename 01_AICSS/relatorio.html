@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CitizenTech - AICSS</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>CitizenTech — Bancada de monitoramento com ESP32 para prática de transição de carreira</h1>
+<p><strong>Disciplina:</strong> AI Computer Systems and Sensors · <strong>Global Solution 2026.2</strong></p>
+<p><strong>Integrantes (nome completo + RM):</strong></p>
+<ul>
+<li>[HUMANO — preencher]</li>
+</ul>
+<div class="quebra-pagina"></div>
+
+<h2>1. Problema, público beneficiado e evidência de relevância</h2>
+<p><strong>Problema.</strong> Quem está migrando de carreira para monitoramento industrial e IoT precisa praticar três coisas: ler sensores, ajustar limiares e reagir a alarmes. Laboratório com instrumentação é caro e se concentra nos grandes centros, e quem trabalha durante o dia raramente consegue frequentar uma bancada presencial.</p>
+<p><strong>Público beneficiado.</strong> Profissionais graduados e experientes em transição de carreira que usam a plataforma CitizenTech e escolhem o destino "Analista de Monitoramento/IoT Industrial". É o mesmo público das demais disciplinas.</p>
+<p><strong>Evidência de relevância.</strong> O snapshot de mercado do projeto, gerado a partir dos microdados públicos do Novo Caged (MTE/PDET), registra <strong>3.445 admissões formais em 2024</strong> de pessoas com ensino superior completo ou mais nas 7 ocupações CBO curadas desse destino. Dessas, <strong>2.269 (66%) foram no Sudeste</strong>, 1.356 só em São Paulo, e <strong>118 em toda a região Norte</strong>. A demanda existe e está concentrada onde já há mais laboratórios. Uma bancada simulada ou de baixo custo, ligada a uma plataforma, leva a prática para quem está longe deles. Os números são admissões observadas, não vagas abertas nem chance individual de contratação. Fonte: <code>snapshot_mercado.json</code> do recorte R29, campo <code>contexto_regional</code> (SHA-256 do painel <code>33a89898…e922c5</code>).</p>
+<p><strong>Contribuição para o CitizenTech.</strong> A plataforma distingue competência <strong>declarada</strong> (vinda do currículo) de competência <strong>demonstrada</strong>. A bancada dá à pessoa um lugar para praticar a competência de monitoramento com dados reais da própria sessão, e a leitura de cada sensor chega à plataforma com o mesmo critério de risco usado em todo o sistema.</p>
+<h2>2. Arquitetura da solução e origem dos dados</h2>
+<pre><code>Fenômeno na bancada
+  temperatura do equipamento ──&gt; DS18B20 (1-Wire, GPIO 4)
+  aproximação da zona de risco ─&gt; HC-SR04 (TRIG GPIO 5, ECHO GPIO 18)
+        |
+        v
+ESP32 · firmware C++ (Arduino Core), ciclo a cada 5 s
+  logica.h  classifica cada sensor: normal / atenção / crítico / ERRO
+            decide o alerta local pela pior classe:
+              LED vermelho (GPIO 2) .... atenção ou crítico
+              buzzer (GPIO 15) ......... crítico
+              LED piscando ............. os dois sensores em falha
+            monta um JSON por métrica (montar_json)
+        |
+        |  POST /leituras  (JSON, cabeçalho X-Device-Key)
+        v
+Servidor Python · FastAPI, módulo citizentech.leituras
+  valida e reclassifica com os mesmos limiares
+  grava em CSV · exibe por GET /leituras e na tela &quot;Laboratório&quot; da web
+  outbox SQLite ──&gt; AWS Lambda (disciplina de Cloud)
+</code></pre>
+<p><strong>Origem dos dados.</strong> As leituras são do próprio dispositivo: temperatura em °C do DS18B20 e distância em cm calculada pelo tempo de eco do HC-SR04 (<code>duração_us × 0,0343 / 2</code>). Não há base externa.</p>
+<p><strong>Limiares.</strong> Ficam num único arquivo, <code>app/config/limiares.json</code>. O header do firmware <code>limiares.h</code> é <strong>gerado</strong> a partir dele (<code>app/tools/gerar_limiares_h.py</code>, que grava o SHA-256 de origem <code>283065eb…</code>), e a API e a Lambda leem o mesmo JSON. Ninguém digita limiar em código.</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Direção</th>
+<th>Normal</th>
+<th>Atenção</th>
+<th>Crítico</th>
+<th>Erro de sensor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperatura_c</code></td>
+<td>maior é pior</td>
+<td>&lt; 35 °C</td>
+<td>35 ≤ t &lt; 45</td>
+<td>≥ 45 °C</td>
+<td>−127 °C (DS18B20 desconectado), NaN</td>
+</tr>
+<tr>
+<td><code>distancia_cm</code></td>
+<td>menor é pior</td>
+<td>&gt; 15 cm</td>
+<td>8 &lt; d ≤ 15</td>
+<td>0 ≤ d ≤ 8 cm</td>
+<td>sem eco (timeout de 30 ms), NaN, &lt; 0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status por sensor e atuadores.</strong> Cada sensor recebe o status <code>OK</code> (normal), <code>ALERTA</code> (atenção ou crítico) ou <code>ERRO</code>. O atuador segue a pior classe entre os sensores válidos: atenção acende o LED; crítico acende o LED e liga o buzzer (1 kHz); os dois sensores em <code>ERRO</code> fazem o LED piscar três vezes por ciclo.</p>
+<p><strong>JSON transmitido</strong> (um por métrica e por ciclo; exemplo real do cenário crítico):</p>
+<pre><code class="language-json">{&quot;schema_version&quot;:&quot;1.0&quot;,&quot;evento_id&quot;:&quot;esp32-lab-01-c-ec127e43-3-temperatura_c&quot;,
+ &quot;dispositivo_id&quot;:&quot;esp32-lab-01&quot;,&quot;tipo_dispositivo&quot;:&quot;esp32&quot;,
+ &quot;sessao_laboratorio_id&quot;:&quot;demo-aicss-5aea1b35&quot;,&quot;ciclo_id&quot;:&quot;c-ec127e43-3&quot;,
+ &quot;metrica&quot;:&quot;temperatura_c&quot;,&quot;unidade&quot;:&quot;C&quot;,&quot;valor&quot;:48.0,&quot;status&quot;:&quot;ALERTA&quot;}
+</code></pre>
+<p>O <code>evento_id</code> combina dispositivo, ciclo e métrica. Um reenvio do mesmo JSON não duplica o registro: a API responde 200 em vez de 201. O <code>sessao_laboratorio_id</code> só vai no JSON quando a pessoa configura o código da sessão aberta na plataforma (<code>LAB-XXXXXX</code>).</p>
+<p><strong>Montagem do circuito</strong> (<code>firmware/diagram.json</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Ligação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DS18B20</td>
+<td>VCC → 3V3, GND → GND, DQ → GPIO 4, resistor de pull-up de 4,7 kΩ entre DQ e 3V3</td>
+</tr>
+<tr>
+<td>HC-SR04</td>
+<td>VCC → 5V, GND → GND, TRIG → GPIO 5, ECHO → GPIO 18</td>
+</tr>
+<tr>
+<td>LED vermelho</td>
+<td>GPIO 2 → resistor 220 Ω → anodo; catodo → GND</td>
+</tr>
+<tr>
+<td>Buzzer</td>
+<td>GPIO 15 → buzzer → GND</td>
+</tr>
+</tbody>
+</table>
+<div class="quebra-pagina"></div>
+
+<h2>3. Justificativa dos sensores</h2>
+<p>A bancada simula a rotina de um analista de monitoramento: acompanhar uma grandeza que sobe e outra que desce, e reagir quando passam do limite.</p>
+<ul>
+<li><strong>DS18B20 (temperatura).</strong> Superaquecimento de motor, painel ou mancal é o alarme mais comum em monitoramento industrial. O sensor é digital (1-Wire), não depende de calibração de ADC e sinaliza desconexão com um valor fixo (−127 °C). Isso permite praticar também a diferença entre "valor alto" e "sensor com defeito", que exige reações diferentes.</li>
+<li><strong>HC-SR04 (distância).</strong> Representa a zona de segurança da bancada: alguém ou algo se aproximando de um equipamento quente ou em movimento. A regra é invertida (quanto menor, pior). Assim a pessoa pratica limiares nas duas direções, um erro frequente de quem está começando.</li>
+<li><strong>Dois níveis de alarme.</strong> LED sozinho para atenção e LED com buzzer para crítico. Separar o aviso do alarme que exige ação imediata é um princípio básico de gestão de alarmes (presente em normas como a ANSI/ISA-18.2), e a pessoa vê esse princípio na própria bancada.</li>
+<li><strong>Alinhamento com a solução.</strong> As duas métricas são as mesmas que a API de CTP, a Lambda de Cloud e a tela de laboratório da web usam. As competências ESCO "sensores" e "protocolos de comunicação de TIC" fazem parte dos requisitos obrigatórios do destino IoT no catálogo do projeto (consulta C4 de Data Science).</li>
+</ul>
+<h2>4. Inovação</h2>
+<ol>
+<li><strong>A bancada vira instrumento de prática ligado à pessoa.</strong> Na plataforma, a pessoa abre uma sessão de laboratório, recebe um código <code>LAB-XXXXXX</code> válido por 4 horas e o configura no dispositivo. As leituras com esse código aparecem na tela da sessão com os indicadores calculados (contagem, alertas, média, máximo e mínimo por métrica). Para o destino IoT, o plano de preparação traz essa sessão como checkpoint opcional. Declaramos o limite: a sessão <strong>não</strong> muda sozinha o estado da competência; a competência passa a "demonstrada" pelo exercício diagnóstico da plataforma.</li>
+<li><strong>Uma regra só, do sensor à nuvem.</strong> O firmware, a API e a Lambda classificam com o mesmo <code>limiares.json</code>. Na evidência da §5, as 16 leituras enviadas receberam da API exatamente o risco que o firmware calculou, inclusive nas fronteiras (35,0 °C, 15,0 cm, 45,0 °C, 8,0 cm).</li>
+<li><strong>Lógica de decisão testável fora da placa.</strong> Toda a decisão (classificação, atuadores, conversão do eco, montagem e escape do JSON sem alocação dinâmica) está em <code>logica.h</code>, C++ puro. Ela compila no computador com <code>g++ -std=c++17 -Wall -Wextra -Werror</code> e tem testes automatizados. O <code>sketch.ino</code> só faz entrada e saída.</li>
+</ol>
+<h2>5. Evidências: 3 comportamentos e testes com diferentes entradas</h2>
+<h3>5.1 O que já foi executado (16/11/2026)</h3>
+<p><strong>Evidência A — lógica do firmware → JSON → servidor → CSV</strong> (<code>evidencias/20261116_logica_firmware_host.txt</code>). O script <code>app/tools/demo_firmware_aicss.py</code> compila um harness (<code>app/tools/aicss/demo_cenarios.cpp</code>) com a mesma <code>logica.h</code> e o mesmo <code>limiares.h</code> do firmware. Para cada entrada, imprime a classe de cada sensor, a decisão dos atuadores e o JSON que o <code>sketch.ino</code> montaria. Em seguida envia esse JSON ao <code>POST /leituras</code> da API Python e lê o histórico gravado em CSV. Resultado: <strong>10 casos, 16 leituras enviadas, 16 gravadas, 0 falhas</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Entrada (temperatura / distância)</th>
+<th>Status do firmware</th>
+<th>Atuadores decididos</th>
+<th>Envio e registro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Normal</strong> 25,0 °C / 25,0 cm</td>
+<td>OK / OK</td>
+<td>LED apagado, buzzer desligado</td>
+<td>2 JSON → 201, risco <code>normal</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Atenção</strong> 38,0 °C / 12,0 cm</td>
+<td>ALERTA / ALERTA</td>
+<td><strong>LED aceso</strong>, buzzer desligado</td>
+<td>2 JSON → 201, risco <code>atencao</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Crítico</strong> 48,0 °C / 5,0 cm</td>
+<td>ALERTA / ALERTA</td>
+<td><strong>LED aceso, buzzer ligado</strong></td>
+<td>2 JSON → 201, risco <code>critico</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Fronteira 34,9 °C / 15,1 cm</td>
+<td>OK / OK</td>
+<td>nenhum</td>
+<td>201, <code>normal</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Fronteira 35,0 °C / 15,0 cm</td>
+<td>ALERTA / ALERTA</td>
+<td>LED</td>
+<td>201, <code>atencao</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Fronteira 45,0 °C / 8,0 cm</td>
+<td>ALERTA / ALERTA</td>
+<td>LED + buzzer</td>
+<td>201, <code>critico</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Misto 25,0 °C / 6,0 cm</td>
+<td>OK / ALERTA</td>
+<td>LED + buzzer (pior classe)</td>
+<td>201 <code>normal</code> + 201 <code>critico</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>DS18B20 desconectado (−127 °C) / 25,0 cm</td>
+<td>ERRO / OK</td>
+<td>nenhum</td>
+<td>só a distância é enviada</td>
+</tr>
+<tr>
+<td>9</td>
+<td>38,0 °C / HC-SR04 sem eco</td>
+<td>ALERTA / ERRO</td>
+<td>LED</td>
+<td>só a temperatura é enviada</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Os dois sensores em falha</td>
+<td>ERRO / ERRO</td>
+<td><strong>LED piscando</strong></td>
+<td>nada é enviado</td>
+</tr>
+</tbody>
+</table>
+<p>Trecho do CSV gravado pela API (cenário crítico):</p>
+<pre><code>evento_id,dispositivo_id,sessao_laboratorio_id,ciclo_id,tipo_dispositivo,metrica,unidade,valor,risco,alerta,estado,medido_em,criado_em
+esp32-lab-01-c-ec127e43-3-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,temperatura_c,C,48.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+</code></pre>
+<p><strong>Evidência B — compatibilidade com o servidor modelo da disciplina</strong> (<code>evidencias/20261116_compat_servidor_modelo.txt</code>). Os 6 JSON dos três cenários foram enviados também ao <code>servidor/servidor.py</code> fornecido no enunciado. O servidor respondeu 201 a todos, exibiu cada leitura no terminal (<code>esp32-lab-01 temperatura_c=48.0 status=ALERTA</code>) e gravou as 6 linhas no CSV dele.</p>
+<p><strong>Testes automatizados do firmware.</strong> <code>app/tools/tests/test_firmware.py</code>: <strong>9 testes passando</strong> em 16/11. Eles cobrem a sincronia de <code>limiares.h</code> com o JSON, a compilação e execução de <code>teste_logica.cpp</code> com <code>-Werror</code>, fronteiras, falhas de sensor, conversão do eco e montagem do JSON (com e sem sessão, buffer pequeno, NaN e infinito).</p>
+<p><strong>Outras entradas tratadas pela API</strong> (evidência de CTP, <code>04_CTP_Python/</code>): leitura sem <code>valor</code> → 400; <code>-127</code> enviado por engano → 400; reenvio do mesmo <code>evento_id</code> → 200 sem duplicar; mesmo <code>evento_id</code> com valor diferente → 409; sem <code>X-Device-Key</code> → 401.</p>
+<h3>5.2 O que falta executar: o ESP32 no Wokwi</h3>
+<p>[HUMANO — executar e anexar] A execução do <code>sketch.ino</code> no simulador Wokwi <strong>ainda não foi feita</strong>. Por isso, nenhuma imagem do LED ou do buzzer reagindo é apresentada neste relatório. Para cada um dos três cenários (ajustando os controles do DS18B20 e do HC-SR04 para 25/25, 38/12 e 48/5), a evidência prevista é:</p>
+<ul>
+<li>captura do circuito no Wokwi com o LED e o buzzer no estado esperado: <code>evidencias/wokwi_normal.png</code>, <code>wokwi_atencao.png</code>, <code>wokwi_critico.png</code>;</li>
+<li>trecho do Serial Monitor com a linha <code>[Ciclo …] Temp: … [ALERTA] | Dist: … [ALERTA]</code> e o <code>POST … -&gt; status 201</code>;</li>
+<li>saída de <code>GET /leituras</code> com as leituras recebidas do <code>esp32-lab-01</code>.</li>
+</ul>
+<p>Passo a passo em <code>firmware/README.md</code> §3 e §4 (extensão Wokwi no VS Code, com a API em <code>http://host.wokwi.internal:8000/leituras</code>).</p>
+<div class="quebra-pagina"></div>
+
+<h2>6. Implementado × simulado, e limitações</h2>
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Situação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lógica de classificação, atuadores e JSON (<code>logica.h</code>)</td>
+<td><strong>Implementada e executada</strong> no computador (g++), mesma fonte do firmware</td>
+</tr>
+<tr>
+<td>Firmware completo (<code>sketch.ino</code>: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer)</td>
+<td><strong>Implementado, não executado</strong> (Wokwi pendente, §5.2); não há placa física</td>
+</tr>
+<tr>
+<td>Sensores e atuadores</td>
+<td><strong>Simulados</strong> no Wokwi (<code>wokwi-ds18b20</code>, <code>wokwi-hc-sr04</code>, LED, buzzer); sem bancada física</td>
+</tr>
+<tr>
+<td>Servidor Python que exibe e grava em CSV</td>
+<td><strong>Implementado e executado</strong> (API FastAPI de CTP e servidor modelo da disciplina)</td>
+</tr>
+<tr>
+<td>Envio à nuvem</td>
+<td><strong>Implementado e executado</strong> pela outbox da API até a AWS Lambda (ver <code>06_Cloud/README.md</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Limitações identificadas.</strong></p>
+<ol>
+<li>Sem a execução no Wokwi, a reação real do LED e do buzzer e o caminho Wi-Fi → HTTP do ESP32 não estão comprovados; o que está comprovado é a decisão que o firmware toma e o JSON que ele monta.</li>
+<li><strong>Falha de um só sensor não gera alerta local.</strong> Com o DS18B20 desconectado e a distância normal (caso 8), o LED fica apagado; a falha aparece só no Serial Monitor. O padrão de LED piscando existe apenas quando os dois sensores falham.</li>
+<li>Leituras com <code>ERRO</code> não são enviadas, então o servidor não fica sabendo de um sensor com defeito.</li>
+<li>O ESP32 não guarda leituras quando o Wi-Fi cai: faz uma única nova tentativa (falha de rede, 429 ou 5xx) e descarta. A fila que não perde dados (outbox) fica no servidor, entre a API e a nuvem.</li>
+<li>O dispositivo não envia horário (não há relógio sincronizado por NTP); o <code>medido_em</code> é o horário de recebimento na API.</li>
+<li>No Wokwi, o envio é HTTP sem TLS e a <code>DEVICE_KEY</code> fica compilada no firmware (<code>segredos.h</code>, fora do Git). Aceitável para a demonstração local, não para produção.</li>
+<li>Numa placa física, o ECHO do HC-SR04 sai em 5 V e precisa de divisor resistivo antes do GPIO de 3,3 V do ESP32.</li>
+</ol>
+<h2>7. Código desenvolvido</h2>
+<table>
+<thead>
+<tr>
+<th>Arquivo (<code>01_AICSS/firmware/</code>, cópia gerada de <code>app/iot/firmware/</code>)</th>
+<th>Responsabilidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sketch.ino</code></td>
+<td>entrada e saída: sensores, Wi-Fi, HTTP com <code>X-Device-Key</code>, LED, buzzer, Serial</td>
+</tr>
+<tr>
+<td><code>logica.h</code></td>
+<td>classificação, decisão dos atuadores, conversão do eco, montagem e escape do JSON</td>
+</tr>
+<tr>
+<td><code>limiares.h</code></td>
+<td>limiares gerados de <code>app/config/limiares.json</code> (não editar à mão)</td>
+</tr>
+<tr>
+<td><code>segredos.exemplo.h</code></td>
+<td>modelo de credenciais; o <code>segredos.h</code> real fica fora do Git</td>
+</tr>
+<tr>
+<td><code>teste_logica.cpp</code></td>
+<td>testes da lógica no computador</td>
+</tr>
+<tr>
+<td><code>diagram.json</code>, <code>libraries.txt</code></td>
+<td>circuito do Wokwi e bibliotecas (OneWire, DallasTemperature)</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>geração dos limiares, credenciais, execução no Wokwi e cenários</td>
+</tr>
+</tbody>
+</table>
+<p>Servidor: API de leituras em <code>app/api/src/citizentech/leituras/</code> (cópia em <code>04_CTP_Python/codigo/</code>). Evidência no computador: <code>app/tools/demo_firmware_aicss.py</code> e <code>app/tools/aicss/demo_cenarios.cpp</code>.</p>
+<p><strong>Como reproduzir a evidência A</strong> (Windows PowerShell; Python 3.11, <a href="https://docs.astral.sh/uv/">uv</a> e <code>g++</code> no PATH):</p>
+<pre><code class="language-powershell"># terminal 1: API de leituras em modo isolado
+cd app\api
+$env:DEVICE_KEY = '&lt;chave da bancada&gt;'
+$env:CITIZENTECH_LEITURAS_CSV = &quot;$PWD\leituras.csv&quot;
+uv run uvicorn citizentech.leituras.isolado:app --port 8001
+
+# terminal 2: mesma DEVICE_KEY no ambiente
+cd app\tools
+uv run python demo_firmware_aicss.py --base http://127.0.0.1:8001 `
+    --csv ..\api\leituras.csv
+uv run pytest tests/test_firmware.py -q
+</code></pre>
+<h2>8. ODS</h2>
+<ul>
+<li><strong>ODS 4 — Educação de qualidade (meta 4.4):</strong> dá prática de monitoramento a adultos em requalificação profissional, que dificilmente teriam acesso a um laboratório físico.</li>
+<li><strong>ODS 10 — Redução das desigualdades:</strong> a prática deixa de depender de morar perto de um laboratório; o simulador ou um ESP32 barato bastam. É o ponto dos números da §1: 66% das admissões do destino em 2024 ficaram no Sudeste.</li>
+<li><strong>ODS 8 — Trabalho decente (metas 8.5 e 8.6), secundário:</strong> a prática registrada apoia a transição para ocupações técnicas formais.</li>
+</ul>
+</body>
+</html>

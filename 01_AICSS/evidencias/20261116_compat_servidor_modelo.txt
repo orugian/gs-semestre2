@@ -1,0 +1,22 @@
+=== Compatibilidade: JSON do firmware (cenários normal, atenção, crítico) -> servidor modelo 01_AICSS/servidor/servidor.py (porta 8014, CSV temporário) - 2026-11-16T19:22:03-03:00 ===
+Saída do servidor (exibe) e status HTTP de cada POST, seguida do CSV gravado:
+[2026-11-16T19:22:03] esp32-lab-01 temperatura_c=25.0 status=OK
+201
+[2026-11-16T19:22:03] esp32-lab-01 distancia_cm=25.0 status=OK
+201
+[2026-11-16T19:22:03] esp32-lab-01 temperatura_c=38.0 status=ALERTA
+201
+[2026-11-16T19:22:03] esp32-lab-01 distancia_cm=12.0 status=ALERTA
+201
+[2026-11-16T19:22:03] esp32-lab-01 temperatura_c=48.0 status=ALERTA
+201
+[2026-11-16T19:22:03] esp32-lab-01 distancia_cm=5.0 status=ALERTA
+201
+recebido_em,dispositivo_id,tipo_dispositivo,latitude,longitude,metrica,valor,status,medido_em
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,temperatura_c,25.0,OK,
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,distancia_cm,25.0,OK,
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,temperatura_c,38.0,ALERTA,
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,distancia_cm,12.0,ALERTA,
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,temperatura_c,48.0,ALERTA,
+2026-11-16T19:22:03,esp32-lab-01,esp32,,,distancia_cm,5.0,ALERTA,
+

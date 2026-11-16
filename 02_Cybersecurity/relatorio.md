@@ -3,6 +3,7 @@
 **Disciplina:** Cognitive Cybersecurity · **Global Solution 2026.2**
 
 **Integrantes (nome completo + RM):**
+
 - [HUMANO — preencher]
 
 > Atuamos como consultoria de segurança do nosso próprio protótipo. Separamos sempre três situações: **implementado e demonstrado** (com evidência executada), **implementado sem demonstração própria** (coberto por testes automatizados) e **proposto** (não existe no protótipo). Nada neste relatório é apresentado como mais seguro do que foi verificado.

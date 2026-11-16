@@ -1,0 +1,119 @@
+=== Evidência AICSS (lógica do firmware no host) — 2026-11-16T22:25:18Z — API http://127.0.0.1:8013 ===
+firmware: app\iot\firmware · limiares SHA-256 no header: 283065ebfc3a…
+sessão: demo-aicss-5aea1b35
+compilação g++ -std=c++17 -Wall -Wextra -Werror: OK
+
+[1] cenário normal: temperatura=25.0 dist=25.0
+  firmware : temperatura normal (OK) · distância normal (OK)
+  atuadores: LED=apagado · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-1-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-1", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-1-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-1-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-1", "metrica": "distancia_cm", "unidade": "cm", "valor": 25.0, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-1-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[2] cenário atencao: temperatura=38.0 dist=12.0
+  firmware : temperatura atencao (ALERTA) · distância atencao (ALERTA)
+  atuadores: LED=aceso · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-2-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-2", "metrica": "temperatura_c", "unidade": "C", "valor": 38.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-2-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 38.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-2-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-2", "metrica": "distancia_cm", "unidade": "cm", "valor": 12.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-2-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 12.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[3] cenário critico: temperatura=48.0 dist=5.0
+  firmware : temperatura critico (ALERTA) · distância critico (ALERTA)
+  atuadores: LED=aceso · buzzer=ligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-3-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-3", "metrica": "temperatura_c", "unidade": "C", "valor": 48.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-3-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 48.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-3-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-3", "metrica": "distancia_cm", "unidade": "cm", "valor": 5.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-3-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 5.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[4] fronteira 34,9 °C / 15,1 cm: temperatura=34.9 dist=15.1
+  firmware : temperatura normal (OK) · distância normal (OK)
+  atuadores: LED=apagado · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-4-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-4", "metrica": "temperatura_c", "unidade": "C", "valor": 34.9, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-4-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 34.9, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-4-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-4", "metrica": "distancia_cm", "unidade": "cm", "valor": 15.1, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-4-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 15.1, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[5] fronteira 35,0 °C / 15,0 cm: temperatura=35.0 dist=15.0
+  firmware : temperatura atencao (ALERTA) · distância atencao (ALERTA)
+  atuadores: LED=aceso · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-5-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-5", "metrica": "temperatura_c", "unidade": "C", "valor": 35.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-5-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 35.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-5-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-5", "metrica": "distancia_cm", "unidade": "cm", "valor": 15.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-5-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 15.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[6] fronteira 45,0 °C / 8,0 cm: temperatura=45.0 dist=8.0
+  firmware : temperatura critico (ALERTA) · distância critico (ALERTA)
+  atuadores: LED=aceso · buzzer=ligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-6-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-6", "metrica": "temperatura_c", "unidade": "C", "valor": 45.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-6-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 45.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-6-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-6", "metrica": "distancia_cm", "unidade": "cm", "valor": 8.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-6-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 8.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[7] misto: temperatura normal, distância crítica: temperatura=25.0 dist=6.0
+  firmware : temperatura normal (OK) · distância critico (ALERTA)
+  atuadores: LED=aceso · buzzer=ligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-7-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-7", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-7-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-7-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-7", "metrica": "distancia_cm", "unidade": "cm", "valor": 6.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-7-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 6.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[8] DS18B20 desconectado (-127 °C), distância normal: temperatura=-127 dist=25.0
+  firmware : temperatura erro (ERRO) · distância normal (OK)
+  atuadores: LED=apagado · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  json_temperatura: não enviado (leitura com ERRO, como no sketch.ino)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-8-distancia_cm", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-8", "metrica": "distancia_cm", "unidade": "cm", "valor": 25.0, "status": "OK"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-8-distancia_cm", "dispositivo_id": "esp32-lab-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+
+[9] HC-SR04 sem eco, temperatura em atenção: temperatura=38.0 dist=sem_eco
+  firmware : temperatura atencao (ALERTA) · distância erro (ERRO)
+  atuadores: LED=aceso · buzzer=desligado · piscar_falha=não  (esperado pelo limiares.json: OK)
+  JSON enviado : {"schema_version": "1.0", "evento_id": "esp32-lab-01-c-ec127e43-9-temperatura_c", "dispositivo_id": "esp32-lab-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-aicss-5aea1b35", "ciclo_id": "c-ec127e43-9", "metrica": "temperatura_c", "unidade": "C", "valor": 38.0, "status": "ALERTA"}
+  API          : HTTP 201 {"evento_id": "esp32-lab-01-c-ec127e43-9-temperatura_c", "dispositivo_id": "esp32-lab-01", "metrica": "temperatura_c", "unidade": "C", "valor": 38.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T22:25:19Z"}  (risco igual ao do firmware)
+  json_distancia: não enviado (leitura com ERRO, como no sketch.ino)
+
+[10] os dois sensores em falha: temperatura=-127 dist=sem_eco
+  firmware : temperatura erro (ERRO) · distância erro (ERRO)
+  atuadores: LED=apagado · buzzer=desligado · piscar_falha=sim  (esperado pelo limiares.json: OK)
+  json_temperatura: não enviado (leitura com ERRO, como no sketch.ino)
+  json_distancia: não enviado (leitura com ERRO, como no sketch.ino)
+
+[GET /leituras?sessao=demo-aicss-5aea1b35] HTTP 200 · 16 leituras no histórico, 16 enviadas (OK)
+  esp32-lab-01-c-ec127e43-1-temperatura_c: temperatura_c=25.0 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-1-distancia_cm: distancia_cm=25.0 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-2-temperatura_c: temperatura_c=38.0 risco=atencao alerta=True
+  esp32-lab-01-c-ec127e43-2-distancia_cm: distancia_cm=12.0 risco=atencao alerta=True
+  esp32-lab-01-c-ec127e43-3-temperatura_c: temperatura_c=48.0 risco=critico alerta=True
+  esp32-lab-01-c-ec127e43-3-distancia_cm: distancia_cm=5.0 risco=critico alerta=True
+  esp32-lab-01-c-ec127e43-4-temperatura_c: temperatura_c=34.9 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-4-distancia_cm: distancia_cm=15.1 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-5-temperatura_c: temperatura_c=35.0 risco=atencao alerta=True
+  esp32-lab-01-c-ec127e43-5-distancia_cm: distancia_cm=15.0 risco=atencao alerta=True
+  esp32-lab-01-c-ec127e43-6-temperatura_c: temperatura_c=45.0 risco=critico alerta=True
+  esp32-lab-01-c-ec127e43-6-distancia_cm: distancia_cm=8.0 risco=critico alerta=True
+  esp32-lab-01-c-ec127e43-7-temperatura_c: temperatura_c=25.0 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-7-distancia_cm: distancia_cm=6.0 risco=critico alerta=True
+  esp32-lab-01-c-ec127e43-8-distancia_cm: distancia_cm=25.0 risco=normal alerta=False
+  esp32-lab-01-c-ec127e43-9-temperatura_c: temperatura_c=38.0 risco=atencao alerta=True
+
+[CSV leituras.csv] cabeçalho + 16 linhas desta sessão:
+  evento_id,dispositivo_id,sessao_laboratorio_id,ciclo_id,tipo_dispositivo,metrica,unidade,valor,risco,alerta,estado,medido_em,criado_em
+  esp32-lab-01-c-ec127e43-1-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-1,esp32,temperatura_c,C,25.0,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-1-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-1,esp32,distancia_cm,cm,25.0,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-2-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-2,esp32,temperatura_c,C,38.0,atencao,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-2-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-2,esp32,distancia_cm,cm,12.0,atencao,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-3-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,temperatura_c,C,48.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-4-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-4,esp32,temperatura_c,C,34.9,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-4-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-4,esp32,distancia_cm,cm,15.1,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-5-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-5,esp32,temperatura_c,C,35.0,atencao,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-5-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-5,esp32,distancia_cm,cm,15.0,atencao,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-6-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-6,esp32,temperatura_c,C,45.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-6-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-6,esp32,distancia_cm,cm,8.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-7-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-7,esp32,temperatura_c,C,25.0,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-7-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-7,esp32,distancia_cm,cm,6.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-8-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-8,esp32,distancia_cm,cm,25.0,normal,False,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+  esp32-lab-01-c-ec127e43-9-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-9,esp32,temperatura_c,C,38.0,atencao,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
+
+=== sessão demo-aicss-5aea1b35 · falhas=0 ===
