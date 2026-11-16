@@ -1,0 +1,199 @@
+{
+  "exercicio": {
+    "destino_id": "analista_monitoramento_iot",
+    "exercicio_id": "ex-iot-1",
+    "versao": "1.0",
+    "cenario": "Você é responsável por monitorar a bancada de sensores de temperatura e distância em uma linha de produção.",
+    "questoes_objetivas": [
+      {
+        "id": "q1",
+        "enunciado": "Qual protocolo é mais adequado para telemetria leve em redes com restrição de banda?",
+        "alternativas": {
+          "A": "MQTT",
+          "B": "FTP",
+          "C": "Telnet",
+          "D": "SNMP v1"
+        }
+      },
+      {
+        "id": "q2",
+        "enunciado": "Ao identificar um pico crítico de temperatura em um motor, qual a ação imediata recomendada?",
+        "alternativas": {
+          "A": "Ignorar até a próxima medição programada",
+          "B": "Acionar procedimento de resfriamento ou parada preventiva",
+          "C": "Desligar os sensores para evitar alarmes",
+          "D": "Alterar o limiar de alerta para não registrar o evento"
+        }
+      }
+    ],
+    "questao_aberta": {
+      "id": "qa1",
+      "enunciado": "Descreva como você diagnosticaria uma oscilação anômala nos valores de distância e temperatura na bancada de sensores.",
+      "criterios": [
+        {
+          "id": "crit_metodologia",
+          "descricao": "Metodologia de investigação do problema",
+          "ancoras": {
+            "0": "Não apresenta método ou sugere ações sem relação com o problema.",
+            "1": "Apresenta verificação isolada de cabos ou sensores sem isolamento de causa.",
+            "2": "Apresenta isolamento sistemático (verificação física, rede, ruído eletromagnético e calibração)."
+          }
+        },
+        {
+          "id": "crit_seguranca",
+          "descricao": "Mitigação de riscos e segurança operacional",
+          "ancoras": {
+            "0": "Omite medidas de segurança operacional.",
+            "1": "Menciona segurança superficialmente sem ações concretas.",
+            "2": "Prioriza a integridade do operador e prevenção de danos aos equipamentos."
+          }
+        }
+      ]
+    },
+    "politica": {
+      "pesos": {
+        "objetiva": 0.5,
+        "llm": 0.5
+      },
+      "minimo_objetiva": 70,
+      "minimo_llm": 70,
+      "max_tentativas_24h": 3
+    },
+    "tentativas_restantes_24h": 3
+  },
+  "tentativa_parcial": {
+    "tentativa_id": "tent-parcial-1",
+    "destino_id": "analista_monitoramento_iot",
+    "exercicio_id": "ex-iot-1",
+    "exercicio_versao": "1.0",
+    "criado_em": "2026-11-16T14:30:00Z",
+    "objetiva": {
+      "acertos": 2,
+      "total": 2,
+      "nota": 100,
+      "questoes": [
+        {
+          "id": "q1",
+          "resposta": "A",
+          "correta": true,
+          "gabarito": "A",
+          "justificativa": "MQTT é projetado especificamente para telemetria leve e redes com restrição."
+        },
+        {
+          "id": "q2",
+          "resposta": "B",
+          "correta": true,
+          "gabarito": "B",
+          "justificativa": "Parada preventiva ou resfriamento é a medida que evita danos graves imediatos."
+        }
+      ]
+    },
+    "aberta": {
+      "status": "parcial",
+      "nota": null,
+      "modelo": null,
+      "em_cache": false,
+      "criterios": []
+    },
+    "nota_final": null,
+    "resultado": "parcial",
+    "requisitos_avaliados": [
+      {
+        "id_local": "req_telemetria",
+        "esco_id": "esco_123"
+      }
+    ],
+    "tentativas_restantes_24h": 2,
+    "aviso": "Avaliação parcial registrada: a avaliação da resposta aberta pela IA não estava disponível no momento."
+  },
+  "tentativa_demonstrada": {
+    "tentativa_id": "tent-demo-2",
+    "destino_id": "analista_monitoramento_iot",
+    "exercicio_id": "ex-iot-1",
+    "exercicio_versao": "1.0",
+    "criado_em": "2026-11-16T15:00:00Z",
+    "objetiva": {
+      "acertos": 2,
+      "total": 2,
+      "nota": 100,
+      "questoes": [
+        {
+          "id": "q1",
+          "resposta": "A",
+          "correta": true,
+          "gabarito": "A",
+          "justificativa": "MQTT é projetado especificamente para telemetria leve."
+        },
+        {
+          "id": "q2",
+          "resposta": "B",
+          "correta": true,
+          "gabarito": "B",
+          "justificativa": "Parada preventiva ou resfriamento evita danos."
+        }
+      ]
+    },
+    "aberta": {
+      "status": "avaliada",
+      "nota": 90,
+      "modelo": "modelo-ia-diagnostico-v1",
+      "em_cache": false,
+      "criterios": [
+        {
+          "id": "crit_metodologia",
+          "nivel": 2,
+          "justificativa": "O candidato detalhou isolamento por etapas cobrindo fiação, protocolo e ruído.",
+          "trecho_resposta": "Iniciaria pelo isolamento elétrico dos cabos e análise de ruído na linha de telemetria."
+        },
+        {
+          "id": "crit_seguranca",
+          "nivel": 2,
+          "justificativa": "Indicou procedimentos claros de bloqueio e desenergização segura.",
+          "trecho_resposta": "Garantindo a desenergização do maquinário antes de qualquer inspeção na bancada."
+        }
+      ]
+    },
+    "nota_final": 95,
+    "resultado": "demonstrada",
+    "requisitos_avaliados": [
+      {
+        "id_local": "req_telemetria",
+        "esco_id": "esco_123"
+      }
+    ],
+    "tentativas_restantes_24h": 1,
+    "aviso": "Evidência demonstrada com base nos critérios explícitos do exercício."
+  },
+  "historico": {
+    "itens": [
+      {
+        "tentativa_id": "tent-parcial-1",
+        "destino_id": "analista_monitoramento_iot",
+        "exercicio_id": "ex-iot-1",
+        "exercicio_versao": "1.0",
+        "criado_em": "2026-11-16T14:30:00Z",
+        "nota_objetiva": 100,
+        "status_aberta": "parcial",
+        "nota_llm": null,
+        "nota_final": null,
+        "resultado": "parcial",
+        "discordo_em": null
+      },
+      {
+        "tentativa_id": "tent-demo-2",
+        "destino_id": "analista_monitoramento_iot",
+        "exercicio_id": "ex-iot-1",
+        "exercicio_versao": "1.0",
+        "criado_em": "2026-11-16T15:00:00Z",
+        "nota_objetiva": 100,
+        "status_aberta": "avaliada",
+        "nota_llm": 90,
+        "nota_final": 95,
+        "resultado": "demonstrada",
+        "discordo_em": null
+      }
+    ],
+    "ultima": "tent-demo-2",
+    "melhor": "tent-demo-2"
+  }
+}

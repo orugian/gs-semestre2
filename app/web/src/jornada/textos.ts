@@ -10,6 +10,9 @@ export const TEXTOS_JORNADA = {
     curriculo: 'Currículo',
     competencias: 'Competências',
     comparacao: 'Comparação',
+    plano: 'Plano',
+    exercicio: 'Exercício',
+    laboratorio: 'Laboratório',
   },
 
   auth: {
@@ -227,6 +230,180 @@ export const TEXTOS_JORNADA = {
       titulo: 'Disponibilidade e preferências',
       semConflitos: 'Nenhum conflito identificado com sua disponibilidade.',
     },
+    escolherDestino: 'Escolher este destino',
+    dialogSubstituir: {
+      titulo: 'Substituir plano anterior?',
+      descricao:
+        'Você já possui um plano ativo. Ao escolher um novo destino, o plano anterior será substituído pelo novo plano inicial.',
+      confirmar: 'Substituir plano',
+      cancelar: 'Cancelar',
+    },
+  },
+
+  plano: {
+    titulo: 'Plano de desenvolvimento',
+    subtitulo: 'Plano com checkpoints para orientar seus passos de preparação.',
+    vazioTitulo: 'Nenhum plano ativo',
+    vazioDescricao:
+      'Escolha um destino na comparação para gerar seu plano inicial com checkpoints.',
+    irParaComparacao: 'Comparar destinos',
+    carregando: 'Carregando plano de desenvolvimento...',
+    avisoFixo:
+      'Concluir um checkpoint não torna a competência demonstrada; apenas o exercício diagnóstico com critério explícito comprova a evidência.',
+    secaoCheckpoints: 'Checkpoints do plano',
+    secaoJaDemonstrados: 'Já demonstradas anteriormente',
+    secaoObservacoes: 'Observações do plano',
+    obrigatorio: 'Obrigatório',
+    opcional: 'Opcional',
+    criterioConclusao: 'Critério de conclusão',
+    status: {
+      pendente: 'Pendente',
+      em_andamento: 'Em andamento',
+      concluido: 'Concluído',
+    },
+    tipos: {
+      estudar: 'Estudar',
+      praticar: 'Praticar',
+      demonstrar: 'Demonstrar',
+      laboratorio: 'Laboratório',
+      exercicio: 'Exercício diagnóstico',
+    },
+    acoes: {
+      comecar: 'Começar',
+      concluir: 'Concluir',
+      fazerExercicio: 'Fazer o exercício',
+      irParaLaboratorio: 'Acessar laboratório',
+      concluirAria: (titulo: string) => `Concluir checkpoint ${titulo}`,
+      comecarAria: (titulo: string) => `Começar checkpoint ${titulo}`,
+    },
+    resultadoExercicio: {
+      titulo: 'Resultado da última tentativa',
+    },
+  },
+
+  exercicio: {
+    titulo: 'Exercício diagnóstico',
+    carregando: 'Carregando exercício diagnóstico...',
+    cenarioTitulo: 'Cenário',
+    criteriosTitulo: 'Critérios da resposta aberta',
+    criteriosDescricao:
+      'Critérios avaliados com suas âncoras explícitas de nível (0, 1 e 2):',
+    questoesObjetivasTitulo: 'Questões objetivas',
+    questaoAbertaTitulo: 'Resposta aberta',
+    rotuloRespostaAberta: 'Sua resposta aberta',
+    contadorCaracteres: (qtd: number) => `${qtd} / 4000 caracteres (mínimo 20)`,
+    tentativasRestantes: (qtd: number) =>
+      `Tentativas restantes em 24h: ${qtd}`,
+    limiteAtingido:
+      'Você atingiu o limite de 3 tentativas em 24 horas para este exercício.',
+    bloqueioConsentimentoLlm:
+      'Para realizar o exercício diagnóstico com avaliação de resposta aberta, é necessário autorizar o uso do modelo de inteligência artificial.',
+    irParaConsentimentos: 'Ir para consentimentos',
+    enviar: 'Enviar resposta',
+    enviando: 'Avaliando respostas...',
+    resultadoTitulo: 'Resultado da tentativa',
+    resultadoObjetiva: (acertos: number, total: number) =>
+      `Objetiva: ${acertos} de ${total} acertos`,
+    gabaritoRotulo: 'Gabarito',
+    justificativaRotulo: 'Justificativa',
+    respostaCorreta: 'Correta',
+    respostaIncorreta: 'Incorreta',
+    trechoCitacao: 'Trecho da resposta:',
+    notaExercicio: (nota: number) => `Nota do exercício: ${nota}`,
+    notaObjetivaRotulo: (nota: number) => `Nota objetiva: ${nota}`,
+    notaLlmRotulo: (nota: number) => `Nota aberta: ${nota}`,
+    conceito: {
+      demonstrada: 'Demonstrada (básico)',
+      insuficiente: 'Insuficiente',
+      parcial: 'Parcial',
+    },
+    explicacaoParcial:
+      'a avaliação da resposta aberta não estava disponível; a parte objetiva foi registrada',
+    rastreabilidade: {
+      versao: (v: string) => `Versão ${v}`,
+      modelo: (m: string) => `Modelo: ${m}`,
+      data: (d: string) => `Realizado em ${d}`,
+    },
+    acoes: {
+      refazer: 'Refazer exercício',
+      discordo: 'Discordo',
+    },
+    contestacao: {
+      titulo: 'Registrar discordância',
+      descricao:
+        'Se você discorda da avaliação, registre o motivo da sua contestação (entre 10 e 1000 caracteres). Isso não altera a nota automaticamente, mas fica registrado para auditoria.',
+      rotuloMotivo: 'Motivo da discordância',
+      placeholderMotivo: 'Explique por que você discorda da avaliação...',
+      contador: (qtd: number) => `${qtd} / 1000 caracteres (mínimo 10)`,
+      confirmar: 'Confirmar discordância',
+      cancelar: 'Cancelar',
+      registrada: (data?: string) =>
+        data ? `Contestação registrada em ${data}` : 'Contestação registrada',
+      jaRegistrada: 'Você já registrou uma contestação para esta tentativa.',
+    },
+    historico: {
+      titulo: 'Histórico de tentativas',
+      ultima: 'Última',
+      melhor: 'Melhor',
+    },
+  },
+
+  laboratorio: {
+    titulo: 'Laboratório na nuvem',
+    descricao:
+      'Acompanhamento em tempo real da bancada de monitoramento IoT.',
+    opcional: 'Esta etapa é opcional e destinada à prática com telemetria e sensores.',
+    bloqueioConsentimento:
+      'Para acessar o laboratório na nuvem, é necessário autorizar o envio de leituras e relato na etapa de consentimentos.',
+    irParaConsentimentos: 'Ir para consentimentos',
+    abrirSessao: 'Abrir sessão',
+    abrindo: 'Iniciando sessão...',
+    codigoSessao: 'Código da sessão',
+    copiarCodigo: 'Copiar código',
+    codigoCopiado: 'Código copiado!',
+    instrucoesTitulo: 'Instruções',
+    statusSessao: {
+      ativa: 'Ativa',
+      encerrada: 'Encerrada',
+      expirada: 'Expirada',
+    },
+    leiturasTitulo: 'Leituras da bancada',
+    atualizarLeituras: 'Atualizar leituras',
+    atualizando: 'Atualizando leituras...',
+    tabela: {
+      horario: 'Horário (Brasília)',
+      metrica: 'Métrica',
+      valor: 'Valor',
+      risco: 'Risco',
+      estadoNuvem: 'Estado da nuvem',
+    },
+    riscos: {
+      normal: 'Normal',
+      atencao: 'Atenção',
+      critico: 'Crítico',
+    },
+    indicadoresTitulo: 'Indicadores de telemetria',
+    indicadorItem: {
+      contagem: 'Total de leituras',
+      alertas: 'Alertas',
+      media: 'Média',
+      minimo: 'Mínimo',
+      maximo: 'Máximo',
+    },
+    relatoTitulo: 'Relato de observação',
+    rotuloRelato: 'Relato de observação da bancada',
+    placeholderRelato:
+      'Descreva anomalias ou observações da bancada (até 280 caracteres)...',
+    contadorRelato: (qtd: number) => `${qtd} / 280 caracteres`,
+    enviarRelato: 'Enviar relato',
+    enviandoRelato: 'Enviando relato...',
+    textoRedigidoTitulo: 'Relato registrado (texto com dados protegidos)',
+    statusRelato: {
+      pendente: 'será enviado com a próxima leitura',
+      enviado: 'Enviado',
+    },
+    sessaoEncerradaOuExpirada:
+      'A sessão está encerrada ou expirada. Abra uma nova sessão para continuar.',
   },
 };
 

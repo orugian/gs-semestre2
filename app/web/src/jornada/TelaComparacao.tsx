@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Banner} from '@astryxdesign/core/Banner';
 import {Button} from '@astryxdesign/core/Button';
 import {Card} from '@astryxdesign/core/Card';
+import {Dialog} from '@astryxdesign/core/Dialog';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
@@ -14,14 +15,23 @@ import {
 } from '../api/comparacao';
 import {obterIntencao} from '../api/intencao';
 import {UFS_BRASIL} from '../api/mercado';
+import {criarCaminho, RespostaCaminho} from '../api/plano';
 import {CartaoDestino} from './CartaoDestino';
 import {TEXTOS_JORNADA} from './textos';
 
 export interface TelaComparacaoProps {
   onNovaComparacao?: () => void;
+  planoAtivo?: RespostaCaminho | null;
+  onDestinoEscolhido?: (caminho: RespostaCaminho) => void;
+  onIrParaPlano?: () => void;
 }
 
-export function TelaComparacao({onNovaComparacao}: TelaComparacaoProps) {
+export function TelaComparacao({
+  onNovaComparacao,
+  planoAtivo,
+  onDestinoEscolhido,
+  onIrParaPlano,
+}: TelaComparacaoProps) {
   const [destinosDisponiveis, setDestinosDisponiveis] = useState<DestinoResumo[]>([]);
   const [destinosSelecionados, setDestinosSelecionados] = useState<string[]>([]);
   const [uf, setUf] = useState<string>('');
@@ -32,6 +42,8 @@ export function TelaComparacao({onNovaComparacao}: TelaComparacaoProps) {
   const [avisoSelecao, setAvisoSelecao] = useState<string | null>(null);
 
   const [resultado, setResultado] = useState<RespostaComparacao | null>(null);
+  const [destinoParaConfirmar, setDestinoParaConfirmar] = useState<string | null>(null);
+  const [escolhendoDestinoId, setEscolhendoDestinoId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelado = false;
@@ -122,6 +134,39 @@ export function TelaComparacao({onNovaComparacao}: TelaComparacaoProps) {
     setAvisoSelecao(null);
     setErro(null);
     onNovaComparacao?.();
+  };
+
+  const handleSolicitarEscolha = (destinoId: string) => {
+    if (planoAtivo) {
+      setDestinoParaConfirmar(destinoId);
+    } else {
+      executarEscolhaDestino(destinoId);
+    }
+  };
+
+  const executarEscolhaDestino = async (destinoId: string) => {
+    setEscolhendoDestinoId(destinoId);
+    setErro(null);
+
+    try {
+      const resp = await criarCaminho({
+        destino_id: destinoId,
+        comparacao_id: resultado?.comparacao_id || null,
+      });
+      onDestinoEscolhido?.(resp);
+      onIrParaPlano?.();
+    } catch (err: unknown) {
+      if (err instanceof ErroApi) {
+        setErro(err.detalhes || err.erro);
+      } else if (err instanceof Error) {
+        setErro(err.message);
+      } else {
+        setErro('Erro ao escolher destino.');
+      }
+    } finally {
+      setEscolhendoDestinoId(null);
+      setDestinoParaConfirmar(null);
+    }
   };
 
   if (carregandoInicial) {
@@ -277,11 +322,55 @@ export function TelaComparacao({onNovaComparacao}: TelaComparacaoProps) {
             }`}
           >
             {resultado.destinos.map((dest) => (
-              <CartaoDestino key={dest.destino_id} destino={dest} />
+              <CartaoDestino
+                key={dest.destino_id}
+                destino={dest}
+                onEscolherDestino={handleSolicitarEscolha}
+                isEscolhendo={escolhendoDestinoId === dest.destino_id}
+              />
             ))}
           </div>
         </div>
       )}
+
+      {/* Confirmação de substituição de plano existente */}
+      <Dialog
+        isOpen={destinoParaConfirmar !== null}
+        onOpenChange={(aberto) => {
+          if (!aberto) setDestinoParaConfirmar(null);
+        }}
+        width={480}
+      >
+        <div className="flex flex-col gap-4 p-5">
+          <Heading level={3}>
+            {TEXTOS_JORNADA.comparacao.dialogSubstituir.titulo}
+          </Heading>
+          <Text type="body">
+            {TEXTOS_JORNADA.comparacao.dialogSubstituir.descricao}
+          </Text>
+          <div className="flex justify-end gap-3 pt-3 border-t">
+            <Button
+              type="button"
+              variant="secondary"
+              label={TEXTOS_JORNADA.comparacao.dialogSubstituir.cancelar}
+              onClick={() => setDestinoParaConfirmar(null)}
+              isDisabled={escolhendoDestinoId !== null}
+            />
+            <Button
+              type="button"
+              variant="primary"
+              label={TEXTOS_JORNADA.comparacao.dialogSubstituir.confirmar}
+              onClick={() => {
+                if (destinoParaConfirmar) {
+                  executarEscolhaDestino(destinoParaConfirmar);
+                }
+              }}
+              isLoading={escolhendoDestinoId !== null}
+              isDisabled={escolhendoDestinoId !== null}
+            />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

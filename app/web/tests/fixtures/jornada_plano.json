@@ -1,0 +1,67 @@
+{
+  "caminho_id": "cam-1",
+  "destino_id": "analista_monitoramento_iot",
+  "comparacao_id": "comp-123",
+  "criado_em": "2026-11-16T12:00:00Z",
+  "plano": {
+    "plano_id": "plano-1",
+    "gerado_em": "2026-11-16T12:00:00Z",
+    "destino_id": "analista_monitoramento_iot",
+    "nome": "Plano de Transição - Analista de Monitoramento IoT",
+    "versao_catalogo": "1.0",
+    "regra": "priorizar_obrigatorios",
+    "explicacao_regra": "Checkpoints ordenados por obrigatoriedade e estado de evidência.",
+    "ja_demonstrados": [
+      "req_demonstrado_1"
+    ],
+    "checkpoints": [
+      {
+        "id": "cp-1",
+        "ordem": 1,
+        "tipo": "estudar",
+        "titulo": "Estudo de Telemetria e Sensores",
+        "descricao": "Conceitos básicos de sensores industriais e protocolos.",
+        "criterio_conclusao": "Leitura completa dos manuais recomendados",
+        "requisito_id_local": "req_telemetria",
+        "estado_origem": "lacuna",
+        "motivo_origem": "ausencia_informada_pelo_usuario",
+        "obrigatorio": true,
+        "exercicio_id": null,
+        "status": "pendente"
+      },
+      {
+        "id": "cp-2",
+        "ordem": 2,
+        "tipo": "exercicio",
+        "titulo": "Exercício Diagnóstico de IoT",
+        "descricao": "Avaliação diagnóstica de telemetria e análise de bancada.",
+        "criterio_conclusao": "Obter conceito demonstrada na tentativa",
+        "requisito_id_local": "req_iot_diagnostico",
+        "estado_origem": "desconhecida",
+        "motivo_origem": "sem_informacao_suficiente",
+        "obrigatorio": true,
+        "exercicio_id": "ex-iot-1",
+        "status": "pendente"
+      },
+      {
+        "id": "cp-3",
+        "ordem": 3,
+        "tipo": "laboratorio",
+        "titulo": "Prática em Bancada de Monitoramento",
+        "descricao": "Acompanhar leituras de telemetria e emitir relato de observação.",
+        "criterio_conclusao": "Sessão concluída e relato registrado",
+        "requisito_id_local": "req_bancada",
+        "estado_origem": "desconhecida",
+        "motivo_origem": "sem_informacao_suficiente",
+        "obrigatorio": false,
+        "exercicio_id": null,
+        "status": "pendente"
+      }
+    ],
+    "observacoes": [
+      "Os checkpoints práticos podem ser realizados em paralelo.",
+      "Consulte os materiais complementares sugeridos."
+    ],
+    "aviso": "Concluir um checkpoint não torna a competência demonstrada; apenas o exercício diagnóstico com critério explícito comprova a evidência."
+  }
+}

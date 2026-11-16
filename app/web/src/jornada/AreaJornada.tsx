@@ -8,12 +8,16 @@ import {Text} from '@astryxdesign/core/Text';
 import {ErroApi} from '../api/cliente';
 import {RespostaExtracao} from '../api/competencias';
 import {obterMe, sair, Usuario} from '../api/conta';
+import {obterPlano, RespostaCaminho} from '../api/plano';
 import {TelaComparacao} from './TelaComparacao';
 import {TelaCompetencias} from './TelaCompetencias';
 import {TelaConsentimentos} from './TelaConsentimentos';
 import {TelaCurriculo} from './TelaCurriculo';
 import {TelaEntrar} from './TelaEntrar';
+import {TelaExercicio} from './TelaExercicio';
 import {TelaIntencao} from './TelaIntencao';
+import {TelaLaboratorio} from './TelaLaboratorio';
+import {TelaPlano} from './TelaPlano';
 import {TEXTOS_JORNADA} from './textos';
 
 export function AreaJornada() {
@@ -23,6 +27,7 @@ export function AreaJornada() {
 
   const [etapaAtiva, setEtapaAtiva] = useState(0);
   const [extracao, setExtracao] = useState<RespostaExtracao | null>(null);
+  const [planoAtivo, setPlanoAtivo] = useState<RespostaCaminho | null>(null);
 
   const tituloEtapaRef = useRef<HTMLDivElement>(null);
 
@@ -35,11 +40,25 @@ export function AreaJornada() {
         if (!cancelado) {
           setUsuario(dados);
           setAvisoSessao(null);
+
+          // Carrega o plano ativo se houver (404 = sem plano)
+          obterPlano()
+            .then((respPlano) => {
+              if (!cancelado && respPlano && respPlano.plano) {
+                setPlanoAtivo(respPlano);
+              }
+            })
+            .catch(() => {
+              if (!cancelado) {
+                setPlanoAtivo(null);
+              }
+            });
         }
       })
       .catch((err: unknown) => {
         if (!cancelado) {
           setUsuario(null);
+          setPlanoAtivo(null);
           if (err instanceof ErroApi && err.status === 401) {
             // Sessão ainda não iniciada - comportamento normal
           }
@@ -73,6 +92,7 @@ export function AreaJornada() {
       setAvisoSessao(null);
       setEtapaAtiva(0);
       setExtracao(null);
+      setPlanoAtivo(null);
     }
   };
 
@@ -80,7 +100,15 @@ export function AreaJornada() {
     setUsuario(usr);
     setAvisoSessao(null);
     setEtapaAtiva(0);
+    obterPlano()
+      .then((resp) => {
+        if (resp && resp.plano) setPlanoAtivo(resp);
+      })
+      .catch(() => setPlanoAtivo(null));
   };
+
+  const mostrarLaboratorio =
+    planoAtivo?.destino_id === 'analista_monitoramento_iot';
 
   if (carregandoUsuario) {
     return (
@@ -128,6 +156,11 @@ export function AreaJornada() {
           <Step step={2} label={TEXTOS_JORNADA.etapas.curriculo} />
           <Step step={3} label={TEXTOS_JORNADA.etapas.competencias} />
           <Step step={4} label={TEXTOS_JORNADA.etapas.comparacao} />
+          <Step step={5} label={TEXTOS_JORNADA.etapas.plano} />
+          <Step step={6} label={TEXTOS_JORNADA.etapas.exercicio} />
+          {mostrarLaboratorio && (
+            <Step step={7} label={TEXTOS_JORNADA.etapas.laboratorio} />
+          )}
         </Stepper>
       </nav>
 
@@ -164,7 +197,39 @@ export function AreaJornada() {
         )}
 
         {etapaAtiva === 4 && (
-          <TelaComparacao />
+          <TelaComparacao
+            planoAtivo={planoAtivo}
+            onDestinoEscolhido={(novoPlano) => {
+              setPlanoAtivo(novoPlano);
+              setEtapaAtiva(5);
+            }}
+            onIrParaPlano={() => setEtapaAtiva(5)}
+          />
+        )}
+
+        {etapaAtiva === 5 && (
+          <TelaPlano
+            planoInicial={planoAtivo}
+            onPlanoAtualizado={(atualizado) => setPlanoAtivo(atualizado)}
+            onIrParaComparacao={() => setEtapaAtiva(4)}
+            onFazerExercicio={() => setEtapaAtiva(6)}
+            onIrParaLaboratorio={() => setEtapaAtiva(7)}
+          />
+        )}
+
+        {etapaAtiva === 6 && (
+          <TelaExercicio
+            destinoId={planoAtivo?.destino_id || 'analista_monitoramento_iot'}
+            onIrParaConsentimentos={() => setEtapaAtiva(0)}
+            onVoltarParaPlano={() => setEtapaAtiva(5)}
+          />
+        )}
+
+        {etapaAtiva === 7 && mostrarLaboratorio && (
+          <TelaLaboratorio
+            onIrParaConsentimentos={() => setEtapaAtiva(0)}
+            onVoltarParaPlano={() => setEtapaAtiva(5)}
+          />
         )}
       </div>
     </div>
