@@ -85,38 +85,45 @@ def aplicar_ddl_oracle_teste():
     except ImportError:
         return
 
-    caminho_ddl = (
+    caminho_ddl_001 = (
         Path(__file__).resolve().parents[2] / "db" / "ddl" / "001_usuario_consentimento.sql"
     )
-    if not caminho_ddl.is_file():
-        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl}")
+    caminho_ddl_002 = (
+        Path(__file__).resolve().parents[2] / "db" / "ddl" / "002_competencias.sql"
+    )
+    if not caminho_ddl_001.is_file():
+        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_001}")
+    if not caminho_ddl_002.is_file():
+        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_002}")
 
-    conteudo = caminho_ddl.read_text(encoding="utf-8")
     with oracledb.connect(user=user, password=password, dsn=dsn) as conexao:
         with conexao.cursor() as cursor:
             try:
                 cursor.execute("SELECT 1 FROM usuario WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM consentimento WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM competencia_usuario WHERE ROWNUM = 1")
                 return
             except oracledb.DatabaseError:
                 pass
 
-            for bloco in conteudo.split(";"):
-                linhas = [
-                    linha
-                    for linha in bloco.splitlines()
-                    if not linha.strip().startswith("--")
-                ]
-                sql = "\n".join(linhas).strip()
-                if not sql:
-                    continue
-                try:
-                    cursor.execute(sql)
-                except oracledb.DatabaseError as err:
-                    msg = str(err)
-                    # ORA-00955: name is already used by an existing object
-                    # ORA-01408: such column list already indexed
-                    if "ORA-00955" in msg or "ORA-01408" in msg:
+            for caminho_ddl in (caminho_ddl_001, caminho_ddl_002):
+                conteudo = caminho_ddl.read_text(encoding="utf-8")
+                for bloco in conteudo.split(";"):
+                    linhas = [
+                        linha
+                        for linha in bloco.splitlines()
+                        if not linha.strip().startswith("--")
+                    ]
+                    sql = "\n".join(linhas).strip()
+                    if not sql:
                         continue
-                    raise
+                    try:
+                        cursor.execute(sql)
+                    except oracledb.DatabaseError as err:
+                        msg = str(err)
+                        # ORA-00955: name is already used by an existing object
+                        # ORA-01408: such column list already indexed
+                        if "ORA-00955" in msg or "ORA-01408" in msg:
+                            continue
+                        raise
         conexao.commit()
