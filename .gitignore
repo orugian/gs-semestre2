@@ -8,6 +8,7 @@ leituras.csv
 .env
 .env.*
 !.env.example
+app/iot/firmware/segredos.h
 
 # cache e build regeneravel (CLAUDE.md 15.3)
 .venv/
