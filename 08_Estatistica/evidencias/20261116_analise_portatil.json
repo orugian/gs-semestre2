@@ -1,0 +1,584 @@
+{
+  "base": {
+    "n": 229,
+    "sha256": "5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee",
+    "colunas_usadas": [
+      "municipio",
+      "uf",
+      "admissoes_2024",
+      "admissoes_2025",
+      "salario_medio_2024",
+      "percentual_superior_2024",
+      "crescimento"
+    ]
+  },
+  "q02": {
+    "media": 687.3231441048035,
+    "mediana": 53.0,
+    "sigma_populacional": 5740.57989557669,
+    "probabilidade_menor_media": 0.5,
+    "probabilidade_maior_mediana": 0.5439928198053906,
+    "classificacao_menor_media": "equiprovavel",
+    "classificacao_maior_mediana": "provavel",
+    "interpretacao": "Sob premissa de Normalidade (mu=687.3231, sigma_ddof0=5740.5799): P(X < media) = 0.5000 (equiprovável); P(X > mediana) = 0.5440 (provavel)."
+  },
+  "q03": {
+    "mu_ref": 687.3231441048035,
+    "sigma_ref": 5740.57989557669,
+    "seeds": [
+      42,
+      43
+    ],
+    "teste_menor": {
+      "tipo": "unilateral_menor",
+      "seed": 42,
+      "n": 20,
+      "indices_amostrais": [
+        163,
+        160,
+        43,
+        220,
+        191,
+        169,
+        29,
+        18,
+        138,
+        225,
+        92,
+        215,
+        103,
+        184,
+        20,
+        221,
+        176,
+        93,
+        151,
+        115
+      ],
+      "media_amostral": 102.05,
+      "mu_ref": 687.3231441048035,
+      "sigma_ref": 5740.57989557669,
+      "estatistica_z": -0.45595063893519766,
+      "p_valor": 0.32421273699837483,
+      "alpha": 0.06,
+      "z_critico": -1.5547735945968535,
+      "regiao_critica": "z < -1.5548",
+      "rejeita_h0": false,
+      "decisao": "Não rejeita H0 ao nível de significância de 6% (sem evidência de média menor)"
+    },
+    "teste_maior": {
+      "tipo": "unilateral_maior",
+      "seed": 43,
+      "n": 25,
+      "indices_amostrais": [
+        163,
+        134,
+        9,
+        219,
+        83,
+        183,
+        93,
+        88,
+        215,
+        48,
+        60,
+        120,
+        207,
+        203,
+        218,
+        33,
+        4,
+        177,
+        103,
+        125,
+        98,
+        101,
+        43,
+        142,
+        58
+      ],
+      "media_amostral": 215.68,
+      "mu_ref": 687.3231441048035,
+      "sigma_ref": 5740.57989557669,
+      "estatistica_z": -0.41079747402193667,
+      "p_valor": 0.6593894772310619,
+      "alpha": 0.09,
+      "z_critico": 1.3407550336902165,
+      "regiao_critica": "z > 1.3408",
+      "rejeita_h0": false,
+      "decisao": "Não rejeita H0 ao nível de significância de 9% (sem evidência de média maior)"
+    }
+  },
+  "q04": {
+    "tipo": "ols_simples",
+    "variavel_x": "salario_medio_2024",
+    "variavel_y": "admissoes_2025",
+    "coeficientes": {
+      "const": 686.6573385414539,
+      "salario_medio_2024": 9.884746423530219e-05
+    },
+    "intercepto": 686.6573385414539,
+    "coeficiente_angular": 9.884746423530219e-05,
+    "equacao": "admissoes_2025 = 686.6573 + 0.0001 * salario_medio_2024",
+    "r2": 3.626143572077467e-07,
+    "r2_ajustado": -0.004404922131835187,
+    "estatistica_f": 8.231348892216467e-05,
+    "p_f": 0.9927691178086517,
+    "covariancia": 121420.39157625404,
+    "correlacao_pearson": 0.0006021746897429671,
+    "matriz_covariancia": [
+      [
+        1228361218.1210585,
+        121420.39157625404
+      ],
+      [
+        121420.39157625404,
+        33098793.75476902
+      ]
+    ],
+    "matriz_correlacao": [
+      [
+        0.9999999999999998,
+        0.0006021746897429671
+      ],
+      [
+        0.0006021746897429671,
+        1.0
+      ]
+    ],
+    "ponto_previsao": 3864.331304347826,
+    "previsao": 687.0393178918538,
+    "n_observacoes": 229
+  },
+  "q05": {
+    "tipo": "ols_multipla",
+    "variaveis_x": [
+      "salario_medio_2024",
+      "percentual_superior_2024"
+    ],
+    "variavel_y": "admissoes_2025",
+    "coeficientes": {
+      "const": -1582.2303803071884,
+      "salario_medio_2024": 0.003383174463798021,
+      "percentual_superior_2024": 54.233690535560754
+    },
+    "intercepto": -1582.2303803071884,
+    "equacao": "admissoes_2025 = -1582.2304 + 0.0034 * salario_medio_2024 + 54.2337 * percentual_superior_2024",
+    "r2": 0.021457660749883867,
+    "r2_ajustado": 0.012797994030856241,
+    "estatistica_f": 2.4778852865937364,
+    "p_f": 0.08619800377403855,
+    "matriz_covariancia": {
+      "salario_medio_2024": {
+        "salario_medio_2024": 1228361218.1210585,
+        "percentual_superior_2024": -74388.07637930062,
+        "admissoes_2025": 121420.39157625404
+      },
+      "percentual_superior_2024": {
+        "salario_medio_2024": -74388.07637930062,
+        "percentual_superior_2024": 245.96690316570098,
+        "admissoes_2025": 13088.025067861357
+      },
+      "admissoes_2025": {
+        "salario_medio_2024": 121420.39157625404,
+        "percentual_superior_2024": 13088.025067861357,
+        "admissoes_2025": 33098793.75476902
+      }
+    },
+    "matriz_correlacao": {
+      "salario_medio_2024": {
+        "salario_medio_2024": 1.0,
+        "percentual_superior_2024": -0.1353324497941563,
+        "admissoes_2025": 0.0006021746897429693
+      },
+      "percentual_superior_2024": {
+        "salario_medio_2024": -0.1353324497941563,
+        "percentual_superior_2024": 1.0,
+        "admissoes_2025": 0.14505399625803944
+      },
+      "admissoes_2025": {
+        "salario_medio_2024": 0.0006021746897429693,
+        "percentual_superior_2024": 0.14505399625803944,
+        "admissoes_2025": 1.0
+      }
+    },
+    "ponto_previsao": {
+      "salario_medio_2024": 3864.331304347826,
+      "percentual_superior_2024": 43.333333333333336
+    },
+    "previsao": 780.969916555636,
+    "n_observacoes": 229
+  },
+  "q06": {
+    "tipo": "logistica_binaria_municipal",
+    "variaveis_x": [
+      "salario_medio_2024",
+      "percentual_superior_2024"
+    ],
+    "variavel_y": "crescimento",
+    "coeficientes": {
+      "const": -0.6496934973874882,
+      "salario_medio_2024": -5.503827472637135e-05,
+      "percentual_superior_2024": 0.0223254729167176
+    },
+    "equacao": "logit(p) = -0.6497 - 0.0001 * salario_medio_2024 + 0.0223 * percentual_superior_2024",
+    "matriz_confusao_no_ajuste": {
+      "rotulo": "Matriz de confusão no ajuste (in-sample, descritiva)",
+      "ordem_classes": [
+        0,
+        1
+      ],
+      "matriz": [
+        [
+          35,
+          55
+        ],
+        [
+          31,
+          62
+        ]
+      ],
+      "verdadeiros_negativos": 35,
+      "falsos_positivos": 55,
+      "falsos_negativos": 31,
+      "verdadeiros_positivos": 62
+    },
+    "acuracia_no_ajuste": 0.5300546448087432,
+    "avaliacao_teste": {
+      "tipo": "teste_estratificado",
+      "seed": 44,
+      "fracao_teste": 0.2,
+      "municipios_treino": [
+        "354910",
+        "351518",
+        "354800",
+        "353630",
+        "353780",
+        "353080",
+        "352490",
+        "351340",
+        "355030",
+        "352570",
+        "351500",
+        "350220",
+        "350070",
+        "351880",
+        "355680",
+        "352440",
+        "353340",
+        "352530",
+        "350275",
+        "354260",
+        "353440",
+        "354100",
+        "350320",
+        "350950",
+        "351110",
+        "353800",
+        "352730",
+        "352230",
+        "354670",
+        "352140",
+        "354340",
+        "354750",
+        "352400",
+        "354880",
+        "354000",
+        "352840",
+        "353070",
+        "354090",
+        "350290",
+        "350480",
+        "351510",
+        "355170",
+        "350390",
+        "350640",
+        "354240",
+        "351860",
+        "350970",
+        "355395",
+        "353050",
+        "354070",
+        "351550",
+        "353930",
+        "354780",
+        "352100",
+        "355710",
+        "350840",
+        "351907",
+        "354530",
+        "351750",
+        "352710",
+        "350590",
+        "355070",
+        "354680",
+        "352470",
+        "352940",
+        "354890",
+        "353400",
+        "353980",
+        "350850",
+        "351240",
+        "351370",
+        "351300",
+        "351960",
+        "355650",
+        "352090",
+        "350570",
+        "352270",
+        "350280",
+        "354390",
+        "355600",
+        "351380",
+        "351280",
+        "352250",
+        "353390",
+        "351770",
+        "352044",
+        "351570",
+        "351000",
+        "355410",
+        "351840",
+        "352670",
+        "355690",
+        "354870",
+        "352885",
+        "352900",
+        "351210",
+        "353880",
+        "350170",
+        "353180",
+        "353860",
+        "351060",
+        "352390",
+        "350530",
+        "350520",
+        "351050",
+        "350450",
+        "355370",
+        "350330",
+        "351870",
+        "353920",
+        "352930",
+        "353140",
+        "355240",
+        "350710",
+        "352240",
+        "355210",
+        "352340",
+        "351140",
+        "351670",
+        "352210",
+        "351905",
+        "353960",
+        "350920",
+        "352050",
+        "350760",
+        "353870",
+        "353470",
+        "350940",
+        "354630",
+        "353190",
+        "355250",
+        "352410",
+        "350610",
+        "351685",
+        "351440",
+        "355540",
+        "355040",
+        "352590",
+        "350650",
+        "351170",
+        "353060",
+        "351220",
+        "355400",
+        "350900",
+        "352310",
+        "352810",
+        "354520",
+        "351350",
+        "352500",
+        "353550",
+        "354990",
+        "355100",
+        "352720",
+        "353530",
+        "350410",
+        "354640",
+        "353020",
+        "354140",
+        "350400",
+        "353350",
+        "350460",
+        "350700",
+        "351930",
+        "355620",
+        "355645",
+        "350380",
+        "354980",
+        "351640",
+        "355700",
+        "351150",
+        "355450",
+        "352510",
+        "351620",
+        "355670",
+        "355500",
+        "353430",
+        "354730",
+        "350010",
+        "351310",
+        "353200",
+        "354940",
+        "350720",
+        "351490"
+      ],
+      "municipios_teste": [
+        "354210",
+        "352680",
+        "352520",
+        "350960",
+        "350750",
+        "353790",
+        "352860",
+        "351460",
+        "352360",
+        "351020",
+        "351410",
+        "355060",
+        "354060",
+        "354330",
+        "352260",
+        "353710",
+        "350030",
+        "350880",
+        "350210",
+        "353650",
+        "352480",
+        "354400",
+        "351970",
+        "352430",
+        "351040",
+        "353130",
+        "355280",
+        "350160",
+        "354580",
+        "354850",
+        "352690",
+        "355610",
+        "350190",
+        "355630",
+        "350600",
+        "352220",
+        "350550",
+        "355220",
+        "354970",
+        "353730",
+        "352640",
+        "351830",
+        "351430",
+        "353670",
+        "352850",
+        "353030"
+      ],
+      "matriz_confusao": [
+        [
+          8,
+          14
+        ],
+        [
+          7,
+          17
+        ]
+      ],
+      "acuracia": 0.5434782608695652
+    },
+    "limiar_classificacao": 0.5,
+    "previsao_ponto": {
+      "probabilidade": 0.5262402533720071,
+      "classe": 1,
+      "limiar": 0.5
+    },
+    "nota_validacao": "Ajuste somente nos 80% de treino; avaliacao_teste usa os 20% estratificados (R07, seed44). Métricas no ajuste são diagnóstico separado, não evidência de teste.",
+    "n_observacoes": 229
+  },
+  "diagnostico": {
+    "n": 229,
+    "teste": "Shapiro-Wilk",
+    "natureza": "diagnostico complementar; Normal assumida mantida nos itens obrigatorios",
+    "original": {
+      "estatistica_w": 0.08440802288442595,
+      "p_valor": 9.690758191616247e-32
+    },
+    "log1p": {
+      "estatistica_w": 0.9428020875333206,
+      "p_valor": 8.006500774210932e-08
+    }
+  },
+  "pontos_extremos_salario": {
+    "mediana_salario_medio_2024": 3864.331304347826,
+    "municipios": [
+      {
+        "municipio": "352885",
+        "admissoes_2024": 19,
+        "salario_medio_2024": 527726.8478947367,
+        "n_salarios_validos_2024": 19,
+        "razao_para_mediana": 136.56356205819674
+      },
+      {
+        "municipio": "351210",
+        "admissoes_2024": 11,
+        "salario_medio_2024": 86712.00545454546,
+        "n_salarios_validos_2024": 11,
+        "razao_para_mediana": 22.439071245517766
+      },
+      {
+        "municipio": "350320",
+        "admissoes_2024": 801,
+        "salario_medio_2024": 14936.016099999939,
+        "n_salarios_validos_2024": 800,
+        "razao_para_mediana": 3.865097198885398
+      }
+    ],
+    "top_3": [
+      {
+        "municipio": "352885",
+        "admissoes_2024": 19,
+        "salario_medio_2024": 527726.8478947367,
+        "n_salarios_validos_2024": 19,
+        "razao_para_mediana": 136.56356205819674
+      },
+      {
+        "municipio": "351210",
+        "admissoes_2024": 11,
+        "salario_medio_2024": 86712.00545454546,
+        "n_salarios_validos_2024": 11,
+        "razao_para_mediana": 22.439071245517766
+      },
+      {
+        "municipio": "350320",
+        "admissoes_2024": 801,
+        "salario_medio_2024": 14936.016099999939,
+        "n_salarios_validos_2024": 800,
+        "razao_para_mediana": 3.865097198885398
+      }
+    ],
+    "observacao": "Decisão pré-registrada D11: pontos mantidos em todos os cálculos sem corte pós-observação. Hipótese de erro de declaração/escala do campo salário no Caged não verificada."
+  },
+  "figuras": [
+    "q04_dispersao_reta.png",
+    "q04_correlacao.png",
+    "q05_dispersao_matriz.png",
+    "q05_correlacao.png",
+    "q06_matriz_confusao.png",
+    "diag_normalidade.png",
+    "diag_residuos_simples.png",
+    "diag_residuos_multipla.png"
+  ],
+  "limites": [
+    "Normalidade assumida pelo enunciado, nao comprovada empiricamente.",
+    "Testes Z usam sigma da populacao de referencia e SE=sigma/sqrt(n), sem correcao finita.",
+    "Sem arquivos2026/revisoes2026; criterio e sementes nao alterados por resultado.",
+    "Ponto previsto e cenario de medianas dos atributos, nao municipio observado."
+  ]
+}
