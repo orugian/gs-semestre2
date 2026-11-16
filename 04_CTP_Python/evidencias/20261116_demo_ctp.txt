@@ -1,0 +1,57 @@
+# Demonstração executada pelo orquestrador contra a API FastAPI em modo isolado CTP (citizentech.leituras.isolado, porta 8001, sem Oracle/Mongo/nuvem).
+# Comando (em app/tools): uv run python demo_leituras_ctp.py --base http://127.0.0.1:8001  ->  exit 0
+# DEVICE_KEY gerada em memória para a demonstração (não impressa). CSV gravado em pasta temporária e copiado para 20261116_historico_leituras.csv.
+
+=== Demonstração CTP — 2026-11-16T19:32:02Z — API http://127.0.0.1:8001 ===
+
+[cenário normal · temperatura_c] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "81499162-b7c3-42fe-97cc-a3a2b6264ae0", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "temperatura_c", "valor": 25.0, "unidade": "C", "status": "OK", "medido_em": "2026-11-16T19:32:02Z"}
+  resposta: {"evento_id": "81499162-b7c3-42fe-97cc-a3a2b6264ae0", "dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[cenário normal · distancia_cm] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "59eb0366-55ea-4740-a506-3485babbbe58", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "distancia_cm", "valor": 25.0, "unidade": "cm", "status": "OK", "medido_em": "2026-11-16T19:32:02Z"}
+  resposta: {"evento_id": "59eb0366-55ea-4740-a506-3485babbbe58", "dispositivo_id": "esp32-bancada-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[cenário atencao · temperatura_c] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "9bc63598-0669-49ab-9a42-6ab028ced5ed", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "temperatura_c", "valor": 38.0, "unidade": "C", "status": "ALERTA", "medido_em": "2026-11-16T19:32:02Z"}
+  resposta: {"evento_id": "9bc63598-0669-49ab-9a42-6ab028ced5ed", "dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c", "unidade": "C", "valor": 38.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[cenário atencao · distancia_cm] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "e11b3559-a5ae-4b16-b2cc-98be86afc73d", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "distancia_cm", "valor": 12.0, "unidade": "cm", "status": "ALERTA", "medido_em": "2026-11-16T19:32:02Z"}
+  resposta: {"evento_id": "e11b3559-a5ae-4b16-b2cc-98be86afc73d", "dispositivo_id": "esp32-bancada-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 12.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[cenário critico · temperatura_c] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "48425223-c9a6-4c13-859b-440886411248", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "temperatura_c", "valor": 48.0, "unidade": "C", "status": "ALERTA", "medido_em": "2026-11-16T19:32:02Z"}
+  resposta: {"evento_id": "48425223-c9a6-4c13-859b-440886411248", "dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c", "unidade": "C", "valor": 48.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[cenário critico · distancia_cm] HTTP 201 (esperado 201) OK
+  enviado : {"evento_id": "ebb423a6-e998-40ae-8973-c0dbbeb7c7e5", "dispositivo_id": "esp32-bancada-01", "tipo_dispositivo": "esp32", "sessao_laboratorio_id": "demo-ctp-bba8a9e3", "metrica": "distancia_cm", "valor": 5.0, "unidade": "cm", "status": "ALERTA", "medido_em": "2026-11-16T19:32:03Z"}
+  resposta: {"evento_id": "ebb423a6-e998-40ae-8973-c0dbbeb7c7e5", "dispositivo_id": "esp32-bancada-01", "metrica": "distancia_cm", "unidade": "cm", "valor": 5.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:03Z"}
+
+[reenvio idêntico (mesmo evento_id)] HTTP 200 (esperado 200) OK
+  resposta: {"evento_id": "81499162-b7c3-42fe-97cc-a3a2b6264ae0", "dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c", "unidade": "C", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem", "medido_em": "2026-11-16T19:32:02Z"}
+
+[mesmo evento_id com valor diferente] HTTP 409 (esperado 409) OK
+  resposta: {"erro": "Conflito", "detalhes": "Mesmo evento_id com conteudo divergente."}
+
+[leitura sem 'valor'] HTTP 400 (esperado 400) OK
+  enviado : {"dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c"}
+  resposta: {"erro": "Requisicao invalida", "detalhes": "Campo obrigatorio ausente: 'valor'."}
+
+[DS18B20 desconectado (-127 °C)] HTTP 400 (esperado 400) OK
+  enviado : {"dispositivo_id": "esp32-bancada-01", "metrica": "temperatura_c", "valor": -127}
+  resposta: {"erro": "Requisicao invalida", "detalhes": "Leitura de sensor invalida (-127 C indica falha de hardware ou sensor desconectado)."}
+
+[sem X-Device-Key] HTTP 401 (esperado 401) OK
+  resposta: {"erro": "Nao autorizado", "detalhes": "Chave de dispositivo ausente ou invalida."}
+
+[GET /leituras da sessão (histórico do CSV)] HTTP 200 (esperado 200) OK
+  resposta: {"total": 6, "itens": [{"metrica": "temperatura_c", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem"}, {"metrica": "distancia_cm", "valor": 25.0, "risco": "normal", "alerta": false, "estado": "pendente_nuvem"}, {"metrica": "temperatura_c", "valor": 38.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem"}, {"metrica": "distancia_cm", "valor": 12.0, "risco": "atencao", "alerta": true, "estado": "pendente_nuvem"}, {"metrica": "temperatura_c", "valor": 48.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem"}, {"metrica": "distancia_cm", "valor": 5.0, "risco": "critico", "alerta": true, "estado": "pendente_nuvem"}]}
+
+[GET /leituras/indicadores da sessão] HTTP 200 (esperado 200) OK
+  resposta: {"sessao": "demo-ctp-bba8a9e3", "metricas": {"distancia_cm": {"contagem": 3, "total_alertas": 2, "media": 14.0, "maximo": 25.0, "minimo": 5.0}, "temperatura_c": {"contagem": 3, "total_alertas": 2, "media": 37.0, "maximo": 48.0, "minimo": 25.0}}}
+
+[GET /leituras/indicadores?metrica=temperatura_c] HTTP 200 (esperado 200) OK
+  resposta: {"sessao": "demo-ctp-bba8a9e3", "metrica": "temperatura_c", "contagem": 3, "total_alertas": 2, "media": 37.0, "maximo": 48.0, "minimo": 25.0}
+
+=== sessão demo-ctp-bba8a9e3 · falhas=0 ===

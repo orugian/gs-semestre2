@@ -1,0 +1,7 @@
+evento_id,dispositivo_id,sessao_laboratorio_id,ciclo_id,tipo_dispositivo,metrica,unidade,valor,risco,alerta,estado,medido_em,criado_em
+81499162-b7c3-42fe-97cc-a3a2b6264ae0,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,25.0,normal,False,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+59eb0366-55ea-4740-a506-3485babbbe58,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,25.0,normal,False,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+9bc63598-0669-49ab-9a42-6ab028ced5ed,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,38.0,atencao,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+e11b3559-a5ae-4b16-b2cc-98be86afc73d,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,12.0,atencao,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+48425223-c9a6-4c13-859b-440886411248,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,48.0,critico,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+ebb423a6-e998-40ae-8973-c0dbbeb7c7e5,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T19:32:03Z,2026-11-16T19:32:03Z

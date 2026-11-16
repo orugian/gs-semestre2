@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CitizenTech - CTP</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>CitizenTech — API REST de leituras do laboratório de monitoramento</h1>
+<p><strong>Disciplina:</strong> Computational Thinking with Python · <strong>Global Solution 2026.2</strong></p>
+<p><strong>Integrantes (nome completo + RM):</strong>
+- [HUMANO — preencher]</p>
+<div class="quebra-pagina"></div>
+
+<h2>1. Problema, público beneficiado e contribuição da API</h2>
+<p><strong>Problema.</strong> Quem está migrando de carreira para monitoramento industrial e IoT precisa praticar a leitura de sensores e a reação a alarmes, mas laboratório com instrumentação é caro e raro fora dos grandes centros.</p>
+<p><strong>Público beneficiado.</strong> Profissionais graduados e experientes em transição de carreira que usam a plataforma CitizenTech e escolhem a trilha prática do destino "Analista de Monitoramento/IoT Industrial".</p>
+<p><strong>Contribuição da API.</strong> A API recebe as leituras de uma bancada de monitoramento (ESP32 com sensor de temperatura DS18B20 e sensor de distância HC-SR04, ou uma simulação com o mesmo JSON), valida cada leitura, classifica o risco com os mesmos limiares usados pelo firmware e pela nuvem, grava o histórico em CSV e devolve o histórico e indicadores calculados por <code>GET</code>. Esse histórico é a base para a pessoa demonstrar, com dados reais da própria sessão, a competência de monitoramento. A mesma API repassa cada leitura para a nuvem (disciplina de Cloud) sem perder dados quando a rede cai.</p>
+<h2>2. Arquitetura e origem dos dados</h2>
+<pre><code>ESP32 (DS18B20 + HC-SR04)  ou  simulação HTTP com o mesmo JSON
+        |  POST /leituras  (JSON, cabeçalho X-Device-Key)
+        v
+API REST FastAPI (Python 3.11)  ── módulo citizentech.leituras
+        |-- valida campos e tipos          (esquemas.py)
+        |-- classifica o risco             (limiares.py + app/config/limiares.json)
+        |-- limita requisições por dispositivo (limitador.py)
+        |-- grava no CSV (histórico)       (repositorio.py)
+        |-- registra na outbox SQLite      (outbox/banco.py) ──&gt; worker ──&gt; AWS Lambda (Cloud)
+        v
+GET /leituras              histórico paginado, filtro por sessão
+GET /leituras/indicadores  contagem, alertas, média, máximo e mínimo por métrica
+</code></pre>
+<p><strong>Origem dos dados.</strong> As leituras vêm do dispositivo da bancada. Nas evidências deste documento, o dispositivo é <strong>simulado por requisições HTTP</strong> com o JSON exato do firmware (o enunciado aceita). O firmware do ESP32 está em <code>app/iot/firmware/</code> e envia o mesmo contrato; ele <strong>ainda não foi executado no Wokwi</strong> contra esta API.</p>
+<p><strong>Modo isolado (para a correção desta disciplina).</strong> A API completa do produto também tem contas, currículo e bancos Oracle e MongoDB. Para CTP existe o aplicativo <code>citizentech.leituras.isolado</code>, que sobe <strong>só as rotas de leituras</strong>, sem Oracle, sem MongoDB e sem nuvem. É esse modo que as evidências usam.</p>
+<h2>3. Contrato JSON</h2>
+<p><strong>Requisição <code>POST /leituras</code></strong> (cabeçalho obrigatório <code>X-Device-Key</code>):</p>
+<pre><code class="language-json">{
+  &quot;evento_id&quot;: &quot;81499162-b7c3-42fe-97cc-a3a2b6264ae0&quot;,
+  &quot;dispositivo_id&quot;: &quot;esp32-bancada-01&quot;,
+  &quot;tipo_dispositivo&quot;: &quot;esp32&quot;,
+  &quot;sessao_laboratorio_id&quot;: &quot;demo-ctp-bba8a9e3&quot;,
+  &quot;metrica&quot;: &quot;temperatura_c&quot;,
+  &quot;valor&quot;: 25.0,
+  &quot;unidade&quot;: &quot;C&quot;,
+  &quot;status&quot;: &quot;OK&quot;,
+  &quot;medido_em&quot;: &quot;2026-11-16T19:32:02Z&quot;
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Regra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dispositivo_id</code>, <code>metrica</code>, <code>valor</code></td>
+<td><strong>obrigatórios</strong>; ausente → 400</td>
+</tr>
+<tr>
+<td><code>metrica</code></td>
+<td><code>temperatura_c</code> ou <code>distancia_cm</code> (as métricas de <code>limiares.json</code>); outra → 400</td>
+</tr>
+<tr>
+<td><code>valor</code></td>
+<td>número (int ou float), finito; texto, booleano, NaN ou infinito → 400; <code>-127</code> em <code>temperatura_c</code> (código do DS18B20 desconectado) → 400; distância negativa → 400</td>
+</tr>
+<tr>
+<td><code>unidade</code></td>
+<td>opcional; se vier, precisa ser <code>C</code> ou <code>cm</code> conforme a métrica</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>opcional: <code>OK</code> ou <code>ALERTA</code>; <code>ERRO</code> (falha do sensor) → 400</td>
+</tr>
+<tr>
+<td><code>evento_id</code></td>
+<td>opcional; se ausente, a API gera um. Mesmo <code>evento_id</code> com o mesmo conteúdo → <strong>200</strong> (reenvio, não duplica); com conteúdo diferente → <strong>409</strong></td>
+</tr>
+<tr>
+<td><code>medido_em</code></td>
+<td>opcional, ISO-8601; se ausente, usa o horário de recebimento (UTC)</td>
+</tr>
+<tr>
+<td><code>relato</code></td>
+<td>opcional, até 280 caracteres</td>
+</tr>
+<tr>
+<td>corpo</td>
+<td>até 8 KB</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Resposta <code>201</code>:</strong></p>
+<pre><code class="language-json">{&quot;evento_id&quot;: &quot;...&quot;, &quot;dispositivo_id&quot;: &quot;esp32-bancada-01&quot;, &quot;metrica&quot;: &quot;temperatura_c&quot;, &quot;unidade&quot;: &quot;C&quot;,
+ &quot;valor&quot;: 25.0, &quot;risco&quot;: &quot;normal&quot;, &quot;alerta&quot;: false, &quot;estado&quot;: &quot;pendente_nuvem&quot;, &quot;medido_em&quot;: &quot;2026-11-16T19:32:02Z&quot;}
+</code></pre>
+<p><strong>Regras de classificação</strong> (<code>app/config/limiares.json</code>, fonte única usada pela API, pela Lambda e pelo firmware):</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th><code>normal</code></th>
+<th><code>atencao</code></th>
+<th><code>critico</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperatura_c</code> (°C, quanto maior pior)</td>
+<td>v &lt; 35</td>
+<td>35 ≤ v &lt; 45</td>
+<td>v ≥ 45</td>
+</tr>
+<tr>
+<td><code>distancia_cm</code> (cm, quanto menor pior)</td>
+<td>v &gt; 15</td>
+<td>8 &lt; v ≤ 15</td>
+<td>0 ≤ v ≤ 8</td>
+</tr>
+</tbody>
+</table>
+<p><code>alerta = true</code> quando o risco é <code>atencao</code> ou <code>critico</code> (é o LED aceso na bancada). Na nuvem, o "alerta ao cidadão" é só o <code>critico</code> (buzzer).</p>
+<p><strong>Erros:</strong> sempre no formato <code>{"erro": "...", "detalhes": "..."}</code>. 400 validação · 401 chave ausente ou errada · 409 conflito de <code>evento_id</code> · 429 limite por dispositivo · 503 falha ao gravar.</p>
+<h2>4. Código Python e instruções de execução</h2>
+<p><strong>Onde está o código</strong> (fonte em <code>app/api/src/citizentech/</code>; cópia gerada em <code>04_CTP_Python/codigo/</code> pelo empacotador da entrega):</p>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Responsabilidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>leituras/isolado.py</code></td>
+<td>aplicativo FastAPI do modo isolado</td>
+</tr>
+<tr>
+<td><code>leituras/rotas.py</code></td>
+<td>endpoints <code>POST /leituras</code>, <code>GET /leituras</code>, <code>GET /leituras/indicadores</code>; leitura do corpo com limite de 8 KB; cálculo dos indicadores</td>
+</tr>
+<tr>
+<td><code>leituras/esquemas.py</code></td>
+<td><code>validar_e_processar_payload</code>: validação campo a campo e normalização</td>
+</tr>
+<tr>
+<td><code>limiares.py</code></td>
+<td><code>carregar_limiares</code> e <code>classificar_risco</code> (regras da tabela acima)</td>
+</tr>
+<tr>
+<td><code>leituras/repositorio.py</code></td>
+<td>gravação durável no CSV (trava de arquivo, escrita atômica por linha e <code>fsync</code> antes de confirmar) e leitura do histórico</td>
+</tr>
+<tr>
+<td><code>leituras/limitador.py</code></td>
+<td>limite de leituras por minuto por <code>dispositivo_id</code></td>
+</tr>
+<tr>
+<td><code>leituras/seguranca.py</code></td>
+<td>conferência da <code>X-Device-Key</code> em tempo constante</td>
+</tr>
+<tr>
+<td><code>outbox/</code></td>
+<td>fila SQLite que repassa cada leitura à nuvem com nova tentativa e idempotência</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conceitos de pensamento computacional aplicados:</strong> decomposição (validar → classificar → limitar → gravar → consultar, cada etapa numa função); estruturas condicionais (classificação por faixas, regras de erro); repetição (percurso do histórico para filtrar e calcular indicadores); coleções (<code>dict</code> para o registro e para o catálogo de limiares, <code>list</code> para o histórico, <code>set</code> para os status válidos); modularização (um módulo por responsabilidade) e abstração (os limiares ficam num arquivo de dados, não espalhados no código).</p>
+<p><strong>Como executar</strong> (Windows PowerShell; requer Python 3.11 e <a href="https://docs.astral.sh/uv/">uv</a>):</p>
+<pre><code class="language-powershell">cd app\api
+uv sync
+$env:DEVICE_KEY = '&lt;chave da bancada&gt;'                 # obrigatória: sem ela a API recusa tudo
+$env:CITIZENTECH_LEITURAS_CSV = &quot;$PWD\leituras.csv&quot;     # onde o histórico será gravado
+$env:CITIZENTECH_OUTBOX_DB = &quot;$PWD\outbox.db&quot;
+uv run uvicorn citizentech.leituras.isolado:app --port 8001
+</code></pre>
+<p>Em outro terminal, com a mesma <code>DEVICE_KEY</code> no ambiente:</p>
+<pre><code class="language-powershell">cd app\tools
+uv run python demo_leituras_ctp.py --base http://127.0.0.1:8001     # 3 cenários + erros + GET
+cd ..\api
+uv run pytest tests/test_leituras.py tests/test_leituras_isoladas.py -q
+</code></pre>
+<p>Requisição manual: <code>curl.exe -X POST http://127.0.0.1:8001/leituras -H "Content-Type: application/json" -H "X-Device-Key: &lt;chave&gt;" -d '{"dispositivo_id":"esp32-bancada-01","metrica":"temperatura_c","valor":38}'</code>.</p>
+<div class="quebra-pagina"></div>
+
+<h2>5. Testes dos endpoints: três cenários e histórico CSV</h2>
+<p>Execução de 16/11/2026 às 19:32 UTC (16:32 em Brasília), pelo script <code>app/tools/demo_leituras_ctp.py</code>, contra a API em modo isolado. Saída completa: <code>evidencias/20261116_demo_ctp.txt</code> (<strong>0 falhas</strong>). Os valores dos cenários vêm de <code>cenarios_demonstracao</code> em <code>limiares.json</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Cenário</th>
+<th>Leitura enviada</th>
+<th>HTTP</th>
+<th><code>risco</code></th>
+<th><code>alerta</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · normal</td>
+<td><code>temperatura_c</code> = 25,0</td>
+<td>201</td>
+<td>normal</td>
+<td>false</td>
+</tr>
+<tr>
+<td>1 · normal</td>
+<td><code>distancia_cm</code> = 25,0</td>
+<td>201</td>
+<td>normal</td>
+<td>false</td>
+</tr>
+<tr>
+<td>2 · atenção</td>
+<td><code>temperatura_c</code> = 38,0</td>
+<td>201</td>
+<td>atencao</td>
+<td>true</td>
+</tr>
+<tr>
+<td>2 · atenção</td>
+<td><code>distancia_cm</code> = 12,0</td>
+<td>201</td>
+<td>atencao</td>
+<td>true</td>
+</tr>
+<tr>
+<td>3 · crítico</td>
+<td><code>temperatura_c</code> = 48,0</td>
+<td>201</td>
+<td>critico</td>
+<td>true</td>
+</tr>
+<tr>
+<td>3 · crítico</td>
+<td><code>distancia_cm</code> = 5,0</td>
+<td>201</td>
+<td>critico</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<p>Casos de borda executados na mesma sessão:</p>
+<table>
+<thead>
+<tr>
+<th>Caso</th>
+<th>HTTP</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reenvio idêntico (mesmo <code>evento_id</code>)</td>
+<td>200</td>
+<td>mesmo registro; o CSV não ganhou linha nova</td>
+</tr>
+<tr>
+<td>Mesmo <code>evento_id</code> com <code>valor</code> diferente</td>
+<td>409</td>
+<td>"Mesmo evento_id com conteudo divergente."</td>
+</tr>
+<tr>
+<td>Leitura sem <code>valor</code></td>
+<td>400</td>
+<td>"Campo obrigatorio ausente: 'valor'."</td>
+</tr>
+<tr>
+<td>DS18B20 desconectado (<code>-127</code>)</td>
+<td>400</td>
+<td>"Leitura de sensor invalida (-127 C indica falha de hardware ou sensor desconectado)."</td>
+</tr>
+<tr>
+<td>Sem <code>X-Device-Key</code></td>
+<td>401</td>
+<td>"Chave de dispositivo ausente ou invalida."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Consulta do histórico</strong> <code>GET /leituras?sessao=demo-ctp-bba8a9e3</code> → 200 com <code>total: 6</code>, as seis leituras na ordem de chegada (o reenvio e as leituras recusadas não entraram).</p>
+<p><strong>Histórico CSV gravado</strong> (<code>evidencias/20261116_historico_leituras.csv</code>, cópia do arquivo gerado pela API):</p>
+<pre><code>evento_id,dispositivo_id,sessao_laboratorio_id,ciclo_id,tipo_dispositivo,metrica,unidade,valor,risco,alerta,estado,medido_em,criado_em
+81499162-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,25.0,normal,False,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+59eb0366-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,25.0,normal,False,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+9bc63598-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,38.0,atencao,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+e11b3559-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,12.0,atencao,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+48425223-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,temperatura_c,C,48.0,critico,True,pendente_nuvem,2026-11-16T19:32:02Z,2026-11-16T19:32:02Z
+ebb423a6-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T19:32:03Z,2026-11-16T19:32:03Z
+</code></pre>
+<p>O <code>estado = pendente_nuvem</code> indica que a leitura está na outbox esperando envio à nuvem. No modo isolado não há nuvem configurada, então ela continua pendente; no produto completo o worker a envia à Lambda e o estado passa a <code>sincronizado</code>.</p>
+<p><strong>Testes automatizados.</strong> 108 testes de leituras, limiares, outbox e aceite das fatias de leitura passaram em 16/11/2026 (<code>uv run pytest tests/test_leituras.py tests/test_leituras_isoladas.py tests/test_s2_aceite.py tests/test_s3_aceite.py tests/test_outbox.py tests/test_outbox_integracao.py tests/test_limiares.py -q</code> → <code>108 passed</code>).</p>
+<h2>6. Indicador calculado</h2>
+<p><code>GET /leituras/indicadores?sessao=&lt;id&gt;</code> calcula, <strong>por métrica</strong>, a contagem de leituras, o total de alertas, a média, o máximo e o mínimo. A média é calculada de forma incremental (<code>media += (v − media) / i</code>), o que evita estouro numérico com valores grandes. Resultado real da sessão de demonstração:</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Contagem</th>
+<th>Alertas</th>
+<th>Média</th>
+<th>Máximo</th>
+<th>Mínimo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperatura_c</code></td>
+<td>3</td>
+<td>2</td>
+<td>37,0</td>
+<td>48,0</td>
+<td>25,0</td>
+</tr>
+<tr>
+<td><code>distancia_cm</code></td>
+<td>3</td>
+<td>2</td>
+<td>14,0</td>
+<td>25,0</td>
+<td>5,0</td>
+</tr>
+</tbody>
+</table>
+<p>Conferência manual: (25 + 38 + 48) / 3 = 37,0 °C e (25 + 12 + 5) / 3 = 14,0 cm; os alertas são as leituras de atenção e crítico (2 por métrica). Também é possível filtrar uma métrica: <code>?metrica=temperatura_c</code> devolveu o mesmo bloco de temperatura.</p>
+<h2>7. Limitações</h2>
+<ul>
+<li>O dispositivo das evidências é <strong>simulado por HTTP</strong>; o firmware do ESP32 ainda não foi executado no Wokwi contra esta API.</li>
+<li>O CSV é adequado para um laboratório com poucos dispositivos; a leitura do histórico percorre o arquivo inteiro a cada <code>GET</code>. Para volume maior, um banco de dados.</li>
+<li>O limite de requisições por dispositivo fica em memória do processo: com várias instâncias da API, cada uma conta separado.</li>
+<li>A chave do dispositivo é única para a bancada de demonstração (não há uma chave por dispositivo).</li>
+<li>Os indicadores são descritivos da sessão; não há previsão nem detecção de tendência.</li>
+</ul>
+<h2>8. ODS</h2>
+<p><strong>ODS 4 — Educação de qualidade (meta 4.4):</strong> a bancada remota com histórico e indicadores dá prática de monitoramento a adultos em requalificação profissional, que dificilmente teriam acesso a laboratório físico. <strong>ODS 10 — Redução das desigualdades:</strong> a prática não depende de morar perto de um laboratório; basta o simulador ou um ESP32 de baixo custo.</p>
+</body>
+</html>
