@@ -55,10 +55,22 @@ export interface AbstencaoSecao {
   contexto_regional: ContextoRegionalSecao;
 }
 
+export interface ItemAmostraAdzuna {
+  territorio: string;
+  termo_busca: string;
+  contagem_anuncios: number | null;
+}
+
 export interface AmostraAdzuna {
   disponivel: boolean;
   natureza: string;
   motivo: string;
+  fonte?: string | null;
+  atribuicao?: string | null;
+  unidade?: string | null;
+  populacao?: string | null;
+  coletado_em?: string | null;
+  itens: ItemAmostraAdzuna[];
 }
 
 export interface RespostaMercado {
