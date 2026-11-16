@@ -88,6 +88,20 @@ async def criar_leitura(
             },
         )
 
+    # 4.1. Gancho de sessao de laboratorio: se sessao_laboratorio_id preenchido e existir
+    # sessao ativa nao expirada com relato pendente, anexa relato redigido
+    sessao_cod = registro.get("sessao_laboratorio_id")
+    relato_para_anexar: str | None = None
+    if sessao_cod:
+        try:
+            from citizentech.laboratorio.repositorio import buscar_relato_pendente_sessao_ativa
+
+            relato_para_anexar = buscar_relato_pendente_sessao_ativa(sessao_cod)
+            if relato_para_anexar:
+                registro["relato_redigido"] = relato_para_anexar
+        except Exception:
+            pass
+
     # 5. Persistencia duravel em CSV e Outbox SQLite
     try:
         resultado, reg_final = salvar_leitura_duravel(registro)
@@ -99,6 +113,16 @@ async def criar_leitura(
                 "detalhes": str(err),
             },
         ) from err
+
+    # 5.1. Se leitura foi gravada como nova (criado) e havia relato anexado,
+    # marca relato como enviado no banco de dados
+    if resultado == "criado" and relato_para_anexar and sessao_cod:
+        try:
+            from citizentech.laboratorio.repositorio import marcar_relato_enviado
+
+            marcar_relato_enviado(sessao_cod, reg_final["evento_id"])
+        except Exception:
+            pass
 
     codigo_status = (
         status.HTTP_201_CREATED if resultado == "criado" else status.HTTP_200_OK
@@ -164,7 +188,8 @@ def listar_leituras(
     }
 
 
-def _calcular_estatisticas(leituras: list[dict[str, Any]]) -> dict[str, Any]:
+def calcular_indicadores(leituras: list[dict[str, Any]]) -> dict[str, Any]:
+    """Calcula indicadores estatisticos sobre uma lista de leituras."""
     contagem = len(leituras)
     if contagem == 0:
         return {
@@ -210,6 +235,10 @@ def _calcular_estatisticas(leituras: list[dict[str, Any]]) -> dict[str, Any]:
         "maximo": max_arredondado,
         "minimo": min_arredondado,
     }
+
+
+def _calcular_estatisticas(leituras: list[dict[str, Any]]) -> dict[str, Any]:
+    return calcular_indicadores(leituras)
 
 
 @router.get("/leituras/indicadores")

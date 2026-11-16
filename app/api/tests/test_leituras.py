@@ -711,3 +711,31 @@ def test_indicadores_com_valores_extremos_calcula_media_estavel_sem_overflow(mon
     assert dados["maximo"] == 1e308
     assert dados["minimo"] == 1e308
 
+
+def test_funcao_publica_calcular_indicadores():
+    from citizentech.leituras.rotas import calcular_indicadores
+
+    # Lista vazia
+    vazio = calcular_indicadores([])
+    assert vazio == {
+        "contagem": 0,
+        "total_alertas": 0,
+        "media": None,
+        "maximo": None,
+        "minimo": None,
+    }
+
+    # Lista com leituras normais e alertas
+    leituras = [
+        {"valor": 20.0, "alerta": False},
+        {"valor": 30.0, "alerta": True},
+        {"valor": 40.0, "alerta": True},
+    ]
+    res = calcular_indicadores(leituras)
+    assert res["contagem"] == 3
+    assert res["total_alertas"] == 2
+    assert res["media"] == 30.0
+    assert res["minimo"] == 20.0
+    assert res["maximo"] == 40.0
+
+

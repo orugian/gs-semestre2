@@ -427,3 +427,53 @@ def test_reconciliacao_startup_falha_loga_warning_com_caplog(monkeypatch, caplog
     assert len(avisos) == 1
     assert "RuntimeError" in avisos[0].message
     assert "falha simulada" not in avisos[0].message
+
+
+def test_cliente_envia_relato_redigido_e_nunca_o_bruto():
+    import json
+
+    corpos_capturados: list[dict] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        dados = json.loads(req.content.decode("utf-8"))
+        corpos_capturados.append(dados)
+        return httpx.Response(201, json={"evento_id": dados.get("evento_id"), "id": 1})
+
+    cliente = ClienteLambda(
+        url="https://fake.example.test/nuvem",
+        chave_dispositivo="chave-demo",
+        transport=httpx.MockTransport(handler),
+    )
+
+    base = {
+        "evento_id": "evt-rel-1",
+        "dispositivo_id": "esp32-01",
+        "metrica": "temperatura_c",
+        "unidade": "C",
+        "valor": 25.0,
+        "risco": "normal",
+        "alerta": False,
+        "medido_em": "2026-11-13T10:00:00Z",
+    }
+
+    # 1. Registro com relato (bruto) e relato_redigido -> corpo tem relato == relato_redigido
+    reg_com_ambos = dict(
+        base,
+        relato="Meu email eh segredo@privado.com",
+        relato_redigido="Meu email eh [EMAIL]",
+    )
+    res1 = cliente.enviar_leitura(reg_com_ambos)
+    assert res1.sucesso is True
+    assert corpos_capturados[0].get("relato") == "Meu email eh [EMAIL]"
+    assert "segredo@privado.com" not in json.dumps(corpos_capturados[0])
+
+    # 2. Registro so com relato bruto -> corpo sem relato
+    reg_so_bruto = dict(
+        base,
+        evento_id="evt-rel-2",
+        relato="Meu email eh segredo@privado.com",
+    )
+    res2 = cliente.enviar_leitura(reg_so_bruto)
+    assert res2.sucesso is True
+    assert "relato" not in corpos_capturados[1]
+

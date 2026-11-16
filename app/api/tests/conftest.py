@@ -100,6 +100,9 @@ def aplicar_ddl_oracle_teste():
     caminho_ddl_005 = (
         Path(__file__).resolve().parents[2] / "db" / "ddl" / "005_plano.sql"
     )
+    caminho_ddl_006 = (
+        Path(__file__).resolve().parents[2] / "db" / "ddl" / "006_laboratorio.sql"
+    )
     if not caminho_ddl_001.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_001}")
     if not caminho_ddl_002.is_file():
@@ -110,6 +113,8 @@ def aplicar_ddl_oracle_teste():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_005}")
     if not caminho_ddl_004.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_004}")
+    if not caminho_ddl_006.is_file():
+        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_006}")
 
     with oracledb.connect(user=user, password=password, dsn=dsn) as conexao:
         with conexao.cursor() as cursor:
@@ -124,6 +129,7 @@ def aplicar_ddl_oracle_teste():
                 cursor.execute("SELECT 1 FROM plano WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM checkpoint WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM tentativa WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM sessao_laboratorio WHERE ROWNUM = 1")
                 return
             except oracledb.DatabaseError:
                 pass
@@ -134,6 +140,7 @@ def aplicar_ddl_oracle_teste():
                 caminho_ddl_003,
                 caminho_ddl_004,
                 caminho_ddl_005,
+                caminho_ddl_006,
             ):
                 conteudo = caminho_ddl.read_text(encoding="utf-8")
                 for bloco in conteudo.split(";"):
