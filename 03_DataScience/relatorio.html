@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CitizenTech - Data Science</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>CitizenTech — Modelagem e implementação dos dados (Oracle + MongoDB)</h1>
+<p><strong>Disciplina:</strong> Cognitive Data Science · <strong>Global Solution 2026.2</strong></p>
+<p><strong>Integrantes (nome completo + RM):</strong>
+- [HUMANO — preencher]</p>
+<blockquote>
+<p>Tudo o que aparece como resultado neste relatório foi <strong>executado</strong> em 16/11/2026 no Oracle local (Docker, imagem Oracle Free 23ai, DDL escrito no dialeto 19c) e no MongoDB Atlas do projeto. As saídas completas estão em <code>evidencias/</code>. O Oracle da FIAP ficou fora do escopo por decisão do grupo (credencial recusada com ORA-01017); o mesmo DDL roda nele sem mudança porque usa só recursos do 19c.</p>
+</blockquote>
+<h2>1. Contexto: que dados a solução trata</h2>
+<p>A CitizenTech ajuda profissionais graduados e experientes em transição de carreira a comparar destinos com base em evidências. Os dados se dividem em quatro grupos:</p>
+<table>
+<thead>
+<tr>
+<th>Grupo</th>
+<th>Exemplos</th>
+<th>Onde fica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conta, consentimento e decisões da pessoa</td>
+<td>usuário, consentimentos por finalidade, intenção, competências revisadas, comparações, plano e checkpoints, tentativas do exercício, sessão de laboratório</td>
+<td><strong>Oracle</strong></td>
+</tr>
+<tr>
+<td>Catálogo curado</td>
+<td>destinos, ocupações CBO, competências ESCO, requisitos de cada destino</td>
+<td>YAML versionados (fonte) → <strong>Oracle</strong> (projeção relacional para consulta)</td>
+</tr>
+<tr>
+<td>Textos e documentos de formato variável</td>
+<td>texto <strong>redigido</strong> do currículo, metadados das extrações por IA, avaliações da IA em cache, respostas abertas redigidas, <em>model cards</em> dos modelos de mercado</td>
+<td><strong>MongoDB</strong></td>
+</tr>
+<tr>
+<td>Leituras de sensores e mercado</td>
+<td>leituras da bancada (CSV + outbox), série de admissões do Novo Caged</td>
+<td>CSV/SQLite locais e snapshot versionado com hash (fora do escopo deste relatório)</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Modelagem relacional (Oracle)</h2>
+<p><strong>Arquivos:</strong> <code>app/db/ddl/001_usuario_consentimento.sql</code> a <code>007_catalogo.sql</code> (cópia consolidada em <code>03_DataScience/oracle.sql</code>). São <strong>16 tabelas</strong> com chaves primárias, estrangeiras (com <code>ON DELETE CASCADE</code> a partir de <code>usuario</code>, exceto em <code>consentimento</code>, ver §5), <code>CHECK</code> de domínio (estados, finalidades, faixas numéricas), <code>UNIQUE</code> e índices de acesso.</p>
+<p><strong>Diagrama entidade-relacionamento:</strong> <code>docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png</code> (gerado do mesmo DDL). <strong>DER do Oracle Data Modeler:</strong> [HUMANO — importar o DDL no Data Modeler, gerar os modelos lógico e relacional e exportar a imagem para <code>evidencias/</code>].</p>
+<p>Principais decisões de modelagem:
+- <strong>Dialeto 19c:</strong> sem <code>BOOLEAN</code> (flags em <code>CHAR(1)</code> com <code>CHECK IN ('S','N')</code>), sem <code>IF NOT EXISTS</code>, sem tipo <code>JSON</code> nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em <code>CLOB</code>/<code>VARCHAR2</code> com <code>CHECK (coluna IS JSON)</code>, consultáveis com <code>JSON_VALUE</code>.
+- <strong>Rastreabilidade:</strong> cada comparação guarda o resultado completo por destino, na ordem escolhida (<code>comparacao_destino.ordem</code>); o plano guarda a base de estados usada (<code>plano.base_json</code>); a tentativa guarda a versão do exercício e o hash da resposta.
+- <strong>Minimização:</strong> o texto do currículo e as respostas abertas <strong>não</strong> ficam no Oracle (só no MongoDB, já redigidos); o Oracle guarda o hash.
+- <strong>Catálogo disjunto:</strong> <code>destino_ocupacao</code> tem <code>UNIQUE (cbo6)</code>, garantindo que uma ocupação CBO pertença a um só destino (a mesma população não é contada duas vezes no mercado).</p>
+<table>
+<thead>
+<tr>
+<th>Tabela</th>
+<th>Papel</th>
+<th>Chaves e restrições principais</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>usuario</code></td>
+<td>conta (e-mail, hash Argon2id, versão da sessão, <code>persona_demo</code>)</td>
+<td>PK <code>id</code>, UNIQUE <code>email</code>, CHECK <code>persona_demo IN ('S','N')</code></td>
+</tr>
+<tr>
+<td><code>consentimento</code></td>
+<td>finalidade, versão do termo, concessão e revogação</td>
+<td>FK <code>usuario</code>, CHECK finalidade ∈ {perfil, curriculo_llm, laboratorio_nuvem}</td>
+</tr>
+<tr>
+<td><code>competencia_usuario</code></td>
+<td>competência sugerida/declarada e a revisão da pessoa</td>
+<td>FK <code>usuario</code>, CHECK revisão ∈ {pendente, confirmada, rejeitada, nao_possuo}</td>
+</tr>
+<tr>
+<td><code>intencao</code></td>
+<td>atividades, motivos (JSON), horas/semana, orçamento, UF</td>
+<td>PK = FK <code>usuario</code> (1:1), CHECK horas 1–80</td>
+</tr>
+<tr>
+<td><code>comparacao</code> / <code>comparacao_destino</code></td>
+<td>comparação de até 3 destinos e o resultado de cada um</td>
+<td>PK composta (<code>comparacao_id</code>, <code>ordem</code>), CHECK ordem 1–3, UNIQUE destino por comparação</td>
+</tr>
+<tr>
+<td><code>caminho_escolhido</code> / <code>plano</code> / <code>checkpoint</code></td>
+<td>destino escolhido, plano gerado e etapas</td>
+<td><code>plano.caminho_id</code> UNIQUE (1:1), CHECK tipo e status</td>
+</tr>
+<tr>
+<td><code>tentativa</code></td>
+<td>exercício diagnóstico: notas objetiva e da IA, resultado, contestação</td>
+<td>FK <code>usuario</code>, CHECK resultado ∈ {demonstrada, insuficiente, parcial}</td>
+</tr>
+<tr>
+<td><code>sessao_laboratorio</code></td>
+<td>sessão com código, validade e relato redigido</td>
+<td>UNIQUE <code>codigo</code>, CHECK status</td>
+</tr>
+<tr>
+<td><code>destino</code>, <code>ocupacao_cbo</code>, <code>destino_ocupacao</code>, <code>competencia_esco</code>, <code>requisito_destino</code></td>
+<td>catálogo curado</td>
+<td>PKs naturais, FKs entre catálogo, UNIQUE <code>cbo6</code></td>
+</tr>
+</tbody>
+</table>
+<div class="quebra-pagina"></div>
+
+<h2>3. Consultas no Oracle — evidências de execução</h2>
+<p><strong>Arquivo:</strong> <code>app/db/consultas/evidencias_oracle.sql</code> (9 consultas). <strong>Execução:</strong> <code>app/tools/executar_consultas_oracle.py</code>, saída completa em <code>evidencias/20261116_consultas_oracle.txt</code> (21:58 UTC). Os dados de usuário são da <strong>persona de demonstração</strong> (Marina, fictícia, marcada <code>persona_demo = 'S'</code>), criada pelo script <code>app/tools/criar_persona_demo.py</code> pela API real, com a IA real sugerindo as competências e avaliando o exercício.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Técnica</th>
+<th>Pergunta respondida</th>
+<th>Resultado executado (resumo)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>JOIN de 3 tabelas + <code>LISTAGG</code></td>
+<td>Quais ocupações CBO compõem cada destino?</td>
+<td>6 destinos; Monitoramento/IoT com 7 ocupações, Dados/BI e Processos com 6 cada (os três do MVP marcados <code>S</code>)</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>JOIN + agregação condicional</td>
+<td>Quantos requisitos obrigatórios e opcionais cada destino tem?</td>
+<td>IoT: 6 obrigatórios, 2 opcionais, 3 de conhecimento</td>
+</tr>
+<tr>
+<td>C3</td>
+<td><code>GROUP BY</code> + <code>HAVING</code></td>
+<td>Quais competências ESCO aparecem em mais de um destino?</td>
+<td>13 competências; "identificar os requisitos dos clientes" em 4 destinos</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>JOIN de 4 tabelas + <code>LEFT JOIN</code></td>
+<td>Como a persona revisou as sugestões da IA e onde elas contam?</td>
+<td>"sensores" e "protocolos de comunicação de TIC" confirmadas; "resolver problemas de sistemas de TIC" rejeitada; "efetuar análise de riscos" marcada como "não possuo"</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>Subconsulta <code>NOT EXISTS</code></td>
+<td>Que obrigatórios a persona ainda não confirmou em cada destino do MVP?</td>
+<td>16 pares destino × requisito (4 no destino IoT)</td>
+</tr>
+<tr>
+<td>C6</td>
+<td>Função analítica <code>RANK() OVER (PARTITION BY …)</code></td>
+<td>Qual a melhor tentativa de cada exercício?</td>
+<td>1 tentativa: objetiva 0,75, IA 1,0, final 0,875, <strong>demonstrada</strong></td>
+</tr>
+<tr>
+<td>C7</td>
+<td><code>JSON_VALUE</code> sobre <code>CLOB IS JSON</code></td>
+<td>O que cada comparação salva mostrou por destino?</td>
+<td>antes do exercício IoT tinha 2 declaradas e 6 desconhecidas; depois, <code>todos_demonstrados</code>; último mês observado (202509, SP): IoT 121, Processos 645, Dados/BI 1994 admissões</td>
+</tr>
+<tr>
+<td>C8</td>
+<td>JOIN de 4 tabelas + agregação</td>
+<td>Como está o progresso do plano ativo por tipo de etapa?</td>
+<td>16 checkpoints; 1 <code>demonstrar</code> concluído</td>
+</tr>
+<tr>
+<td>C9</td>
+<td>Agregação</td>
+<td>Consentimentos ativos por finalidade (LGPD)</td>
+<td>perfil, curriculo_llm e laboratorio_nuvem: 1 ativo cada</td>
+</tr>
+</tbody>
+</table>
+<p>Trecho real da saída (C6):</p>
+<pre><code>exercicio_id                     | criado_em                  | nota_objetiva | nota_llm | nota_final | resultado   | posicao_melhor
+ex_analista_monitoramento_iot_01 | 2026-11-16 21:57:29.996023 | 0.75          | 1.0      | 0.875      | demonstrada | 1
+</code></pre>
+<p>Os números de mercado em C7 são <strong>admissões formais observadas</strong> no Novo Caged (ensino superior completo ou mais, nas ocupações do destino, SP), repassadas do snapshot versionado; não são oportunidades abertas nem chance individual.</p>
+<div class="quebra-pagina"></div>
+
+<h2>4. Documentos e consultas no MongoDB — evidências de execução</h2>
+<p><strong>Arquivo:</strong> <code>app/db/mongo/evidencias_mongo.js</code> (cópia em <code>03_DataScience/mongodb.js</code>), executado com <code>mongosh --file</code> contra o Atlas do projeto. Saída completa em <code>evidencias/20261116_consultas_mongo.txt</code>. Nenhuma consulta devolve o texto do currículo nem da resposta: só metadados.</p>
+<table>
+<thead>
+<tr>
+<th>Coleção</th>
+<th>Documentos (16/11)</th>
+<th>Conteúdo</th>
+<th>Por que é documento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>curriculos_redigidos</code></td>
+<td>1</td>
+<td>texto <strong>já redigido</strong>, hash SHA-256, contagem de redações por tipo, status de confirmação</td>
+<td>texto longo e livre; a contagem de redações varia por categoria</td>
+</tr>
+<tr>
+<td><code>extracoes_llm</code></td>
+<td>1</td>
+<td>modelo usado, tentativas, uso de tokens, candidatas e descartes por motivo (sem a resposta bruta)</td>
+<td>metadados de chamadas à IA com estrutura que muda por modelo</td>
+</tr>
+<tr>
+<td><code>avaliacoes_llm</code></td>
+<td>1</td>
+<td>cache da avaliação por critério da rubrica (chave = hash da resposta)</td>
+<td>lista aninhada de critérios; leitura por chave</td>
+</tr>
+<tr>
+<td><code>respostas_abertas</code></td>
+<td>1</td>
+<td>resposta aberta redigida da tentativa</td>
+<td>texto livre ligado ao id da tentativa no Oracle</td>
+</tr>
+<tr>
+<td><code>model_cards</code></td>
+<td>6</td>
+<td>procedência dos modelos de mercado: período de treino e validação, seed, versões das bibliotecas, hashes dos artefatos, status de promoção</td>
+<td>documento técnico aninhado, diferente para modelo clássico e rede neural</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Consulta</th>
+<th>Resultado executado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>documentos por coleção</td>
+<td>5 coleções; <code>model_cards</code> com 6 documentos</td>
+</tr>
+<tr>
+<td>M2</td>
+<td><code>aggregate</code> em <code>curriculos_redigidos</code> por origem e status</td>
+<td>1 currículo de texto confirmado, 1 e-mail e 1 telefone redigidos</td>
+</tr>
+<tr>
+<td>M3</td>
+<td><code>aggregate</code> em <code>extracoes_llm</code> por modelo</td>
+<td><code>deepseek/deepseek-v4.1-flash-1017</code>: 1 extração, 4 candidatas, 0 descartes</td>
+</tr>
+<tr>
+<td>M4</td>
+<td><code>find</code> com projeção em <code>model_cards</code></td>
+<td>6 modelos (persistência, sazonal, ridge, random forest, gradient boosting, MLP), treino 202101–202409, validação 202501–202509, seed 42, <code>status_promocao = nao_decidida</code></td>
+</tr>
+<tr>
+<td>M5</td>
+<td><code>$unwind</code> + <code>$group</code> em <code>avaliacoes_llm</code></td>
+<td>nível médio 2 nos 3 critérios da rubrica do exercício IoT</td>
+</tr>
+<tr>
+<td>M6</td>
+<td><code>aggregate</code> em <code>respostas_abertas</code> por usuário</td>
+<td>1 resposta da persona</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>índices por coleção</td>
+<td>só <code>_id</code> (as buscas são por chave)</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Por que Oracle e MongoDB, e como os dois se ligam</h2>
+<ul>
+<li><strong>Oracle para o que precisa de integridade e de perguntas cruzadas:</strong> conta, consentimento (prova de LGPD), estados de competência, comparações, plano e tentativas têm regras de domínio (<code>CHECK</code>), relações obrigatórias (<code>FK</code>) e consultas que cruzam o catálogo com as decisões da pessoa (C4, C5, C8). Apagar a conta remove em cascata competências, intenção, comparações, plano, tentativas e sessões de laboratório. O consentimento <strong>não</strong> tem cascata, de propósito: o registro de que o consentimento existiu e foi revogado precisa ser preservado (prova perante a LGPD), então a conta só pode ser apagada depois de tratar esses registros.</li>
+<li><strong>MongoDB para texto livre e documentos de formato variável:</strong> currículo redigido, respostas abertas e saídas de IA mudam de forma conforme o modelo e o conteúdo; guardar isso em colunas fixas obrigaria a esquemas frágeis. Os <em>model cards</em> são documentos técnicos aninhados que se leem inteiros.</li>
+<li><strong>Ligação por identificadores estáveis:</strong> <code>curriculo_id</code> (Mongo) está em <code>competencia_usuario.curriculo_id</code>; <code>tentativa.avaliacao_id</code> é a chave do documento em <code>avaliacoes_llm</code>; <code>respostas_abertas._id</code> é o <code>tentativa.id</code>.</li>
+<li><strong>Minimização como regra de distribuição:</strong> dado pessoal em texto livre só existe redigido e só no MongoDB; o Oracle guarda hash e estados. Nenhum log contém esses textos (verificado na demonstração de Cyber).</li>
+</ul>
+<h2>6. Limitações</h2>
+<ul>
+<li>Oracle local em Docker, não o Oracle da FIAP (credencial recusada); o DDL é 19c e roda igual.</li>
+<li>Os dados de usuário são de <strong>uma persona de demonstração</strong> fictícia; as contagens descrevem o ambiente de demonstração, não um uso real.</li>
+<li>O MongoDB ainda não tem índices além de <code>_id</code> nem TTL para os textos redigidos (proposto: TTL e índice por <code>usuario_id</code>).</li>
+<li>A exclusão de conta não remove automaticamente os documentos do MongoDB (proposto).</li>
+<li>DER do Data Modeler pendente [HUMANO].</li>
+</ul>
+</body>
+</html>
