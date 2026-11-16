@@ -1,0 +1,118 @@
+{
+    "version":  "1.1.0",
+    "title":  "CitizenTech — Design Tokens \u0026 Direction Sidecar",
+    "surface":  "docs/panorama_projeto.html",
+    "direction":  {
+                      "name":  "Roteiro de Orientação por Camadas (Direção 4 — Rodada 2)",
+                      "description":  "Interface visual de orientação do projeto CitizenTech com navegação contextual em 5 áreas, lista mestre/detalhe de 9 disciplinas sem filtro redundante, fluxos com conectores SVG reais e metas de contraste e teclado orientadas a WCAG AA; não constitui auditoria integral.",
+                      "seed_reference":  "seed:a6b2ec02977de17f",
+                      "updated_at":  "2026-11-16T15:50:46.011Z"
+                  },
+    "color_tokens":  {
+                         "slate_900":  "#0f172a",
+                         "slate_800":  "#1e293b",
+                         "slate_700":  "#334155",
+                         "slate_600":  "#475569",
+                         "slate_500":  "#64748b",
+                         "slate_400":  "#94a3b8",
+                         "slate_300":  "#cbd5e1",
+                         "slate_200":  "#e2e8f0",
+                         "slate_100":  "#f1f5f9",
+                         "slate_50":  "#f8fafc",
+                         "white":  "#ffffff",
+                         "semantic":  {
+                                          "integrated":  {
+                                                             "text":  "#14532d",
+                                                             "bg":  "#dcfce7",
+                                                             "border":  "#86efac",
+                                                             "accent":  "#15803d"
+                                                         },
+                                          "in_progress":  {
+                                                              "text":  "#78350f",
+                                                              "bg":  "#fef3c7",
+                                                              "border":  "#fde047",
+                                                              "accent":  "#b45309"
+                                                          },
+                                          "package_generated":  {
+                                                                    "text":  "#1e3a8a",
+                                                                    "bg":  "#dbeafe",
+                                                                    "border":  "#93c5fd",
+                                                                    "accent":  "#2563eb"
+                                                                },
+                                          "pending":  {
+                                                          "text":  "#0f172a",
+                                                          "bg":  "#f1f5f9",
+                                                          "border":  "#cbd5e1",
+                                                          "accent":  "#475569"
+                                                      },
+                                          "human_action":  {
+                                                               "text":  "#581c87",
+                                                               "bg":  "#f3e8ff",
+                                                               "border":  "#d8b4fe",
+                                                               "accent":  "#7c3aed"
+                                                           },
+                                          "active_selection":  {
+                                                                   "text":  "#1e3a8a",
+                                                                   "bg":  "#eff6ff",
+                                                                   "border":  "#2563eb",
+                                                                   "accent":  "#2563eb"
+                                                               }
+                                      }
+                     },
+    "borders":  {
+                    "max_border_width":  "1px",
+                    "card_border":  "1px solid #e2e8f0",
+                    "border_radius_sm":  "4px",
+                    "border_radius_md":  "8px",
+                    "border_radius_lg":  "12px",
+                    "accent_borders_over_1px":  false
+                },
+    "typography":  {
+                       "font_family_sans":  "\"Segoe UI\", -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", Arial, sans-serif",
+                       "font_family_mono":  "\"Cascadia Code\", \"Consolas\", \"Courier New\", monospace",
+                       "min_font_size":  "12px",
+                       "sizes":  {
+                                     "h1":  "2.25rem",
+                                     "h2":  "1.5rem",
+                                     "h3":  "1.125rem",
+                                     "body":  "1rem",
+                                     "cards":  "14px",
+                                     "caption":  "13px",
+                                     "badges_meta":  "12px",
+                                     "code":  "max(12px, 0.85em)"
+                                 },
+                       "line_heights":  {
+                                            "tight":  "1.25",
+                                            "normal":  "1.5",
+                                            "relaxed":  "1.6"
+                                        }
+                   },
+    "spacing":  {
+                    "xs":  "4px",
+                    "sm":  "8px",
+                    "md":  "12px",
+                    "lg":  "16px",
+                    "xl":  "20px",
+                    "2xl":  "24px",
+                    "3xl":  "32px"
+                },
+    "breakpoints":  {
+                        "desktop":  "1440px",
+                        "laptop":  "1024px",
+                        "tablet":  "768px",
+                        "mobile_large":  "390px",
+                        "mobile_small":  "360px"
+                    },
+    "accessibility":  {
+                          "min_touch_target":  "44px",
+                          "min_contrast_ratio_normal":  "4.5:1",
+                          "min_contrast_ratio_large":  "3.0:1",
+                          "focus_ring":  "2px solid #2563eb",
+                          "focus_offset":  "2px",
+                          "heading_programmatic_focus_outline":  "none",
+                          "icons_format":  "inline_svg",
+                          "emojis_as_icons":  false,
+                          "mobile_nav_visible_items":  5,
+                          "overview_initial_words_limit":  400
+                      }
+}
