@@ -22,6 +22,8 @@ from citizentech_ml.estatistica.validacao import validar_base_municipal
 
 def probabilidades_normais(populacao: Any) -> dict[str, Any]:
     """Calcula probabilidades sob a premissa de distribuição Normal dos registros."""
+    if any(isinstance(v, (bool, np.bool_)) for v in np.asarray(populacao, dtype=object).flat):
+        raise ValueError("Populacao numerica nao aceita booleanos.")
     arr = np.asarray(populacao, dtype=float).ravel()
     if len(arr) < 2:
         raise ValueError("A população precisa ter pelo menos 2 observações.")
@@ -68,6 +70,8 @@ def testes_medias_enunciado(
     seeds: tuple[int, int] = (42, 43),
 ) -> dict[str, Any]:
     """Testes unilaterais de médias (n=20 alpha=0.06 menor; n=25 alpha=0.09 maior)."""
+    if any(isinstance(v, (bool, np.bool_)) for v in np.asarray(populacao, dtype=object).flat):
+        raise ValueError("Populacao numerica nao aceita booleanos.")
     arr = np.asarray(populacao, dtype=float).ravel()
     if len(arr) < 25:
         raise ValueError(

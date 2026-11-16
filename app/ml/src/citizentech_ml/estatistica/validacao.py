@@ -44,6 +44,7 @@ def validar_base_municipal(df: pd.DataFrame) -> pd.DataFrame:
     if (mun_str == "").any() or mun_str.str.lower().isin(["none", "nan", "null"]).any():
         raise ValueError("Identificador municipal nulo ou vazio não é permitido.")
 
+    df_out["municipio"] = mun_str
     # Validação de duplicata de chave municipal
     if df_out["municipio"].duplicated().any():
         dups = df_out.loc[df_out["municipio"].duplicated(), "municipio"].unique().tolist()

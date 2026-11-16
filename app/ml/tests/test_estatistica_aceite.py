@@ -39,3 +39,28 @@ def test_r07_logistica_avalia_teste_estratificado_sem_sobreposicao():
         assert res["coeficientes"][nome] == pytest.approx(coef)
     classes = (independente.predict(x.iloc[te]) >= 0.5).astype(int).to_numpy()
     assert av["acuracia"] == pytest.approx(np.mean(classes == y[te]))
+
+
+def test_municipios_equivalentes_com_espacos_nao_contornam_deduplicacao():
+    from citizentech_ml.estatistica import validar_base_municipal
+
+    base = pd.DataFrame(
+        {
+            "municipio": ["355030", "355030 "],
+            "uf": "35",
+            "admissoes_2024": [20, 30],
+            "admissoes_2025": [21, 31],
+            "salario_medio_2024": [3000.0, 3100.0],
+            "percentual_superior_2024": [20.0, 30.0],
+        }
+    )
+    with pytest.raises(ValueError, match="duplicad"):
+        validar_base_municipal(base)
+
+
+@pytest.mark.parametrize("nome", ["probabilidades_normais", "testes_medias_enunciado"])
+def test_booleanos_nao_sao_contagens_numericas_na_inferencia(nome):
+    from citizentech_ml import estatistica
+
+    with pytest.raises((TypeError, ValueError), match="[Bb]oolean"):
+        getattr(estatistica, nome)([True, False] * 20)
