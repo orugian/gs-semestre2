@@ -150,6 +150,9 @@ Execução de 16/11/2026, 15h37–15h38 (UTC−3), contra a Function URL real.
 | 2 | Simulador enviando as leituras e a resposta da API | `20261116_e2e_function_url.txt` (saída do terminal) | texto ok; **print do terminal pendente** [HUMANO] |
 | 3 | CloudWatch com payload chegando, classificação e gravação | `20261116_cloudwatch_3.png` | ok; prints do descarte/chave inválida e do alerta crítico **a refazer** [HUMANO] |
 | 4 | Consulta no banco com as ocorrências gravadas | `20261116_consulta_rds.txt` (psql, TLS verify-full) | texto ok; **print pendente** [HUMANO] |
+| extra | Function URL da Lambda `CP-2` no console | `20261116_function_url.png` | ok (usuário do console tarjado) |
+| extra | RDS `cp1-cloud`: endpoint, porta 5432, *publicly accessible* = Yes, security group `default` | `20261116_rds_conectividade.png` | ok (usuário tarjado) |
+| extra | Regras do security group: entrada CIDR `0.0.0.0/0` (exceção acadêmica, §9) | `20261116_rds_security_group.png` | ok (usuário tarjado) |
 
 O que as evidências mostram (valores copiados das saídas):
 - `GET /health` → 200 `{"status": "ok", "banco": "ok", "ia_provedor": "comprehend"}`.
