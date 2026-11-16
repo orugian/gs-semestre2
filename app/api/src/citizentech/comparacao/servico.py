@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
 from citizentech.comparacao.dominio import comparar_destinos
 from citizentech.competencias.repositorio import competencias_para_comparacao
 from citizentech.destinos.catalogo import carregar_destinos_aprovados_brutos
@@ -177,10 +178,11 @@ def executar_comparacao(
         mercado[did] = resumo_mercado_para_comparacao(did, uf_efetiva)
 
     # 5. Executa domínio
+    resultados_exercicio = resultados_exercicio_para_comparacao(usuario_id)
     resultado_dominio = comparar_destinos(
         destinos=destinos_entrada,
         competencias=competencias,
-        resultados_exercicio=(),
+        resultados_exercicio=resultados_exercicio,
         preferencias=preferencias,
         mercado=mercado,
     )

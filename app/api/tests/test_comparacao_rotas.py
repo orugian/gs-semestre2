@@ -418,3 +418,218 @@ def test_comparacao_nao_vaza_dados_em_log(caplog):
         assert resp.status_code == 201
 
     assert trecho_secreto not in caplog.text
+
+
+@pytest.mark.oracle
+@pytest.mark.mongo
+def test_comparacao_apos_exercicio_demonstrada():
+    """Valida integracao S13 com comparacao: tentativa demonstrada."""
+    from citizentech.llm.cliente import ClienteLLM, RespostaLLM, obter_cliente_llm
+
+    cliente = TestClient(app, base_url="https://testserver")
+    usuario = _criar_usuario_e_sessao(cliente, "comp_ex_dem")
+    headers_csrf = {"X-CSRF-Token": usuario["csrf_token"]}
+
+    cliente.post("/me/consentimentos", json={"finalidade": "perfil"}, headers=headers_csrf)
+    cliente.post("/me/consentimentos", json={"finalidade": "curriculo_llm"}, headers=headers_csrf)
+
+    class FakeLLMSucesso(ClienteLLM):
+        def gerar_json(self, mensagens, schema, nome_schema, validar=None):
+            dados = {
+                "criterios": [
+                    {
+                        "id": "crit_redesenho_fluxo",
+                        "nivel": 2,
+                        "justificativa": "ok",
+                        "trecho_resposta": "fluxo to-be validado",
+                    },
+                    {
+                        "id": "crit_gestao_riscos",
+                        "nivel": 2,
+                        "justificativa": "ok",
+                        "trecho_resposta": "fluxo to-be validado",
+                    },
+                    {
+                        "id": "crit_indicadores_kpis",
+                        "nivel": 2,
+                        "justificativa": "ok",
+                        "trecho_resposta": "fluxo to-be validado",
+                    },
+                ]
+            }
+            if validar:
+                validar(dados)
+            return RespostaLLM(dados=dados, modelo="fake", tentativas=1, uso=None)
+
+    app.dependency_overrides[obter_cliente_llm] = lambda: FakeLLMSucesso()
+
+    try:
+        token = uuid.uuid4().hex[:8]
+        payload_ex = {
+            "destino_id": "analista_processos",
+            "exercicio_id": "ex_analista_processos_01",
+            "respostas_objetivas": {"q1": "C", "q2": "D", "q3": "A", "q4": "B"},
+            "resposta_aberta": f"Proposta com fluxo TO-BE validado {token} para comparacao.",
+        }
+        r_tentativa = cliente.post("/me/tentativas", json=payload_ex, headers=headers_csrf)
+        assert r_tentativa.status_code == 201
+        assert r_tentativa.json()["resultado"] == "demonstrada"
+
+        # Executa comparacao
+        r_comp = cliente.post(
+            "/me/comparacoes",
+            json={"destinos": ["analista_processos"]},
+            headers=headers_csrf,
+        )
+        assert r_comp.status_code == 201
+        dados_comp = r_comp.json()
+
+        dest = dados_comp["destinos"][0]
+        reqs_map = {r["id_local"]: r for r in dest["dimensoes"]["requisitos"]["itens"]}
+
+        # Requisitos avaliados no exercicio devem estar 'demonstrada'
+        for req_id in [
+            "processos_empresariais",
+            "criar_modelos_processos_empresariais",
+            "analisar_processos_empresariais",
+        ]:
+            assert reqs_map[req_id]["estado"] == "demonstrada"
+            assert reqs_map[req_id]["motivo"] is None
+        # Requisitos que o exercício NÃO avalia continuam sem informação (RV-S13-06)
+        for req_id in ["analisar_dados", "garantia_qualidade_dados"]:
+            assert reqs_map[req_id]["estado"] == "desconhecida"
+            assert reqs_map[req_id]["motivo"] == "sem_informacao_suficiente"
+    finally:
+        app.dependency_overrides.pop(obter_cliente_llm, None)
+
+
+@pytest.mark.oracle
+@pytest.mark.mongo
+def test_comparacao_apos_exercicio_insuficiente():
+    """Valida integracao S13: tentativa insuficiente classifica requisitos como lacuna."""
+    from citizentech.llm.cliente import ClienteLLM, RespostaLLM, obter_cliente_llm
+
+    cliente = TestClient(app, base_url="https://testserver")
+    usuario = _criar_usuario_e_sessao(cliente, "comp_ex_insuf")
+    headers_csrf = {"X-CSRF-Token": usuario["csrf_token"]}
+
+    cliente.post("/me/consentimentos", json={"finalidade": "perfil"}, headers=headers_csrf)
+    cliente.post("/me/consentimentos", json={"finalidade": "curriculo_llm"}, headers=headers_csrf)
+
+    class FakeLLMZero(ClienteLLM):
+        def gerar_json(self, mensagens, schema, nome_schema, validar=None):
+            dados = {
+                "criterios": [
+                    {
+                        "id": "crit_redesenho_fluxo",
+                        "nivel": 0,
+                        "justificativa": "ruim",
+                        "trecho_resposta": "",
+                    },
+                    {
+                        "id": "crit_gestao_riscos",
+                        "nivel": 0,
+                        "justificativa": "ruim",
+                        "trecho_resposta": "",
+                    },
+                    {
+                        "id": "crit_indicadores_kpis",
+                        "nivel": 0,
+                        "justificativa": "ruim",
+                        "trecho_resposta": "",
+                    },
+                ]
+            }
+            if validar:
+                validar(dados)
+            return RespostaLLM(dados=dados, modelo="fake", tentativas=1, uso=None)
+
+    app.dependency_overrides[obter_cliente_llm] = lambda: FakeLLMZero()
+
+    try:
+        token = uuid.uuid4().hex[:8]
+        payload_ex = {
+            "destino_id": "analista_processos",
+            "exercicio_id": "ex_analista_processos_01",
+            "respostas_objetivas": {"q1": "A", "q2": "A", "q3": "B", "q4": "C"},  # 0 acertos
+            "resposta_aberta": f"Resposta insuficiente {token} para teste de lacuna.",
+        }
+        r_tentativa = cliente.post("/me/tentativas", json=payload_ex, headers=headers_csrf)
+        assert r_tentativa.status_code == 201
+        assert r_tentativa.json()["resultado"] == "insuficiente"
+
+        # Executa comparacao
+        r_comp = cliente.post(
+            "/me/comparacoes",
+            json={"destinos": ["analista_processos"]},
+            headers=headers_csrf,
+        )
+        assert r_comp.status_code == 201
+        dados_comp = r_comp.json()
+
+        dest = dados_comp["destinos"][0]
+        reqs_map = {r["id_local"]: r for r in dest["dimensoes"]["requisitos"]["itens"]}
+
+        for req_id in [
+            "processos_empresariais",
+            "criar_modelos_processos_empresariais",
+            "analisar_processos_empresariais",
+        ]:
+            assert reqs_map[req_id]["estado"] == "lacuna"
+            assert reqs_map[req_id]["motivo"] == "exercicio_abaixo_do_minimo"
+    finally:
+        app.dependency_overrides.pop(obter_cliente_llm, None)
+
+
+@pytest.mark.oracle
+@pytest.mark.mongo
+def test_comparacao_apos_exercicio_parcial():
+    """Valida integracao S13: tentativa parcial classifica requisitos como desconhecida."""
+    from citizentech.llm.cliente import ClienteLLM, ErroLLM, obter_cliente_llm
+
+    cliente = TestClient(app, base_url="https://testserver")
+    usuario = _criar_usuario_e_sessao(cliente, "comp_ex_parc")
+    headers_csrf = {"X-CSRF-Token": usuario["csrf_token"]}
+
+    cliente.post("/me/consentimentos", json={"finalidade": "perfil"}, headers=headers_csrf)
+    cliente.post("/me/consentimentos", json={"finalidade": "curriculo_llm"}, headers=headers_csrf)
+
+    class FakeLLMFalha(ClienteLLM):
+        def gerar_json(self, mensagens, schema, nome_schema, validar=None):
+            raise ErroLLM("Indisponibilidade simulada")
+
+    app.dependency_overrides[obter_cliente_llm] = lambda: FakeLLMFalha()
+
+    try:
+        token = uuid.uuid4().hex[:8]
+        payload_ex = {
+            "destino_id": "analista_processos",
+            "exercicio_id": "ex_analista_processos_01",
+            "respostas_objetivas": {"q1": "C", "q2": "D", "q3": "A", "q4": "B"},
+            "resposta_aberta": f"Resposta valida {token} mas LLM caira para parcial.",
+        }
+        r_tentativa = cliente.post("/me/tentativas", json=payload_ex, headers=headers_csrf)
+        assert r_tentativa.status_code == 201
+        assert r_tentativa.json()["resultado"] == "parcial"
+
+        # Executa comparacao
+        r_comp = cliente.post(
+            "/me/comparacoes",
+            json={"destinos": ["analista_processos"]},
+            headers=headers_csrf,
+        )
+        assert r_comp.status_code == 201
+        dados_comp = r_comp.json()
+
+        dest = dados_comp["destinos"][0]
+        reqs_map = {r["id_local"]: r for r in dest["dimensoes"]["requisitos"]["itens"]}
+
+        for req_id in [
+            "processos_empresariais",
+            "criar_modelos_processos_empresariais",
+            "analisar_processos_empresariais",
+        ]:
+            assert reqs_map[req_id]["estado"] == "desconhecida"
+            assert reqs_map[req_id]["motivo"] == "avaliacao_parcial_llm_indisponivel"
+    finally:
+        app.dependency_overrides.pop(obter_cliente_llm, None)
