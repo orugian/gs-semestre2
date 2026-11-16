@@ -1,0 +1,359 @@
+{
+  "alvo": "C:\\Users\\orugi\\Documents\\Projetos\\FIAP\\GS\\info-gs-diciplinas\\docs\\panorama_projeto.html",
+  "snapshot": "2026-11-16T12:41:58.187Z",
+  "layouts": [
+    {
+      "url": "file:///C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/docs/panorama_projeto.html",
+      "viewport": 1440,
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "visualWidth": 1425,
+      "visualScale": 1,
+      "title": "CitizenTech: caderno de continuidade",
+      "h1": "CitizenTech: caderno de continuidade",
+      "bodyFont": "17px",
+      "bodyLine": "27.2px",
+      "navTargets": [
+        {
+          "text": "1. Visão do Produto e Limites",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "2. Ponto de Parada e Snapshot",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "3. Mapa da Arquitetura",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "4. Estado Técnico por Frente",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "5. Resultados de ML, RNA e Estatística",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "6. Matriz das 9 Disciplinas",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "7. Próximos Gates Ordenados",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "8. Riscos e Invariantes",
+          "width": 260,
+          "height": 44
+        },
+        {
+          "text": "9. Fontes de Verdade e Referências",
+          "width": 260,
+          "height": 44
+        }
+      ],
+      "details": 1,
+      "larguraSolicitada": 1440,
+      "primeiraTela": "     citizentech: caderno de continuidade  retrato técnico e arquitetural de engenharia para retomada de desenvolvimento — fiap gs 2026.2     síntese operacional do ponto de parada (snapshot 16/11/2026 às 09h15 utc−3)   mercado já integrado, aplicação parcial: api, tela e painel técnico existem; login e jornada completa ainda faltam.  frente científica executada: notebooks ml/rna e estatística portátil existem; pacotes acadêmicos finais ainda pendentes.  holdout2026 fechado por protocolo: não abrir nem retunar com2025. o diretório misto de parquets exige cuidado.  nenhum modelo promovido: o app mostra o sazonal como estimativa retrospectiva2025; promoção ainda não decidida.  próximo: s9 currículo/pii. antes, conferir gates oracle e qa. este caderno é estático, não monitoramento ao vivo.     base funcional:  13cb0a2 (regressão 5d311e7 )  documentação consolidada:  dd55e48  snapshot: 16/11/2026 às 09h15 (utc−3)  prazo de entrega: 19/11/2026 às 23h55 (aprox. 3,6 dias)  ambiente: offline local ( file:// )       sumário do caderno  1. visão do produto e limites  2. ponto de parada e snapshot  3. mapa da arquitetura  4. estado técnico por frente  5. resultados de ml, rna e estatística  6. matriz das 9 disciplinas  7. próximos gates ordenados  8. riscos e invariantes  9. fontes de verdade e referências         1. visão honesta do produto  o citizentech é uma ferramenta de apoio analítico à transição de carreira de profissionais graduados e experientes. seu objetivo central é confrontar trajetórias ocupacionais pregressas com dados do mercado formal de trabalho brasileiro (novo caged), apontando lacunas de formação e orientando rotas de qualificação estruturadas.   fronteiras éticas e metodológicas do escopo  o sistema não promete recolocação profissional , não calcula pontuação única (\"score mágico\" de empregabilidade) e não converte autodeclarações em competências automaticamente comprovadas. o produto atua na orientação diagnóstica e no planejamento consciente do trabalhador.   em conformidade com a decisão formal r29, o escopo do mínimo produto viável (mvp) contempla estritamente :                       "
+    },
+    {
+      "url": "file:///C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/docs/panorama_projeto.html",
+      "viewport": 768,
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "visualWidth": 753,
+      "visualScale": 1,
+      "title": "CitizenTech: caderno de continuidade",
+      "h1": "CitizenTech: caderno de continuidade",
+      "bodyFont": "17px",
+      "bodyLine": "27.2px",
+      "navTargets": [
+        {
+          "text": "1. Visão do Produto e Limites",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "2. Ponto de Parada e Snapshot",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "3. Mapa da Arquitetura",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "4. Estado Técnico por Frente",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "5. Resultados de ML, RNA e Estatística",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "6. Matriz das 9 Disciplinas",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "7. Próximos Gates Ordenados",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "8. Riscos e Invariantes",
+          "width": 659.8125,
+          "height": 44
+        },
+        {
+          "text": "9. Fontes de Verdade e Referências",
+          "width": 659.8125,
+          "height": 44
+        }
+      ],
+      "details": 1,
+      "larguraSolicitada": 768,
+      "primeiraTela": "     citizentech: caderno de continuidade  retrato técnico e arquitetural de engenharia para retomada de desenvolvimento — fiap gs 2026.2     síntese operacional do ponto de parada (snapshot 16/11/2026 às 09h15 utc−3)   mercado já integrado, aplicação parcial: api, tela e painel técnico existem; login e jornada completa ainda faltam.  frente científica executada: notebooks ml/rna e estatística portátil existem; pacotes acadêmicos finais ainda pendentes.  holdout2026 fechado por protocolo: não abrir nem retunar com2025. o diretório misto de parquets exige cuidado.  nenhum modelo promovido: o app mostra o sazonal como estimativa retrospectiva2025; promoção ainda não decidida.  próximo: s9 currículo/pii. antes, conferir gates oracle e qa. este caderno é estático, não monitoramento ao vivo.     base funcional:  13cb0a2 (regressão 5d311e7 )  documentação consolidada:  dd55e48  snapshot: 16/11/2026 às 09h15 (utc−3)  prazo de entrega: 19/11/2026 às 23h55 (aprox. 3,6 dias)  ambiente: offline local ( file:// )         sumário do caderno   1. visão do produto e limites  2. ponto de parada e snapshot  3. mapa da arquitetura  4. estado técnico por frente  5. resultados de ml, rna e estatística  6. matriz das 9 disciplinas            1. visão honesta do produto  o citizentech é uma ferramenta de apoio analítico à transição de carreira de profissionais graduados e experientes. seu objetivo central é confrontar trajetórias ocupacionais pregressas com dados do mercado formal de trabalho brasileiro (novo caged), apontando lacunas de formação e orientando rotas de qualificação estruturadas.                         "
+    },
+    {
+      "url": "file:///C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/docs/panorama_projeto.html",
+      "viewport": 390,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "visualWidth": 390,
+      "visualScale": 1,
+      "title": "CitizenTech: caderno de continuidade",
+      "h1": "CitizenTech: caderno de continuidade",
+      "bodyFont": "17px",
+      "bodyLine": "27.2px",
+      "navTargets": [
+        {
+          "text": "1. Visão do Produto e Limites",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "2. Ponto de Parada e Snapshot",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "3. Mapa da Arquitetura",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "4. Estado Técnico por Frente",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "5. Resultados de ML, RNA e Estatística",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "6. Matriz das 9 Disciplinas",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "7. Próximos Gates Ordenados",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "8. Riscos e Invariantes",
+          "width": 337.03125,
+          "height": 44
+        },
+        {
+          "text": "9. Fontes de Verdade e Referências",
+          "width": 337.03125,
+          "height": 44
+        }
+      ],
+      "details": 1,
+      "larguraSolicitada": 390,
+      "primeiraTela": "     citizentech: caderno de continuidade  retrato técnico e arquitetural de engenharia para retomada de desenvolvimento — fiap gs 2026.2     síntese operacional do ponto de parada (snapshot 16/11/2026 às 09h15 utc−3)   mercado já integrado, aplicação parcial: api, tela e painel técnico existem; login e jornada completa ainda faltam.  frente científica executada: notebooks ml/rna e estatística portátil existem; pacotes acadêmicos finais ainda pendentes.  holdout2026 fechado por protocolo: não abrir nem retunar com2025. o diretório misto de parquets exige cuidado.  nenhum modelo promovido: o app mostra o sazonal como estimativa retrospectiva2025; promoção ainda não decidida.  próximo: s9 currículo/pii. antes, conferir gates oracle e qa. este caderno é estático, não monitoramento ao vivo.     base funcional:  13cb0a2 (regressão 5d311e7 )  documentação consolidada:  dd55e48  snapshot: 16/11/2026 às 09h15 (utc−3)  prazo de entrega: 19/11/2026 às 23h55 (aprox. 3,6 dias)  ambiente: offline local ( file:// )     "
+    },
+    {
+      "url": "file:///C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/docs/panorama_projeto.html",
+      "viewport": 360,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "visualWidth": 360,
+      "visualScale": 1,
+      "title": "CitizenTech: caderno de continuidade",
+      "h1": "CitizenTech: caderno de continuidade",
+      "bodyFont": "17px",
+      "bodyLine": "27.2px",
+      "navTargets": [
+        {
+          "text": "1. Visão do Produto e Limites",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "2. Ponto de Parada e Snapshot",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "3. Mapa da Arquitetura",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "4. Estado Técnico por Frente",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "5. Resultados de ML, RNA e Estatística",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "6. Matriz das 9 Disciplinas",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "7. Próximos Gates Ordenados",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "8. Riscos e Invariantes",
+          "width": 307.03125,
+          "height": 44
+        },
+        {
+          "text": "9. Fontes de Verdade e Referências",
+          "width": 307.03125,
+          "height": 44
+        }
+      ],
+      "details": 1,
+      "larguraSolicitada": 360,
+      "primeiraTela": "     citizentech: caderno de continuidade  retrato técnico e arquitetural de engenharia para retomada de desenvolvimento — fiap gs 2026.2     síntese operacional do ponto de parada (snapshot 16/11/2026 às 09h15 utc−3)   mercado já integrado, aplicação parcial: api, tela e painel técnico existem; login e jornada completa ainda faltam.  frente científica executada: notebooks ml/rna e estatística portátil existem; pacotes acadêmicos finais ainda pendentes.  holdout2026 fechado por protocolo: não abrir nem retunar com2025. o diretório misto de parquets exige cuidado.  nenhum modelo promovido: o app mostra o sazonal como estimativa retrospectiva2025; promoção ainda não decidida.  próximo: s9 currículo/pii. antes, conferir gates oracle e qa. este caderno é estático, não monitoramento ao vivo.     base funcional:  13cb0a2 (regressão 5d311e7 )         "
+    }
+  ],
+  "foco": {
+    "tag": "A",
+    "text": "Pular para o conteúdo principal",
+    "href": "#main-content",
+    "outline": "rgb(30, 58, 138) solid 2px",
+    "outlineOffset": "2px",
+    "corHover": "rgb(255, 255, 255)"
+  },
+  "detailsTeclado": true,
+  "requisicoesRemotas": [],
+  "contraste": {
+    "textos": 698,
+    "minimoRatio": 6.916973995632248,
+    "violacoes": []
+  },
+  "tipografia": {
+    "titulos": [
+      {
+        "tag": "H1",
+        "font": 28.05,
+        "tracking": -0.2805,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H3",
+        "font": 19.55,
+        "tracking": -0.1955,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H3",
+        "font": 19.55,
+        "tracking": -0.1955,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H3",
+        "font": 19.55,
+        "tracking": -0.1955,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      },
+      {
+        "tag": "H2",
+        "font": 22.1,
+        "tracking": -0.221,
+        "ratio": -0.01
+      }
+    ],
+    "menorRotuloPx": 12,
+    "paddingCelula": {
+      "top": "9.35px",
+      "right": "12.75px",
+      "bottom": "9.35px",
+      "left": "12.75px"
+    }
+  },
+  "caracteresVisiveis": 37428
+}

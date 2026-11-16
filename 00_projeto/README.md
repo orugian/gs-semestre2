@@ -10,6 +10,7 @@ Prazo de todas as entregas: **19/11/2026 às23h55** (Portal do Aluno).
 ## Comece por aqui
 
 - [Estado atual e próxima sessão](<../docs/estado.md>) — checkpoint operacional, restrições e pendências.
+- [Panorama visual offline](<../docs/panorama_projeto.html>) — arquitetura, resultados,9disciplinas e próximos gates; documento, não app.
 - [Plano aprovado](<../docs/plano_desenvolvimento.md>) — decisões D01–D25, contratos, fatias e mínimos das9 disciplinas.
 - [Proposta e terminologia](<../docs/proposta_transicao_carreira.md>) — visão e limites; contém também contexto histórico, não um status de implementação.
 - [Revisão adversarial](<../docs/revisao_adversarial_plano.md>) — achados R01–R30.

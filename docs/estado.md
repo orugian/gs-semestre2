@@ -53,10 +53,18 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 
 ## 5. Git, processos e worktrees (conferido 09h15)
 
-- Worktrees: `../GS-wt/S5-auth` (`b94b0de`, **preservar**), `../GS-wt/S5-red` (`112042d`, preservar), `../GS-wt/DOC-panorama` (`7fd8769`, **outra sessão**: panorama HTML documental, `docs/panorama_projeto.html` não commitado, ainda sendo editado às 09h12). Não tocar.
+- Worktrees preservados: `../GS-wt/S5-auth` (`b94b0de`) e `../GS-wt/S5-red` (`112042d`). **DOC-panorama integrado em `c6ee6e1` e worktree/branch limpos removidos às09h44**; não há mais autoria pendente desse HTML.
 - Processo `agy` PID 16884 (pai: powershell do Windows Terminal, 15/11 23h22) = sessão documental do panorama. Não é desta linha de trabalho. Conta para o limite de 2 agy simultâneos.
 - Nenhum job/servidor desta sessão ativo; portas 8000/5173 livres.
 - Disco: 23,5 GB livres.
+
+### Encerramento documental —16/11 às09h44
+
+[Panorama visual offline](<panorama_projeto.html>) publicado, reconciliado com as integraçõesS8/E05/E08/S15a da outra frente. Snapshotfuncional09h15, não monitoramento vivo. Próxima implementação continua**S9 após gates**; nada de reiniciarS8 ou refazer os notebooks. [Aceite/evidências](<../09_AIC/evidencias/20261116_panorama_aceite.md>): RED de ausência porAssertionError;8checagens próprias emmain passed; Edge real no arquivo publicado em1440/768/390/360,sem expansão horizontal do corpo,teclado/hover verificados,zero recursos remotos,contraste de texto computado mínimo6,917:1. Revisão independente leu toda superfície+6capturas;P2 de rubricas tardias corrigido e resolução confirmada. Não é auditoriaaxe integral nem regressão do app.
+
+Jobs próprios152/168/290(autoria/reconciliação),166/174/179/277/292/293/300(browser) concluídos/coletados,sem job próprio restante; falhas de primeira rodada registradas,não omitidas. Não se matou oPID16884 nem se deduziu origem além do registro anterior. Nenhuma alteração emapp/ por esta linha documental,nenhum holdout/segredo acessado,push ou dado apagado. Disco24,1GB às09h43. Temporários globais de outras sessões não foram esvaziados para evitar perda concorrente; provas finais estão versionadas.
+
+[Handoff atual no temporário do sistema](<C:/Users/orugi/AppData/Local/Temp/handoff_citizentech_20261116_0915.md>),com prompt atualizado no chat; substitui o inicial que ainda apontavaS8. [PRODUCT](<../PRODUCT.md>)/[DESIGN](<../DESIGN.md>) tratam o caderno, não uma nova identidade para o appAstryx.
 
 ## 6. Próxima sessão — tarefas em ordem
 
