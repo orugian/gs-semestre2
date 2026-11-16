@@ -8,7 +8,13 @@
 
 > Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
 
-## 0a. Frente de desenvolvimento — checkpoint 16/11 ~14h30 (mais recente; prevalece sobre §0 e o restante)
+## 0b. S4 na AWS real — 16/11 ~15h40 (mais recente)
+
+**Deploy feito pelo usuário no console; verificação executada pelo orquestrador.** RDS: o identificador `cp1-cloud` é a **instância**, não um banco (só existiam `postgres`/`rdsadmin`). Criado o banco **`citizentech`**, aplicado `app/cloud/sql/ocorrencias.sql` e o usuário **`app_ingest`** (INSERT/SELECT; DELETE negado, verificado). Senha do `app_ingest` em `../.dados/cloud/segredo_app_ingest.txt` (fora do git, nunca exibida). Lambda `cp2-hello-world` com o zip da S4b (`../.dados/cloud/funcao_lambda_20261116.zip`), `DB_NAME=citizentech`, `DB_USER=app_ingest`, `DB_SSLMODE=verify-full`. A primeira tentativa falhou com `sqlstate=3D000` (DB_NAME antigo), diagnosticada pelo log novo.
+**Evidências versionadas:** [e2e](<../06_Cloud/evidencias/20261116_e2e_function_url.txt>) (health banco ok; simulador normal 2×201 sem chave; evolução 30→50 °C, 6×201, atenção em 38/42, **crítico com alerta em 46/50**; payload oficial do professor 201 `desconhecido`/`autenticado=false`; 400 inválido; 401 chave errada; duplicata 200; conflito 409; GET lista) e [consulta RDS](<../06_Cloud/evidencias/20261116_consulta_rds.txt>) (10 linhas, 2 críticas). **Sentimento:** Comprehend → `ClientError (AccessDenied)` na LabRole (informado pelo usuário a partir do CloudWatch) → `analise_status=indisponivel` com ingestão intacta, exatamente o fallback exigido; o README de Cloud deve declarar isso (HF 402 também indisponível). S4b `main` cloud 115 passed (logs INFO no runtime, sqlstate no erro, simulador anexa `/ocorrencias` e sai 1 em erro).
+**Pendente do usuário:** prints 1 (env vars com valores ocultos), 3 (CloudWatch do stream 18:38 UTC), Function URL e RDS connectivity → salvar em `06_Cloud/evidencias/`. **SG 5432 aberto a 0.0.0.0/0** (D09: exceção acadêmica documentada; manter até a correção).
+
+## 0a. Frente de desenvolvimento — checkpoint 16/11 ~14h30
 
 **`main` em `0362cc0`, enviado a `gs-semestre2` (gitleaks limpo).** Integrados após o checkpoint das 11h:
 
