@@ -57,8 +57,6 @@ class ClienteLambda:
         payload_nuvem = {
             "evento_id": registro["evento_id"],
             "dispositivo_id": registro["dispositivo_id"],
-            "sessao_laboratorio_id": registro.get("sessao_laboratorio_id") or "",
-            "ciclo_id": registro.get("ciclo_id") or "",
             "tipo_dispositivo": registro.get("tipo_dispositivo") or "esp32",
             "metrica": registro["metrica"],
             "unidade": registro["unidade"],
@@ -68,6 +66,10 @@ class ClienteLambda:
             "medido_em": registro["medido_em"],
             "criado_em": registro.get("criado_em", registro["medido_em"]),
         }
+        # A Lambda exige 1–64 caracteres quando o campo vem; vazio é omitido, não enviado como "".
+        for campo in ("sessao_laboratorio_id", "ciclo_id"):
+            if registro.get(campo):
+                payload_nuvem[campo] = registro[campo]
 
         headers = {
             "Content-Type": "application/json",

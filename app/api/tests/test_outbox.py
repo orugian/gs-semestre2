@@ -299,6 +299,42 @@ def test_cliente_lambda_seguranca_header_e_minimizacao():
     assert "chave-secreta-xyz" not in req.content.decode("utf-8")
 
 
+def test_cliente_lambda_omite_identificadores_opcionais_vazios():
+    """A Lambda recusa sessao_laboratorio_id/ciclo_id vazios (1–64 caracteres): não enviar ""."""
+    import json
+
+    corpos: list[dict] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        corpos.append(json.loads(req.content.decode("utf-8")))
+        return httpx.Response(201, json={"evento_id": "evt-vazio-1", "id": 1})
+
+    cliente = ClienteLambda(
+        url="https://fake.example.test/nuvem",
+        chave_dispositivo="chave-demo",
+        transport=httpx.MockTransport(handler),
+    )
+    registro = {
+        "evento_id": "evt-vazio-1",
+        "dispositivo_id": "esp32-01",
+        "sessao_laboratorio_id": "",
+        "ciclo_id": "",
+        "metrica": "temperatura_c",
+        "unidade": "C",
+        "valor": 25.0,
+        "risco": "normal",
+        "alerta": False,
+        "medido_em": "2026-11-13T10:00:00Z",
+    }
+    assert cliente.enviar_leitura(registro).sucesso is True
+    assert "sessao_laboratorio_id" not in corpos[0]
+    assert "ciclo_id" not in corpos[0]
+
+    registro_com_sessao = dict(registro, evento_id="evt-vazio-2", sessao_laboratorio_id="LAB-1")
+    cliente.enviar_leitura(registro_com_sessao)
+    assert corpos[1]["sessao_laboratorio_id"] == "LAB-1"
+
+
 def test_backoff_exponencial_limitado():
     agora = datetime(2026, 11, 13, 12, 0, 0, tzinfo=UTC)
 
