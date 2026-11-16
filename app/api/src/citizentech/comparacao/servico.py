@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
 from citizentech.comparacao.dominio import comparar_destinos
 from citizentech.competencias.repositorio import competencias_para_comparacao
 from citizentech.destinos.catalogo import carregar_destinos_aprovados_brutos
@@ -82,8 +83,13 @@ def resumo_mercado_para_comparacao(destino_id: str, uf: str | None) -> dict[str,
     ultimo_valor = ultimo["admissoes"]
     elegivel = bool(serie_alvo.get("elegivel", False))
 
+    valor_texto = (
+        f"{ultimo_valor:.0f}"
+        if float(ultimo_valor).is_integer()
+        else f"{float(ultimo_valor):.1f}".replace(".", ",")
+    )
     resumo_texto = (
-        f"Último mês observado ({ultimo['competencia']}): {ultimo_valor} "
+        f"Último mês observado ({ultimo['competencia']}): {valor_texto} "
         "admissões formais estimadas no grupo e território (Novo Caged)."
     )
 
@@ -172,10 +178,11 @@ def executar_comparacao(
         mercado[did] = resumo_mercado_para_comparacao(did, uf_efetiva)
 
     # 5. Executa domínio
+    resultados_exercicio = resultados_exercicio_para_comparacao(usuario_id)
     resultado_dominio = comparar_destinos(
         destinos=destinos_entrada,
         competencias=competencias,
-        resultados_exercicio=(),
+        resultados_exercicio=resultados_exercicio,
         preferencias=preferencias,
         mercado=mercado,
     )

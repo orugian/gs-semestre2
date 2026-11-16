@@ -24,11 +24,10 @@ logger = logging.getLogger("citizentech.plano")
 
 
 def _resultados_exercicio(usuario_id: str) -> list[dict[str, Any]]:
-    """Devolve os resultados de exercicios diagnósticos para o usuario.
+    """Devolve os resultados de exercicios diagnósticos do usuario (tentativa mais recente)."""
+    from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
 
-    Por enquanto retorna lista vazia; ligado à avaliacao na integracao.
-    """
-    return []
+    return resultados_exercicio_para_comparacao(usuario_id)
 
 
 def gerar_e_salvar_caminho(

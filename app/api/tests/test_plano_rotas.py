@@ -116,9 +116,9 @@ def test_concluir_checkpoint_nao_demonstra_competencia():
     dados_comp = resp_comp.json()
     dest = dados_comp["destinos"][0]
     contagem = dest["dimensoes"]["requisitos"]["contagem"]
-    assert (
-        contagem["demonstrada"] == 0
-    ), "Concluir checkpoint não pode tornar competência demonstrada"
+    assert contagem["demonstrada"] == 0, (
+        "Concluir checkpoint não pode tornar competência demonstrada"
+    )
 
     # 4. PATCH do checkpoint exercicio -> 409
     resp_patch_ex = cliente.patch(
@@ -418,3 +418,56 @@ def test_base_json_sem_trecho_origem_e_logs_sem_trechos(caplog):
 
     # 2. Verifica que nenhuma linha de log contem o trecho confidencial
     assert trecho_confidencial not in caplog.text
+
+
+@pytest.mark.oracle
+@pytest.mark.mongo
+def test_plano_usa_exercicio_demonstrado_da_avaliacao():
+    """Integração S12×S13: requisitos demonstrados pelo exercício não geram passos de estudo."""
+    from citizentech.llm.cliente import ClienteLLM, RespostaLLM, obter_cliente_llm
+
+    class _FakeNota2(ClienteLLM):
+        def gerar_json(self, mensagens, schema, nome_schema, validar=None):
+            ids = schema["properties"]["criterios"]["items"]["properties"]["id"]["enum"]
+            dados = {
+                "criterios": [
+                    {"id": i, "nivel": 2, "justificativa": "ok", "trecho_resposta": "fluxo to-be"}
+                    for i in ids
+                ]
+            }
+            if validar:
+                validar(dados)
+            return RespostaLLM(dados=dados, modelo="fake", tentativas=1, uso=None)
+
+    cliente = TestClient(app, base_url="https://testserver")
+    usuario = _criar_usuario_e_sessao(cliente, "s12_s13")
+    h = {"X-CSRF-Token": usuario["csrf_token"]}
+    cliente.post("/me/consentimentos", json={"finalidade": "perfil"}, headers=h)
+    cliente.post("/me/consentimentos", json={"finalidade": "curriculo_llm"}, headers=h)
+    app.dependency_overrides[obter_cliente_llm] = lambda: _FakeNota2()
+    try:
+        r = cliente.post(
+            "/me/tentativas",
+            headers=h,
+            json={
+                "destino_id": "analista_processos",
+                "exercicio_id": "ex_analista_processos_01",
+                "respostas_objetivas": {"q1": "C", "q2": "D", "q3": "A", "q4": "B"},
+                "resposta_aberta": (
+                    f"Proposta {uuid.uuid4().hex[:6]} com fluxo TO-BE e pontos de checagem."
+                ),
+            },
+        )
+        assert r.status_code == 201
+        assert r.json()["resultado"] == "demonstrada"
+    finally:
+        app.dependency_overrides.pop(obter_cliente_llm, None)
+
+    resp = cliente.post("/me/caminho", json={"destino_id": "analista_processos"}, headers=h)
+    assert resp.status_code == 201
+    plano = resp.json()["plano"]
+    assert "processos_empresariais" in plano["ja_demonstrados"]
+    ids_com_passo = {c["requisito_id_local"] for c in plano["checkpoints"]}
+    assert "processos_empresariais" not in ids_com_passo
+    # Requisito que o exercício não avalia continua gerando passos
+    assert "analisar_dados" in ids_com_passo
