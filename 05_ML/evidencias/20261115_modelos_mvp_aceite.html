@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>ML e RNA - aceite real do MVP R29</title>
+<style>
+@page { size: A4; margin: 20mm 18mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
+       color: #1a1a1a; }
+h1 { font-size: 20pt; margin: 0 0 12pt; }
+h2 { font-size: 15pt; margin: 18pt 0 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+h1, h2, h3 { break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 10pt; }
+th, td { border: 1px solid #999; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+th { background: #eee; }
+tr, img, pre { break-inside: avoid; }
+pre { background: #f4f4f4; padding: 8pt; font-size: 9pt; white-space: pre-wrap;
+      word-break: break-word; }
+code { font-family: Consolas, "Courier New", monospace; }
+img { max-width: 100%; }
+.quebra-pagina { break-after: page; }
+</style>
+</head>
+<body>
+<h1>ML/RNA — aceite dos experimentos reais do MVP</h1>
+<p><strong>Execução:</strong> 15/11/2026, horário de São Paulo. <strong>Natureza:</strong> avaliação retrospectiva na validação2025; não é avaliação final, demonstração de serving ou previsão de contratação individual.</p>
+<h2>População e desenho congelado</h2>
+<ul>
+<li>Novo Caged, admissões formais de pessoas com superior/pós nos três grupos R29: Dados/BI, Monitoramento/IoT e Processos, por UF. Alvo: total de admissões do trimestre futuro, com origens mensais sobrepostas.</li>
+<li>Painel DEV segregado: SHA-256 <code>33a898980916c841c325fb9e37b643484ee1d6f8b7017a19f52208de02e922c5</code>. Histórico2020 somente para lags; fit202101–202409; validação externa202501–202509, com embargo temporal.</li>
+<li>Seleção por densidade≥10 somente no treino de cada fold; transformações ajustadas dentro do fit. Na validação global: <strong>55 das81 séries elegíveis,495 linhas =55×9 origens</strong>, mesma máscara para todos os modelos e referências.</li>
+<li>Clássicos: Ridge, Random Forest e HistGradientBoosting; RandomizedSearchCV temporal,6 iterações/família,3 folds, seed42, CPU≤6 threads.</li>
+<li>MLP PyTorch CPU: A64/32,dropout0,1,lr0,001; B128/64,dropout0,2,lr0,0005; batch128,até200 épocas,patience15,min_delta0,00001,seed42. Early stopping interno com janela3meses e embargo3meses; pré-processador ajustado só no fit interno. <strong>A foi escolhida no CV do treino; refit com55 épocas</strong>, sem escolher pela validação2025.</li>
+<li>Código no início dos treinos: <code>a3a6866</code>. O holdout2026 permaneceu fechado. Nenhum parâmetro foi ajustado após estes resultados de2025.</li>
+</ul>
+<h2>Validação2025 — conferida independentemente</h2>
+<p>MAE e RMSE em <strong>admissões formais/trimestre por grupo×UF</strong>; WAPE em percentual, calculado sobre495 linhas elegíveis. Não são números de anúncios nem medidas individuais de empregabilidade.</p>
+<table>
+<thead>
+<tr>
+<th>Modelo/referência</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: right;">RMSE</th>
+<th style="text-align: right;">WAPE</th>
+<th style="text-align: right;">Ganho relativo de MAE vs sazonal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Persistência</td>
+<td style="text-align: right;">35,4525</td>
+<td style="text-align: right;">103,5830</td>
+<td style="text-align: right;">12,5588%</td>
+<td style="text-align: right;">−5,53%</td>
+</tr>
+<tr>
+<td>Sazonal</td>
+<td style="text-align: right;">33,5960</td>
+<td style="text-align: right;">91,3838</td>
+<td style="text-align: right;">11,9011%</td>
+<td style="text-align: right;">referência</td>
+</tr>
+<tr>
+<td>Ridge</td>
+<td style="text-align: right;">34,2577</td>
+<td style="text-align: right;">84,4189</td>
+<td style="text-align: right;">12,1355%</td>
+<td style="text-align: right;">−1,97%</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td style="text-align: right;">35,6339</td>
+<td style="text-align: right;">135,6003</td>
+<td style="text-align: right;">12,6230%</td>
+<td style="text-align: right;">−6,07%</td>
+</tr>
+<tr>
+<td>HistGradientBoosting</td>
+<td style="text-align: right;">39,7394</td>
+<td style="text-align: right;">132,1033</td>
+<td style="text-align: right;">14,0774%</td>
+<td style="text-align: right;">−18,29%</td>
+</tr>
+<tr>
+<td>MLP A</td>
+<td style="text-align: right;"><strong>31,6545</strong></td>
+<td style="text-align: right;"><strong>73,6720</strong></td>
+<td style="text-align: right;"><strong>11,2133%</strong></td>
+<td style="text-align: right;"><strong>+5,78%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Leitura crítica:</strong> os três clássicos não superaram a referência sazonal em MAE. Isso é um resultado válido, não motivo para alterar o split ou retunar com2025. A MLP reduziu o MAE em5,78% e o RMSE nesta amostra; o ganho agregado não demonstra benefício em toda UF/série, estabilidade futura, causalidade ou adequação ao uso individual.</p>
+<p><strong>Nenhum modelo foi promovido.</strong> O ganho mínimo de MAE é apenas parte de D10a. Promoção completa, model cards no MongoDB, serving/fallback, painel técnico, notebooks, slides e avaliação final continuam pendentes. O holdout não foi aberto para resolver essa escolha.</p>
+<h2>Evidência executada</h2>
+<ol>
+<li>Regressão integrada ML/RNA/Estatística em <code>main</code>: <code>uv run pytest -q -rs -o addopts=''</code> → <strong>206passed</strong>, seguido de <code>uv run ruff check .</code> → <strong>All checks passed</strong>; job <code>pwsh-98</code>.</li>
+<li>Treino clássico real: CLI <code>citizentech_ml.treinar_classicos</code>, com <code>--validacao --n-iter 6 --seed 42 --n-splits 3</code> → saída0, job <code>pwsh-99</code>.</li>
+<li>Treino MLP real: CLI <code>citizentech_ml.treinar_rna</code>, com <code>--validacao --max-epochs 200 --patience 15 --min-delta 0.00001 --seed 42 --limite-densidade 10 --n-splits 3 --escopo-mvp</code> → saída0, job <code>pwsh-100</code>.</li>
+<li>Aceite independente do orquestrador: comparação dos alvos exportados com o painel original por chave; recálculo direto de n/MAE/RMSE/WAPE de cada fold e validação, sem helpers de métricas/split/densidade; reabertura dos artefatos próprios e reprodução das previsões de validação <strong>sem fornecer o alvo aos estimadores</strong> → todas as asserções passaram, saída0, job <code>pwsh-105</code>.</li>
+<li>O recálculo preserva previsões brutas, sem clipagem. O aviso de depreciação pandas sobre <code>float_precision</code> afetou apenas o leitor CSV do script de conferência, não o cálculo nem o treino.</li>
+</ol>
+<p>Os valores completos e os recálculos de CV estão no <a href="20261115_modelos_mvp_aceite.json">JSON de aceite</a>. Artefatos grandes permanecem fora do git, sob os diretórios próprios <code>.dados/artefatos/classicos/20261115_r29_aceite</code> e <code>.dados/artefatos/rna/20261115_r29_aceite</code>, com hashes nos respectivos manifestos.</p>
+<h2>Limites e dívidas explícitos</h2>
+<ul>
+<li>CV foi usado para seleção: suas métricas não são uma estimativa independente de generalização; a validação2025 não é o teste final.</li>
+<li>A métrica de495 origens não transforma os trimestres sobrepostos em495 observações independentes. Não foi calculado intervalo de confiança por reamostragem temporal.</li>
+<li>Hashes demonstram integridade local, não autenticidade de um diretório controlado por atacante. Somente artefatos próprios foram carregados; reabertura direta não mede latência HTTP/carga de produção.</li>
+<li>Permanecem ajustes de schema comparativo da RNA (<code>_medio</code>/<code>_media</code>, resumo MASE das referências), validação defensiva de <code>melhor_config</code> em manifestos externos e ancoragem externa de hashes para o serving S8.</li>
+<li>As três rubricas do MVP ainda exigem revisão humana. Esta evidência não substitui notebooks executados, slides, relatório acadêmico nem vídeos obrigatórios.</li>
+</ul>
+</body>
+</html>
