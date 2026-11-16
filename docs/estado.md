@@ -53,7 +53,7 @@ Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`
 
 ## 5. Git, processos e worktrees (conferido 09h15)
 
-- Worktrees preservados: `../GS-wt/S5-auth` (`b94b0de`) e `../GS-wt/S5-red` (`112042d`). **DOC-panorama integrado em `c6ee6e1` e worktree/branch limpos removidos às09h44**; não há mais autoria pendente desse HTML.
+- Worktrees preservados: `../GS-wt/S5-auth` (`b94b0de`) e `../GS-wt/S5-red` (`112042d`). **DOC-panorama integrado em `c6ee6e1` e worktree/branch limpos removidos às09h44**; não há mais autoria pendente desse HTML. Conferência09h52:main eS5-auth limpos;S5-red temM`app/api/src/citizentech/main.py` e??`app/api/tests/test_auth.py`, não modificados por esta linha documental — preservar, não limpar/commitar cegamente.
 - Processo `agy` PID 16884 (pai: powershell do Windows Terminal, 15/11 23h22) = sessão documental do panorama. Não é desta linha de trabalho. Conta para o limite de 2 agy simultâneos.
 - Nenhum job/servidor desta sessão ativo; portas 8000/5173 livres.
 - Disco: 23,5 GB livres.
