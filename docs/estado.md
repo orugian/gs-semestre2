@@ -1,161 +1,103 @@
-# Estado do desenvolvimento
+# Estado do desenvolvimento — CitizenTech
 
-> Arquivo vivo, mantido pelo orquestrador (CLAUDE.md §5). É o primeiro arquivo lido em cada sessão: seja curto e factual.
+> Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites/adjudicações: `git show d2ddec4:docs/estado.md` e trilha retida em `../.kaiser/reports/`.
 
-**Atualizado em:** 16/11/2026, 00h06 (UTC−3) · **Dias até o prazo (19/11 23h55):** 3,99 · **Fase:** S5/R29, modelosML/RNA e EstatísticaD11 integrados;227testesML, treinos/validação reais auditados e base229municípios analisada. Holdout fechado, nenhuma promoção/push. RelatóriospreliminaresML/Estatística emPDF3páginas cada; notebooks/serving/pacoteacadêmicofinal pendentes. Caminho crítico atrasado > meio dia, usuário avisado.
+**Checkpoint funcional:** `main` em `d2ddec4`, conferido em16/11/2026 às00h30 (UTC−3), sem mudanças pendentes naquele instante. Prazo: **19/11/2026 às23h55** —3,98 dias na conferência. A aplicação **ainda não está integrada ponta a ponta**. Esta atualização é documental; não houve nova execução das suítes nesta tarefa de handoff.
 
-**Ponto corrente:** `main` em1a47a1a antes do commit final documental. Nenhumagy/jobativo; todos relevantesaté123coletados. S7worktrees/brancheslimposintegradosremovidosreversivelmente apósverificarancestria/ausênciadeapp/.env eraiz/.dados,fonte retidaemmain; **S5-authoriginalb94b0depreservadolimpo**,S5-redmantidoparareprodução. `.dados`,modelos/CSV,schemasOracleevolumesintactos; `.kaiser`/temporáriosdeaceiteretidosparaauditoria(restriçãoatualdenãoapagardados). Objetivo revisão4 rearmado por pedido humano, etapa cumprida; próxima abertura: serving/modelcards/notebooks, semholdout até autorização. Handoff anterior: `%TEMP%\handoff_citizentech_20261115.md`.
+## 1. Ponto de parada
 
-**Escopo vigente (D02/D16/R29):** prazo de 15/11 às 18h ultrapassado, sem revisão humana registrada nos YAMLs nem nesta conversa. Acionado o corte automático para **Dados/BI, Monitoramento/IoT e Processos**. Os seis rascunhos e o painel original estão preservados. Recorte técnico aplicado ao pipelineML e baselines2021/validação executados; rotas de catálogo/mercado e UI ainda deverão consumir o manifestoR29. Não equivale à aprovação das três rubricas.
+- S0–S3, S5, ingestão S6, features/split S7 e experimentos ML/RNA/D11 estão integrados em `main`, com as limitações abaixo.
+- Última regressão integrada ML/RNA/Estatística: **227passed e ruff limpo**, execução15/16 de novembro (`pwsh-114`). API: **208passed,0skip com Oracle real**, na etapa S5. Não somar esses números como se fossem uma única execução.
+- ML/RNA foram treinados e avaliados em dados reais segregados; artefatos reabertos e previsões/métricas conferidas independentemente. **Nenhum modelo foi promovido.**
+- D11 foi executada em229 municípios de SP; análises e diagnósticos reais conferidos. PDFs de evidência ML/RNA e Estatística:3 páginas cada, **preliminares**, não pacotes acadêmicos finais.
+- **Holdout2026 fechado.** Não retunar com os resultados já vistos de2025. Nenhum push nesta retomada, nenhum segredo lido e nenhum dado/schema/volume apagado.
+- Frontend atual: somente esqueleto Astryx; confirmado por leitura de [App.tsx](<app/web/src/App.tsx>). A API principal só inclui leituras, autenticação, consentimentos e saúde; [main.py](<app/api/src/citizentech/main.py>) ainda não inclui Mercado/LLM/jornada profissional.
 
-## Concluído
+## 2. O que está verificado
 
-- Documentação de base: proposta, plano v1.1 (D01–D25), revisões adversariais (R01–R30) e `CLAUDE.md`.
-- **S0 — esqueleto (12/11), em `main`.** Evidência executada pelo orquestrador:
-  - `.gitattributes`, `core.longpaths=true`, `.gitignore` ampliado (§15.3); `uv` por componente (`app/api`, `app/ml`, `app/cloud`, `app/tools`), Python 3.11.
-  - `app/docker-compose.yml`, profile `teste`: 3 serviços *healthy* (Oracle 26ai Free no `FREEPDB1`, Postgres 17.11 na 5433, Mongo 8.0.38 na 27018), login testado nos três.
-  - `app/config/limiares.json` e `GET /health` (RED → GREEN pelo `TestClient`).
-  - `app/tools/md_para_pdf.py`: 5 testes com Edge real; plano → PDF de 14 páginas; `--max-paginas 2` → saída 1.
-  - `app/web`: React 19.3 + Vite 8 + Tailwind 4 + Astryx 0.7.14; teste, build e captura de tela ok. **Plano B (Radix) não acionado.**
-- **S1 — limiares compartilhados (12/11), em `main`.** Via `agy`. Os 3 cenários classificam igual na API e na Lambda; tabela compartilhada em `app/config/casos_limiares.json`.
-- **S6 — ingestão do Novo Caged: concluída e validada (13/11), em `main`.**
-  - Código implementado via `agy` (2 rodadas) e refinado pelo orquestrador.
-  - Lista de ocupações CBO aprovada pelo usuário versionada em `app/catalogo/ocupacoes_cbo.json` (6 destinos, 34 códigos; 22 de reserva).
-  - **Download e processamento completo (202001–202609):** 243 arquivos verificados, 239 ingeridos, 4 ausentes na fonte legítimos (FOR e EXC de 202001, EXC de 202002 e EXC de 202003), 0 falhas, 0 pendentes.
-  - 239 arquivos Parquet gerados em `.dados\caged\parquet\` totalizando 107,32 MB.
-  - `caged\bruto\` 100% limpo e vazio.
-  - **Conferência independente:** contagem de admissões no MOV em 7 competências amostrais (202001, 202101, 202201, 202301, 202401, 202501 e 202609) 100% idêntica às sondagens prévias independentes.
-  - Nenhuma coluna sensível preservada nos Parquets (estrita adesão ao R05).
-- **Push (13/11):** `main` enviado para `https://github.com/orugian/gs-semestre2` (remoto `gs-semestre2`). Gitleaks limpo em todo o histórico.
-- Regressão em `main` (13/11): `uv run pytest` → api 48, cloud 50, ml 25, tools 5 (todos passando). Web: 1 teste (vitest).
-
-## Concluído no D2 (13/11, sessão iniciada às 11h08)
-
-- **S7 — features e split temporal, em `main` (merge `0586b49`).** `agy` em 2 rodadas + ajustes do orquestrador.
-  - Evidência: em `app/ml`, `uv run pytest -q` → 62 passed; `uv run ruff check .` limpo (executado em `main` após o merge).
-  - RED: o RED autoral falhou por `NotImplementedError` (não aceito). **Reprodução independente:** teste T18 sem alterações sobre `main` + interface mínima → `AssertionError: 0 == 1` (`.kaiser/reports/S7-red-reproduzido.txt`).
-  - Aceite adversarial do orquestrador: 10 falhas na rodada 1 (cobertura incompleta tratada como válida, coerções silenciosas, CBO sobreposto, fold vazio) → corrigidas na rodada 2; mais 2 defeitos residuais (competência com espaços perdia a movimentação; pré-agregado silenciava catálogo sobreposto) corrigidos pelo orquestrador com RED/GREEN.
-  - **Revisão independente** (`agy --mode plan`, `.kaiser/reports/S7-features-rev.md`, sobre o commit `d889003`), adjudicação: **RV-S7-01 aceito** (horizonte padrão do alvo anulava alvos quando o manifesto tinha mês futuro pendente; corrigido, teste novo); **RV-S7-02 aceito** (competências inferidas da cobertura não eram validadas, `mes` virava 401; corrigido, teste novo); **RV-S7-03 aceito** (`numpy` declarado em `pyproject.toml`); **RV-S7-04 aceito como dívida, não corrigido** (mapa de cobertura reconstruído a cada chamada; custo medido: pré-agregação dos 239 Parquets em 55 s). As correções pós-revisão (commit `e95cbf5`, ~20 linhas em `extracao.py`) **não passaram por nova revisão independente**.
-- **S2 — leituras CTP, em `main` (merge `7da2f57`).** `agy` em 2 rodadas + ajustes do orquestrador.
-  - Evidência: em `app/api`, `uv run pytest -q` → 73 passed; ruff limpo. RED autoral por asserção (`501 == 201`), lido no relatório, não reproduzido (S2 não é fatia de risco).
-  - Aceite adversarial: 6 falhas na rodada 1 (201 sobre CSV corrompido, eco de conteúdo privado em 4 erros, `Bearer` aceito sem contrato) e 5 na rodada 2 (`status` fora do vocabulário e `tipo_dispositivo` vazio davam 201; datas-limite davam 500; sentinela −127 por tolerância rejeitava −126,999999). Todas corrigidas.
-  - **Smoke em `uvicorn` real** (`citizentech.leituras.isolado:app`, porta 8000, chave e CSV descartáveis): 6 POST → 201 nos 3 cenários × 2 métricas com risco normal/atencao/critico corretos; campo ausente → 400; −127 → 400; chave errada → 401; GET paginado (total 6, 3 páginas) e indicadores (média 37,0 °C e 14,0 cm; 2 alertas por métrica); CSV com cabeçalho + 6 linhas. Processo encerrado e porta liberada.
-- **Rascunho do catálogo dos 6 destinos, em `main` (merge `659ecbe`).** `agy` em 2 rodadas. `app/catalogo/destinos/*.yaml` + `app/catalogo/README.md` + `app/catalogo/fontes/esco_20261113.json`.
-  - Evidência: em `app/tools`, `uv run pytest -q` → 20 passed; ruff limpo. Script do orquestrador: URI, título, tipo, descrição oficial e sha256 dos 48 requisitos idênticos à fonte ESCO; gabaritos A/B/C/D = 6/6/6/6; nenhum requisito obrigatório sem avaliação.
-  - A rodada 1 foi devolvida: gabarito só em A/B (16/8), distratores absurdos e resposta certa denunciada pelo tamanho em 10 de 24 questões.
-  - **Continua rascunho:** `status: rascunho`, revisão humana pendente, mínimos de aprovação nulos. O conteúdo técnico das questões e rubricas **não foi validado por humano** (R29).
-- **Correção de teste intermitente da S6 (commit `de3a55e`).** `test_r05_ponta_a_ponta…` falhava em ~6% das execuções: a sentinela `"888"` coincidia com o sha256 do `.7z` no manifesto. Reproduzido (falha na 7ª de 80 execuções); sentinelas trocadas por valores fora de `[0-9a-f]`; 0 falhas em 25 execuções.
-- **Sondagens nos dados reais (orquestrador, sem abrir o teste):**
-  - Qualidade (239 Parquets, 6 925 532 linhas): `saldo_movimentacao` só ±1; competências todas `AAAAMM`; **UF `99` em 2 264 linhas (0,03%)**; `grau_instrucao` 99 em 13 linhas.
-  - Contagens as-of (movimentações ≤ 202512): **0 células** destino × UF × mês com acumulado negativo; 0 linhas com disponibilidade anterior à movimentação.
-  - **Defasagem de declaração (R02), preliminar** (`.kaiser/reports/R02-sondagem-defasagem-for.txt`; só movimentações ≤ 202512): fração de admissões vinda de FOR por coorte, série principal: 2020 2,48% · 2021 1,31% · 2022 0,75% · 2023 0,49% · 2024 0,34% · 2025 0,32% (2025 é limite inferior: coorte ainda imatura). Nas coortes 202407–202506, fica por declarar depois do mês da movimentação 0,33% (máximo mensal 0,65%) na série principal e 0,51% (máximo 0,94%) na total; depois de 1 mês, 0,11% e 0,20%. **Abaixo do limite de 2% de D04b:** pelo pré-registro, os meses finais do teste não são cortados e o viés de subcontagem (< 1%) é declarado. Falta formalizar no notebook de EDA. A sondagem expôs o total anual de admissões de 2025 (período de validação), nenhum valor de 2026.
-
-- **S3 — outbox durável e `POST /leituras` idempotente, em `main` (merge `04c7f94`).** `agy` em 2 rodadas + ajustes do orquestrador.
-  - Evidência: em `app/api`, `uv run pytest -q -rs` → 109 passed, 0 pulados; ruff limpo (em `main`, depois do merge).
-  - **Sensibilidade do teste reproduzida por mutação**, com o worker neutralizado: `'pendente_nuvem' == 'sincronizado'` falha por asserção (`.kaiser/reports/S3-red-reproduzido.txt`). Isso **não** é reprodução literal de testes novos sobre base + esqueleto (§7.5), nem prova retroativa da sequência autoral TDD. Diff lido na íntegra.
-  - Aceite adversarial (11 contraexemplos): 3 falharam na rodada 1 — reenvio sem `medido_em` virava 409 quando o relógio avançava (o caso T13 real; o teste do autor passava por cair no mesmo segundo); órfão do CSV reenviado respondia 200 sem entrar na fila; chave do dispositivo saía por `http://` para host externo. Corrigidos na rodada 2, junto com `synchronous=FULL`, mensagens 503 sem texto de exceção, `.dockerignore`, uv 0.11.6 e usuário não-root na imagem.
-  - **Revisão independente** (`agy --mode plan`, `.kaiser/reports/S3-outbox-rev.md`, sobre o commit `09e2f0d`), adjudicação: **RV-S3-01 aceito** (ack sem `id` remoto marcava `sincronizado`; agora exige `evento_id` igual e `id` não vazio); **RV-S3-02 aceito** (CSV com caminho explícito e outbox em outra pasta; a outbox agora acompanha o CSV); **RV-S3-03 aceito** (backoff contava do início do lote; agora do momento da falha); **RV-S3-04 aceito** (modo isolado não reconciliava órfãos ao subir; ganhou `lifespan` sem worker); **RV-S3-05 aceito em parte** (413 e 422 viram `erro_permanente`; 404/405 continuam na fila porque indicam URL mal configurada, corrigível); **RV-S3-06/07/08 aceitos como limitação**, documentados no README (processo único obrigatório, sem keep-alive, contexto de build em `app/`). Cada correção com RED por asserção (`.kaiser/reports/S3-revisao-red.txt`). As correções pós-revisão (commit `1f837ef`) **não passaram por nova revisão independente**.
-  - **Imagem Docker construída e exercitada pelo orquestrador:** `docker build -f app\api\Dockerfile app` → 376 MB; contêiner com volume nomeado temporário: `/health` 200, POST novo 201, reenvio 2 s depois 200 com o mesmo `medido_em`, conteúdo diferente 409, processo como usuário `citizentech`, CSV + `outbox.db` no volume, estado preservado depois de `docker restart`; contêiner e volume temporários removidos. A imagem `citizentech-api:s3` ficou no Docker.
-  - **Achado do orquestrador:** os testes da rodada 1 gravaram um `outbox.db` com 77 eventos de teste em `.dados\runtime\` (o `agy` roda com `CITIZENTECH_DADOS` real). Adicionada a fixture autouse `ambiente_isolado` em `app/api/tests/conftest.py`; verificado com diretório-sentinela que a suíte não cria mais nada fora de `tmp`. **O arquivo antigo continua lá** (apagar exige aprovação; ver pendências).
-- **S7b — painel de desenvolvimento, EDA do treino e baselines, em `main` (merge `464fa4c`).** `agy` em 2 rodadas + ajustes do orquestrador. Sem revisão independente (não é fatia de risco na lista do plano).
-  - Evidência: em `app/ml`, `uv run pytest -q` → 86 passed; ruff limpo (em `main`).
-  - **Executado nos dados reais a partir de `main`:** `python -m citizentech_ml.painel` → `.dados\caged\painel\painel_desenvolvimento.parquet` (11 178 linhas: treino 9 234, embargo 486, validação 1 458; sha256 `8e653b00…b4eb9e`, idêntico entre execuções). **Conferência independente direto dos Parquets:** alvo consolidado da origem 202312 e admissões as-of de 202403 com 0 divergências em 162 séries; `n`, MAE e WAPE dos 3 folds iguais ao recálculo à parte.
-  - **Baselines, só treino (validação e teste NÃO avaliados):** 3 folds de origem móvel (avaliação em 202401–03, 202404–06, 202407–09; 113/114/114 séries elegíveis de 162). Persistência trimestral: MAE médio 52,17 (desvio 9,63), WAPE 13,71%. Sazonal: MAE 65,45 (desvio 13,98), WAPE 17,09%. O sazonal vence só no fold de jan–mar/2024 (49,63 contra 63,08).
-  - **EDA do treino** (`05_ML/evidencias/20261113-eda-treino.md` + 2 PNG): 115 de 162 séries passam na densidade (D04a) e cobrem 99,61% das admissões do treino; IoT tem 14 UFs elegíveis e Projetos/Produto 13; índice sazonal do agregado: pico em agosto (1,11), vale em dezembro (0,82); 45 origens de treino com todas as features (202101–202409); defasagem de declaração e FOR abaixo de 2% a partir de 2021 (2020: 2,48% de FOR na série principal).
-  - Devolvido na rodada 1: MAE 0,0 fabricado quando n = 0; fração de exclusões subestimada; rótulos e formatação. Corrigido pelo orquestrador depois da rodada 2: a tabela da série total comparava o consolidado com o as-of da série principal (mostrava 75–90% de diferença; o correto é 0,5–3%).
-  - Evidências versionadas em `05_ML/evidencias/20261113-*` (EDA, PNGs, `baselines-treino.json` e `.txt` com comandos e conferência).
-
-## Retomada — 15/11, 19h01; continuação às 20h13
-
-### S5 integrada e verificada
-
-- **Merge `c391eac` em `main`**, após commits `1e409a5` e `b94b0de`. Worktree `../GS-wt/S5-auth` preservado, limpo e integrado; não há mais implementação não commitada nele.
-- **RED independente:** teste original sobre `main` + rota mínima em `../GS-wt/S5-red` → **assert501==201**, por asserção HTTP; log `../.kaiser/reports/S5-red-independente-20261115.txt`. Rascunho adversarial corrigido antes de executar: preparação de rate limit não consome login; JWTs partem de controle positivo válido.
-- Contraexemplos próprios expuseram6falhas (iat/jti ausentes aceitos, exp malformado geravaTypeError, senha gigante chegava ao banco). Corrigidas via agy na rodada2, com subprocesso novo para a prova de isolamento CTP, expiração global do limitador e fail-closed. Retentativa única após interrupção externa concluiu, sem tarefas filhas pendentes.
-- **Oracle real executado pelo orquestrador:** worktree204passed; após revisão/correções208passed (102,97s); **regressão em main208passed,0skip (104,44s)**, ruff limpo. `uv run pytest -q -rs --tb=short -o addopts=''` via runner `pwsh-18`, encerrado/coletado saída0. Logs em `../.kaiser/reports/S5-oracle-CT_S5_TESTE_651E903F48-*.txt`.
-- **Revisão independente agy `pwsh-26`, coletada saída0**, patch de três pontos do candidato `1e409a5`, sem relatório autoral. Adjudicação: **RV-S5-01/02/03 aceitos como limitações declaradas** (rate limit por processo, logout global, enumeração residual no cadastro409); **04 aceito como dívida** (import ausente do driver pode escapar do503 em ambiente sem `uv sync`, não reproduzido); **05 corrigido** (leitura redundante de configuração); **06 corrigido com RED/GREEN** (JWT_SECRET só whitespace); achado próprio adicional corrigido com RED/GREEN (JWT_EXPIRA_MINUTOS vazio não usa default). Quatro falhas novas antes das correções,208passed depois. Correções de poucas linhas em `b94b0de` não tiveram segunda revisão independente.
-- **Autorização humana explícita nesta continuação:** criar novo schema Oracle local de teste. Criado `CT_S5_TESTE_651E903F48`, senha gerada e usada só em memória para worktree/main, esquecida ao encerrar o runner. `CT_S5_TESTE` anterior preservado; nenhum dado/schema apagado. Oracle parado com `docker stop` após os testes, volumes intactos. Não reaproveitar canais encerrados como se guardassem credencial.
-- Gitleaks bloqueou um falso positivo na string de fixture JWTcurto; substituída por `"x" * 31`, reforçando o teste do limite32. Teste próprio1passed; nova varredura limpa, sem exceção no detector. Demais commits também passaram por gitleaks.
-- Evidência inicial versionada: [aceite parcial S5](<02_Cybersecurity/evidencias/20261115_s5_aceite_parcial.txt>); complementar com resultado final no próximo registro documental.
-
-### R29 aplicado ao pipeline ML, baselines reais executados
-
-- **Merge `d807e10` em main**, manifesto canônico de três destinos, projeção do painel e CLI `--escopo-mvp`. Catálogo completo/seis rascunhos/Parquets preservados. Rotas futuras de catálogo/mercado e UI ainda precisam consumir esse manifesto. D11/Estatística mantém seis destinos; não houve emenda científica silenciosa.
-- Revisão independente agy `pwsh-21` coletada. **RV-R29-01/03/04 aceitos e corrigidos** (return duplicado, sobrescrita de baseline, rótulo parcial); **02 aceito como limitação operacional**, documentado: rejeitar2026 em memória NÃO impede I/O prévio. Usar apenas painelDEV segregado; nunca reconstruir a partir do diretório misto de microdados nesta etapa. Correções pequenas em `b45b092`, sem segunda revisão. RED próprio2failed, regressão pós-correções e em main **110passed/ruff limpo**. RED inicial autoral da projeção não preservado; não alegar sequência TDD retroativa.
-- Painel originalDEV identificado por SHA-256 `8e653b0047ceed204d25bf7c0d9d28c8d7944bd4e75c7f65bf4ea09651b4eb9e`, origens202001–202509 e11178linhas. Nova projeção em `../.dados/caged/painel/r29_20261115_2041/`, SHA-256 `33a898980916c841c325fb9e37b643484ee1d6f8b7017a19f52208de02e922c5`,5589linhas; histórico2020=972, treino202101–202409=3645, embargo243, validação729.
-- **Baselines `pwsh-35`, coletado saída0:** `--escopo-mvp --inicio-treino 202101 --validacao`;55séries elegíveis de81,495linhas de validação. CV3folds: persistênciaMAE39,94±9,85/WAPE14,75%; sazonalMAE54,06±1,66/WAPE19,92%. Validação: persistênciaMAE35,45/WAPE12,56%; sazonalMAE33,60/WAPE11,90%. Não são resultados de Ridge/RF/HGB/MLP.
-- **Conferência independente**, sem helpers de modelo/split/densidade/métricas: n/MAE/RMSE/WAPE idênticos nos3folds e validação (rtol1e-12). Evidências novas em [baselines MVP](<05_ML/evidencias/20261115_baselines_mvp.md>) e JSON/TXT associados. Originais de13/11 preservados. Nenhuma EDA2025 nem arquivo de holdout aberto.
-
-### Em execução e próximo gate
-
-- **Clássicos:** autoria/R2 `pwsh-33/57` concluídas/coletadas; aceite próprio inicial128passed,4falhasadversariais corrigidas, pós-R2 `pwsh-70`137passed/ruff. Candidato8cd3b61 revisto independentemente (`pwsh-75`, concluído/coletado):0bloqueadores. RV-CLA-01/05/06 aceitos/corrigidos em~14linhas: CVnãoaninhada explícita, fitisoladobloqueia2026 e contagemMasecom/semescala. RED3failed/9passed→**140passed/rufflimpo** (`pwsh-83`,137,75s). Commit2a72bf9/gitleakslimpo, sem segundarevisão dascorreções pequenas. RV-CLA-02rejeitado: APIcontratada treina obrigatoriamenteos3modelos,nãoaceitagridRFisolado. RV-CLA-03rejeitado: execução pandas comindexduplicado e máscarandarray retorna[1,3]corretamente; .locndarrayéposicional. RV-CLA-04aceito comolimitaçãojádocumentada: hashéintegridade,nãoautenticidade; sóartefatospróprios/diretórioconfiável, pinningexternoparaS8. Worktree `../GS-wt/S7-classicos`; **integrado emmain7d1d4db**, regressão `pwsh-96`176passed/rufflimpo em87,33s eCLIhelpconfirmado. Treino real `pwsh-99` concluído/coletado saída0 com n_iter6,seed42,3folds/val2025 e painelSHA33a898…22c5. Artefatospróprios reabertos e n/MAE/RMSE/WAPErecalculados porchaves/paineloriginal e previsõesCV/val (`pwsh-105`,saída0), semhelpersdemétricas/split/densidade. MAEval:Ridge34,25765,RF35,63387,HGB39,73936; sazonal33,59596,nenhumclássicosuperaabase. Semreajusteapós2025,nempromoção.
-- **RNA:** autoria/R2 `pwsh-52/69` concluídas/coletadas; aceite127passed/CPU2.15.0+cpu,cudaNone;4falhasadversariais corrigidas (uma5ªfalha eraregexdopróprioteste, corrigidaseinventardefeito). Pós-R2 próprio `pwsh-82`138passed. Aceite adicional encontrou guardainfqueusava2025mesmocomvalFalse e destinosdescartados; RED2failed/5passed→correçãodeescoponuméricoem~13linhas→**140passed/rufflimpo** (`pwsh-85`,33,70s). Candidato11142aa/gitleakslimpo. Revisãoindependente `pwsh-90` concluída/coletada,0bloqueadores,RV-RNA-01aceitocomodívidaS8: schemaCV usa_medio(MLP)/_media(baselines)eMASEagregadobaselineausente, foldsindividuaiscorretos, adaptadorS8devenormalizarsemfabricarNone. RV-RNA-02aceitocomodívidadevalidaçãoestrutural demelhor_config(paramsexterno), nãoafeta manifestoprópriogeradopeloCLI. RV-RNA-03aceitocomolimitaçãodeCVseleçãonãoaninhada, a explicar nas evidências (nãogeneralizaçãoindependente). RV-RNA-04aceitocomolimitejádeclarado: hashintegridade,nãoautenticidade/OSbarreira,sóartefatospróprios/trustedroot. Nenhum requer mudar cientificamentefit/split/seeds; candidato integrado emmaina3a6866; regressão conjunta `pwsh-98`206passed/rufflimpo. Treino real `pwsh-100`concluído/coletado saída0,configsfixas/seed42/200épocasmáximo,selecionouAporCV/refit55épocas. Aceiteindependente105reabriucheckpointCPU,reproduziuprediçõessemalvoe conferiu495linhas,n/MAE/RMSE/WAPE deCV/val. MAEval31,65446,RMSE73,67201,WAPE11,21334%; ganhoMAE5,77896%vssazonal,masNÃOhouvepromoção. EvidênciasJSON/MD/HTML/PDF em05_ML/evidencias/20261115_modelos_mvp_aceite.*; Edge confirmou3páginas (`pwsh-111`),WordCraftinspecionou638palavras/61parágrafos. Worktree `../GS-wt/S7-rna` preservado.
-- Escolhas locais prévias a treino real: regressão global com destino/UF categóricos e features principais (sem total de contexto), seed42; grids pequenos no contratoClássicos. RNA configs64/32 e128/64, seed42 e treinoCPU; Estatística seeds42/43 para amostras e44 no ajuste, sem base real analisada. Split/embargo/densidade/promoção inalterados.
-- **Estatística:** usuário aprovou remover participação municipal/denominador e depois aprovou pré-registro completo, antes de dadosreais (plano§1.1). R2agy `pwsh-53` concluída/coletada; funções usam2X2024. Orquestrador encontrou exigênciaR07 de testeestratificado e corrigiu em~30linhas com RED/GREEN:80/20seed44, treino somente80%, teste municipaldisjunto; candidato `f33d791`. Revisão independente `pwsh-64` concluída/coletada,0bloqueadores. RV-EST-03/06 aceitos/corrigidos com RED3failed→**146passed/rufflimpo** (duplicatasapósstrip e booleanosnainferência). RV-EST-01/02 aceitos como dívida de pontosOLS inválidos (StopIteration/KeyError), não usados pela análise planejada. RV-EST-04 rejeitado como mínimo10universal: execução sklearn N6→treino4/teste2comambasclasses; a suficiência depende de classes/rank, não sóN. RV-EST-05 apenas padronização opcional da matriz2x2, sem mudarcontrato. Correções pós-revisão pequenas commitadas50adcca, sem segundarevisão; **integradas emmain df28804**, regressãoprópria `pwsh-77`146passed/rufflimpo em23,36s. Nenhuma base real municipal construída.
-- **Base municipal:** autoria agy `pwsh-80` concluída/coletada (4arquivos novos, somentefixtures), worktree `../GS-wt/S7-base-municipal`, base df28804. Aceitepróprio `pwsh-91`162passed/ruff; novoaceiteindependente confirmou médiaassinada15000/11,%superior7/12,snapshot2024não revisado porFOR2025; expôs aliasHARDLINK2026sobnome2024 (RED1failed/1passed). Corrigida barreiradeplanejamento comst_nlink>1 antesdequalquerread/hash/footer; **`pwsh-94`164passed/rufflimpo**,32,03s. Aceite seguinte achou metadadosinternosnãoamarradosaonomeFonte (RED2failed/2passed); corrigido em~9linhas→166passed/ruff. Candidatoca80ee5 revistoindependentemente `pwsh-104`concluído/coletado: RV-BASE-01rejeitado como bloqueador porpremissafalsa(72ARQUIVOS=24meses,parquetsjáfiltradosR05,não100Mlinhasbrutas). PerfilrealAPENASrodapésde72fontesplanejadas:2.216.198linhas,36.366.201bytes; estimativaconservadora3cópias×1KiB/linha6,34GiB,memórialivre10,22GiB. Iterrowsaceitocomodívidadeperformance,nãoexecutarparaleloacoletores. RV-BASE-02aceito/corrigido: políticaspresentesnobaserelvazio(RED1failed/4passed→167passedem15,56s;lintcorrigidoe5testesfocadospassaram),commit2c535d6/gitleakslimpo,semsegundarevisãodapequenacorreção. RV-BASE-03aceitocomodívidautilitária(dupSHA),04limitescientíficosaceitos,05layoutrealaindaverificar. **Integrado emmain1a47a1a**. Regressãointegrada `pwsh-114`:227passed/rufflimpo; CLIdabase real saiu0. CSV229municípios/20colunas,0perdasdecasoscompletos; SHA5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee, fora do git em `.dados/estatistica/20261115_d11_aceite/`, commanifesto72fontes/hashes. Aceite118saída0: recomputaçãoindependente3municípios(355030,350950,354990),municípiosválidosnodicionário645(o646ºregistroé359999Sp-Ignorado,nãopresentenabase),Z/seedseLogittrain/test disjuntos. Nenhuma mudança depopulação/aprovação apósclasses/pvalores. Evidências em08_Estatistica/evidencias/20261115_d11_aceite.*; Zmenor20α.06p.324213 eZmaior25α.09p.659389,ambosnão rejeitamH0; OLSR²simples3.626e−7/múltipla.021458; Logit183treino/46teste,matriz[[8,14],[7,17]],acurácia.543478. DiagnósticosR08reais119:hist/QQ/Shapirooriginalp9.69e−32/log1pp8.01e−8; Normalassumidamantidanositensobrigatórios. Gráficoinspecionado/rotuloscorrigidoscomasserçãodenúmerosinalterados; PDFEdge3páginas121. CSV/PYportávele relatórioacadêmicofinal/empacotamentoaindapendentes; não abrir2026. Contrato `../.kaiser/contratos/S7-base-municipal.md`, testepúblico próprio `test_base_municipal_aceite.py`.
-- **Pré-registro D11 aprovado:** SP,seis destinos,todas escolaridades; municípios com≥10admissões2024; snapshots2024até202412 e2025até202512,nenhumarquivo2026. Salário mensal declarado (layoutoficialverificado), inválidosausentes/≤0/inf fora sódamédia; sem cortaroutliers. Percentualsuperiordeclarado sobre todasadmissões, desconhecidosàparte. Z/admissões2025 seeds42/43,n20α.06menor/n25α.09maior,σddof0; logística80/20estratificada seed44,limiar.5. Grau80=Pós-Graduaçãocompleta. Dicionário oficial SHA0490f7ef…423ce, saída `../.kaiser/reports/D11-dicionario-salario-layout.txt`. Snapshot mínimo do mapaCBOseis em `../.kaiser/snapshots/D11_mapa_cbo_seis.json`, copiado apenas dos camposcbo6lidos; não contém estatísticas2026. Próxima fatia: agregador municipal com bloqueioI/Oantesdeabrir2026, depois análise real/CSV/relatório.
-- Regressões próprias adicionais: Cloud50passed/ruff; Tools20passed/ruff; Web1teste/build/typecheck; API208OracleS5 e ML227integrados. Gitleaks final inicialmente bloqueou1falsopositivo no p-valor numérico sob chave shapiro_p (relatórioredigido em../.kaiser/reports/D11-gitleaks-redacted.json); metadados renomeados para teste=Shapiro-Wilk,estatistica_w,p_valor,SEM alterar valores ou usarallowlist/skip. Sem push.
-- Interrupção anterior perdeu jobs `pwsh-16`/`pwsh-23` da primeira etapa (unknown job); relatórios parcial/vazio preservados, sem atribuir saída0. Retentativas concluídas `pwsh-5`/`pwsh-6` nesta continuação. Objetivo antigo retornou null; recriado `goal-b26c0ecc-56d3-46a1-9ddc-bb5fb7873872`, rearmado na revisão4 após novo pedido humano de continuidade; etapaS5/R29/experimentosD11cumprida. Nenhum segredo foi lido do `.env`.
-- Higiene123concluída: worktreesS7integrados/limposebrancheslocaisremovidos(semdadosexclusivos,commitsretidosemmain); originalS5limpoeREDpreservados. NenhumParquet/CSV/modelo,schema/volumeououtboxapagado. Disco23,9GiBàs00h06de16/11. Temporáriosdeaceite/trilhamantidosparareprodução;nãolimpar dados nemoutboxcontaminado semaprovação.
-
-## Bloqueios e pendências [HUMANO]
-
-- [ ] **Repositório público:** `orugian/gs-semestre2` está **público** e contém nomes e RMs da equipe, e-mails nos metadados dos commits e o material do professor (`docs\material_por_cadeira\`, PDFs dos enunciados). Confirmar que é isso mesmo ou tornar privado.
-- [ ] **Qual é o remoto oficial?** `origin` continua `insonia999/GS2_26` (D14b) e não recebeu push. Decidir se `gs-semestre2` substitui o `origin` ou se os dois recebem push.
-- [ ] `MONGODB_URI` completa e IP liberado no Atlas.
-- [ ] Senha correta do Oracle FIAP.
-- [ ] Sessão do Learner Lab e porta 5432 do RDS antes do D4.
-- [ ] Caminho da IA de sentimento (créditos HF ou Comprehend).
-- [ ] AWS CLI (instalar ou usar o console).
-- [ ] Ok para o snapshot da Adzuna (até 12 chamadas, com contador).
-- [x] **D10, aprovado pelo usuário em 15/11:** treino com origens desde **202101**, preservando 2020 apenas como histórico de lags (45 origens até 202409, sem imputar 2020 para incluí-lo no treino). EDA: CV 0,251 e FOR 2,48% em 2020, além de ausência de lag de 12 meses. **Baselines e modelos clássicos/RNA do MVP executados e conferidos** na retomada; promoção/serving ainda pendentes. Split, embargo, densidade e promoção inalterados.
-- [ ] **Apagar `.dados\runtime\outbox.db*`?** São 77 eventos de teste gravados por engano (ver S3). Enquanto existirem, subir a API com `CITIZENTECH_DADOS` real e `FUNCTION_URL` configurada enviaria esses eventos à Lambda.
-- [ ] **Revisão humana das três rubricas mantidas após o corte R29:** Dados/BI, Monitoramento/IoT e Processos. Às 18h50 de 15/11, os seis YAMLs ainda eram rascunhos com revisor e mínimos nulos; nenhuma revisão humana foi registrada. Roteiro em `app/catalogo/README.md` §4. Os demais rascunhos estão preservados, não aprovados.
-- [ ] `gh auth refresh -s project,read:project`; ideia da live (AIC); quem grava cada vídeo.
-
-**Disco:** 24,7GB livres em15/11 às20h46 (25,3GB no início da sessão). **Abaixo de 6 GB, avisar; abaixo de 4 GB, parar.**
-
-## Validação das credenciais (12/11, sem expor valores)
-
-| Serviço | Resultado | Ação |
+| Frente | Implementado / evidência | Limite que permanece |
 |---|---|---|
-| OpenRouter | ok (limite US$ 7); JSON válido via json_schema | — |
-| Adzuna | ok (1 de 25 chamadas usada como smoke) | snapshot com o contador, depois do ok |
-| Hugging Face | token válido, inferência retorna **402 (sem créditos)** | decidir: créditos HF ou Comprehend |
-| Lambda (reaproveitada) | 200, mas ainda é `cp2-hello-world` | subir o código na S4 |
-| RDS (reaproveitado) | **TCP 5432 com timeout** | Learner Lab, SG (D09), usuário `app_ingest` |
-| Oracle FIAP | **ORA-01017** | corrigir `ORACLE_FIAP_PASSWORD` |
-| Mongo Atlas | **`MONGODB_URI` só com o usuário** | URI completa e IP liberado |
+| Base técnica | uv por componente, React/Astryx, limiares compartilhados, Docker de teste e geração PDF Edge | Smoke da base não significa jornada funcional |
+| CTP / leituras | POST/GET, validações400/401/429, indicadores, CSV e smoke HTTP local | ESP32/Wokwi real ainda não demonstrado |
+| Outbox S3 | SQLite durável, idempotência201/200/409, reconciliação, retry; imagem Docker exercitada | Lambda/RDS reais não integrados; processo único |
+| Auth S5 | JWT/cookie, CSRF, Argon2id, consentimentos por proprietário; Oracle real208passed | UI de login ausente; limitações de rate limit por processo/logout/enumeração documentadas |
+| Caged S6 |239 Parquets de243 fontes verificadas,4 ausências legítimas; descarte de atributos sensíveis | Ingestão histórica incluiu2026; isso **não** autoriza reabrir esses arquivos agora |
+| Features / ML | As-of, embargo, densidade por fold, baselines, Ridge/RF/HGB e MLP CPU com duas configurações | Serving, promoção, model cards MongoDB, notebooks/slides e avaliação final pendentes |
+| Estatística D11 |229 municípios, Z/OLS/Logit, teste municipal estratificado, histogramas/QQ/Shapiro/log1p | Script portátil, dispersões/resíduos e pacote PDF/PY/CSV final pendentes |
+| Catálogo | Seis rascunhos e fontes ESCO preservados | Nenhuma das três rubricas do MVP foi aprovada por humano |
+| Cloud / IoT / IA | Regras locais de risco e infraestrutura-base | S4, firmware próprio e S9–S15/jornada ainda pendentes |
 
-## Decisões tomadas fora do plano
+Outras regressões registradas na etapa anterior: Cloud50passed; Tools20passed; Web1teste, typecheck/build. Não foram reexecutadas neste pedido documental.
 
-- **Equipe (12/11):** Guilherme Orugian (RM572882), Lucas Henrique (RM571901), Rodrigo Bettio (RM573725).
-- **LLM fallback (D06a):** `xiaomi/mimo-v2.6-flash`.
-- **AWS reaproveitada (12/11):** Lambda `cp2-hello-world` e RDS `cp1-cloud`, com alteração autorizada.
-- **S0 feita pelo orquestrador, não pelo `agy`:** andaime e configuração, em passos pequenos. D14 foi seguido na S1 e na S6.
-- **Escolhas locais da S0:** pacote da API chama-se `citizentech`; `app/tools` é projeto uv sem pacote; `@stylexjs/stylex` fixado em 0.19.1 (a 0.19.2 tinha menos de um dia e o pnpm a recusa); `postinstall` do Astryx desativado; `GS22026_enunciadosOG.txt` mantém os bytes originais (`-text`).
-- **S6:** Parquet com uma linha por movimentação filtrada, um arquivo por tipo e competência, em `.dados\caged\parquet\` (o plano cita `app/data/`; vale o mapa do CLAUDE.md §15.1).
-- **S6:** a ingestão baixa a união dos destinos com a reserva (56 códigos); o hash da lista depende só do conjunto de códigos. A atribuição de códigos a destinos pode mudar até o congelamento da S7 sem novo download.
-- **Ocupações (13/11), decisões do usuário:** manter 142330 no destino 1; manter 142315 na reserva (destino 4 fica com 2 códigos); 252105 na reserva; aceitar a esparsidade do destino 2 e as quebras de série de 211220, 212425 e 212430.
-- **D2 (13/11), aprovado pelo usuário:** `POST /leituras` responde 201 para evento novo, **200 para reenvio idêntico e 409 para o mesmo `evento_id` com conteúdo diferente** (plano §3.2 atualizado; implementação na S3). Schema de teste `CT_S5_TESTE` no Oracle Docker. Encerramento do `agy` ocioso (PID 25872).
-- **S7, escolhas do orquestrador:** disponibilidade conservadora `max(competencia_dec, competencia_arquivo)` para MOV/FOR e `max(dec, exc, arquivo)` para EXC; uma contagem do mês *m* vista em *t* só é número se MOV de *m* e FOR/EXC de *m..t* estiverem ingeridos (senão `NaN`, nunca zero); `construir_painel_features` bloqueia origens ≥ 202601 salvo `permitir_teste=True`; `SplitOrigemMovel` recusa embargo < 3 e treino > 202409.
-- **S2, escolhas do orquestrador:** autenticação só por `X-Device-Key`; `status` aceita apenas `OK`/`ALERTA`/`ERRO` (vocabulário do firmware, plano §3.1), outro valor → 400; só o valor exato −127 em `temperatura_c` é falha de sensor; `relato` é validado (≤ 280) e descartado até a S14; rate limit técnico de 60/min por dispositivo; o CSV guarda `estado` fixo `pendente_nuvem` e o estado atual virá da outbox.
-- **S5 (13/11), aprovado pelo usuário:** além de `POST /me/consentimentos`, a fatia entrega `GET /me/consentimentos` e `DELETE /me/consentimentos/{id}` (404 se não existe ou é de outra pessoa), para o T14 ser testável já na S5 (plano §3.2 atualizado).
-- **S7b, escolhas do orquestrador:** linhas com UF `99` são descartadas e contadas no carregador (D04 fixa 27 UFs); o painel de desenvolvimento vai até a origem 202509 e lê movimentações até 202512 (rótulos da validação), nunca 2026; os dois baselines são avaliados no mesmo conjunto de linhas.
-- **Catálogo:** 29 conceitos ESCO consultados na API oficial em 13/11 (versão da ESCO não fixada na consulta); a associação conceito → destino é curadoria inferida, não vínculo oficial.
+## 3. Recortes e resultados — não misturar coortes
 
-## Não verificado
+**Produto R29:** três destinos: Dados/BI, Monitoramento/IoT e Processos/Melhoria Contínua. O corte não aprova rubricas e não apaga os outros três rascunhos. Rotas futuras e UI devem consumir [escopo_mvp.json](<app/catalogo/escopo_mvp.json>).
 
-- Títulos oficiais da CBO no site do MTE (reCAPTCHA); o título de 211220 vem de fonte secundária.
-- S2/S3: POST vindo do Wokwi/ESP32 real; worker contra a Lambda e o RDS reais (só fake na fronteira); `docker compose --profile app up` com o `app/.env` real (o smoke usou `docker run` com chave descartável).
-- ML/RNA: promoção, model cards MongoDB, serving/painel técnico, notebooks e slides ainda não concluídos. ModelosnovosMVP/202101játreinados/validadosdeformacongelada,verificadosacima. **Não retunarcom2025nemabrirholdout.** Resultadosde13/11sãodaseis-destinos/configuraçãoanterior,nãomisturarcoortes.
-- Catálogo: correção técnica de enunciados, gabaritos e rubricas (depende da revisão humana); versão da ESCO.
-- S5: UI de autenticação e smoke em navegador real não executados; a fatia integrada aqui entrega API/Oracle, não a tela futura.
-## Próximo passo exato
+**ML/RNA:** superior/pós, três destinos×UF. Histórico2020 apenas para lags; fit202101–202409; validação202501–202509. Embargo, densidade e promoção D10/D04a/D10a inalterados. Validação:55 séries elegíveis de81;495 linhas.
 
-1. **Próxima fatia:** S8 serving/modelcards/painel técnicoR06, interfaces do plano§3 e credenciais primeiro; todas dependênciasML/RNA/D11jáestãocommitadasemmain. NormalizarschemaRNA_medio/_media evalidarmelhor_config,conformeRV-RNA-01/02,semretunar oualterarresultado. ModeloCardMongoDB,pinningdeartefatospróprios eD10acompletos ainda pendentes. Máximo2agy simultâneos; nenhum ativo.
-2. **ML/RNA:** treinadosreais e validação2025jáauditados, artefatos preservados. Próximos:notebooksimportandocódigoapp/ml eexecutadospontaaponta,slides/curvas/análisecrítica,serving ecomparaçãoR06. NÃOretunar apósver2025. Nenhumcandidato promovido; aplicarD10acompleto semreinterpretarparaobteraprovação. Holdout2026continuafechadoatéautorizaçãoexplícita/critériofinal.
-3. **Estatística:** base229municípioseanálisesZ/OLS/Logit/diagnósticosreaisestãoconferidos,PDFpreliminar3páginas. Próximos:dispersões/Pearson/resíduos e narrativafinal; programa portátil daanáliseemapp/ eempacotadorpara `.py`+`.csv`+PDFdiretos, semeditarosmodelosdoprofessor. Preservarpopulação/seed/n/α/asof e admitir resultadosfracos; nãoforçarsignificância.Normalassumidanositensmandatóriosmesmocomdiagnósticocontrário. Código/fixturesisoladosnãoequivalemàentregaacadêmicafinal.
-4. **Cronograma restante:** consultar o plano §5 literalmente: D3 prevê **S9/S10/S11**, ML (Ridge/RF/HGB + tuning), RNA (MLP ≥ 2 configs) e Estatística; D4 prevê **S4**, firmware e **S8/S12/S13**. Priorizar o caminho crítico atrasado e dependências, não apresentar todas essas fatias como iniciadas. Não abrir holdout nesta retomada antes de concluir critérios e candidatos.
-5. **Dependências humanas:** revisão das três rubricas, credenciais/infra e vídeos; apagar o outbox contaminado e snapshot Adzuna só com aprovação específica.
-6. **Push:** não autorizado neste fechamento. Antes do commit documental, `main` tinha 19 commits a mais que a referência local `gs-semestre2/main`; referência não consultada remotamente. Não houve push nesta sessão.
+| Modelo | MAE de validação |
+|---|---:|
+| Persistência |35,45253|
+| Sazonal |33,59596|
+| Ridge |34,25765|
+| Random Forest |35,63387|
+| HistGradientBoosting |39,73936|
+| MLP A |31,65446|
+
+MLP A foi escolhida no **CV do treino**, refit55 épocas. Ganho de MAE5,77896% vs sazonal; **não é promoção automática nem superioridade estatística demonstrada**. Os clássicos não superaram o sazonal. [Evidência ML/RNA](<05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [recálculo JSON](<05_ML/evidencias/20261115_modelos_mvp_aceite.json>).
+
+**D11:** seis destinos e **todas as escolaridades**, SP, população com≥10 admissões2024; snapshots202412/202512, sem revisões2026. Duas explicativas autorizadas: salário mensal declarado2024 e %superior2024; participação municipal removida por aprovação humana. Pré-registro integral no plano§1.1.
+
+-229 municípios,229 casos completos, nenhum município removido para melhorar ajuste. Dicionário:645 municípios+359999=Sp-Ignorado; a base não contém a categoria ignorada.
+- Z: n20/α6%,seed42,p0,324213; n25/α9%,seed43,p0,659389; ambos não rejeitamH0. Normal **assumida** nos itens obrigatórios, não comprovada; Shapiro original p9,69×10⁻³² e log1p p8,01×10⁻⁸.
+- OLS: R² simples3,626×10⁻⁷; múltipla0,021458 — resultados fracos preservados.
+- Logística:183 treino/46 teste,80/20 estratificado,seed44,limiar0,5; matriz[[8,14],[7,17]],acurácia54,3478%. Teste municipal não é o holdout temporal de ML.
+- [Evidência D11](<08_Estatistica/evidencias/20261115_d11_aceite.md>) e [JSON real](<08_Estatistica/evidencias/20261115_d11_aceite.json>).
+
+## 4. Ativos e proteção operacional
+
+Raízes externas: `GS=..`, `.dados=../.dados`, `.kaiser=../.kaiser`, worktrees=`../GS-wt`.
+
+- DEV seis destinos: `../.dados/caged/painel/painel_desenvolvimento.parquet`, SHA `8e653b0047ceed204d25bf7c0d9d28c8d7944bd4e75c7f65bf4ea09651b4eb9e`.
+- DEV MVP: `../.dados/caged/painel/r29_20261115_2041/painel_mvp.parquet`, SHA `33a898980916c841c325fb9e37b643484ee1d6f8b7017a19f52208de02e922c5`.
+- Modelos próprios: `../.dados/artefatos/classicos/20261115_r29_aceite/` e `../.dados/artefatos/rna/20261115_r29_aceite/`, com manifestos/hashes. Hash é integridade local, não autenticidade contra atacante que controla manifesto.
+- D11: `../.dados/estatistica/20261115_d11_aceite/base_municipal.csv` e manifesto; SHA CSV `5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee`.
+- D11 usa somente72 nomes canônicos2024/25, com gate antes de read/hash/footer, bloqueio de symlink/hardlink e vínculo nome×metadados. Perfil real:2.216.198 linhas R05/36,37MB comprimidos, não100M linhas nacionais. Iterrows é dívida de performance, não razão para mudar população.
+- **Não reconstruir DEV com o loader legado no diretório misto de Parquets:** ele pode abrir2026 antes de filtrar. Proteção em memória não é barreira de I/O.
+- **Não subir worker com dados reais e FUNCTION_URL:** `../.dados/runtime/outbox.db*` contém77 eventos antigos de teste. Arquivo preservado; remoção exige aprovação específica.
+- Oracle local foi parado, volumes preservados. Schema S5 autorizado foi criado sem tocar o anterior; senha gerada apenas em memória foi esquecida ao encerrar runner. Não tentar recuperá-la nem alegar sessão/credencial ativa. Nova necessidade de credencial/schema exige o gate humano adequado.
+
+## 5. Git, processos e auditoria
+
+- Commits de integração: S5 `c391eac`; R29 `d807e10`; Estatística `df28804`; clássicos `7d1d4db`; RNA `a3a6866`; base municipal `1a47a1a`; último checkpoint de evidências `d2ddec4`.
+- Worktrees S7 limpos/integrados e branches locais já removidos; fonte retida emmain. **Preservar original S5** `../GS-wt/S5-auth` em `b94b0de`, limpo; `../GS-wt/S5-red` em `112042d` mantido para reprodução.
+- Jobs antigos até123 encerrados/coletados; são histórico, não tarefas a aguardar. Na conferência documental00h30 apareceu um processo `agy` PID16884, criado15/11às23h22, **origem não confirmada**. Não há vínculo de repo/worktree nos argumentos; isso não comprova seu cwd. Não foi cancelado. Reconferir antes de delegar; máximo2agy.
+- Contratos, relatórios e snapshots de revisão em `.kaiser` foram mantidos. Adjudicações completas continuam no histórico d2ddec4 do estado; não reabrir fatias concluídas sem defeito concreto.
+- Gitleaks bloqueou falsos positivos em fixture JWT e chave estatística; corrigidos sem allowlist/skip e sem alterar métricas. Toda entrega documental será novamente varrida antes do commit.
+- Disco conferido:24,3GiB em16/11às00h30; avisar<6GiB, abortar ingestão<4GiB. Nenhuma limpeza de dados autorizada.
+
+## 6. Próxima sessão — ordem recomendada
+
+1. Ritual de [CLAUDE.md](<CLAUDE.md>): data/prazo, este estado, git/worktrees/processos; Docker só quando a fatia exigir. Não ler segredos nem iniciar outra ingestão/treino.
+2. **S8 Mercado API/model cards/R06:** ler plano§3 e§4, conferir gates Mongo/Oracle/artefatos e fechar o contrato público. Corrigir dívidas RV-RNA-01/02: `_medio`/`_media`, resumo MASE de referências, validação de `melhor_config`. Usar só artefatos próprios/raiz confiável; planejar pinning externo. **Não promover pela única condição de ganho de MAE.**
+3. Em paralelo, frente documental/científica sem sobreposição: notebooks ML/RNA importando app/ml, execução completa, slides e análise crítica; finalizar Estatística com dispersões/Pearson/resíduos e programa portátil. Empacotar código/CSV/PDF por ferramentas, sem editar modelos do professor.
+4. Reavaliar cronograma: S9(currículo/PII),S10(extração),S11(comparação) do D3 ainda faltam; S4/Cloud e firmware precisam de gates humanos. S12–S15 e jornadaE2E não estão iniciadas. Não declarar todas essas frentes em execução.
+5. Sem abrir o holdout, mudar split/densidade/promoção ou retunar com2025. Qualquer nova decisão científica/de produto segue aprovação humana; mínimos acadêmicos nunca são cortados.
+
+## 7. Pendências humanas / restrições
+
+- Revisar as **três** rubricas mantidas; [roteiro do catálogo](<app/catalogo/README.md>)§4. Seis YAMLs ainda são rascunhos, mínimos/revisor não aprovados.
+- Configurar acessos pelo ambiente, nunca enviar segredos ao chat: Atlas/URI/IP; Oracle FIAP; Learner Lab/RDS; opção HF(créditos) ou Comprehend; AWS CLI ou console. Status conhecidos são de12/11, **não revalidados** agora.
+- Adzuna: snapshot só após aprovação, teto do projeto12 chamadas/contador — disponibilidade da conta não aumenta esse teto.
+- Definir responsáveis pelos vídeos, ideia real da live, Data Modeler e Portal. Formatos/limites no plano§8; PDFs preliminares não equivalem a submissão final.
+- Decidir remoto oficial e exposição pública de nomes/RMs/material do professor. Push do dia13 é histórico; **não autoriza novo push**. Autorizações de AWS/credenciais precisam respeitar o escopo vigente.
+- Não apagar dados/outbox/schemas/volumes, não ler arquivos de segredos e não chamar APIs pagas sem autorização.
+
+## 8. Decisões locais que continuam válidas
+
+- Limiares de produto só em [limiares.json](<app/config/limiares.json>); validaçãoHTTP400; OracleDDL19c; domínio em português sem acento.
+- CTP: X-Device-Key, estadosOK/ALERTA/ERRO, sentinela exata−127; POST201novo/200idêntico/409conflito. Risco normal/atencao/critico é distinto do estado do firmware.
+- As-of: MOV/FOR=max(dec,arquivo);EXC=max(dec,exc,arquivo). Ausência de cobertura não vira zero. Parquets conservam linhas legítimas repetidas; não deduplicar arbitrariamente.
+- Ingestão usa56CBOs(34dosdestinos+22reserva), sem atributos sensíveis; CBOs/fontes/curadoria preservados. Para D11 usar snapshot mínimo de mapa em `.kaiser/snapshots/D11_mapa_cbo_seis.json`, sem carregar catálogo completo por padrão.
+- Catálogo ESCO é curadoria inferida, não vínculo oficial; versão da ESCO ainda precisa ser fixada. Alegações de títulos CBO por fontes secundárias continuam limitadas.
+- Nenhum score único, probabilidade individual de contratação ou competência automaticamente demonstrada por experiência. PII só chega à LLM redigida e após confirmação explícita; sentimento não entra na nota.

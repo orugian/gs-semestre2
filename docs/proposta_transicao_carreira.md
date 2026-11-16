@@ -4,7 +4,7 @@
 
 **Atualização 12/11/2026:** o nivelamento Grill Me foi concluído. As decisões e o plano TDD estão em [plano_desenvolvimento.md](plano_desenvolvimento.md), que prevalece sobre as recomendações deste documento em caso de conflito (ex.: público amplo com laboratório IoT opcional; 6 destinos; nota 50/50 no exercício; ODS 4 e 10 principais).
 
-**Estado original:** proposta para nivelamento, não implementação aprovada. Este é o documento único de consolidação solicitado. A próxima sessão deverá começar com **Grill Me**, resolver os bloqueios abaixo e somente então aprovar um plano de implementação em **TDD**.
+**Contexto histórico da versão0.1:** este texto nasceu como proposta para nivelamento. A etapa Grill Me e a aprovação do plano já ocorreram; **não reiniciar o nivelamento na próxima sessão**. Para retomar o desenvolvimento, ler primeiro [estado.md](<docs/estado.md>) e depois as decisões/contratos necessários do plano aprovado. As seções históricas desta proposta não são um checklist de execução atual.
 
 **Prazo acadêmico registrado nos enunciados:** 19/11/2026, às 23h55. O cronograma disponível é curto; não há promessa de concluir todas as funcionalidades comerciais até essa data.
 

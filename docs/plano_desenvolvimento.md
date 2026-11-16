@@ -197,6 +197,8 @@ Cada linha é uma fatia **RED → GREEN → REFACTOR**, testada pela interface p
 | **D6** | Qua 18 | Revisão independente (agy plan) + correções; segurança demonstrada; Oracle FIAP (evidências); **[HUMANO] vídeos Cyber e AIC** | Relatórios .md + evidências .html → PDFs finais (9 disciplinas); UML Mermaid; notebooks finais | Checklist §17 da proposta; PDFs dentro do limite de páginas |
 | **D7** | Qui 19 | **[HUMANO]** conferência de checklist, links e formatos; entrega no Portal até 23h55; **abrir o SG do RDS para o período de correção** (D09) | Margem de correção | Entregue |
 
+**Leitura do cronograma em16/11:** esta tabela é o alvo original, não prova de execução. O gate D3 de abrir teste **não autoriza** abrir holdout: a instrução humana vigente mantém2026 fechado. Consulte estado.md para o checkpoint real e não repita S0/S5/treinos concluídos.
+
 **Paralelismo:** no máximo 2 agentes `agy` simultâneos, com caminhos de escrita disjuntos e **um worktree cada**. A Frente B do D1 (dados) é o caminho crítico do ML/RNA/Estatística.
 
 **Orçamento do orquestrador (R30):** testes completos em toda fatia. Leitura integral do diff só nas fatias com revisor independente (S3, S4, S5, S7, S9, S13); nas demais, por amostragem.
@@ -219,33 +221,42 @@ Por estar em uso o `--dangerously-skip-permissions`, todo prompt **lista literal
 |---|---|
 | Ler arquivos do repo | **Nunca** `.env*` (exceto `.env.example`), `~/.aws`, `~/.ssh` |
 | Criar/editar arquivos | **Somente** nos caminhos de escrita declarados no contrato |
-| `python -m pytest …`, `python -m ruff …`, `python <script em app/>` | No venv do componente |
-| `uv pip install` / `pip install -r` / `npm|pnpm install` | Só dentro de `app/*`, nunca global, sem `-g` |
-| `npm|pnpm run test|build|lint|typecheck`, `npx playwright test` | — |
-| `docker compose up -d <serviço>` / `down` / `ps` / `logs` | Só o compose de `app/`; **sem** `docker system prune` ou `volume rm` |
+| `uv run pytest …`, `uv run ruff …`, `uv run python <script em app/>` | Dentro do componente; nunca Python/pip globais |
+| `uv sync`, `uv add …`, `pnpm install`, `pnpm add …` | Só dentro de `app/*`, respeitando os locks; sem `-g` |
+| `pnpm run test\|build\|lint\|typecheck`, `pnpm exec playwright test` | Só em `app/web` |
+| Conexão aos serviços locais de teste | O orquestrador os mantém; **docker é proibido ao implementador** |
 | `git status`, `git diff`, `git log` | **Proibido:** commit, push, reset, checkout, clean, rebase, stash |
 | Rede | Só registries de pacotes, FTP do MTE (agente de dados) e docs públicas |
 | **Proibido sempre** | `aws`, chamadas reais a OpenRouter/Adzuna/HF, apagar arquivos fora do escopo, alterar `settings.json`/credenciais, desativar testes, `--no-verify` |
 
-Antes e depois de cada chamada, o orquestrador registra `git status --porcelain`, o hash de `git diff HEAD` e a lista de arquivos com tamanho e data, e compara com o escopo declarado. **Commits são feitos só pelo orquestrador**, depois do aceite e do gitleaks.
+**Procedimento operacional atualizado em16/11:** prevalece a allowlist literal de CLAUDE§7.3, que deve ser colada no contrato. Exemplos antigos com pip/Python globais ou docker pelo agente não são autorização. Antes e depois de cada chamada, o orquestrador registra os snapshots e compara o escopo. **Commits são feitos só pelo orquestrador**, depois do aceite e do gitleaks.
 
 ### 6.3 Invocação padrão (isolamento R22)
 
 ```powershell
-# 1) worktree descartável por fatia (o .env real fica fora dele)
-git -C info-gs-diciplinas worktree add ..\GS-wt\S2 -b fatia/S2
-# 2) ambiente sem segredos + prompt via STDIN (aspas no -p quebram o PS 5.1)
-$limpo = 'AWS_*','OPENROUTER_*','HF_*','MONGODB_*','ADZUNA_*','DEVICE_KEY','DB_*'
-Get-ChildItem env: | Where-Object { $n=$_.Name; $limpo | Where-Object { $n -like $_ } } |
+# Executar a partir de REPO; gate de dependências e contrato já concluídos.
+$R = 'C:\Users\orugi\Documents\Projetos\FIAP\GS'; $S = 'S8-mercado'
+git -C "$R\info-gs-diciplinas" worktree add "$R\GS-wt\$S" -b "fatia/$S"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+git -C "$R\GS-wt\$S" rev-parse HEAD > "$R\.kaiser\snapshots\$S-base.txt"
+'AWS_*','OPENROUTER_*','HF_*','MONGODB_*','ADZUNA_*','DEVICE_KEY*','DB_*','ORACLE_*','JWT_*' |
+  ForEach-Object { Get-ChildItem "env:$_" -ErrorAction SilentlyContinue } |
   ForEach-Object { Remove-Item "env:$($_.Name)" }
-$raiz = (Get-Location).Path   # C:\...\FIAP\GS
-Push-Location ..\GS-wt\S2     # o agente trabalha dentro do worktree
-Get-Content -Raw -Encoding utf8 "$raiz\.kaiser\contratos\S2-leituras.md" |
-  agy --model gemini-3.8-flash-high --dangerously-skip-permissions --print-timeout 0s 2>&1 |
-  Out-File -Encoding utf8 "$raiz\.kaiser\reports\S2-leituras.md"
+$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'
+# Real .dados só quando o contrato autorizar expressamente a leitura.
+$env:CITIZENTECH_DADOS="$R\.kaiser\tmp\dados-nao-reais"
+$env:CITIZENTECH_TMP="$R\.kaiser\tmp"
+Push-Location "$R\GS-wt\$S"
+Get-Content -Raw -Encoding utf8 "$R\.kaiser\contratos\$S.md" |
+  agy --model gemini-3.8-flash-high --dangerously-skip-permissions --print-timeout 45m 2>&1 |
+  Out-File -Encoding utf8 "$R\.kaiser\reports\$S.md"
+$resultado=$LASTEXITCODE
 Pop-Location
-# 3) o orquestrador compara o diff do worktree com o escopo e faz merge ou descarta
+git -C "$R\GS-wt\$S" status --porcelain --untracked-files=all > "$R\.kaiser\snapshots\$S-depois.txt"
+exit $resultado
 ```
+
+Revisão independente: nova chamada, `--mode plan --print-timeout 20m`, **sem** `--dangerously-skip-permissions`, sem relatório autoral. Nunca usar timeout0s. O próprio orquestrador mantém os serviços de teste e registra o ID do job em estado.md; no máximo2agy simultâneos.
 
 Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delegação"), acrescido da allowlist da §6.2. Os jobs rodam em background com ID registrado e timeout operacional de 45 min; a falha é reportada e a fatia replanejada, sem repetição indefinida.
 
@@ -298,15 +309,15 @@ Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delega
 - [ ] Ideia efetivamente extraída da live de 04/11 (para AIC).
 - [ ] Quem grava cada vídeo e quem entrega cada disciplina no Portal.
 - [ ] Preencher o `.env`: `OPENROUTER_API_KEY`, `ADZUNA_APP_ID/KEY`, `HF_TOKEN`, `MONGODB_URI`, `DEVICE_KEY`, credenciais do RDS.
-- [ ] Revisar as rubricas dos 6 exercícios no **D3 até 18h** (registrado como revisor).
+- [ ] Revisar as rubricas dos **3 destinos mantidos após R29** (registrar revisor/mínimos). O gate original D3 às18h expirou; os seis rascunhos foram preservados, não aprovados.
 - [ ] **Data Modeler** no D4 (obrigatório, R11); confirmar o campo de envio do vídeo de RNA.
 - [ ] `gh auth refresh -s project,read:project` (R28).
 - [x] **Tamanho do grupo:** trio, compatível com a Estatística (R09).
-- [ ] Ligar o Docker Desktop antes do D1 (R26).
+- [x] Primeiro smoke Docker executado no D1 (R26). Isso não garante serviços ativos hoje: o orquestrador deve reconferir quando a fatia precisar de banco.
 - [ ] (Opcional) Comunicar ao professor de Cloud a exceção de rede do RDS.
 
 ---
 
 ## 11. Próximo passo
 
-Com a aprovação deste plano: **Fase 1 / D1** — criar `app/` (S0), os contratos `.kaiser/contratos/S0…S2`, as issues no GitHub Projects, e disparar em paralelo o agente de dados (Caged) e o primeiro implementador (S1).
+**Checkpoint16/11:** a fase inicial, S5 e experimentosML/RNA/D11 já estão integrados; não reiniciar S0/S1 nem retunar com2025. Próxima fatia recomendada: **S8 Mercado API/model cards/R06**, após ler§3 e conferir acessos/interfaces. Em paralelo sem sobreposição, finalizar notebooks/entregáveis científicos. S9–S11, Cloud/firmware e S12–S15 ainda precisam ser executados conforme dependências e gates humanos. [Estado atual](<docs/estado.md>) é a entrada operacional; holdout permanece fechado e não há autorização de push.
