@@ -1,0 +1,56 @@
+{
+  "destino": "analista_dados_bi",
+  "uf": "AC",
+  "uf_codigo": "12",
+  "observado": {
+    "natureza": "observado",
+    "fonte": "Novo Caged — microdados públicos do MTE (PDET)",
+    "populacao": "Admissões formais com ensino superior completo ou mais nas ocupações CBO curadas de cada destino",
+    "unidade": "admissões por mês",
+    "referencia_temporal": {
+      "inicio": "202001",
+      "fim": "202509"
+    },
+    "serie": [
+      {
+        "competencia": "202508",
+        "valor": null
+      },
+      {
+        "competencia": "202509",
+        "valor": 2.0
+      }
+    ]
+  },
+  "previsto": null,
+  "abstencao": {
+    "motivo": "densidade_insuficiente",
+    "media_alvo_treino": 1.7777777777777777,
+    "limite_minimo": 10.0,
+    "contexto_regional": {
+      "natureza": "observado",
+      "fonte": "Novo Caged — microdados públicos do MTE (PDET)",
+      "populacao": "Admissões formais agregadas na macrorregião geográfica",
+      "unidade": "admissões por mês",
+      "referencia_temporal": {
+        "inicio": "202001",
+        "fim": "202509"
+      },
+      "regiao": "Norte",
+      "serie": [
+        {
+          "competencia": "202001",
+          "valor": 12.0
+        }
+      ]
+    }
+  },
+  "amostra_adzuna": {
+    "disponivel": false,
+    "natureza": "amostra_pontual",
+    "motivo": "Snapshot Adzuna não coletado nesta versão (D05a)."
+  },
+  "avisos": [
+    "Números medem admissões formais estimadas no grupo e território registradas no Novo Caged (PDET), sem constituir oportunidade aberta ou chance individual."
+  ]
+}

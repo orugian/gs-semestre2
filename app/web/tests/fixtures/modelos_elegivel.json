@@ -1,0 +1,425 @@
+{
+  "destino": "analista_dados_bi",
+  "uf": "SP",
+  "uf_codigo": "35",
+  "elegivel": true,
+  "motivo_densidade": "aprovado",
+  "criterio_promocao": {
+    "criterio": "D10a congelado: Holdout 2026 fechado; promoção requer superar baseline sazonal em MAE e WAPE na validação global.",
+    "status": "nao_decidida",
+    "modelo_exibido": "sazonal"
+  },
+  "modelos": [
+    {
+      "id": "persistencia",
+      "nome": "Persistência 3M",
+      "tipo": "baseline",
+      "promovido": false,
+      "exibido_ao_usuario": false,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 35.45,
+        "rmse": 103.58,
+        "wape": 0.1256,
+        "mase": 0.798
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 39.9,
+        "mae_desvio": 9.8,
+        "wape_medio": 0.147,
+        "wape_desvio": 0.038,
+        "mase_medio": null,
+        "mase_desvio": null
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 31.1,
+        "rmse": 45.2,
+        "wape": 0.11,
+        "mase": 0.75
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 1.0,
+          "alvo": 2.0
+        }
+      ],
+      "model_card": {
+        "_id": "persistencia:20261115_r29_aceite",
+        "modelo": "persistencia",
+        "versao_artefato": "1.0",
+        "tipo": "baseline",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "regra": "admissoes_soma_3m"
+        },
+        "seed": 42,
+        "versoes": {},
+        "sha256_artefatos": {
+          "modelo": "sha_persistencia_123"
+        },
+        "selecao": "Baseline determinístico",
+        "limites": [
+          "Série com no mínimo 12 meses observados"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    },
+    {
+      "id": "sazonal",
+      "nome": "Sazonal Ano Anterior",
+      "tipo": "baseline",
+      "promovido": false,
+      "exibido_ao_usuario": true,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 28.12,
+        "rmse": 88.45,
+        "wape": 0.0984,
+        "mase": 0.654
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 31.2,
+        "mae_desvio": 7.4,
+        "wape_medio": 0.112,
+        "wape_desvio": 0.025,
+        "mase_medio": 0.71,
+        "mase_desvio": 0.06
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 24.5,
+        "rmse": 38.1,
+        "wape": 0.085,
+        "mase": 0.58
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 5112.0,
+          "alvo": 5459.0
+        }
+      ],
+      "model_card": {
+        "_id": "sazonal:20261115_r29_aceite",
+        "modelo": "sazonal",
+        "versao_artefato": "1.0",
+        "tipo": "baseline",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "regra": "admissoes_sazonal_ano_anterior"
+        },
+        "seed": 42,
+        "versoes": {},
+        "sha256_artefatos": {
+          "modelo": "sha_sazonal_123"
+        },
+        "selecao": "Baseline determinístico sazonal",
+        "limites": [
+          "Necessita de 12 meses anteriores observados"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    },
+    {
+      "id": "ridge",
+      "nome": "Ridge Regression",
+      "tipo": "classico",
+      "promovido": false,
+      "exibido_ao_usuario": false,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 32.1,
+        "rmse": 95.2,
+        "wape": 0.112,
+        "mase": 0.73
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 35.4,
+        "mae_desvio": 8.1,
+        "wape_medio": 0.13,
+        "wape_desvio": 0.03,
+        "mase_medio": 0.78,
+        "mase_desvio": 0.05
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 28.3,
+        "rmse": 41.2,
+        "wape": 0.098,
+        "mase": 0.68
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 4900.0,
+          "alvo": 5459.0
+        }
+      ],
+      "model_card": {
+        "_id": "ridge:20261115_r29_aceite",
+        "modelo": "ridge",
+        "versao_artefato": "1.0",
+        "tipo": "classico",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "alpha": 1.0
+        },
+        "seed": 42,
+        "versoes": {
+          "scikit-learn": "1.4.0"
+        },
+        "sha256_artefatos": {
+          "modelo": "sha_ridge_123"
+        },
+        "selecao": "GridSearchCV 3 folds",
+        "limites": [
+          "Linearidade das defasagens"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    },
+    {
+      "id": "random_forest",
+      "nome": "Random Forest",
+      "tipo": "classico",
+      "promovido": false,
+      "exibido_ao_usuario": false,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 30.5,
+        "rmse": 91.8,
+        "wape": 0.106,
+        "mase": 0.7
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 33.8,
+        "mae_desvio": 7.9,
+        "wape_medio": 0.121,
+        "wape_desvio": 0.028,
+        "mase_medio": 0.75,
+        "mase_desvio": 0.048
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 26.7,
+        "rmse": 39.5,
+        "wape": 0.092,
+        "mase": 0.64
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 5020.0,
+          "alvo": 5459.0
+        }
+      ],
+      "model_card": {
+        "_id": "random_forest:20261115_r29_aceite",
+        "modelo": "random_forest",
+        "versao_artefato": "1.0",
+        "tipo": "classico",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "n_estimators": 100,
+          "max_depth": 10
+        },
+        "seed": 42,
+        "versoes": {
+          "scikit-learn": "1.4.0"
+        },
+        "sha256_artefatos": {
+          "modelo": "sha_rf_123"
+        },
+        "selecao": "RandomizedSearchCV 3 folds",
+        "limites": [
+          "Não extrapola tendências além do limite do treino"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    },
+    {
+      "id": "hist_gradient_boosting",
+      "nome": "Hist Gradient Boosting",
+      "tipo": "classico",
+      "promovido": false,
+      "exibido_ao_usuario": false,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 29.8,
+        "rmse": 89.9,
+        "wape": 0.103,
+        "mase": 0.68
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 32.5,
+        "mae_desvio": 7.6,
+        "wape_medio": 0.117,
+        "wape_desvio": 0.026,
+        "mase_medio": 0.73,
+        "mase_desvio": 0.046
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 25.9,
+        "rmse": 38.9,
+        "wape": 0.089,
+        "mase": 0.62
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 5080.0,
+          "alvo": 5459.0
+        }
+      ],
+      "model_card": {
+        "_id": "hist_gradient_boosting:20261115_r29_aceite",
+        "modelo": "hist_gradient_boosting",
+        "versao_artefato": "1.0",
+        "tipo": "classico",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "max_iter": 100,
+          "learning_rate": 0.1
+        },
+        "seed": 42,
+        "versoes": {
+          "scikit-learn": "1.4.0"
+        },
+        "sha256_artefatos": {
+          "modelo": "sha_hgb_123"
+        },
+        "selecao": "GridSearchCV 3 folds",
+        "limites": [
+          "Requer dados tabelados sem multicolinearidade perfeita"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    },
+    {
+      "id": "mlp",
+      "nome": "Rede Neural MLP",
+      "tipo": "rna",
+      "promovido": false,
+      "exibido_ao_usuario": false,
+      "metricas_validacao_global": {
+        "n": 495,
+        "mae": 27.9,
+        "rmse": 87.2,
+        "wape": 0.096,
+        "mase": 0.64
+      },
+      "metricas_cv_treino": {
+        "mae_medio": 30.8,
+        "mae_desvio": 7.1,
+        "wape_medio": 0.11,
+        "wape_desvio": 0.023,
+        "mase_medio": 0.69,
+        "mase_desvio": 0.042
+      },
+      "metricas_serie": {
+        "n": 9,
+        "mae": 23.8,
+        "rmse": 37.0,
+        "wape": 0.082,
+        "mase": 0.56
+      },
+      "previsoes_validacao": [
+        {
+          "competencia": "202501",
+          "previsao": 5150.0,
+          "alvo": 5459.0
+        }
+      ],
+      "model_card": {
+        "_id": "mlp:20261115_r29_aceite",
+        "modelo": "mlp",
+        "versao_artefato": "1.0",
+        "tipo": "rna",
+        "data_treino_utc": "2026-11-15T00:00:00Z",
+        "periodo_treino": [
+          "202101",
+          "202409"
+        ],
+        "periodo_validacao": [
+          "202501",
+          "202509"
+        ],
+        "populacao": "Admissões com superior completo",
+        "hiperparametros": {
+          "hidden_layers": [
+            64,
+            32
+          ],
+          "activation": "relu",
+          "lr": 0.001,
+          "batch_size": 128
+        },
+        "seed": 42,
+        "versoes": {
+          "torch": "2.2.0"
+        },
+        "sha256_artefatos": {
+          "pesos": "sha_mlp_weights_123"
+        },
+        "selecao": "Validação cruzada temporal 3 folds",
+        "limites": [
+          "Treinamento estocástico sensível à inicialização de pesos"
+        ],
+        "status_promocao": "nao_decidida"
+      }
+    }
+  ],
+  "avisos": [
+    "CV no treino não é aninhado: métrica de seleção, otimista",
+    "hash garante integridade local, não autenticidade",
+    "Avaliação final no holdout 2026 permanece fechada nesta fatia; nenhum modelo foi promovido."
+  ]
+}
