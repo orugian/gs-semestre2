@@ -91,10 +91,15 @@ def aplicar_ddl_oracle_teste():
     caminho_ddl_002 = (
         Path(__file__).resolve().parents[2] / "db" / "ddl" / "002_competencias.sql"
     )
+    caminho_ddl_003 = (
+        Path(__file__).resolve().parents[2] / "db" / "ddl" / "003_intencao_comparacao.sql"
+    )
     if not caminho_ddl_001.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_001}")
     if not caminho_ddl_002.is_file():
         raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_002}")
+    if not caminho_ddl_003.is_file():
+        raise FileNotFoundError(f"Arquivo DDL nao encontrado: {caminho_ddl_003}")
 
     with oracledb.connect(user=user, password=password, dsn=dsn) as conexao:
         with conexao.cursor() as cursor:
@@ -102,11 +107,14 @@ def aplicar_ddl_oracle_teste():
                 cursor.execute("SELECT 1 FROM usuario WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM consentimento WHERE ROWNUM = 1")
                 cursor.execute("SELECT 1 FROM competencia_usuario WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM intencao WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM comparacao WHERE ROWNUM = 1")
+                cursor.execute("SELECT 1 FROM comparacao_destino WHERE ROWNUM = 1")
                 return
             except oracledb.DatabaseError:
                 pass
 
-            for caminho_ddl in (caminho_ddl_001, caminho_ddl_002):
+            for caminho_ddl in (caminho_ddl_001, caminho_ddl_002, caminho_ddl_003):
                 conteudo = caminho_ddl.read_text(encoding="utf-8")
                 for bloco in conteudo.split(";"):
                     linhas = [

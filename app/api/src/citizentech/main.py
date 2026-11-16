@@ -8,10 +8,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from citizentech.auth.rotas import router as auth_router
+from citizentech.comparacao.rotas import router as comparacao_router
 from citizentech.competencias.rotas import router as competencias_router
 from citizentech.consentimentos.rotas import router as consentimentos_router
 from citizentech.curriculo.rotas import router as curriculo_router
+from citizentech.destinos.rotas import router as destinos_router
 from citizentech.erros import registrar_manipuladores_de_erro
+from citizentech.intencao.rotas import router as intencao_router
 from citizentech.leituras.rotas import router as leituras_router
 from citizentech.limiares import carregar_limiares
 from citizentech.mercado.rotas import router as mercado_router
@@ -58,6 +61,9 @@ def criar_app() -> FastAPI:
     aplicacao.include_router(mercado_router)
     aplicacao.include_router(curriculo_router)
     aplicacao.include_router(competencias_router)
+    aplicacao.include_router(intencao_router)
+    aplicacao.include_router(destinos_router)
+    aplicacao.include_router(comparacao_router)
 
     @aplicacao.get("/health")
     def health() -> dict:
