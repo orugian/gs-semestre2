@@ -1,0 +1,64 @@
+{
+  "sessao_criada": {
+    "id": "sess-lab-1",
+    "codigo": "LAB-123456",
+    "status": "ativa",
+    "criado_em": "2026-11-16T16:00:00Z",
+    "expira_em": "2026-11-16T18:00:00Z",
+    "instrucoes": "Conecte sua bancada utilizando o código LAB-123456 para iniciar a transmissão de telemetria."
+  },
+  "sessao_detalhe": {
+    "id": "sess-lab-1",
+    "codigo": "LAB-123456",
+    "status": "ativa",
+    "criado_em": "2026-11-16T16:00:00Z",
+    "expira_em": "2026-11-16T18:00:00Z",
+    "instrucoes": "Conecte sua bancada utilizando o código LAB-123456 para iniciar a transmissão de telemetria.",
+    "relato": {
+      "texto_redigido": null,
+      "status": "nenhum"
+    },
+    "leituras": [
+      {
+        "evento_id": "evt-1",
+        "metrica": "temperatura_c",
+        "unidade": "°C",
+        "valor": 24.5,
+        "risco": "normal",
+        "alerta": false,
+        "estado": "conectado",
+        "medido_em": "2026-11-16T16:05:00Z"
+      },
+      {
+        "evento_id": "evt-2",
+        "metrica": "distancia_cm",
+        "unidade": "cm",
+        "valor": 12.0,
+        "risco": "atencao",
+        "alerta": true,
+        "estado": "conectado",
+        "medido_em": "2026-11-16T16:06:00Z"
+      }
+    ],
+    "indicadores": {
+      "temperatura_c": {
+        "contagem": 1,
+        "total_alertas": 0,
+        "media": 24.5,
+        "maximo": 24.5,
+        "minimo": 24.5
+      },
+      "distancia_cm": {
+        "contagem": 1,
+        "total_alertas": 1,
+        "media": 12.0,
+        "maximo": 12.0,
+        "minimo": 12.0
+      }
+    }
+  },
+  "relato_resposta": {
+    "texto_redigido": "Observada oscilação na leitura de distância no minuto 6.",
+    "status": "pendente"
+  }
+}

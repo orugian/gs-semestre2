@@ -1,4 +1,5 @@
 import {Badge} from '@astryxdesign/core/Badge';
+import {Button} from '@astryxdesign/core/Button';
 import {Card} from '@astryxdesign/core/Card';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
@@ -11,6 +12,8 @@ import {TEXTOS_JORNADA} from './textos';
 
 export interface CartaoDestinoProps {
   destino: DestinoComparado;
+  onEscolherDestino?: (destinoId: string) => void;
+  isEscolhendo?: boolean;
 }
 
 function traduzirMotivo(motivo: string | null | undefined): string | null {
@@ -34,7 +37,11 @@ const ESTADOS_ORDENADOS: EstadoRequisito[] = [
   'lacuna',
 ];
 
-export function CartaoDestino({destino}: CartaoDestinoProps) {
+export function CartaoDestino({
+  destino,
+  onEscolherDestino,
+  isEscolhendo = false,
+}: CartaoDestinoProps) {
   const {dimensoes} = destino;
   const {requisitos, obrigatorios_nao_atendidos, mercado, preferencias} = dimensoes;
 
@@ -285,6 +292,18 @@ export function CartaoDestino({destino}: CartaoDestinoProps) {
                 )}
               </div>
             )}
+          </section>
+
+          {/* (6) Escolha de Destino */}
+          <section className="flex justify-end border-t pt-4">
+            <Button
+              type="button"
+              variant="primary"
+              label={TEXTOS_JORNADA.comparacao.escolherDestino}
+              onClick={() => onEscolherDestino?.(destino.destino_id)}
+              isDisabled={isEscolhendo}
+              isLoading={isEscolhendo}
+            />
           </section>
         </div>
       </Card>
