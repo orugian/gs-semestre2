@@ -8,7 +8,26 @@
 
 > Primeiro arquivo da próxima sessão. Snapshot documental, não monitoramento em tempo real. Histórico detalhado de aceites anteriores: `git show d2ddec4:docs/estado.md` (até 15/11) e `git show 5d311e7:docs/estado.md` (sessão de 16/11 madrugada); trilha completa em `../.kaiser/reports/` e `../.kaiser/contratos/`.
 
-## 0. Sessão 16/11 tarde — checkpoint ~11h05 (mais recente; prevalece sobre o restante)
+## 0a. Frente de desenvolvimento — checkpoint 16/11 ~14h30 (mais recente; prevalece sobre §0 e o restante)
+
+**`main` em `0362cc0`, enviado a `gs-semestre2` (gitleaks limpo).** Integrados após o checkpoint das 11h:
+
+| Fatia | Evidência executada pelo orquestrador |
+|---|---|
+| **S9 currículo/PII** | RED reproduzido em worktree temporário (`assert 501 == 400`, `assert 501 == 201`); revisão independente `../.kaiser/reports/S9-curriculo-rev.md` (9 achados; 1–8 corrigidos na rodada 2; 9 = risco documentado: spool multipart do Starlette). Contraexemplos reexecutados (ex.: "Python, R e SQL, 3 anos" intacto; nome na 3ª linha → `[NOME]`; `12345678901` → `[CPF]` inteiro). API em `main`: **290 passed, 0 skip** (Oracle `CT_TESTE_S9` + Mongo local). |
+| **S4 Lambda** | Rodada 1 + revisão independente (`../.kaiser/reports/S4-lambda-rev.md`, 12 achados; 1–6 e 9–11 corrigidos na rodada 2; 7 LGPD do relato no CloudWatch = risco declarado; 8 sem efeito). Orquestrador corrigiu: validação de `metrica`/`tipo_dispositivo`/`medido_em` (contraexemplos davam 201 com lixo ou 503), HF padrão = router, timeouts do boto3, caminho do CA no zip, `CREATE ROLE` com `\gexec` (validado com psql real). Cloud em `main`: **108 passed**. Zip de deploy `../.dados/cloud/funcao_lambda_20261116.zip` (SHA `b42d367f…57f2`, 722 816 bytes; handler `lambda_function.lambda_handler`; pg8000 puro, `limiares.json`, `citizentech_cloud/global-bundle.pem`). **Nada executado na AWS ainda.** |
+| **S10 extração LLM** | agy + correções do orquestrador: trecho só com marcador de redação (`[EMAIL]`) era aceito como evidência → descartado; **orçamento de tokens**: com `max_tokens=2000` o modelo padrão esgotava no raciocínio (`finish_reason=length`, `content` vazio, verificado) → `max_tokens=6000` + `reasoning.max_tokens=2000`. **Smoke real OpenRouter** (persona fictícia, com tentativa de injeção): modelo padrão na 1ª tentativa, 7 candidatas da lista fechada, 0 descartes, injeção sem efeito. **Gasto acumulado da conta: US$ 0,0168 de 7** (via `/key`). Suíte S10: 329 passed, 0 skip. |
+| **E01 firmware Wokwi** | `app/iot/firmware/` (sketch + `logica.h` testada no host com g++ + `limiares.h` gerado de `limiares.json` + `diagram.json` DS18B20/HC-SR04/LED/buzzer); tools 41 passed. **Não compilado para ESP32 nem simulado no Wokwi** (sem toolchain local). |
+
+**Decisão S4 (D23):** sentimento por **Amazon Comprehend** (`SENTIMENTO_PROVEDOR=comprehend`); HF disponível como `hf` (402 hoje). Se a LabRole negar `comprehend:DetectSentiment`, a ingestão continua com `analise_status=indisponivel` e o README declara.
+
+**Próximo:** (1) usuário faz o deploy S4 no console pela lista do chat (16/11 ~14h30) e envia prints; orquestrador então roda o simulador contra a Function URL e grava evidências; (2) rotas `/me/comparacoes` + `/me/intencao` e telas web (login, currículo, competências, comparação); (3) relatórios Cyber, CTP, Data Science (DDL 001+002 no Oracle local + consultas + Mongo); (4) S12 → S13 → S14; (5) rodar o firmware no Wokwi.
+
+**Incidente:** o Docker Desktop caiu (~14h05); reiniciado, serviços de teste de pé, volumes preservados. Disco 22,5 GB (14h26). Processo `agy` PID 30832 (09h23) pertence à frente do panorama — não encerrado por esta frente.
+
+---
+
+## 0. Sessão 16/11 tarde — checkpoint ~11h05
 
 **`main` em `16ed68f`, enviado a `gs-semestre2` (gitleaks limpo no intervalo).** Integrados nesta sessão, com aceite executado pelo orquestrador:
 
