@@ -226,7 +226,7 @@ export function PainelTecnico({
                 Comparativo de modelos preditivos
               </Heading>
               <div
-                className="w-full overflow-x-auto"
+                className="w-full shrink-0 overflow-x-auto overflow-y-hidden pb-4"
                 tabIndex={0}
                 role="region"
                 aria-label="Tabela comparativa dos 6 modelos preditivos"
