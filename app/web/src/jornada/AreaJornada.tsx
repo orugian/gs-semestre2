@@ -210,7 +210,7 @@ export function AreaJornada() {
         {etapaAtiva === 5 && (
           <TelaPlano
             planoInicial={planoAtivo}
-            onPlanoAtualizado={(atualizado) => setPlanoAtivo(atualizado)}
+            onPlanoAtualizado={setPlanoAtivo}
             onIrParaComparacao={() => setEtapaAtiva(4)}
             onFazerExercicio={() => setEtapaAtiva(6)}
             onIrParaLaboratorio={() => setEtapaAtiva(7)}

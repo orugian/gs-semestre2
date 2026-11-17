@@ -387,6 +387,7 @@ describe('JornadaPlano - Plano de Desenvolvimento e Checkpoints (D03, T07, T08)'
     // Abre diálogo de substituição
     await waitFor(() => {
       expect(screen.getByText(/substituir plano anterior\?/i)).toBeTruthy();
+      expect(screen.queryByRole('dialog', {name: /substituir plano anterior\?/i})).toBeTruthy();
     });
 
     // Clica no botão de confirmação do diálogo

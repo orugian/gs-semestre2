@@ -84,7 +84,9 @@ export default function App() {
             onUfChange={setUf}
           />
         ) : (
-          <AreaJornada />
+          <section id="painel-jornada" role="tabpanel" aria-label="Minha transição">
+            <AreaJornada />
+          </section>
         )}
       </main>
     </Theme>
