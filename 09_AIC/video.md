@@ -5,7 +5,7 @@
 
 ## Preparação (antes de gravar)
 1. Docker com Oracle e Mongo de teste: `docker compose -f app\docker-compose.yml --profile teste up -d --wait`.
-2. API com a LLM real (gasto mínimo, autorizado): `powershell -File ..\.kaiser\ferramentas\subir_api_teste.ps1 -ComLLM`; web: `cd app\web; pnpm run dev` → `http://localhost:5173`.
+2. Para usar a persona existente, API contra o banco do **app**: `powershell -File ..\.kaiser\ferramentas\subir_api_teste.ps1 -App -ComLLM`; web: `cd app\web; pnpm run dev` → `http://localhost:5173`. O modo padrão sem `-App` usa o schema de testes e não é a demonstração dessa persona. Usar `-ComLLM` somente com autorização de gasto válida; omitir a flag para navegação que não precise de chamadas reais. Conferir o isolamento da outbox antes de gravar.
 3. Persona de demonstração já criada e sinalizada ("Persona de demonstração" no cabeçalho), com consentimentos, currículo confirmado e competências revisadas. **Não usar dados pessoais reais.**
 4. Abas prontas: app (Minha transição, Mercado, Painel técnico), `docs/uml/img/02_2_componentes.png`, quadro Kanban do grupo, terminal com o simulador de Cloud, Wokwi (se a gravação incluir o firmware).
 5. [HUMANO] Anotar 1–2 ideias da live de lançamento que inspiraram a proposta (o grupo precisa citar com as próprias palavras).

@@ -1,8 +1,8 @@
 # Estado do desenvolvimento — CitizenTech
 
-> **Checkpoint17/11/2026, madrugada.** Prazo19/11/2026 às23h55. Não é monitoramento ao vivo. Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre os checkpoints anteriores; o Git mantém o histórico.
+> **Encerramento verificado em 17/11/2026, 08h51 (UTC−3).** Prazo: **19/11/2026 às23h55**; nessa checagem faltavam 2d15h03. Não é monitoramento ao vivo. Este estado e o [handoff com fila priorizada](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
 
-## 0. Retomada concluída; próximo passo depende das entregas humanas
+## 0. Fechamento funcional aceito; pendente o fechamento acadêmico
 
 **Wokwi efetivamente executado pelo agente:**3cenários,6HTTP201,6linhas CSV, LED0/1/1 e PWM**1.000Hz** só no crítico. [Aceite com prints/Serial/VCD/limites](<../01_AICSS/evidencias/20261117_wokwi_aceite.md>), [CSV original](<../01_AICSS/evidencias/20261117_wokwi_leituras.csv>), [manifesto/hashes](<../01_AICSS/evidencias/20261117_wokwi_manifesto.json>). **Sensores/atuadores simulados**, não bancada física. A placa ESP sem sensores do usuário permaneceu intacta, sem reflash.
 
@@ -12,13 +12,13 @@
 - Ngrok apresentou falha TLS (-1), com DNS/TCP funcionando no PCAP; CPUmax também falhou. Critérios não enfraquecidos. Cloudflare Quick Tunnel HTTPS/CPU padrão passou os mesmos testes, mudando só o destino de demo. Causa exata do encerramento no servidor ngrok **não verificada**, hipótese de CPU como solução rejeitada. Nenhuma mudança em regras, firmware, limiares ou diagrama do produto nesta etapa.
 - GPIO extraído de VCD real do analisador passivo nos pinos2/15/4/18: normal LED0/buzzer0; atenção LED1/buzzer0; crítico LED1,200 subidas em200ms, mediana1.000Hz. Nenhuma gravação acústica.
 - Seis PNG inspecionados, sem dados pessoais/conta/token/chave real: **nenhuma tarja necessária**. Vinte e dois originais de dados/imagens copiados, não movidos, também para .dados/iot/privado/20261117_wokwi, comparados por SHA. Originais Cloud anteriores intocados.
-- Túneis próprios ngrok/Cloudflare e API do ensaio **encerrados**. Última checagem03h42: portas8000/4040/20241 sem listener, C:**17,1GB** livres. Não relançar para “manter demo viva”; só abrir novo túnel temporário com escopo isolado.
+- Túneis próprios ngrok/Cloudflare e API do ensaio **encerrados**. Nova checagem08h51: portas8000/8001/5173/4040/20241 sem listener; C:**16,3GB** livres. Às09h05 foi confirmado o agy30832 da outra frente, iniciado16/11 09h23, preservado. Não relançar para “manter demo viva”; só abrir novo serviço/túnel quando necessário ao trabalho autorizado.
 
 **Documentos/pacote:** AICSS§5.2 e limites atualizados com os três prints; PDF**10p**. Firmware README e projeto/Cloud distinguem Wokwi→CSV da execução AWS anterior. Revisão nº2 adjudicada e RC2-04 fechado com prova. Empacotador gerar+`--verificar` **OK**; tools**43passed** após a atualização. PDFs:10/12/7/8/12/21p; três RMs em todos, Cyber≤15. Parser confirmou três imagens2200×1400 no PDF AICSS (p7/7/8) e as medidas no texto.
 
-**Publicação:** S15 em `e7c533a`; docs/compilação/revisão2 em `f10ffd2`; boot Wokwi em `409e975`, todos publicados em gs-semestre2. O lote final de Wokwi/documentos está no commit que contém este estado; confirmar hash/remote pelo Git, sem repetir o aceite. Gitleaks staged e do intervalo são obrigatórios antes de commit/push; somente remoto gs-semestre2.
+**Publicação funcional confirmada:** `f96b13e` em main e gs-semestre2/main, working tree limpa e zero commits não enviados antes deste encerramento documental. Histórico: S15 `e7c533a`, docs/revisão2 `f10ffd2`, boot Wokwi `409e975`. O upstream origin/main continua antigo: não resetar/rebasear nem publicar nesse remoto por confusão. Gitleaks staged/intervalo antes de cada commit/push; somente gs-semestre2.
 
-**Próximo passo exato:** grupo produzir os artefatos do §4 (Cloud/Data Modeler/vídeos/live); então o agente confere arquivos realmente fornecidos, preserva originais por cópia privada, redige dados pessoais, atualiza documentos/PDFs, repete empacotador --verificar e publica. Não substituir captura Cloud por PNG de terminal local nem por este Wokwi isolado. Não declarar entrega acadêmica concluída antes desses gates e do Portal.
+**Próximo passo exato:** seguir P01–P08 do [handoff](<handoff_citizentech_20261116_fim.md>). Agente faz inventário e QA final enquanto o grupo produz Cloud/Data Modeler/vídeos/live em paralelo; incorpora apenas arquivos realmente fornecidos, copia originais privados antes de tarjar e repete PDFs/empacotador. Não é necessário esperar parado pelos humanos, nem repetir S15/Wokwi. Não substituir captura AWS por saída histórica/local e não declarar entrega acadêmica concluída antes do Portal.
 
 ## 1. Evidências já aceitas nesta retomada
 
@@ -43,12 +43,12 @@ REDs web reais reproduzidos antes das correções: aria-controls inválido, Disc
 ## 2. Ambiente e higiene
 
 - **Sem job próprio útil em andamento.** Ensaios e browsers terminaram. API Wokwi wrapper2888/servidor20584; ngrok29628/14548; Cloudflare35500 foram encerrados. Primeiro túnel por timer15min, demais deliberadamente antes do limite. Jobs170/175/178/180/187/189/194 coletados; falhas diagnósticas preservadas, não interpretadas como GREEN.
-- Worktrees **S5-auth b94b0de/S5-red112042d** e `agy` PID30832 de outra frente foram preservados. Docker compartilhado não foi derrubado nem volumes apagados. S15 worktree/branch removidos após merge; resíduo Windows só removido com aprovação específica e hashes conferidos.
-- Último disco medido: **17,1GB**. Arduino portátil isolado4,76GB em ../.kaiser/toolchains/citizentech-esp32, sem PATH global/serviço. Cloudflared portátil2026.11.0 ocupa55,4MB nessa mesma raiz de ferramentas; digest oficial conferido, sem login/autoupdate/serviço instalado. Remoção após o projeto exige confirmação, sem tocar dados.
+- Worktrees **S5-auth b94b0de/S5-red112042d** permanecem preservados. **Agy30832 confirmado ativo às09h05**, iniciado16/11 09h23, pertence à outra frente: não encerrar nem interferir. Sempre reidentificar processos numa sessão nova, nunca matar só pelo PID de um handoff. Docker Oracle/Mongo/Postgres **saudáveis** na checagem de encerramento, compartilhados e mantidos; nenhum volume apagado. S15 worktree/branch já removidos após merge e limpeza específica autorizada.
+- Último disco medido: **16,3GB**. Arduino portátil isolado4,76GB em ../.kaiser/toolchains/citizentech-esp32, sem PATH global/serviço. Cloudflared portátil2026.11.0 ocupa55,4MB nessa mesma raiz de ferramentas; digest oficial conferido, sem login/autoupdate/serviço instalado. Remoção após o projeto exige confirmação, sem tocar dados.
 - Trilha fora do Git em ../.kaiser/ferramentas/ (validar_wokwi.mjs, verificar_gpio_wokwi.mjs, compilar_wokwi_demo.ps1, lançadores de API/túneis); diagnósticos em ../.kaiser/tmp/wokwi e reports/wokwi_20261117_red. Retidos para auditoria/reprodução; não limpar tmp global com outra frente ativa, nem apagar originais/evidências para “higiene”.
 - **Oracle:** localhost20,129s vs127.0.0.1 em0,114s. IPv6 é hipótese não instrumentada. env_teste/env_app normalizam somente em memória, sem alterar app/.env; evitou timeout de cadastro sem relaxar asserção.
-- Segredos de app só em memória a partir de app/.env; não imprimidos/copied para agentes/worktrees. Persona só quando teste exige. Wokwi usou exclusivamente placeholder público e dados sintéticos.
-- OpenRouter nesta sessão: **US$0,02153822 de US$7**; Wokwi não o chamou. Adzuna não chamada nesta retomada, contador histórico7/12. Comprehend AccessDenied e HF402 permanecem limitações, sem sentimento válido medido.
+- Segredos de app só em memória a partir de app/.env; não impressos ou copiados para agentes/worktrees. Persona só quando teste exige. Wokwi usou exclusivamente placeholder público e dados sintéticos.
+- Última consulta OpenRouter: **US$0,02153822 de US$7**, em etapa anterior; não é leitura ao vivo da conta. Wokwi e o encerramento não o chamaram. Adzuna não chamada nesta retomada, contador histórico7/12. Comprehend AccessDenied e HF402 permanecem limitações, sem sentimento válido medido.
 - Três originais Cloud anteriores continuam ignorados, com cópias privadas iguais por SHA em .dados/cloud/privado; versões tarjadas rastreadas. Nenhuma nova captura humana Cloud. Caged bruto sem .7z na última checagem; parquets/snapshots/modelos preservados.
 
 ## 3. Produto e ciência protegidos
@@ -59,8 +59,21 @@ Holdout2026 **fechado**, status_promocao=nao_decidida, nenhum modelo promovido; 
 
 ## 4. Pendências humanas e limites reais
 
+Fila, responsáveis e critérios detalhados no [handoff P01–P08](<handoff_citizentech_20261116_fim.md>). As tarefas abaixo **não estão concluídas**.
+
 1. **Cloud:** capturas do simulador e consulta RDS; refazer CloudWatch de descarte/chave inválida/alerta; vídeo≤5min. Não alterar AWS por sugestão de revisor; typo RATE_KIMIT documentado e default30. Health verificado não garante Lab continuamente disponível.
 2. **Data Modeler:** modelos lógico/relacional e exportações pelo grupo. Oracle FIAP fora do escopo por decisão anterior; não alegar execução nele nem chamar Mermaid de Data Modeler.
 3. **Vídeos/URLs:** AIC≤7min com rosto/sem música/YouTube não listado e nomes/RMs (obrigatório para pontuar); ML/Cyber/Cloud≤5min; RNA obrigatório. Ideias efetivas da live e relato de gestão também humanos.
 4. Identidades confirmadas e aplicadas: Guilherme Orugian RM572882; Lucas Henrique RM571901; Rodrigo Bettio RM573725. Placeholders em URLs de vídeos permanecem até receber links reais.
-5. Conferência e **Portal**: Estatística PDF+PY+CSV separados, sem ZIP; Cyber≤15p. Nenhuma submissão realizada. Texto de operador/transferência internacional em consentimentos, proteção de sensor único, buffer offline do ESP e TLS/CA de produção permanecem limitações, não foram escondidos.
+5. Conferência e **Portal**: Estatística PDF+PY+CSV separados, sem ZIP; Cyber≤15p. Nenhuma submissão realizada. Texto de operador/transferência internacional em consentimentos, backup/restauração não verificados, proteção de sensor único, buffer offline do ESP e TLS/CA de produção permanecem limitações; não implementar correções fora do escopo sem decisão.
+
+### 4.1 Verificações que o próximo agente ainda deve conduzir
+
+- [ ] Inventariar arquivos humanos novos e confrontar os requisitos atuais; snapshots históricos não são uma fila confiável de pendências.
+- [ ] Revalidar health AWS quando o Lab for reaberto; não considerar o health antigo prova de serviço disponível agora.
+- [ ] Revisar visualmente PDFs e testar os links reais quando fornecidos; parser de páginas/RMs/imagens não substitui inspeção visual completa.
+- [ ] Fazer QA manual pertinente de teclado/foco/acessibilidade, sem alegar certificação WCAG por axe. Se não houver ferramenta para o teste, registrar e pedir apoio humano específico.
+- [ ] Conferir procedência/atualidade das execuções anteriores de notebooks; não reexecutar em massa nem abrir holdout2026 para satisfazer um checklist. Se for indispensável reexecução científica, submeter antes o escopo seguro e o conflito de gates ao usuário.
+- [ ] Após incorporar materiais, regenerar cópias/PDFs, executar empacotador --verificar, regressão pertinente e gitleaks; publicar apenas mudanças intencionais.
+
+**Preparação da próxima gravação:** roteiro AIC corrigido para `-App -ComLLM`, quando a chamada paga estiver autorizada; o modo sem `-App` usa schema de teste e não a persona existente. Não liberar a outbox antiga. Bancada física, áudio acústico e Wokwi→AWS seguem não verificados, não são compras/implementações automaticamente autorizadas.
