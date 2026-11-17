@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>CitizenTech - AICSS</title>
+<title>relatorio</title>
 <style>
 @page { size: A4; margin: 20mm 18mm; }
 body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
@@ -27,7 +27,9 @@ img { max-width: 100%; }
 <p><strong>Disciplina:</strong> AI Computer Systems and Sensors · <strong>Global Solution 2026.2</strong></p>
 <p><strong>Integrantes (nome completo + RM):</strong></p>
 <ul>
-<li>[HUMANO — preencher]</li>
+<li>Guilherme Orugian — RM572882</li>
+<li>Lucas Henrique — RM571901</li>
+<li>Rodrigo Bettio — RM573725</li>
 </ul>
 <div class="quebra-pagina"></div>
 
@@ -234,7 +236,9 @@ esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e
 <p><strong>Evidência B — compatibilidade com o servidor modelo da disciplina</strong> (<code>evidencias/20261116_compat_servidor_modelo.txt</code>). Os 6 JSON dos três cenários foram enviados também ao <code>servidor/servidor.py</code> fornecido no enunciado. O servidor respondeu 201 a todos, exibiu cada leitura no terminal (<code>esp32-lab-01 temperatura_c=48.0 status=ALERTA</code>) e gravou as 6 linhas no CSV dele.</p>
 <p><strong>Testes automatizados do firmware.</strong> <code>app/tools/tests/test_firmware.py</code>: <strong>9 testes passando</strong> em 16/11. Eles cobrem a sincronia de <code>limiares.h</code> com o JSON, a compilação e execução de <code>teste_logica.cpp</code> com <code>-Werror</code>, fronteiras, falhas de sensor, conversão do eco e montagem do JSON (com e sem sessão, buffer pequeno, NaN e infinito).</p>
 <p><strong>Outras entradas tratadas pela API</strong> (evidência de CTP, <code>04_CTP_Python/</code>): leitura sem <code>valor</code> → 400; <code>-127</code> enviado por engano → 400; reenvio do mesmo <code>evento_id</code> → 200 sem duplicar; mesmo <code>evento_id</code> com valor diferente → 409; sem <code>X-Device-Key</code> → 401.</p>
-<h3>5.2 O que falta executar: o ESP32 no Wokwi</h3>
+<h3>5.2 Compilação ESP32 verificada; simulação Wokwi pendente</h3>
+<p><strong>Compilação executada em 16/11/2026.</strong> Arduino CLI 1.6.0, core ESP32 3.0.7, OneWire 2.3.8 e DallasTemperature 4.0.6; placa <code>esp32:esp32:esp32</code>, 2 jobs. O <code>sketch.ino</code> completo compilou com <strong>1.046.369 bytes de programa (79%)</strong> e <strong>47.188 bytes de variáveis globais (14%)</strong>, exit 0. A compilação inicial revelou incompatibilidade de ponteiro const com <code>HTTPClient::POST</code>; a correção preserva os bytes e o reenvio idempotente, usando o buffer JSON mutável já existente. Warnings externos da OneWire foram mantidos. Toolchain portátil fora do repositório, sem instalação global; somente o exemplo sem credenciais reais foi compilado. Evidência: <code>evidencias/20261116_compilacao_esp32.txt</code>; reprodução em <code>firmware/README.md</code> §2.1.</p>
+<p><strong>Limite da evidência:</strong> compilar para ESP32 não comprova a execução dos sensores/atuadores nem o caminho Wi-Fi/HTTP. Não há WOKWI_CLI_TOKEN configurado nem novas capturas do simulador nesta sessão.</p>
 <p>[HUMANO — executar e anexar] A execução do <code>sketch.ino</code> no simulador Wokwi <strong>ainda não foi feita</strong>. Por isso, nenhuma imagem do LED ou do buzzer reagindo é apresentada neste relatório. Para cada um dos três cenários (ajustando os controles do DS18B20 e do HC-SR04 para 25/25, 38/12 e 48/5), a evidência prevista é:</p>
 <ul>
 <li>captura do circuito no Wokwi com o LED e o buzzer no estado esperado: <code>evidencias/wokwi_normal.png</code>, <code>wokwi_atencao.png</code>, <code>wokwi_critico.png</code>;</li>
@@ -259,7 +263,7 @@ esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e
 </tr>
 <tr>
 <td>Firmware completo (<code>sketch.ino</code>: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer)</td>
-<td><strong>Implementado, não executado</strong> (Wokwi pendente, §5.2); não há placa física</td>
+<td><strong>Implementado e compilado para ESP32</strong>, não executado (Wokwi pendente, §5.2); não há placa física</td>
 </tr>
 <tr>
 <td>Sensores e atuadores</td>

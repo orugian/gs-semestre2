@@ -3,9 +3,13 @@
 **Disciplina:** Plataformas de Serviços Cognitivos · **Global Solution 2026.2 — CitizenTech**
 
 **Integrantes (nome completo + RM):**
-- [HUMANO — preencher]
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 > Este README descreve o que foi **implementado e executado na AWS real** (Learner Lab, us-east-1) em 16/11/2026, o que é **simulado** (o dispositivo de campo é um script, como o enunciado permite) e o que **não funcionou** por limitação de conta (a camada de IA, ver §4). Cada número citado vem das evidências em `evidencias/`.
+>
+> **Disponibilidade na retomada noturna de 16/11:** health inicialmente HTTP 502; após o usuário reiniciar o Learner Lab, `GET /health` voltou a HTTP 200 com `status=ok` e `banco=ok` (`evidencias/20261116_health_retomada.txt`). Nenhum recurso AWS foi alterado nessa checagem; ela não revalida sentimento nem substitui os prints obrigatórios.
 
 ## 1. Cenário CitizenTech
 
@@ -169,5 +173,5 @@ O que as evidências mostram (valores copiados das saídas):
 - **RDS público e SG 5432 aberto** para a Lambda fora de VPC e para a correção. Em produção: Lambda em VPC com RDS privado e RDS Proxy, ou Data API, e segredo no AWS Secrets Manager.
 - **Function URL sem autenticação obrigatória** (a chave é opcional para aceitar o simulador do professor). Leituras sem chave ficam marcadas `autenticado=false` e sujeitas ao limite por dispositivo.
 - **Variável do limite:** no print das variáveis o nome aparece como `RATE_KIMIT_POR_MINUTO` (erro de digitação no console). O código lê `RATE_LIMIT_POR_MINUTO` e, sem ela, usa o padrão 30, que é o mesmo valor; o comportamento não muda.
-- O relato de texto livre (≤ 280 caracteres) vai para o log e para o banco. O simulador envia relatos sem dados pessoais. A redação do relato antes de sair da plataforma faz parte da sessão de laboratório do app, que **ainda está em desenvolvimento**.
+- O relato de texto livre (≤ 280 caracteres) vai para o log e para o banco. O simulador envia relatos sem dados pessoais. A sessão de laboratório do app já está integrada e aplica redação ao relato antes do envio pela outbox. As evidências Cloud desta pasta foram produzidas pelo simulador por software, não comprovam a origem no ESP32.
 - O dispositivo das evidências é o **simulador**. O firmware do ESP32 tem a lógica testada no computador, mas **ainda não foi executado no Wokwi nem contra a Lambda**.

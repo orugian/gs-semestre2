@@ -181,7 +181,7 @@ Cada linha é uma fatia **RED → GREEN → REFACTOR**, testada pela interface p
 | S12 Plano | Lacunas → atividades ordenadas por pré-requisito; checkpoints | domínio |
 | S13 Avaliação | 50/50; LLM fora → "parcial"; GET sem gabarito; "discordo" registra; **T08**; 4ª tentativa em 24 h → 429 (R23) | API |
 | S14 Laboratório | Sessão + código; leituras da sessão; relato ≤ 280 com PII redigida segue pela outbox | API |
-| S15 Web | Jornada E2E Playwright (persona demo) + axe sem violações sérias | web |
+| S15 Web | Jornada E2E Playwright (persona demo) + axe sem violações sérias — integrada em 16/11 (`e7c533a`): 3 E2E + persona separada contra API app; axe em 11 telas + modal sem violações; evidência `02_Cybersecurity/evidencias/20261116_s15_e2e_aceite.md` | web |
 
 **Regras:** fake do LLM e da Lambda na fronteira; Oracle e Postgres reais em Docker nos testes de integração; nenhum teste exige uma métrica de modelo específica.
 

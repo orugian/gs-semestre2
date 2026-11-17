@@ -1,7 +1,7 @@
 # Previsão de Demanda de Admissões Formais no Mercado de Tecnologia
 ## Projeto CitizenTech — Machine Learning & Modelling (GS 2026.2)
 
-**Integrantes (nome completo + RM):** [HUMANO — preencher]
+**Integrantes (nome completo + RM):** Guilherme Orugian — RM572882; Lucas Henrique — RM571901; Rodrigo Bettio — RM573725.
 
 - **Problema:** Apoio à transição de carreira para profissionais graduados por meio de estimativas de admissões formais.
 - **Público:** Profissionais com ensino superior completo em processo de transição ou requalificação para tecnologia.

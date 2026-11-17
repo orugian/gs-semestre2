@@ -4,7 +4,9 @@
 
 **Integrantes (nome completo + RM):**
 
-- [HUMANO — preencher]
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 > Tudo o que aparece como resultado neste relatório foi **executado** em 16/11/2026 no Oracle local (Docker, imagem Oracle Free 23ai, DDL escrito no dialeto 19c) e no MongoDB Atlas do projeto. As saídas completas estão em `evidencias/`. O Oracle da FIAP ficou fora do escopo por decisão do grupo (credencial recusada com ORA-01017); o mesmo DDL roda nele sem mudança porque usa só recursos do 19c.
 

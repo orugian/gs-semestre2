@@ -83,7 +83,7 @@ void acionar_atuadores(const Atuadores& atuadores) {
 }
 
 // ------------------------------------------------------------- Comunicacao HTTP
-bool enviar_leitura(const char* json, const char* evento_id) {
+bool enviar_leitura(char* json, const char* evento_id) {
     if (WiFi.status() != WL_CONNECTED) {
         Serial.printf("[WiFi] Desconectado. Leitura %s nao enviada.\n", evento_id);
         return false;
@@ -94,7 +94,7 @@ bool enviar_leitura(const char* json, const char* evento_id) {
     http.addHeader("Content-Type", "application/json");
     http.addHeader("X-Device-Key", DEVICE_KEY);
 
-    int codigo = http.POST(reinterpret_cast<const uint8_t*>(json), strlen(json));
+    int codigo = http.POST(reinterpret_cast<uint8_t*>(json), strlen(json));
     Serial.printf("[HTTP] POST %s -> status %d\n", evento_id, codigo);
 
     bool sucesso = (codigo == 200 || codigo == 201);
@@ -103,7 +103,7 @@ bool enviar_leitura(const char* json, const char* evento_id) {
     if (deve_tentar_reenvio) {
         Serial.printf("[HTTP] Tentando 1 reenvio idempotente para %s apos falha (%d)...\n", evento_id, codigo);
         delay(500);
-        codigo = http.POST(reinterpret_cast<const uint8_t*>(json), strlen(json));
+        codigo = http.POST(reinterpret_cast<uint8_t*>(json), strlen(json));
         Serial.printf("[HTTP Reenvio] POST %s -> status %d\n", evento_id, codigo);
         sucesso = (codigo == 200 || codigo == 201);
         if (!sucesso) {
@@ -146,7 +146,7 @@ void setup() {
 void loop() {
     contador_ciclo++;
     char ciclo_id[32];
-    snprintf(ciclo_id, sizeof(ciclo_id), "c-%08x-%lu", boot_seed, contador_ciclo);
+    snprintf(ciclo_id, sizeof(ciclo_id), "c-%08lx-%lu", static_cast<unsigned long>(boot_seed), contador_ciclo);
 
     // 1. Leituras dos sensores
     float temp_c = ler_temperatura();

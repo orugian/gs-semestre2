@@ -4,7 +4,9 @@
 
 **Integrantes (nome completo + RM):**
 
-- [HUMANO — preencher]
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 <div class="quebra-pagina"></div>
 

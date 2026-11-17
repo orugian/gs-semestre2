@@ -1,6 +1,6 @@
 # Relatório Estatístico — Análise Territorial de Admissões Formais no Estado de São Paulo
 
-**Integrantes (nome completo + RM):** [HUMANO — preencher]
+**Integrantes (nome completo + RM):** Guilherme Orugian — RM572882; Lucas Henrique — RM571901; Rodrigo Bettio — RM573725.
 
 ---
 

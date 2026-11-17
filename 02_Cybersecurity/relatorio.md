@@ -4,7 +4,9 @@
 
 **Integrantes (nome completo + RM):**
 
-- [HUMANO — preencher]
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 > Atuamos como consultoria de segurança do nosso próprio protótipo. Separamos sempre três situações: **implementado e demonstrado** (com evidência executada), **implementado sem demonstração própria** (coberto por testes automatizados) e **proposto** (não existe no protótipo). Nada neste relatório é apresentado como mais seguro do que foi verificado.
 
@@ -14,12 +16,12 @@
 
 **Público-alvo (único).** Profissionais graduados e experientes em transição de carreira.
 
-**O que o protótipo faz.** A pessoa cria conta, concede consentimentos por finalidade, envia o currículo, revisa o texto redigido e as competências sugeridas e compara até 3 destinos de carreira em dimensões separadas: requisitos atendidos, lacunas, mercado formal observado e conflitos com a própria disponibilidade. Não existe nota única nem promessa de emprego. Em 16/11/2026 a API de conta, consentimentos, currículo e competências está pronta e testada; a intenção, a rota de comparação e as telas da jornada estão em desenvolvimento.
+**O que o protótipo faz.** A pessoa cria conta, concede consentimentos por finalidade, envia o currículo, revisa o texto redigido e as competências sugeridas e compara até 3 destinos de carreira em dimensões separadas: requisitos atendidos, lacunas, mercado formal observado e conflitos com a própria disponibilidade. Não existe nota única nem promessa de emprego. Em 16/11/2026 as APIs e telas de conta, consentimentos, intenção, currículo, competências, comparação, plano, exercício diagnóstico e laboratório estão integradas. A jornada foi exercitada no Edge; testes E2E e acessibilidade têm seu aceite registrado em `docs/estado.md`.
 
 **Uso de IA.**
 - **Modelo de linguagem (OpenRouter, DeepSeek):** sugere competências do currículo **redigido**, limitado a uma lista fechada de competências ESCO do catálogo, sempre com o trecho de origem. A pessoa confirma, rejeita ou informa que não possui cada uma.
 - **Modelos de previsão (scikit-learn e rede neural em PyTorch):** estimam admissões formais por grupo de ocupações e UF a partir dos microdados públicos do Novo Caged.
-- **Análise de sentimento (Amazon Comprehend):** classifica o tom do relato que acompanha uma leitura do laboratório IoT. Nunca entra em avaliação da pessoa.
+- **Análise de sentimento (Amazon Comprehend):** integração implementada para classificar somente o tom do relato do laboratório IoT, nunca a avaliação da pessoa. Na AWS real, a LabRole respondeu **AccessDenied** em 16/11/2026: o sistema registrou `analise_status=indisponivel` e preservou a leitura no RDS. Não há resultado de sentimento válido demonstrado (evidências em `06_Cloud/README.md` §4).
 
 **Dados utilizados.** E-mail e hash da senha; consentimentos por finalidade; texto do currículo **já redigido** e seu hash SHA-256; competências declaradas; intenção de transição; leituras de sensores do laboratório (temperatura, distância); dados públicos agregados do Novo Caged (sem idade, sexo, raça/cor e deficiência, descartados na ingestão).
 
@@ -163,10 +165,10 @@ As proteções têm testes que rodam a cada mudança (regressão registrada em 1
 - **Transparência no uso da IA:** a pessoa vê exatamente o texto que irá ao modelo e confirma; o envio é feito com `data_collection=deny`. **Em desenvolvimento:** o texto do termo de `curriculo_llm` na tela de consentimentos, citando o operador (OpenRouter e o provedor do modelo) e a **transferência internacional**; hoje a API registra só a versão do termo (`v1.0`).
 - **Segurança:** senha com Argon2id, sessão em cookie HttpOnly e Secure, CSRF, controle de acesso por dono, TLS no RDS, segredos fora do código, varredura de segredos (gitleaks) antes de cada commit.
 - **Direitos do titular:** revogação de consentimento já implementada (`DELETE /me/consentimentos/{id}`); revogar `curriculo_llm` bloqueia novas extrações. **Proposto:** exportação dos dados e exclusão da conta. Hoje não há rota de exclusão; no Oracle, as competências referenciam a conta com exclusão em cascata, mas o texto redigido no MongoDB não é apagado automaticamente.
-- **Nuvem:** o relato do laboratório vai ao CloudWatch e ao RDS. No protótipo, o simulador envia relatos sem dados pessoais; a redação do relato antes de sair da aplicação faz parte da sessão de laboratório, **ainda em desenvolvimento**.
+- **Nuvem:** o relato do laboratório vai ao CloudWatch e ao RDS. No protótipo, o simulador envia relatos sem dados pessoais; a sessão de laboratório integrada aplica redação ao relato antes de encaminhá-lo pela outbox. Essa proteção não justifica enviar dados pessoais deliberadamente nem elimina a revisão do texto pelo usuário.
 
 **Como o usuário será informado?**
-- Tela de consentimentos (em desenvolvimento nesta entrega) com o que cada finalidade permite e quem recebe o dado; concessão e revogação independentes, com a data exibida.
+- Tela de consentimentos integrada, com a finalidade de cada autorização; concessão e revogação independentes, com a data exibida. O detalhamento do operador e da transferência internacional ainda é uma pendência, descrita acima.
 - Aviso na revisão do currículo: "A redação automática é parcial: revise o texto e remova qualquer dado pessoal restante antes de confirmar."
 - Aviso nas competências: "Sugestões automáticas: confirme apenas o que você realmente faz. Declarar não é o mesmo que demonstrar."
 - **Proposto:** política de privacidade em linguagem simples e canal do encarregado (DPO).

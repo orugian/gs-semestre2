@@ -1,0 +1,71 @@
+CitizenTech — compilação real do sketch para ESP32 — 16/11/2026
+Executado pelo orquestrador nesta sessão, Windows, sem placa e sem simulação Wokwi.
+
+Autorização humana: instalação em ambiente controlado, isolado e facilmente removível.
+Toolchain: ../.kaiser/toolchains/citizentech-esp32 (fora do Git; sem PATH global/serviços).
+Arduino CLI: 1.6.0, commit 50a0e80da (2026-11-10).
+SHA256 oficial do ZIP Windows x64, conferido antes de extrair:
+2769b9b282ce597db9679d8ec14d726d57004ca4205ef4d7a795bf36b6cdc9d8
+Fonte: https://github.com/arduino/arduino-cli/releases/tag/v1.6.0
+Core: esp32:esp32@3.0.7; bibliotecas OneWire@2.3.8 e DallasTemperature@4.0.6.
+O pin inicialmente tentado DallasTemperature@3.11.0 não existe no índice oficial;
+foi consultado lib search DallasTemperature e instalado 4.0.6, sem afrouxar verificação.
+Ocupação medida da toolchain antes dos artefatos: 4,76 GB. Disco após compilação: 17,7 GB livres.
+Nenhum dado de .dados foi excluído.
+
+PREPARAÇÃO
+Uma pasta temporária sketch recebeu cópias de sketch.ino, logica.h, limiares.h e
+segredos.exemplo.h, com SHA256 conferido entre fonte e cópia. teste_logica.cpp
+é teste host com main próprio, por isso não participa da compilação Arduino.
+Não foi criado segredos.h real, nem incorporada chave de app/.env ao firmware.
+
+COMANDO (mesmos parâmetros no RED e no GREEN)
+arduino-cli --config-file <toolchain>/arduino-cli.yaml compile
+  --fqbn esp32:esp32:esp32 --jobs 2 --warnings all
+  --build-path <tmp>/esp32/build --output-dir <toolchain>/artefatos <tmp>/esp32/sketch
+Script do orquestrador: ../.kaiser/ferramentas/compilar_esp32.ps1
+
+PRIMEIRA COMPILAÇÃO — FALHA REAL (job pwsh-124, exit 1)
+sketch.ino:97:28: error: invalid conversion from 'const uint8_t*' to 'uint8_t*'
+  int codigo = http.POST(reinterpret_cast<const uint8_t*>(json), strlen(json));
+HTTPClient.h:230:21: note: initializing argument 1 of 'int HTTPClient::POST(uint8_t*, size_t)'
+Mesmo erro na chamada de reenvio em sketch.ino:106.
+Também houve warning de formato: %x esperava unsigned int, mas boot_seed uint32_t
+nessa plataforma é long unsigned int.
+
+CORREÇÃO MÍNIMA
+- enviar_leitura recebe char*, pois ambos os chamadores já usam char json_[512] mutável.
+- POST usa reinterpret_cast<uint8_t*> sem const_cast e sem alterar os bytes do JSON.
+- boot_seed impresso com %08lx e conversão explícita para unsigned long.
+Nenhuma regra de limiar, falha de sensor ou reenvio foi alterada.
+
+COMPILAÇÃO GREEN (job pwsh-131, exit 0)
+Sketch uses 1046369 bytes (79%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 47188 bytes (14%) of dynamic memory, leaving 280492 bytes for local variables. Maximum is 327680 bytes.
+Compilacao GREEN exit: 0
+
+Warnings externos mantidos, não silenciados:
+- OneWire.cpp:599/600: extra tokens at end of #undef directive.
+- OneWire_direct_gpio.h:214/240: comparison of unsigned expression in '>= 0' is always true.
+Não foi usada a opção -fpermissive nem desativado teste para obter sucesso.
+
+ARTEFATOS GERADOS (fora do Git)
+sketch.ino.bin: 1052944 bytes
+sketch.ino.bootloader.bin: 24896 bytes
+sketch.ino.elf: 12779144 bytes
+sketch.ino.map: 18929578 bytes
+sketch.ino.merged.bin: 4194304 bytes
+sketch.ino.partitions.bin: 3072 bytes
+SHA256 do sketch.ino fonte corrigido:
+046428ac958ef88f85a921e9b3318f21edd0ef2ff6782f495451a7486dbe4cb3
+
+REGRESSÃO
+uv run pytest -q em app/tools (job pwsh-132) -> 43 testes passaram,
+incluindo os 9 testes host de firmware; fonte única de limiares preservada.
+
+NÃO VERIFICADO
+- Sensores/LED/buzzer em execução no ESP32/Wokwi.
+- Caminho Wi-Fi/HTTP originado no microcontrolador.
+- POST real com chave do dispositivo: esta compilação usa só placeholder de exemplo.
+WOKWI_CLI_TOKEN ausente e nenhuma captura nova do simulador disponível nesta sessão.
+A compilação não substitui as evidências dos três cenários em AICSS §5.2.

@@ -1,10 +1,10 @@
 {
-  "gerado_em": "2026-11-16T22:11:52Z",
+  "gerado_em": "2026-11-17T02:53:47Z",
   "itens": [
     {
       "destino": "01_AICSS/firmware/README.md",
       "origem": "app/iot/firmware/README.md",
-      "sha256": "095a64a9dea1f5b0f528ef72eb3f52fa48e7226b5c726eb4e8211a7ef12bc062",
+      "sha256": "ed25a5bbc6e11a491103a70b56803140aec2b39286e88879b4ceedc81a2efd9a",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -46,7 +46,7 @@
     {
       "destino": "01_AICSS/firmware/sketch.ino",
       "origem": "app/iot/firmware/sketch.ino",
-      "sha256": "ea37bd25d01bbe3144af83c589c316f2eef16cbe65d950f7fd9467de504414a7",
+      "sha256": "046428ac958ef88f85a921e9b3318f21edd0ef2ff6782f495451a7486dbe4cb3",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -188,13 +188,20 @@
       "origem": "(declarado: dependências do modo isolado)",
       "sha256": "b4e1a105bae22f05f802d7fc5a78e69f14fd409873d7cec106531e199d077132",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
       "destino": "05_ML/notebook.ipynb",
       "origem": "app/ml/notebooks/ml_mercado.ipynb",
-      "sha256": "4b1600307cf7c225a7d5f7722433f657cad2d46e2bdd80ba23002d117054ce91",
+      "sha256": "81ddb4b3b3059f973534723088d0ae9f7401ca32d20394abfe249407bf195b19",
       "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "05_ML/slides.pdf",
+      "origem": "05_ML/slides.md",
+      "sha256": "0ba810548b3f82005c04a97445e5e8715d6dfa764abccadb271aa939ccc5b05d",
+      "paginas": 12,
       "estado": "inalterado"
     },
     {
@@ -277,22 +284,29 @@
     {
       "destino": "07_RedesNeurais/notebook.ipynb",
       "origem": "app/ml/notebooks/rna_mercado.ipynb",
-      "sha256": "af80a380dd55b46bd5fe25d872ee0ac45c760bf839d9f0d06f91a541079c1dcf",
+      "sha256": "688d7556198913212c22c3fcdab6c430d492b626f7b86fb1f8d67ac00980d47f",
       "paginas": null,
       "estado": "inalterado"
     },
     {
       "destino": "08_Estatistica/analise.py",
       "origem": "app/ml/src/citizentech_ml/estatistica/analise_portatil.py",
-      "sha256": "9adc6cb555d91b0b19f4969f7f76e8f7e6d9a750b38688649f608309a12bacc6",
+      "sha256": "e0ed44e80decea62a53595c4c0da15fad97ff682a9a9e122f3c598cc99591ac2",
       "paginas": null,
-      "estado": "inalterado"
+      "estado": "atualizado"
     },
     {
       "destino": "08_Estatistica/base_municipal.csv",
       "origem": "DADOS/estatistica/20261115_d11_aceite/base_municipal.csv",
       "sha256": "5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee",
       "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "08_Estatistica/relatorio.pdf",
+      "origem": "08_Estatistica/relatorio.md",
+      "sha256": "57d74ba6a94cf79068e9053e5a8813f0b8c26129c7317476bfb53981f4afc73b",
+      "paginas": 21,
       "estado": "inalterado"
     },
     {

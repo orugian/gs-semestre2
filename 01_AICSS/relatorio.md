@@ -4,7 +4,9 @@
 
 **Integrantes (nome completo + RM):**
 
-- [HUMANO — preencher]
+- Guilherme Orugian — RM572882
+- Lucas Henrique — RM571901
+- Rodrigo Bettio — RM573725
 
 <div class="quebra-pagina"></div>
 
@@ -123,7 +125,11 @@ esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e
 
 **Outras entradas tratadas pela API** (evidência de CTP, `04_CTP_Python/`): leitura sem `valor` → 400; `-127` enviado por engano → 400; reenvio do mesmo `evento_id` → 200 sem duplicar; mesmo `evento_id` com valor diferente → 409; sem `X-Device-Key` → 401.
 
-### 5.2 O que falta executar: o ESP32 no Wokwi
+### 5.2 Compilação ESP32 verificada; simulação Wokwi pendente
+
+**Compilação executada em 16/11/2026.** Arduino CLI 1.6.0, core ESP32 3.0.7, OneWire 2.3.8 e DallasTemperature 4.0.6; placa `esp32:esp32:esp32`, 2 jobs. O `sketch.ino` completo compilou com **1.046.369 bytes de programa (79%)** e **47.188 bytes de variáveis globais (14%)**, exit 0. A compilação inicial revelou incompatibilidade de ponteiro const com `HTTPClient::POST`; a correção preserva os bytes e o reenvio idempotente, usando o buffer JSON mutável já existente. Warnings externos da OneWire foram mantidos. Toolchain portátil fora do repositório, sem instalação global; somente o exemplo sem credenciais reais foi compilado. Evidência: `evidencias/20261116_compilacao_esp32.txt`; reprodução em `firmware/README.md` §2.1.
+
+**Limite da evidência:** compilar para ESP32 não comprova a execução dos sensores/atuadores nem o caminho Wi-Fi/HTTP. Não há WOKWI_CLI_TOKEN configurado nem novas capturas do simulador nesta sessão.
 
 [HUMANO — executar e anexar] A execução do `sketch.ino` no simulador Wokwi **ainda não foi feita**. Por isso, nenhuma imagem do LED ou do buzzer reagindo é apresentada neste relatório. Para cada um dos três cenários (ajustando os controles do DS18B20 e do HC-SR04 para 25/25, 38/12 e 48/5), a evidência prevista é:
 
@@ -140,7 +146,7 @@ Passo a passo em `firmware/README.md` §3 e §4 (extensão Wokwi no VS Code, com
 | Parte | Situação |
 |---|---|
 | Lógica de classificação, atuadores e JSON (`logica.h`) | **Implementada e executada** no computador (g++), mesma fonte do firmware |
-| Firmware completo (`sketch.ino`: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer) | **Implementado, não executado** (Wokwi pendente, §5.2); não há placa física |
+| Firmware completo (`sketch.ino`: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer) | **Implementado e compilado para ESP32**, não executado (Wokwi pendente, §5.2); não há placa física |
 | Sensores e atuadores | **Simulados** no Wokwi (`wokwi-ds18b20`, `wokwi-hc-sr04`, LED, buzzer); sem bancada física |
 | Servidor Python que exibe e grava em CSV | **Implementado e executado** (API FastAPI de CTP e servidor modelo da disciplina) |
 | Envio à nuvem | **Implementado e executado** pela outbox da API até a AWS Lambda (ver `06_Cloud/README.md`) |

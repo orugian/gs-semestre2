@@ -45,6 +45,29 @@ Para manter a segurança das chaves de API e isolamento de credenciais (D24):
 
 ---
 
+## 2.1 Compilação ESP32 verificada em 16/11/2026
+
+Toolchain usada: Arduino CLI **1.6.0**, core **esp32:esp32 3.0.7**, **OneWire 2.3.8** e **DallasTemperature 4.0.6**; placa `esp32:esp32:esp32`. A instalação local autorizada está isolada em `../.kaiser/toolchains/citizentech-esp32/` (fora do repositório, sem PATH global ou serviço residente); dados, downloads, bibliotecas e cache ficam sob essa mesma raiz. Ocupação medida: **4,76 GB** antes dos artefatos; compilação limitada a **2 jobs**. Remoção após o projeto depende de confirmação do responsável, sem tocar `.dados`.
+
+A pasta compilada deve se chamar `sketch` e conter somente `sketch.ino`, `logica.h`, `limiares.h` e `segredos.exemplo.h`. **Não inclua `teste_logica.cpp`**, que é teste do computador e tem outro `main`. Para compilar não são necessárias credenciais: o exemplo versionado basta; ele **não autentica uma demonstração real**.
+
+Comandos usados (a partir da raiz do repositório; CLI/core/bibliotecas já instalados):
+
+```powershell
+$tc = '..\.kaiser\toolchains\citizentech-esp32'
+$sketch = '..\.kaiser\tmp\esp32\sketch'
+New-Item -ItemType Directory -Force $sketch | Out-Null
+'sketch.ino','logica.h','limiares.h','segredos.exemplo.h' | ForEach-Object {
+  Copy-Item -LiteralPath "app\iot\firmware\$_" -Destination "$sketch\$_"
+}
+& "$tc\bin\arduino-cli.exe" --config-file "$tc\arduino-cli.yaml" compile --fqbn esp32:esp32:esp32 --jobs 2 --warnings all --output-dir "$tc\artefatos" $sketch
+if ($LASTEXITCODE -ne 0) { throw 'Compilacao ESP32 falhou' }
+```
+
+Resultado: **1.046.369 bytes de programa (79%)**, **47.188 bytes de variáveis globais (14%)**, exit 0. A primeira compilação expôs incompatibilidade real com a assinatura mutável de `HTTPClient::POST`; corrigida usando os buffers JSON mutáveis que o sketch já possui, sem remover qualificadores por `const_cast`. Também corrigido o formato de impressão de `boot_seed`. Permanecem warnings da biblioteca externa OneWire 2.3.8; não foram silenciados. Evidência em `01_AICSS/evidencias/20261116_compilacao_esp32.txt`.
+
+**Compilar não é simular:** LED, buzzer, sensores e Wi-Fi/HTTP no Wokwi continuam não verificados sem capturas/Serial Monitor da execução.
+
 ## 3. Execução no Simulador Wokwi
 
 ### Opção A: Extensão Wokwi no VS Code (Recomendado)

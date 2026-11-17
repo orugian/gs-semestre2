@@ -1,5 +1,8 @@
 """Programa portátil para análise estatística municipal (Q02 a Q06 e diagnósticos).
 
+Integrantes: Guilherme Orugian — RM572882;
+Lucas Henrique — RM571901; Rodrigo Bettio — RM573725.
+
 Uso:
     python analise.py [CAMINHO_CSV] [--figuras DIR] [--json ARQ]
 

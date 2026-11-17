@@ -1,0 +1,15 @@
+CitizenTech — retomada da sessão de 16/11/2026, noite (UTC-3)
+Comando: GET <FUNCTION_URL>/health via Invoke-WebRequest -UseBasicParsing.
+FUNCTION_URL carregada de app/.env em memória; valores de credenciais não impressos.
+
+Primeira checagem: HTTP 502 (job pwsh-90).
+Usuário avisado e confirmou que reiniciou o Learner Lab.
+
+Nova checagem após o reinício humano (job pwsh-136):
+Lambda HTTP: 200
+{"status":"ok","banco":"ok"}
+
+Somente leitura; nenhum recurso AWS foi criado ou alterado pelo orquestrador.
+Esta checagem não reexecuta a classificação de sentimento, os cenários do simulador
+nem as capturas obrigatórias de CloudWatch/RDS. Comprehend AccessDenied permanece
+como limitação histórica demonstrada, não foi testado novamente nesta checagem.
