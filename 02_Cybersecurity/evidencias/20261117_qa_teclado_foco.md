@@ -17,7 +17,9 @@ Fluxo funcional por teclado (passou): criar conta preenchendo o formulário e en
 
 ## Achado
 
-**Indicador de foco fraco ou ausente** nos seletores da tela Mercado e nos campos de login (WCAG 2.4.7 *Foco visível*). Capturas em `.kaiser/tmp/foco_mercado_*.png` e `foco_entrar_*.png` (fora do Git). O axe não acusa isso porque a regra não é automatizável. **Não corrigido nesta sessão:** a correção é CSS de componente (S1/S5 integradas) e reabrir fatias exige decisão do usuário.
+**Indicador de foco fraco ou ausente** nos seletores da tela Mercado e nos campos de login (WCAG 2.4.7 *Foco visível*). Capturas em `.kaiser/tmp/foco_mercado_*.png` e `foco_entrar_*.png` (fora do Git). O axe não acusa isso porque a regra não é automatizável.
+
+**Corrigido em 17/11 à tarde** (aprovação do usuário), no redesign S16 (merge `48be785`): anel `:focus-visible` de 2px `#000091` com deslocamento de 2px em todos os controles (`#F2F2F2` sobre o azul do cabeçalho). Teste automatizado `app/web/e2e/foco_visivel.spec.ts`: **RED reproduzido em main antes da correção** ("Selector Destino: Elemento focado sem indicador visível (outline: none 3px, shadow: none)"; idem "Campo E-mail") e **GREEN depois**; suíte E2E completa e axe sem violações sérias/críticas nas 11 telas + modal.
 
 ## Não verificado
 

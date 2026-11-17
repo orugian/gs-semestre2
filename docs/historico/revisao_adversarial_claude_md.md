@@ -1,6 +1,6 @@
 # Revisão adversarial — CLAUDE.md do orquestrador
 
-**Data:** 12/11/2026 · **Objeto:** [CLAUDE.md](../CLAUDE.md) (versão com §14 Ambiente e §15 Organização)
+**Data:** 12/11/2026 · **Objeto:** [CLAUDE.md](../../CLAUDE.md) (versão com §14 Ambiente e §15 Organização)
 
 **Revisores independentes** (`agy --mode plan`, somente leitura, sem participar da autoria):
 - A — engenharia de prompt e comportamento do agente: `.kaiser/reports/REV-CLAUDE-A-prompt.md`

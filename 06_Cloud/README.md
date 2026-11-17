@@ -113,17 +113,18 @@ Pré-requisitos: Python 3.11 e [uv](https://docs.astral.sh/uv/). Os comandos par
 # na raiz do repositório: sobe o PostgreSQL de teste (porta 5433)
 docker compose -f app\docker-compose.yml --profile teste up -d --wait postgres
 
+. .\app\tools\ambiente_teste.ps1    # terminal local: popula PG_TESTE_* para o pytest, sem exibir valores
 cd app\cloud
-uv sync
-$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_NAME='citizentech_teste'
-$env:DB_USER='citizentech_teste'; $env:DB_PASSWORD='<senha do .env local>'; $env:DB_SSLMODE='disable'
+uv sync --frozen
+$env:DB_HOST=$env:PG_TESTE_HOST; $env:DB_PORT=$env:PG_TESTE_PORT; $env:DB_NAME=$env:PG_TESTE_DB
+$env:DB_USER=$env:PG_TESTE_USER; $env:DB_PASSWORD=$env:PG_TESTE_PASSWORD; $env:DB_SSLMODE='disable'
 $env:SENTIMENTO_PROVEDOR='desligado'
 # aplica a tabela (a parte do app_ingest depois de FIM_DDL é opcional no local)
 # psql ... -f sql\ocorrencias.sql
 uv run python -m citizentech_cloud.servidor_local --porta 8099      # terminal 1
 uv run python -m citizentech_cloud.simulador --url http://127.0.0.1:8099 --cenario normal --leituras 4 --intervalo 1     # terminal 2
 uv run python -m citizentech_cloud.simulador --url http://127.0.0.1:8099 --cenario evolucao --leituras 6 --intervalo 1
-uv run pytest -q                                                     # 115 testes
+uv run pytest -q -rs                                                 # suíte local; confira os skips
 ```
 
 ### 7.2 AWS (Learner Lab)

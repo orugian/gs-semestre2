@@ -6,7 +6,7 @@
 ## Preparação (antes de gravar)
 1. `05_ML/slides.pdf` aberto em tela cheia.
 2. `05_ML/notebook.ipynb` aberto **já executado** (não reexecutar gravando: o treino não é refeito no notebook, ele lê os artefatos de `.dados/artefatos/`). Rolar até as células de métricas (§7), importância das variáveis e demonstração (§8, origem 202509, SP).
-3. App web de pé com a API do app (`subir_api_teste.ps1 -App`) e `pnpm dev` em `app\web`, aberto na aba **Mercado**, destino "Analista de Monitoramento/IoT Industrial", UF SP.
+3. App web e API locais conforme o [README](<../README.md#rodar-a-aplicação>), com o snapshot de Mercado configurado. Não é preciso login ou LLM para a aba **Mercado**. Selecionar o destino "Analista de Monitoramento/IoT Industrial", UF SP.
 4. Não mostrar `app/.env`, terminal com variáveis nem a pasta `.dados/`.
 
 ## Roteiro com tempos

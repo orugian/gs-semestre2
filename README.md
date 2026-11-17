@@ -31,44 +31,71 @@ Windows 11 + PowerShell 5.1 (os comandos abaixo), ou equivalente.
 | Node.js + pnpm | Node 24, pnpm 11 | `app/web` |
 | Docker Desktop | 29 | bancos de teste (Oracle Free, PostgreSQL, MongoDB) |
 | Microsoft Edge | qualquer recente | geração de PDF e testes Playwright |
-| g++ (opcional) | — | teste da lógica do firmware no computador (`app/tools/tests/test_firmware.py`) |
+| g++ no PATH | — | necessário para a suíte completa de `tools` (compilação do firmware no host); dispensável para iniciar o site |
 
 Dados grandes (parquets do Caged, snapshots, artefatos de modelo) ficam **fora do repositório**, na pasta indicada por `CITIZENTECH_DADOS`.
 
 ## Configurar
 
 ```powershell
-Copy-Item app\.env.example app\.env      # preencha: [GERADO] = qualquer segredo aleatório local
+if (-not (Test-Path app\.env)) { Copy-Item app\.env.example app\.env }
+# Preencha as senhas locais em app/.env antes de subir os bancos. Não sobrescreva um ambiente existente.
 docker compose -f app\docker-compose.yml --profile teste up -d --wait
 ```
 
 O compose cria o Oracle com o usuário do app (`ORACLE_USER`). Os testes da API usam um schema separado cujo nome começa com `CT_` e contém `TESTE` (trava de segurança dos testes). Crie-o uma vez:
 
 ```powershell
-"CREATE USER CT_TESTE_S9 IDENTIFIED BY ""<ORACLE_TESTE_PASSWORD>"" QUOTA UNLIMITED ON USERS;`nGRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO CT_TESTE_S9;" |
-  docker exec -i citizentech-oracle-1 bash -c 'sqlplus -s system/"$ORACLE_PASSWORD"@localhost:1521/FREEPDB1'
+docker exec -it citizentech-oracle-1 bash -c 'sqlplus -L -s system/"$ORACLE_PASSWORD"@localhost:1521/FREEPDB1'
+```
+
+No SQL*Plus do **container local**, execute as linhas abaixo uma a uma. Informe no prompt oculto a senha de `ORACLE_TESTE_PASSWORD` que você escolheu em `app/.env`; não a coloque no comando nem na gravação. Se já existir um schema de teste preparado, não recrie o usuário.
+
+```sql
+SET VERIFY OFF
+ACCEPT senha_teste CHAR PROMPT 'Senha do schema de teste: ' HIDE
+CREATE USER CT_TESTE_S9 IDENTIFIED BY "&senha_teste" QUOTA UNLIMITED ON USERS;
+UNDEFINE senha_teste
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO CT_TESTE_S9;
+EXIT;
 ```
 
 ## Testar
 
 ```powershell
-# tudo de uma vez (carrega as variáveis de teste de app/.env sem exibi-las)
-powershell -NoProfile -ExecutionPolicy Bypass -File app\tools\testar_tudo.ps1          # -SemML para pular o ML; -ComE2E para Playwright
+# Na raiz: API, Cloud, ferramentas e web; não executa a suíte científica.
+powershell -NoProfile -File app\tools\testar_tudo.ps1 -SemML
 
-# ou um componente
+# Ou um componente (cada exemplo começa na raiz):
 . .\app\tools\ambiente_teste.ps1
-cd app\api; uv sync; uv run pytest          # idem em app\cloud, app\tools, app\ml
-cd app\web; pnpm install; pnpm run test; pnpm run build
+Push-Location app\api; uv sync --frozen; uv run --frozen pytest -rs; Pop-Location
+Push-Location app\web; pnpm install --frozen-lockfile; pnpm run test; pnpm run build; Pop-Location
 ```
 
-Testes que dependem de banco são **pulados** (não falham) se as variáveis de teste não existirem; o resumo do pytest mostra quantos.
+O runner requer os três bancos de teste. Em execuções individuais, confira os *skips* no resumo: teste pulado não comprova integração. Sem `-SemML`, o runner inclui os testes unitários de `ml` (não os notebooks). `-ComE2E` exige também a API de teste na porta 8000, o snapshot de Mercado e a porta 5173 livre para o Playwright. O caso da persona tem configuração própria; não forneça credenciais reais ao runner de teste.
 
 ## Rodar a aplicação
 
+Abra **dois terminais na raiz**. No primeiro, use o schema de testes (não a persona existente). O auxiliar configura chaves efêmeras e caminhos de runtime novos; não use o diretório da outbox antiga.
+
 ```powershell
 . .\app\tools\ambiente_teste.ps1
-cd app\api; uv run uvicorn citizentech.main:app --host 127.0.0.1 --port 8000     # GET /health
-cd app\web; pnpm run dev                                                         # http://localhost:5173
+# Se necessário, aponte CITIZENTECH_MERCADO_SNAPSHOT para o snapshot local já preparado.
+cd app\api
+uv sync --frozen
+# Somente no primeiro preparo do schema de TESTE recém-criado: lista os DDL 001–007.
+uv run --frozen python ..\tools\aplicar_ddl.py
+# Confira a lista e o schema CT_TESTE_S9; então aplique nele (não no banco do app).
+uv run --frozen python ..\tools\aplicar_ddl.py --confirmar
+uv run --frozen uvicorn citizentech.main:app --host 127.0.0.1 --port 8000
+```
+
+No segundo terminal:
+
+```powershell
+cd app\web
+pnpm install --frozen-lockfile
+pnpm run dev     # http://localhost:5173; encerrar com Ctrl+C antes do Playwright
 ```
 
 A tela **Mercado** precisa de `CITIZENTECH_MERCADO_SNAPSHOT` (snapshot gerado por `app/ml`); sem ele, a API responde 503 e a interface mostra o erro.

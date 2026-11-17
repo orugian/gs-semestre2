@@ -18,7 +18,7 @@ O CitizenTech organiza trajetórias profissionais, distingue competências decla
 
 A superfície visual `panorama_projeto.html` é um guia interno de orientação e continuidade técnica. Seu objetivo é expor com clareza factual a fronteira entre o que já está integrado, o que está em andamento e o que depende de ação humana ou entregas futuras, recusando relatórios contínuos monolíticos e promessas de funcionalidades não construídas.
 
-A autoridade de decisões de produto continua em [plano aprovado](<docs/plano_desenvolvimento.md>), [proposta](<docs/proposta_transicao_carreira.md>) e [CLAUDE.md](<CLAUDE.md>). Este documento não altera as decisões D01–D25.
+A autoridade de decisões de produto continua em [plano aprovado](<../plano_desenvolvimento.md>), [proposta](<../proposta_transicao_carreira.md>) e [CLAUDE.md](<../../CLAUDE.md>). Este documento não altera as decisões D01–D25.
 
 ## Operating Context
 
@@ -40,7 +40,7 @@ Snapshot documental congelado em 16/11/2026 às ~11h34 (commit base `18e72aa`). 
 
 ## Evidence on Hand
 
-Fontes factuais de referência: [estado.md](<docs/estado.md>), [plano_desenvolvimento.md](<docs/plano_desenvolvimento.md>), [manifesto de entregas](<docs/entregas_manifesto.json>), [evidência ML/RNA](<05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [evidência D11 Estatística](<08_Estatistica/evidencias/20261115_d11_aceite.md>).
+Fontes factuais de referência: [estado.md](<../estado.md>), [plano_desenvolvimento.md](<../plano_desenvolvimento.md>), [manifesto de entregas](<../entregas_manifesto.json>), [evidência ML/RNA](<../../05_ML/evidencias/20261115_modelos_mvp_aceite.md>) e [evidência D11 Estatística](<../../08_Estatistica/evidencias/20261115_d11_aceite.md>).
 
 Os resultados preditivos e estatísticos refletem coortes retrospectivas específicas (ML/RNA: 3 destinos MVP, superior+, 55 séries, 495 linhas; Estatística D11: 6 destinos, 229 municípios SP) e não devem ser generalizados como métricas de produção.
 

@@ -6,7 +6,7 @@
 ## Preparação (antes de gravar)
 1. **Learner Lab ativo** (iniciar o laboratório; conferir `GET <Function URL>/health` com `"banco":"ok"`).
 2. Terminal em `app\cloud` com `uv sync` feito e as variáveis `FUNCTION_URL` (sem barra final) e `DEVICE_KEY` definidas **fora da tela** (nunca digitar a chave gravando).
-3. Abas abertas: CloudWatch → Log groups → `/aws/lambda/CP-2` (Live tail ou o stream mais recente); um cliente SQL ou CloudShell conectado ao RDS `cp1-cloud`, banco `citizentech`. Console com o e-mail/RM no canto superior direito **coberto** (zoom ou recorte), e a aba de variáveis de ambiente da Lambda **não** deve aparecer sem tarja.
+3. Abas abertas: CloudWatch → Log groups → `/aws/lambda/CP-2` (Live tail ou o stream mais recente); um cliente SQL ou CloudShell conectado ao RDS `cp1-cloud`, banco `citizentech`. Console com o cabeçalho da conta (ID, e-mail/RM) **fora do enquadramento** antes de gravar, e a aba de variáveis de ambiente da Lambda **não** deve aparecer sem tarja.
 4. `06_Cloud/README.md` aberto para a abertura.
 
 ## Roteiro com tempos

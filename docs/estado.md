@@ -1,14 +1,20 @@
 # Estado do desenvolvimento — CitizenTech
 
-> **Checkpoint de 17/11/2026, ~10h45 (UTC−3).** Prazo: **19/11/2026 às 23h55** (faltavam ~2d13h). Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
+> **Fechamento técnico em 17/11/2026, após 18h (UTC−3).** Prazo: **19/11/2026 às 23h55**. Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
 
-## 000. Em andamento (17/11 ~11h50) — redesign NOUS e reorganização
+## 000. Tarde de 17/11 — redesign NOUS e reorganização (pedido do usuário)
 
-Pedido do usuário: redesign da UI com o DS NOUS + matriz de pixels three.js, foco visível (aprovado) e reorganização/higiene do repositório (untangle em web/tools/cloud-testes/api; `app/ml` congelado). Vídeos ficam para o fim.
-- Commitado: `3782ebf` direção visual [app/web/DESIGN.md](<../app/web/DESIGN.md>); `2282afb` README de replicação na raiz, `app/tools/ambiente_teste.ps1` e `testar_tudo.ps1` (rodado: api 397, cloud 115, tools 46, web 61 + typecheck + build, tudo 0), empacotador cobrindo os 6 PDFs, requirements ML/RNA do uv.lock; `cc8fa50` [registro de decisões](<decisoes_untangle.md>).
-- **agy S16-ui-nous** (worktree `GS-wt/S16-ui-nous`, escopo `app/web`), desde 11:19, timeout 60 min.
-- **agy S17-untangle-api** (worktree `GS-wt/S17-untangle-api`, escopo `app/api` + `app/tools` + testes de paridade em `app/cloud/tests`), desde 11:35, com bancos de teste.
-- Depois: aceite dos dois, untangle do web (C1/C2/C10/C11/C12) sobre o resultado da S16, PDFs/empacotador, commit/push.
+Pedido: UI moderna no DS NOUS + matriz de pixels three.js, foco visível (aprovado), higiene/organização do repositório (untangle em web/tools/cloud-testes/api; `app/ml` congelado). Vídeos ficam para o fim, com tudo revisado. Decisões e motivos em [decisoes_untangle.md](<decisoes_untangle.md>).
+
+- **Fechamento de QA (`8dbe4f7`):** `powershell -NoProfile -File app\tools\testar_tudo.ps1 -SemML` retornou 0 em API, Cloud, tools, typecheck, Vitest (68) e build. Os 17 testes do preparo local passaram em PowerShell, incluindo falta de instalação e recusa de banco externo. No checkout integrado, `pnpm exec playwright test` com a API local isolada → 6 passaram, 1 skip (persona não configurada); axe não reportou violações nas 11 telas e no modal exercitados. `empacotar_entregas.py --verificar` OK, SHA-256 dos **53 destinos** igual ao manifesto; nenhum relatório-fonte PDF mudou neste fechamento. O guia para schema vazio foi conferido em modo de listagem (DDL 001–007); não foi realizada uma instalação do zero em outro computador. A revisão de documentação terminou; a varredura estrutural final adicional foi interrompida sem parecer, não é certificação de ausência de dívida técnica. Worktrees de entrega removidos; S5 preservada. Próximo passo: vídeos reais e, depois dos links conferidos, Portal.
+- **Marcos anteriores da integração:**
+  - `2282afb` README de replicação na raiz, `app/tools/ambiente_teste.ps1` + `testar_tudo.ps1`, `.env.example` completo, empacotador cobrindo os 6 PDFs, requirements ML/RNA do `uv.lock`, docs históricos em `docs/historico`/`docs/panorama`.
+  - **S16 (`48be785`)** redesign NOUS: RED `foco_visivel` reproduzido em main (Selector Destino/E-mail sem indicador) → GREEN; vitest 65, build (three.js em chunk separado 528 kB), playwright 5+1 skip persona, axe 0 serious/critical em 11 telas + modal. O orquestrador corrigiu a matriz (câmera/culling: não renderizava), fez pixels quadrados e reverteu mudanças de comportamento não contratadas em `TelaComparacao`.
+  - **S17 (`fde8f6e`)** untangle API/tools: contratos de erro (11 testes) iguais antes/depois; api 408, tools 47, cloud 118. agy estourou 60 min; orquestrador corrigiu `NameError` real em `executar_consultas_oracle.py` (pego pelo ruff), concluiu `_comum`/demos/conftest DDL 001–007/teste de hash com a Lambda (Lambda intacta) e reexecutou as demos (proteções 16/16, CTP e firmware falhas=0).
+  - `f82301d` cópia CTP autocontida (gancho de relato), entregas regeneradas, `--verificar` OK; cópia entregue rodada isolada com o `requirements.txt` → demo CTP falhas=0.
+- **S18 integrada** (`a14ebef`), incluindo cliente HTTP comum, rótulos, listas e estado do plano; `d8700ab` corrigiu o corte da linha da MLP no painel. Na integração: 68 Vitest, 6 E2E passaram e 1 caso da persona foi pulado. Não repetir S15 para obter nova evidência do mesmo aceite.
+- **Revalidação no HEAD `d8700ab`:** `typecheck`, 68 Vitest e build OK; os 3 casos de foco e tabela passaram em Edge contra uma API recém-iniciada nesse HEAD, runtime separado e sem nuvem. No build, a 390 px, o canvas de 33×12 mudou nas duas comparações de quadros com movimento normal e em nenhuma com `prefers-reduced-motion: reduce`; sem overflow horizontal na tela Entrar. O aviso de tamanho de chunks no build continua. Esse teste não envolveu uma pessoa usando leitor de tela.
+- Não feito por decisão: `app/cloud/src` (Lambda implantada) intocado; polling do laboratório sem backoff e aviso de sessão expirada ficam como estão.
 
 ## 00. Sessão de 17/11 manhã — Cloud e Data Modeler concluídos
 
@@ -94,8 +100,8 @@ Fila, responsáveis e critérios detalhados no [handoff P01–P08](<handoff_citi
 - [x] Revalidar health do Lab (200 às 13:03Z).
 - [x] Executar Data Modeler pelo agente e incorporar ao relatório/PDF.
 - [x] Revisar visualmente PDFs por folha de contato (resolução baixa; legibilidade fina de tabelas não conferida página a página). [ ] Testar links reais quando fornecidos.
-- [x] QA de teclado/foco parcial (4 telas). [ ] Decidir se corrige o foco fraco (Mercado/login) — reabre CSS de fatia integrada.
-- [ ] Conferir procedência/atualidade das execuções anteriores de notebooks; não reexecutar em massa nem abrir holdout2026 para satisfazer um checklist. Se for indispensável reexecução científica, submeter antes o escopo seguro e o conflito de gates ao usuário.
+- [x] QA de teclado/foco parcial (4 telas); correção aprovada e integrada na S16; regressão de Mercado/login verde.
+- [x] Procedência das cópias finais de ML/RNA conferida **sem executar células**: SHA-256 igual ao da respectiva fonte, 15/15 e 7/7 células de código com contador, 16 e 9 saídas salvas, nenhuma saída de erro. Última alteração das cópias: `f10ffd2`. Não é uma reexecução científica em máquina limpa.
 - [ ] Após incorporar materiais, regenerar cópias/PDFs, executar empacotador --verificar, regressão pertinente e gitleaks; publicar apenas mudanças intencionais.
 
 **Preparação da próxima gravação:** roteiro AIC corrigido para `-App -ComLLM`, quando a chamada paga estiver autorizada; o modo sem `-App` usa schema de teste e não a persona existente. Não liberar a outbox antiga. Bancada física, áudio acústico e Wokwi→AWS seguem não verificados, não são compras/implementações automaticamente autorizadas.

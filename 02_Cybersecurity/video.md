@@ -5,7 +5,7 @@
 
 ## Preparação (antes de gravar)
 1. Docker com Oracle e Mongo de teste de pé: `docker compose -f app\docker-compose.yml --profile teste up -d --wait`.
-2. API local contra os bancos de teste (segredos gerados em memória): `powershell -File ..\.kaiser\ferramentas\subir_api_teste.ps1` (ou `cd app\api; uv run uvicorn citizentech.main:app --port 8000` com as variáveis de teste).
+2. Subir a API local contra os bancos de teste usando o [guia do repositório](<../README.md#rodar-a-aplicação>). Usar um terminal dedicado, sem `FUNCTION_URL` e sem chaves de serviços externos.
 3. Terminal com fonte grande em `app\tools`. Navegador com `02_Cybersecurity/relatorio.pdf` aberto nas páginas da matriz de riscos e da LGPD.
 4. **Não mostrar** `app\.env`, o console da AWS sem tarja nem nenhum e-mail real.
 

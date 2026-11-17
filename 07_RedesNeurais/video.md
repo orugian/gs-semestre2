@@ -1,4 +1,4 @@
-# Vídeo — Redes Neurais (demonstração funcional, máx. 5 min)
+# Vídeo — Redes Neurais (demonstração funcional; roteiro planejado para 5 min)
 
 **Link (YouTube não listado ou Google Drive com acesso habilitado):** [HUMANO — preencher]
 **Conteúdo exigido (critério "Demonstração funcional da aplicação em vídeo"):** o modelo funcionando com dados que não foram usados no treino, as entradas e as saídas, e como ele se integra à solução CitizenTech.
@@ -6,7 +6,7 @@
 ## Preparação (antes de gravar)
 1. `07_RedesNeurais/notebook.ipynb` aberto **já executado**. O notebook carrega o modelo treinado de `.dados/artefatos/rna/20261115_r29_aceite`; não reexecutar o treino gravando.
 2. Figuras à mão: `evidencias/figuras/curvas_treinamento_rna.png`, `rna_real_vs_previsto_sp.png`, `rna_erro_por_serie.png`.
-3. App web de pé com a API do app (`subir_api_teste.ps1 -App`) e `pnpm dev` em `app\web`, aberto na aba **Painel técnico**, destino "Analista de Monitoramento/IoT Industrial", UF SP.
+3. App web e API locais conforme o [README](<../README.md#rodar-a-aplicação>), com o snapshot de Mercado configurado. Abrir a aba **Painel técnico** (sem login nem LLM), destino "Analista de Monitoramento/IoT Industrial", UF SP.
 4. Não mostrar `app/.env` nem caminhos com dados pessoais.
 
 ## Roteiro com tempos
