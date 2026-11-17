@@ -336,6 +336,7 @@ export function TelaComparacao({
       {/* Confirmação de substituição de plano existente */}
       <Dialog
         isOpen={destinoParaConfirmar !== null}
+        aria-label={TEXTOS_JORNADA.comparacao.dialogSubstituir.titulo}
         onOpenChange={(aberto) => {
           if (!aberto) setDestinoParaConfirmar(null);
         }}

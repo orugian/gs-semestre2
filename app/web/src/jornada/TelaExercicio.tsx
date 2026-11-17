@@ -704,6 +704,7 @@ export function TelaExercicio({
       {/* Diálogo de Contestação ("Discordo") */}
       <Dialog
         isOpen={dialogDiscordoAberto}
+        aria-label={TEXTOS_JORNADA.exercicio.contestacao.titulo}
         onOpenChange={(aberto) => {
           if (!aberto) setDialogDiscordoAberto(false);
         }}

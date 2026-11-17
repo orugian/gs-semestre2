@@ -58,7 +58,6 @@ export function TelaPlano({
         .then((resp) => {
           if (!cancelado) {
             setCaminho(resp);
-            onPlanoAtualizado?.(resp);
           }
         })
         .catch((err: unknown) => {
@@ -88,6 +87,11 @@ export function TelaPlano({
       cancelado = true;
     };
   }, [planoInicial, onPlanoAtualizado]);
+
+  // Notifica o pai após o commit do React, nunca dentro do atualizador de estado.
+  useEffect(() => {
+    if (caminho) onPlanoAtualizado?.(caminho);
+  }, [caminho, onPlanoAtualizado]);
 
   // Carrega histórico para exibir última tentativa do exercício diagnóstico
   useEffect(() => {
@@ -137,7 +141,6 @@ export function TelaPlano({
             checkpoints: novosCheckpoints,
           },
         };
-        onPlanoAtualizado?.(atualizado);
         return atualizado;
       });
     } catch (err: unknown) {
