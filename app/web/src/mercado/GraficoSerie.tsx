@@ -146,12 +146,32 @@ export function GraficoSerie({
 
   return (
     <div className="flex flex-col gap-3 min-w-0 max-w-full">
+      <style>{`
+        @media (prefers-reduced-motion: no-preference) {
+          .anim-linha-observado {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: desenharLinhaObs 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+          .anim-linha-realizado {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: desenharLinhaObs 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+        }
+        @keyframes desenharLinhaObs {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+      `}</style>
+
       <div className="flex items-baseline justify-between flex-wrap gap-2">
-        <Heading level={4}>{titulo}</Heading>
-        <Text type="supporting">Unidade: {unidade}</Text>
+        <Heading level={4} className="!font-['Barlow_Condensed'] font-semibold text-lg text-[#000091]">{titulo}</Heading>
+        <Text type="supporting" className="text-xs text-[#616191]">Unidade: {unidade}</Text>
       </div>
 
-      <div className="w-full overflow-x-auto rounded border border-neutral-200 bg-white p-2">
+      <div className="w-full overflow-x-auto rounded border border-[#616191]/20 bg-[#FFFFFF] p-3 shadow-[inset_0_0_0_1px_rgba(0,0,242,0.1)]">
         <svg
           role="img"
           aria-label={descricaoAcessivel}
@@ -160,7 +180,9 @@ export function GraficoSerie({
           preserveAspectRatio="xMidYMid meet"
           className="w-full h-auto"
         >
-          {/* Linhas de grade horizontais */}
+          <title>{descricaoAcessivel}</title>
+
+          {/* Linhas de grade horizontais (NOUS: #616191 a 25% de opacidade) */}
           {gridTicks.map((val, idx) => {
             const y = getY(val);
             return (
@@ -170,7 +192,8 @@ export function GraficoSerie({
                   y1={y}
                   x2={svgWidth - padding.right}
                   y2={y}
-                  stroke="#e5e7eb"
+                  stroke="#616191"
+                  strokeOpacity="0.25"
                   strokeDasharray="3 3"
                 />
                 <text
@@ -178,7 +201,9 @@ export function GraficoSerie({
                   y={y + 4}
                   textAnchor="end"
                   fontSize="10"
-                  fill="#6b7280"
+                  fill="#616191"
+                  fontFamily="'IBM Plex Mono', monospace"
+                  style={{fontVariantNumeric: 'tabular-nums'}}
                 >
                   {formatarNumero(val)}
                 </text>
@@ -192,17 +217,19 @@ export function GraficoSerie({
             y1={padding.top + plotHeight}
             x2={svgWidth - padding.right}
             y2={padding.top + plotHeight}
-            stroke="#9ca3af"
+            stroke="#616191"
+            strokeOpacity="0.4"
           />
           <line
             x1={padding.left}
             y1={padding.top}
             x2={padding.left}
             y2={padding.top + plotHeight}
-            stroke="#9ca3af"
+            stroke="#616191"
+            strokeOpacity="0.4"
           />
 
-          {/* Rótulos do Eixo X sem colisão */}
+          {/* Rótulos do Eixo X em IBM Plex Mono com algarismos tabulares */}
           {indicesTicksX.map((i) => {
             const p = pontos[i];
             if (!p) return null;
@@ -214,14 +241,16 @@ export function GraficoSerie({
                 y={padding.top + plotHeight + 18}
                 textAnchor="middle"
                 fontSize="10"
-                fill="#4b5563"
+                fill="#616191"
+                fontFamily="'IBM Plex Mono', monospace"
+                style={{fontVariantNumeric: 'tabular-nums'}}
               >
                 {formatarCompetencia(p.competencia)}
               </text>
             );
           })}
 
-          {/* Série Observada (linha azul sólida) */}
+          {/* Série Observada (NOUS: #0000F2 linha contínua, marcador circular) */}
           {segmentosObservado.map((seg, sIdx) => {
             const pathData =
               seg.length > 1
@@ -234,8 +263,9 @@ export function GraficoSerie({
                   data-serie="observado"
                   d={pathData}
                   fill="none"
-                  stroke="#2563eb"
+                  stroke="#0000F2"
                   strokeWidth="2.5"
+                  className="anim-linha-observado"
                 />
                 {seg.map((pt, ptIdx) => (
                   <circle
@@ -243,7 +273,7 @@ export function GraficoSerie({
                     cx={pt.x}
                     cy={pt.y}
                     r="3.5"
-                    fill="#2563eb"
+                    fill="#0000F2"
                     data-serie="observado"
                   >
                     <title>{`${formatarCompetencia(pt.p.competencia)}: ${formatarNumero(pt.p.observado)}`}</title>
@@ -253,7 +283,7 @@ export function GraficoSerie({
             );
           })}
 
-          {/* Série Realizado (linha azul escura sólida) */}
+          {/* Série Realizado (NOUS: #0000F2 linha contínua, marcador circular) */}
           {segmentosRealizado.map((seg, sIdx) => {
             const pathData =
               seg.length > 1
@@ -266,8 +296,9 @@ export function GraficoSerie({
                   data-serie="realizado"
                   d={pathData}
                   fill="none"
-                  stroke="#1d4ed8"
+                  stroke="#0000F2"
                   strokeWidth="2.5"
+                  className="anim-linha-realizado"
                 />
                 {seg.map((pt, ptIdx) => (
                   <circle
@@ -275,7 +306,7 @@ export function GraficoSerie({
                     cx={pt.x}
                     cy={pt.y}
                     r="3.5"
-                    fill="#1d4ed8"
+                    fill="#0000F2"
                     data-serie="realizado"
                   >
                     <title>{`Realizado ${formatarCompetencia(pt.p.competencia)}: ${formatarNumero(pt.p.realizado)}`}</title>
@@ -285,7 +316,7 @@ export function GraficoSerie({
             );
           })}
 
-          {/* Série Prevista Retrospectiva (linha verde tracejada) */}
+          {/* Série Prevista Retrospectiva (NOUS: #000091 tracejada, marcador quadrado) */}
           {segmentosPrevisto.map((seg, sIdx) => {
             const pathData =
               seg.length > 1
@@ -298,45 +329,46 @@ export function GraficoSerie({
                   data-serie="previsto"
                   d={pathData}
                   fill="none"
-                  stroke="#16a34a"
-                  strokeWidth="2.5"
+                  stroke="#000091"
+                  strokeWidth="2"
                   strokeDasharray="4 4"
                 />
                 {seg.map((pt, ptIdx) => (
-                  <circle
+                  <rect
                     key={`prev-pt-${sIdx}-${ptIdx}`}
-                    cx={pt.x}
-                    cy={pt.y}
-                    r="3.5"
-                    fill="#16a34a"
+                    x={pt.x - 3}
+                    y={pt.y - 3}
+                    width="6"
+                    height="6"
+                    fill="#000091"
                     data-serie="previsto"
                   >
                     <title>{`Estimativa ${formatarCompetencia(pt.p.competencia)}: ${formatarNumero(pt.p.previsto)}`}</title>
-                  </circle>
+                  </rect>
                 ))}
               </g>
             );
           })}
         </svg>
 
-        {/* Legenda com distinção clara de séries */}
-        <div className="flex flex-wrap items-center justify-center gap-6 pt-2 text-xs text-neutral-700">
+        {/* Legenda com distinção clara por forma, texto e cor */}
+        <div className="flex flex-wrap items-center justify-center gap-6 pt-3 text-xs text-[#000091] border-t border-[#616191]/15 mt-2">
           {temObservado && (
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 rounded-full bg-blue-600" />
-              <span>Observado</span>
+              <span className="inline-block h-3 w-3 rounded-full bg-[#0000F2]" />
+              <span className="font-medium">Observado</span>
             </div>
           )}
           {temRealizado && (
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 rounded-full bg-blue-700" />
-              <span>Realizado (admissões no trimestre seguinte)</span>
+              <span className="inline-block h-3 w-3 rounded-full bg-[#0000F2]" />
+              <span className="font-medium">Realizado (admissões no trimestre seguinte)</span>
             </div>
           )}
           {temPrevisto && (
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 border-b-2 border-dashed border-green-600 bg-green-600" />
-              <span>Estimativa retrospectiva (2025)</span>
+              <span className="inline-block h-3 w-3 bg-[#000091] border border-[#000091]" />
+              <span className="font-medium">Estimativa retrospectiva (2025)</span>
             </div>
           )}
         </div>
@@ -351,7 +383,7 @@ export function GraficoSerie({
           aria-label={`Tabela de dados da série: ${titulo}`}
         >
           <Table aria-label={`Tabela de dados: ${titulo}`}>
-            <caption className="text-left text-sm font-semibold py-1">
+            <caption className="text-left text-sm font-semibold py-1 text-[#000091]">
               Tabela de dados da série temporal ({titulo})
             </caption>
             <TableHeader>

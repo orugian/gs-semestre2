@@ -254,8 +254,10 @@ export function TelaIntencao({
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       <header className="flex flex-col gap-2">
-        <Heading level={2}>{TEXTOS_JORNADA.intencao.titulo}</Heading>
-        <Text type="supporting">{TEXTOS_JORNADA.intencao.descricao}</Text>
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          {TEXTOS_JORNADA.intencao.titulo}
+        </Heading>
+        <Text type="supporting" className="text-sm text-[#616191]">{TEXTOS_JORNADA.intencao.descricao}</Text>
       </header>
 
       {mensagemSucesso && (
@@ -292,8 +294,10 @@ export function TelaIntencao({
         <Card width="100%">
           <div className="flex flex-col gap-4 p-5">
             <header className="flex flex-col gap-1">
-              <Heading level={3}>{TEXTOS_JORNADA.intencao.atividades.titulo}</Heading>
-              <Text type="supporting">
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                {TEXTOS_JORNADA.intencao.atividades.titulo}
+              </Heading>
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.atividades.descricao}
               </Text>
             </header>
@@ -302,7 +306,7 @@ export function TelaIntencao({
               <div className="flex-1 flex flex-col gap-1">
                 <label
                   htmlFor="input-nova-atividade"
-                  className="text-sm font-medium"
+                  className="text-sm font-medium text-[#000091]"
                 >
                   {TEXTOS_JORNADA.intencao.atividades.nova}
                 </label>
@@ -313,7 +317,7 @@ export function TelaIntencao({
                   onChange={(e) => setNovaAtividade(e.target.value)}
                   placeholder="Ex: Análise de indicadores de desempenho"
                   disabled={salvando}
-                  className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                  className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
                 />
               </div>
               <div className="self-end">
@@ -329,22 +333,22 @@ export function TelaIntencao({
 
             {erroAtividade && (
               <div role="alert" aria-live="polite">
-                <Text type="supporting">
+                <Text type="supporting" className="text-xs text-red-600">
                   <span className="font-medium">{erroAtividade}</span>
                 </Text>
               </div>
             )}
 
             {atividades.length === 0 ? (
-              <Text type="supporting">
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.atividades.vazio}
               </Text>
             ) : (
-              <ul className="flex flex-col gap-2 pt-2 border-t">
+              <ul className="flex flex-col gap-2 pt-2 border-t border-[#616191]/20">
                 {atividades.map((item, idx) => (
                   <li
                     key={`ativ-${idx}`}
-                    className="flex items-center justify-between gap-3 p-2 border rounded"
+                    className="flex items-center justify-between gap-3 p-2 border border-[#616191]/20 rounded bg-[#FFFFFF]"
                   >
                     <Text type="body">{item}</Text>
                     <Button
@@ -365,8 +369,10 @@ export function TelaIntencao({
         <Card width="100%">
           <div className="flex flex-col gap-4 p-5">
             <header className="flex flex-col gap-1">
-              <Heading level={3}>{TEXTOS_JORNADA.intencao.motivos.titulo}</Heading>
-              <Text type="supporting">
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                {TEXTOS_JORNADA.intencao.motivos.titulo}
+              </Heading>
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.motivos.descricao}
               </Text>
             </header>
@@ -375,7 +381,7 @@ export function TelaIntencao({
               <div className="flex-1 flex flex-col gap-1">
                 <label
                   htmlFor="input-novo-motivo"
-                  className="text-sm font-medium"
+                  className="text-sm font-medium text-[#000091]"
                 >
                   {TEXTOS_JORNADA.intencao.motivos.novo}
                 </label>
@@ -386,7 +392,7 @@ export function TelaIntencao({
                   onChange={(e) => setNovoMotivo(e.target.value)}
                   placeholder="Ex: Busco transição de carreira para ter maior flexibilidade"
                   disabled={salvando}
-                  className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                  className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
                 />
               </div>
               <div className="self-end">
@@ -402,22 +408,22 @@ export function TelaIntencao({
 
             {erroMotivo && (
               <div role="alert" aria-live="polite">
-                <Text type="supporting">
+                <Text type="supporting" className="text-xs text-red-600">
                   <span className="font-medium">{erroMotivo}</span>
                 </Text>
               </div>
             )}
 
             {motivos.length === 0 ? (
-              <Text type="supporting">
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.motivos.vazio}
               </Text>
             ) : (
-              <ul className="flex flex-col gap-2 pt-2 border-t">
+              <ul className="flex flex-col gap-2 pt-2 border-t border-[#616191]/20">
                 {motivos.map((item, idx) => (
                   <li
                     key={`mot-${idx}`}
-                    className="flex items-center justify-between gap-3 p-2 border rounded"
+                    className="flex items-center justify-between gap-3 p-2 border border-[#616191]/20 rounded bg-[#FFFFFF]"
                   >
                     <Text type="body">{item}</Text>
                     <Button
@@ -439,7 +445,7 @@ export function TelaIntencao({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5">
             {/* Horas semanais */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="input-horas-semana" className="text-sm font-medium">
+              <label htmlFor="input-horas-semana" className="text-sm font-medium text-[#000091]">
                 {TEXTOS_JORNADA.intencao.horas.rotulo}
               </label>
               <input
@@ -456,14 +462,14 @@ export function TelaIntencao({
                 }}
                 placeholder="Ex: 30"
                 disabled={salvando}
-                className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
               />
-              <Text type="supporting">
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.horas.descricao}
               </Text>
               {erroHoras && (
                 <div role="alert" aria-live="polite">
-                  <Text type="supporting">
+                  <Text type="supporting" className="text-xs text-red-600">
                     <span className="font-medium">{erroHoras}</span>
                   </Text>
                 </div>
@@ -472,7 +478,7 @@ export function TelaIntencao({
 
             {/* Orçamento mensal */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="input-orcamento-mensal" className="text-sm font-medium">
+              <label htmlFor="input-orcamento-mensal" className="text-sm font-medium text-[#000091]">
                 {TEXTOS_JORNADA.intencao.orcamento.rotulo}
               </label>
               <input
@@ -488,14 +494,14 @@ export function TelaIntencao({
                 }}
                 placeholder="Ex: 500 (opcional)"
                 disabled={salvando}
-                className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
               />
-              <Text type="supporting">
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.orcamento.descricao}
               </Text>
               {erroOrcamento && (
                 <div role="alert" aria-live="polite">
-                  <Text type="supporting">
+                  <Text type="supporting" className="text-xs text-red-600">
                     <span className="font-medium">{erroOrcamento}</span>
                   </Text>
                 </div>
@@ -504,7 +510,7 @@ export function TelaIntencao({
 
             {/* UF */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="seletor-uf-intencao" className="text-sm font-medium">
+              <label htmlFor="seletor-uf-intencao" className="text-sm font-medium text-[#000091]">
                 {TEXTOS_JORNADA.intencao.uf.rotulo}
               </label>
               <select
@@ -516,7 +522,7 @@ export function TelaIntencao({
                   setErroUf(null);
                 }}
                 disabled={salvando}
-                className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
               >
                 <option value="">{TEXTOS_JORNADA.intencao.uf.selecione}</option>
                 {UFS_BRASIL.map((sigla) => (
@@ -525,12 +531,12 @@ export function TelaIntencao({
                   </option>
                 ))}
               </select>
-              <Text type="supporting">
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.intencao.uf.descricao}
               </Text>
               {erroUf && (
                 <div role="alert" aria-live="polite">
-                  <Text type="supporting">
+                  <Text type="supporting" className="text-xs text-red-600">
                     <span className="font-medium">{erroUf}</span>
                   </Text>
                 </div>

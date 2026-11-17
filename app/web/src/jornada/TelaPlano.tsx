@@ -168,7 +168,7 @@ export function TelaPlano({
     return (
       <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
         <header className="flex flex-col gap-2">
-          <Heading level={2}>{TEXTOS_JORNADA.plano.titulo}</Heading>
+          <Heading level={2} type="display-1">{TEXTOS_JORNADA.plano.titulo}</Heading>
         </header>
 
         <Card width="100%">
@@ -201,7 +201,7 @@ export function TelaPlano({
       {/* Cabeçalho */}
       <header className="flex flex-col gap-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <Heading level={2}>{plano.nome || TEXTOS_JORNADA.plano.titulo}</Heading>
+          <Heading level={2} type="display-1">{plano.nome || TEXTOS_JORNADA.plano.titulo}</Heading>
           {onIrParaComparacao && (
             <Button
               type="button"

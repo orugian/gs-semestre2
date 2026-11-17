@@ -211,8 +211,10 @@ export function TelaCurriculo({
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       <header className="flex flex-col gap-2">
-        <Heading level={2}>{TEXTOS_JORNADA.curriculo.titulo}</Heading>
-        <Text type="supporting">{TEXTOS_JORNADA.curriculo.descricao}</Text>
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          {TEXTOS_JORNADA.curriculo.titulo}
+        </Heading>
+        <Text type="supporting" className="text-sm text-[#616191]">{TEXTOS_JORNADA.curriculo.descricao}</Text>
       </header>
 
       {erro && (
@@ -310,10 +312,10 @@ export function TelaCurriculo({
           <Card width="100%">
             <div className="flex flex-col gap-4 p-5">
               <header className="flex flex-col gap-1">
-                <Heading level={3}>
+                <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
                   {TEXTOS_JORNADA.curriculo.textoRedigidoTitulo}
                 </Heading>
-                <Text type="supporting">
+                <Text type="supporting" className="text-xs text-[#616191]">
                   {TEXTOS_JORNADA.curriculo.textoRedigidoDescricao}
                 </Text>
               </header>
@@ -329,7 +331,7 @@ export function TelaCurriculo({
 
               {curriculo.status === 'confirmado' && (
                 <div aria-live="polite">
-                  <Text type="supporting">
+                  <Text type="supporting" className="text-xs text-[#616191]">
                     {textoEditavel === textoOriginal
                       ? `Texto confirmado em ${formatarDataHora(curriculo.confirmado_em)}. Só este texto pode ser enviado ao modelo.`
                       : 'Você alterou o texto depois de confirmar. Confirme de novo para liberar as sugestões.'}
@@ -337,7 +339,7 @@ export function TelaCurriculo({
                 </div>
               )}
 
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#616191]/20">
                 <Button
                   label={TEXTOS_JORNADA.curriculo.confirmarEnvio}
                   variant={
@@ -351,7 +353,6 @@ export function TelaCurriculo({
                 />
 
                 {/* D22: Botão de sugerir competências só existe e está habilitado após status === 'confirmado' */}
-                {/* Edição depois da confirmação exige confirmar de novo antes de sugerir */}
                 {curriculo.status === 'confirmado' && textoEditavel === textoOriginal && (
                   <Button
                     label={TEXTOS_JORNADA.curriculo.sugerirCompetencias}

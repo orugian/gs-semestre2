@@ -106,7 +106,9 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
 
     return (
       <section className="flex flex-col gap-3">
-        <Heading level={3}>{titulo}</Heading>
+        <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+          {titulo}
+        </Heading>
         <div className="flex flex-col gap-3">
           {itens.map((comp) => {
             const emProcesso = processandoId === comp.id;
@@ -116,7 +118,9 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
               <Card key={comp.id} width="100%">
                 <div className="flex flex-col gap-3 p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <Heading level={4}>{comp.titulo}</Heading>
+                    <Heading level={4} className="!font-['Barlow_Condensed'] font-semibold text-base text-[#000091]">
+                      {comp.titulo}
+                    </Heading>
                     <div className="flex items-center gap-2">
                       <Badge
                         variant={
@@ -140,13 +144,13 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
                   </div>
 
                   {comp.trecho_origem && (
-                    <blockquote className="p-3 border-l-2 rounded-r">
-                      <Text type="supporting">{comp.trecho_origem}</Text>
+                    <blockquote className="p-3 border-l-2 border-[#0000F2] bg-[#F2F2F2] rounded-r text-xs">
+                      <Text type="supporting" className="text-xs text-[#616191]">{comp.trecho_origem}</Text>
                     </blockquote>
                   )}
 
                   {mostrarAcoes && !editando && (
-                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t">
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#616191]/20">
                       <Button
                         label={TEXTOS_JORNADA.competencias.acoes.confirmar}
                         variant="primary"
@@ -184,7 +188,7 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
                   )}
 
                   {mostrarAcoes && editando && (
-                    <div className="flex flex-col gap-3 pt-2 border-t">
+                    <div className="flex flex-col gap-3 pt-2 border-t border-[#616191]/20">
                       <TextArea
                         label="Editar trecho de origem"
                         value={trechoEditado}
@@ -231,7 +235,9 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       <header className="flex flex-col gap-2">
-        <Heading level={2}>{TEXTOS_JORNADA.competencias.titulo}</Heading>
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          {TEXTOS_JORNADA.competencias.titulo}
+        </Heading>
       </header>
 
       {/* T07: Aviso honesto sobre competências declaradas vs demonstradas */}

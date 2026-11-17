@@ -111,32 +111,38 @@ export function TelaMercado({
   return (
     <section id="painel-mercado" className="flex flex-col gap-6 w-full max-w-full min-w-0">
       <div className="flex flex-col gap-1">
-        <Heading level={2}>Mercado de admissões formais</Heading>
-        <Text type="supporting">
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          Mercado de admissões formais
+        </Heading>
+        <Text type="supporting" className="text-sm text-[#616191]">
           Acompanhamento das admissões formais observadas no Novo Caged e estimativas retrospectivas com validação estatística.
         </Text>
       </div>
 
-      {/* Seletores de Destino e UF */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Selector
-          label="Destino profissional"
-          options={opcoesDestino}
-          value={destinoAtivo}
-          onChange={(val) => {
-            if (val) handleDestinoChange(val);
-          }}
-          data-testid="seletor-destino"
-        />
-        <Selector
-          label="Unidade Federativa (UF)"
-          options={opcoesUf}
-          value={ufAtiva}
-          onChange={(val) => {
-            if (val) handleUfChange(val);
-          }}
-          data-testid="seletor-uf"
-        />
+      {/* Barra de Seletores de Destino e UF lado a lado */}
+      <div className="flex flex-col sm:flex-row gap-4 p-4 rounded bg-[#FFFFFF] border border-[#616191]/20 shadow-[inset_0_0_0_1px_rgba(0,0,242,0.1)]">
+        <div className="flex-1 min-w-0">
+          <Selector
+            label="Destino profissional"
+            options={opcoesDestino}
+            value={destinoAtivo}
+            onChange={(val) => {
+              if (val) handleDestinoChange(val);
+            }}
+            data-testid="seletor-destino"
+          />
+        </div>
+        <div className="flex-1 sm:max-w-xs min-w-0">
+          <Selector
+            label="Unidade Federativa (UF)"
+            options={opcoesUf}
+            value={ufAtiva}
+            onChange={(val) => {
+              if (val) handleUfChange(val);
+            }}
+            data-testid="seletor-uf"
+          />
+        </div>
       </div>
 
       {/* Estado de Carregamento */}
@@ -162,27 +168,34 @@ export function TelaMercado({
       {/* Conteúdo Principal */}
       {!carregando && dados && (
         <div className="flex flex-col gap-6">
-          {/* Avisos Institucionais da API */}
+          {/* Faixa única compacta de Avisos Institucionais (lista) */}
           {dados.avisos && dados.avisos.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {dados.avisos.map((aviso, idx) => (
-                <Banner
-                  key={`aviso-${idx}`}
-                  status="info"
-                  title="Aviso institucional"
-                  description={aviso}
-                />
-              ))}
-            </div>
+            <Banner
+              status="info"
+              title="Avisos institucionais"
+              collapsible={false}
+            >
+              <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm text-[#000091]/90">
+                {dados.avisos.map((aviso, idx) => (
+                  <li key={`aviso-${idx}`}>{aviso}</li>
+                ))}
+              </ul>
+            </Banner>
           )}
 
           {/* Bloco 1: Série Observada (T17) */}
           <Card padding={4}>
             <div className="flex flex-col gap-4">
-              <Heading level={3}>Observado</Heading>
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                Observado
+              </Heading>
 
               <MetadataList orientation="vertical" columns="multi">
-                <MetadataListItem label="Natureza">Observado</MetadataListItem>
+                <MetadataListItem label="Natureza">
+                  <span className="font-['IBM_Plex_Mono'] uppercase tracking-wider text-xs font-semibold text-[#000091]">
+                    Observado
+                  </span>
+                </MetadataListItem>
                 <MetadataListItem label="Fonte">{dados.observado.fonte}</MetadataListItem>
                 <MetadataListItem label="População">
                   {dados.observado.populacao}
@@ -229,15 +242,19 @@ export function TelaMercado({
               <Card padding={4}>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-baseline justify-between">
-                    <Heading level={3}>Contexto regional observado</Heading>
-                    <Text type="supporting">
+                    <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                      Contexto regional observado
+                    </Heading>
+                    <Text type="supporting" className="text-xs text-[#616191]">
                       Região: {dados.abstencao.contexto_regional.regiao}
                     </Text>
                   </div>
 
                   <MetadataList orientation="vertical" columns="multi">
                     <MetadataListItem label="Natureza">
-                      Contexto regional observado
+                      <span className="font-['IBM_Plex_Mono'] uppercase tracking-wider text-xs font-semibold text-[#000091]">
+                        Contexto regional observado
+                      </span>
                     </MetadataListItem>
                     <MetadataListItem label="Região">
                       {dados.abstencao.contexto_regional.regiao}
@@ -274,11 +291,15 @@ export function TelaMercado({
           ) : dados.previsto ? (
             <Card padding={4}>
               <div className="flex flex-col gap-4">
-                <Heading level={3}>Estimativa retrospectiva (2025)</Heading>
+                <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                  Estimativa retrospectiva (2025)
+                </Heading>
 
                 <MetadataList orientation="vertical" columns="multi">
                   <MetadataListItem label="Natureza">
-                    Estimativa retrospectiva (2025)
+                    <span className="font-['IBM_Plex_Mono'] uppercase tracking-wider text-xs font-semibold text-[#000091]">
+                      Estimativa retrospectiva (2025)
+                    </span>
                   </MetadataListItem>
                   <MetadataListItem label="Fonte">{dados.previsto.fonte}</MetadataListItem>
                   <MetadataListItem label="População">
@@ -319,10 +340,16 @@ export function TelaMercado({
           {dados.amostra_adzuna.disponivel ? (
             <Card variant="muted" padding={4}>
               <div className="flex flex-col gap-2">
-                <Heading level={4}>Amostra pontual Adzuna</Heading>
+                <Heading level={4} className="!font-['Barlow_Condensed'] font-semibold text-lg text-[#000091]">
+                  Amostra pontual Adzuna
+                </Heading>
                 <Text type="body">{dados.amostra_adzuna.motivo}</Text>
                 <MetadataList orientation="vertical" columns="multi">
-                  <MetadataListItem label="Natureza">Amostra pontual</MetadataListItem>
+                  <MetadataListItem label="Natureza">
+                    <span className="font-['IBM_Plex_Mono'] uppercase tracking-wider text-xs font-semibold text-[#000091]">
+                      Amostra pontual
+                    </span>
+                  </MetadataListItem>
                   <MetadataListItem label="Fonte">{dados.amostra_adzuna.fonte}</MetadataListItem>
                   <MetadataListItem label="Unidade">{dados.amostra_adzuna.unidade}</MetadataListItem>
                   <MetadataListItem label="População">
@@ -339,13 +366,15 @@ export function TelaMercado({
                     </MetadataListItem>
                   ))}
                 </MetadataList>
-                <Text type="supporting">{dados.amostra_adzuna.atribuicao}</Text>
+                <Text type="supporting" className="text-xs text-[#616191]">{dados.amostra_adzuna.atribuicao}</Text>
               </div>
             </Card>
           ) : (
             <Card variant="muted" padding={4}>
               <div className="flex flex-col gap-1">
-                <Heading level={4}>Amostra Adzuna indisponível</Heading>
+                <Heading level={4} className="!font-['Barlow_Condensed'] font-semibold text-lg text-[#000091]">
+                  Amostra Adzuna indisponível
+                </Heading>
                 <Text type="body">{dados.amostra_adzuna.motivo}</Text>
               </div>
             </Card>

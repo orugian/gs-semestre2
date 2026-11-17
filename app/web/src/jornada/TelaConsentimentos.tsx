@@ -128,8 +128,10 @@ export function TelaConsentimentos({
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
       <header className="flex flex-col gap-2">
-        <Heading level={2}>{TEXTOS_JORNADA.consentimentos.titulo}</Heading>
-        <Text type="supporting">
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          {TEXTOS_JORNADA.consentimentos.titulo}
+        </Heading>
+        <Text type="supporting" className="text-sm text-[#616191]">
           {TEXTOS_JORNADA.consentimentos.descricao}
         </Text>
       </header>
@@ -157,10 +159,15 @@ export function TelaConsentimentos({
 
             return (
               <Card key={item.chave} width="100%">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5">
+                <div
+                  data-testid={`cartao-consentimento-${item.chave}`}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5"
+                >
                   <div className="flex flex-col gap-2 flex-1">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <Heading level={3}>{item.titulo}</Heading>
+                      <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                        {item.titulo}
+                      </Heading>
                       {estaAtivo ? (
                         <Badge
                           variant="success"
@@ -178,7 +185,7 @@ export function TelaConsentimentos({
                     <Text type="body">{item.descricao}</Text>
 
                     {estaAtivo && item.avisoRevogacao && (
-                      <Text type="supporting">{item.avisoRevogacao}</Text>
+                      <Text type="supporting" className="text-xs text-[#616191]">{item.avisoRevogacao}</Text>
                     )}
                   </div>
 
