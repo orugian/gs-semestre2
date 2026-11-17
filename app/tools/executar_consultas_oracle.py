@@ -10,11 +10,12 @@ Uso (a partir de app/tools, com ORACLE_DSN/USER/PASSWORD no ambiente):
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+
+from _comum import conectar_oracle
 
 ARQUIVO = Path(__file__).resolve().parents[1] / "db" / "consultas" / "evidencias_oracle.sql"
 
@@ -44,19 +45,13 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--saida", required=True)
     args = ap.parse_args(argv)
-    import oracledb
-
     partes = [
         "# Consultas de evidência — Oracle local (Docker Free 23ai, DDL 19c), schema do app",
         f"# Executado em {datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')} por "
         "app/tools/executar_consultas_oracle.py; usuário e senha do schema omitidos.",
         "",
     ]
-    with oracledb.connect(
-        user=os.environ["ORACLE_USER"],
-        password=os.environ["ORACLE_PASSWORD"],
-        dsn=os.environ["ORACLE_DSN"],
-    ) as conexao:
+    with conectar_oracle() as conexao:
         cursor = conexao.cursor()
         for titulo, sql in consultas(ARQUIVO.read_text(encoding="utf-8")):
             cursor.execute(sql)

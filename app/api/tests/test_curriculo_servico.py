@@ -3,13 +3,13 @@
 import uuid
 
 import pytest
-from fastapi import HTTPException
 
 from citizentech.curriculo.repositorio import (
     RepositorioCurriculosEmMemoria,
     RepositorioCurriculosMongo,
 )
 from citizentech.curriculo.servico import CurriculoNaoLiberado, texto_liberado_para_llm
+from citizentech.erros import ServicoIndisponivel
 
 
 def test_repositorio_em_memoria_ciclo_completo():
@@ -88,7 +88,7 @@ def test_texto_liberado_para_llm_falha_se_curriculo_nao_confirmado(monkeypatch):
 
     # Simula consentimento curriculo_llm ativo
     monkeypatch.setattr(
-        "citizentech.curriculo.servico.listar_consentimentos",
+        "citizentech.consentimentos.dependencias.listar_consentimentos",
         lambda u: [{"finalidade": "curriculo_llm", "revogado_em": None}],
     )
 
@@ -116,7 +116,7 @@ def test_texto_liberado_para_llm_falha_se_consentimento_revogado(monkeypatch):
 
     # Consentimento curriculo_llm revogado
     monkeypatch.setattr(
-        "citizentech.curriculo.servico.listar_consentimentos",
+        "citizentech.consentimentos.dependencias.listar_consentimentos",
         lambda u: [{"finalidade": "curriculo_llm", "revogado_em": "2026-11-16T12:10:00Z"}],
     )
 
@@ -143,7 +143,7 @@ def test_texto_liberado_para_llm_sucesso_quando_confirmado_e_consentido(monkeypa
     })
 
     monkeypatch.setattr(
-        "citizentech.curriculo.servico.listar_consentimentos",
+        "citizentech.consentimentos.dependencias.listar_consentimentos",
         lambda u: [{"finalidade": "curriculo_llm", "revogado_em": None}],
     )
 
@@ -159,11 +159,10 @@ def test_mongo_indisponivel_retorna_503_sem_vazar_uri(monkeypatch):
 
     repo = RepositorioCurriculosMongo()
 
-    with pytest.raises(HTTPException) as exc:
+    with pytest.raises(ServicoIndisponivel) as exc:
         repo.buscar_por_id("qualquer_id")
 
-    assert exc.value.status_code == 503
-    detalhes = str(exc.value.detail)
+    detalhes = str(exc.value.detalhes)
     assert uri_invalida not in detalhes
     assert "mongodb://" not in detalhes
     assert "59999" not in detalhes

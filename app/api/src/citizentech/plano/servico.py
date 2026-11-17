@@ -5,11 +5,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import HTTPException, status
-
+from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
+from citizentech.catalogo import carregar_destino_aprovado, carregar_destinos_aprovados
 from citizentech.comparacao.dominio import classificar_requisitos
 from citizentech.competencias.repositorio import competencias_para_comparacao
-from citizentech.destinos.catalogo import carregar_destinos_aprovados_brutos
+from citizentech.erros import Conflito, NaoEncontrado, RequisicaoInvalida
 from citizentech.intencao.repositorio import buscar_intencao
 from citizentech.plano.dominio import gerar_plano
 from citizentech.plano.repositorio import (
@@ -23,13 +23,6 @@ from citizentech.plano.repositorio import (
 logger = logging.getLogger("citizentech.plano")
 
 
-def _resultados_exercicio(usuario_id: str) -> list[dict[str, Any]]:
-    """Devolve os resultados de exercicios diagnósticos do usuario (tentativa mais recente)."""
-    from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
-
-    return resultados_exercicio_para_comparacao(usuario_id)
-
-
 def gerar_e_salvar_caminho(
     usuario_id: str,
     destino_id: str,
@@ -41,36 +34,23 @@ def gerar_e_salvar_caminho(
         valido, erro_tipo = verificar_comparacao_usuario(comparacao_id, usuario_id, destino_id)
         if not valido:
             if erro_tipo == "404":
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail={
-                        "erro": "Nao encontrado",
-                        "detalhes": "Comparacao informada nao encontrada para o usuario.",
-                    },
-                )
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={
-                    "erro": "Destino invalido",
-                    "detalhes": "Destino informado nao faz parte da comparacao indicada.",
-                },
+                raise NaoEncontrado("Comparacao informada nao encontrada para o usuario.")
+            raise RequisicaoInvalida(
+                detalhes="Destino informado nao faz parte da comparacao indicada.",
+                erro="Destino invalido",
             )
 
-    # 2. Carrega destinos aprovados e valida destino_id
-    destinos_aprovados = carregar_destinos_aprovados_brutos()
-    destino = next((d for d in destinos_aprovados if d.get("destino_id") == destino_id), None)
+    # 2. Carrega destino aprovado e valida destino_id
+    destino = carregar_destino_aprovado(destino_id)
     if not destino:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "erro": "Destino invalido",
-                "detalhes": "Destino fora do escopo ou nao aprovado.",
-            },
+        raise RequisicaoInvalida(
+            detalhes="Destino fora do escopo ou nao aprovado.",
+            erro="Destino invalido",
         )
 
     # 3. Coleta competencias confirmadas, exercicios e intencao
     competencias = competencias_para_comparacao(usuario_id)
-    resultados_ex = _resultados_exercicio(usuario_id)
+    resultados_ex = resultados_exercicio_para_comparacao(usuario_id)
     preferencias = buscar_intencao(usuario_id)
 
     # 4. Classifica requisitos
@@ -103,18 +83,12 @@ def gerar_e_salvar_caminho(
 
 def obter_caminho_ativo_usuario(usuario_id: str) -> dict[str, Any]:
     """Recupera o caminho ativo do usuario com status atuais dos checkpoints."""
-    destinos_aprovados = carregar_destinos_aprovados_brutos()
+    destinos_aprovados = carregar_destinos_aprovados()
     catalogo_map = {d.get("destino_id"): d for d in destinos_aprovados if d.get("destino_id")}
 
     caminho = buscar_caminho_ativo(usuario_id, catalogo_map)
     if not caminho:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "erro": "Nao encontrado",
-                "detalhes": "Nenhum plano ativo encontrado para o usuario.",
-            },
-        )
+        raise NaoEncontrado("Nenhum plano ativo encontrado para o usuario.")
     return caminho
 
 
@@ -126,22 +100,10 @@ def atualizar_checkpoint_usuario(
     """Atualiza o status de um checkpoint especifico do usuario."""
     cp_info = obter_checkpoint_para_atualizacao(checkpoint_id, usuario_id)
     if not cp_info:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "erro": "Nao encontrado",
-                "detalhes": "Checkpoint nao encontrado ou de plano inativo/outro usuario.",
-            },
-        )
+        raise NaoEncontrado("Checkpoint nao encontrado ou de plano inativo/outro usuario.")
 
     if cp_info.get("tipo") == "exercicio":
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail={
-                "erro": "Conflito",
-                "detalhes": "O status do exercicio vem da avaliacao.",
-            },
-        )
+        raise Conflito("O status do exercicio vem da avaliacao.")
 
     atualizado = atualizar_status_checkpoint(checkpoint_id, novo_status)
     logger.debug(

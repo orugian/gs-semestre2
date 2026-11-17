@@ -10,23 +10,13 @@ Uso (a partir de app/tools, com as variáveis definidas):
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
+from _comum import blocos_sql, conectar_oracle
+
 DDL_DIR = Path(__file__).resolve().parents[1] / "db" / "ddl"
 JA_EXISTE = ("ORA-00955", "ORA-01408", "ORA-02260", "ORA-02275")
-
-
-def blocos_sql(texto: str) -> list[str]:
-    """Divide o arquivo por ';' e remove linhas de comentário."""
-    saida = []
-    for bloco in texto.split(";"):
-        linhas = [linha for linha in bloco.splitlines() if not linha.strip().startswith("--")]
-        sql = "\n".join(linhas).strip()
-        if sql:
-            saida.append(sql)
-    return saida
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -40,19 +30,16 @@ def main(argv: list[str] | None = None) -> int:
         print("Nada executado (use --confirmar).")
         return 0
 
-    for var in ("ORACLE_DSN", "ORACLE_USER", "ORACLE_PASSWORD"):
-        if not os.environ.get(var):
-            print(f"Variável {var} ausente.", file=sys.stderr)
-            return 2
-
     import oracledb
 
     criados, ignorados = 0, 0
-    with oracledb.connect(
-        user=os.environ["ORACLE_USER"],
-        password=os.environ["ORACLE_PASSWORD"],
-        dsn=os.environ["ORACLE_DSN"],
-    ) as conexao:
+    try:
+        conexao = conectar_oracle()
+    except RuntimeError as err:
+        print(str(err), file=sys.stderr)
+        return 2
+
+    with conexao:
         with conexao.cursor() as cursor:
             for arquivo in arquivos:
                 for sql in blocos_sql(arquivo.read_text(encoding="utf-8")):

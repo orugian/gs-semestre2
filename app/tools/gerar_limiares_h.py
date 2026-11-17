@@ -3,19 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
 
-
-def calcular_sha256(caminho: Path) -> str:
-    """Calcula o hash SHA-256 de um arquivo."""
-    hasher = hashlib.sha256()
-    with caminho.open("rb") as f:
-        while chunk := f.read(65536):
-            hasher.update(chunk)
-    return hasher.hexdigest()
+from _comum import sha256_arquivo as calcular_sha256
 
 
 def renderizar_header(conteudo_json: dict, sha256_origem: str) -> str:
@@ -24,10 +16,11 @@ def renderizar_header(conteudo_json: dict, sha256_origem: str) -> str:
     temp = metricas.get("temperatura_c", {})
     dist = metricas.get("distancia_cm", {})
 
-    temp_atencao = float(temp.get("atencao", 35.0))
-    temp_critico = float(temp.get("critico", 45.0))
-    dist_atencao = float(dist.get("atencao", 15.0))
-    dist_critico = float(dist.get("critico", 8.0))
+    # Limiares só existem em app/config/limiares.json: chave ausente falha em vez de usar padrão.
+    temp_atencao = float(temp["atencao"])
+    temp_critico = float(temp["critico"])
+    dist_atencao = float(dist["atencao"])
+    dist_critico = float(dist["critico"])
     dist_minimo = float(dist.get("valor_minimo", 0.0))
 
     linhas = [

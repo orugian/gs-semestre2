@@ -70,6 +70,15 @@ def test_gerador_limiares_com_fixture_alterada(tmp_path: Path):
     assert verificar_header(mock_json, mock_header) is False
 
 
+def test_gerador_limiares_falha_se_faltar_limiar_no_json(tmp_path: Path):
+    """Limiar ausente no JSON não pode virar um número padrão escondido no gerador."""
+    incompleto = {"metricas": {"temperatura_c": {"atencao": 30.0}, "distancia_cm": {}}}
+    caminho = tmp_path / "limiares.json"
+    caminho.write_text(json.dumps(incompleto), encoding="utf-8")
+    with pytest.raises(KeyError, match="critico"):
+        gerar_conteudo_esperado(caminho)
+
+
 def test_gerador_cli_verificar():
     """Executa a CLI do gerador com --verificar via subprocess e confere retorno 0."""
     res = subprocess.run(

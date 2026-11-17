@@ -20,7 +20,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 
 from citizentech.auth.dependencias import exigir_csrf, obter_usuario_logado
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 from citizentech.curriculo.esquemas import (
     ConfirmarEnvioRequisicao,
     CriarExperienciasRequisicao,
@@ -45,15 +45,6 @@ LIMITE_ARQUIVO_BYTES = 2 * 1024 * 1024  # 2.097.152 bytes (2 MB)
 MARGEM_MULTIPART_BYTES = 64 * 1024  # 64 KB de margem para envelope multipart
 
 
-def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
-    """Verifica se o usuario possui consentimento ativo (nao revogado) para a finalidade."""
-    consentimentos = listar_consentimentos(usuario_id)
-    return any(
-        c.get("finalidade") == finalidade and c.get("revogado_em") is None
-        for c in consentimentos
-    )
-
-
 @router.post(
     "/experiencias",
     response_model=CurriculoResposta,
@@ -62,23 +53,13 @@ def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
 )
 def criar_experiencias(
     payload: CriarExperienciasRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("perfil"))],
     repositorio: Annotated[
         RepositorioCurriculos, Depends(obter_repositorio_curriculos)
     ],
 ) -> dict:
     """Cria e redige experiencias profissionais a partir de texto colado."""
-    # 1. Consentimento 'perfil' ativo obrigatorio
-    if not _verificar_consentimento_ativo(usuario["id"], "perfil"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'perfil' ausente ou revogado.",
-            },
-        )
-
-    # 2. Redacao de PII
+    # 1. Redacao de PII
     texto_redigido, redacoes = redigir_pii(payload.texto)
     sha256_texto = hashlib.sha256(texto_redigido.encode("utf-8")).hexdigest()
     criado_em = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -109,24 +90,14 @@ def criar_experiencias(
 )
 async def upload_curriculo(
     request: Request,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("perfil"))],
     repositorio: Annotated[
         RepositorioCurriculos, Depends(obter_repositorio_curriculos)
     ],
     arquivo: Annotated[UploadFile, File()],
 ) -> dict:
     """Recebe upload de curriculo (PDF ou DOCX), extrai e redige o texto."""
-    # 1. Consentimento 'perfil' ativo obrigatorio (verificado antes de processar arquivo)
-    if not _verificar_consentimento_ativo(usuario["id"], "perfil"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'perfil' ausente ou revogado.",
-            },
-        )
-
-    # 2. Verificacao preventiva de Content-Length
+    # 1. Verificacao preventiva de Content-Length
     tamanho_header = request.headers.get("content-length")
     if tamanho_header:
         try:
@@ -227,23 +198,13 @@ def obter_curriculo(
 )
 def confirmar_envio(
     payload: ConfirmarEnvioRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("curriculo_llm"))],
     repositorio: Annotated[
         RepositorioCurriculos, Depends(obter_repositorio_curriculos)
     ],
 ) -> dict:
     """Confirma o envio do curriculo redigido com consentimento curriculo_llm ativo."""
-    # 1. Verifica consentimento ativo 'curriculo_llm'
-    if not _verificar_consentimento_ativo(usuario["id"], "curriculo_llm"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'curriculo_llm' ausente ou revogado.",
-            },
-        )
-
-    # 2. Busca documento pertencente ao usuario (T14)
+    # 1. Busca documento pertencente ao usuario (T14)
     documento_existente = repositorio.buscar_por_id(
         curriculo_id=payload.curriculo_id, usuario_id=usuario["id"]
     )

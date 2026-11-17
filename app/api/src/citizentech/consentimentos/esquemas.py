@@ -1,11 +1,8 @@
 """Esquemas de validacao e resposta para consentimentos LGPD."""
 
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, field_validator
 
 FINALIDADES_VALIDAS = ("perfil", "curriculo_llm", "laboratorio_nuvem")
-TipoFinalidade = Literal["perfil", "curriculo_llm", "laboratorio_nuvem"]
 
 
 class CriarConsentimentoRequisicao(BaseModel):

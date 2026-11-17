@@ -45,7 +45,7 @@ from citizentech.avaliacao.repositorio import (
     salvar_resposta_aberta_mongo,
     salvar_tentativa_oracle,
 )
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 from citizentech.curriculo.redacao import redigir_pii
 from citizentech.llm.cliente import ClienteLLM, ErroLLM, obter_cliente_llm
 
@@ -57,23 +57,6 @@ AVISO_DIAGNOSTICO = (
     "Resultado diagnóstico de nível básico. "
     "Você pode refazer (até 3 vezes em 24 horas) ou registrar que discorda."
 )
-
-
-def _verificar_consentimento_curriculo_llm(usuario_id: str) -> None:
-    """Valida consentimento ativo curriculo_llm exigido antes de enviar texto a LLM (D22)."""
-    consentimentos = listar_consentimentos(usuario_id)
-    tem_consentimento = any(
-        c.get("finalidade") == "curriculo_llm" and c.get("revogado_em") is None
-        for c in consentimentos
-    )
-    if not tem_consentimento:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento 'curriculo_llm' ausente ou revogado para o usuario.",
-            },
-        )
 
 
 @router.get("/destinos/{destino_id}/exercicio")
@@ -108,16 +91,23 @@ def obter_exercicio_destino(
 )
 def submeter_tentativa(
     payload: CriarTentativaRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[
+        dict,
+        Depends(
+            exigir_consentimento(
+                "curriculo_llm",
+                mensagem_detalhe=(
+                    "Consentimento 'curriculo_llm' ausente ou revogado para o usuario."
+                ),
+            )
+        ),
+    ],
     cliente_llm: Annotated[ClienteLLM, Depends(obter_cliente_llm)],
 ) -> dict[str, Any]:
     """Submete tentativa do exercicio diagnostico com correcao 50/50 e validacao rigorosa."""
     usuario_id = usuario["id"]
 
-    # 1. Verifica consentimento ativo curriculo_llm antes de qualquer processamento (D22)
-    _verificar_consentimento_curriculo_llm(usuario_id)
-
-    # 2. Carrega e valida o destino homologado
+    # 1. Carrega e valida o destino homologado
     dados_destino = carregar_dados_destino(payload.destino_id)
     if not dados_destino:
         raise HTTPException(

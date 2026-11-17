@@ -9,32 +9,10 @@ from datetime import UTC, datetime
 from typing import Any
 
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
+from citizentech.banco.util import deserializar_json, iso_utc
 from citizentech.plano.dominio import AVISO_PLANO, EXPLICACAO_REGRA_V1, REGRA_PLANO_V1
 
 logger = logging.getLogger("citizentech.plano")
-
-
-def _formatar_iso_utc(dt: Any) -> str:
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
-
-
-def _deserializar_json(valor: Any) -> Any:
-    """Converte valor do banco (objeto nativo, LOB ou str) em objeto Python."""
-    if isinstance(valor, (dict, list)):
-        return valor
-    if hasattr(valor, "read"):
-        valor = valor.read()
-    if isinstance(valor, (bytes, bytearray)):
-        valor = valor.decode("utf-8")
-    if isinstance(valor, str):
-        return json.loads(valor)
-    return valor
 
 
 def verificar_comparacao_usuario(
@@ -88,7 +66,7 @@ def salvar_caminho_e_plano(
     caminho_id = uuid.uuid4().hex
     plano_id = uuid.uuid4().hex
     agora = datetime.now(UTC)
-    agora_iso = _formatar_iso_utc(agora)
+    agora_iso = iso_utc(agora)
 
     # Prepara base_json para rastreabilidade T08 SEM trechos de origem
     base_limpa: list[dict[str, Any]] = []
@@ -263,7 +241,7 @@ def buscar_caminho_ativo(
                 destino_id = str(row_cam[1])
                 comparacao_id = str(row_cam[2]) if row_cam[2] is not None else None
                 versao_catalogo = str(row_cam[3]) if row_cam[3] is not None else ""
-                criado_em = _formatar_iso_utc(row_cam[4])
+                criado_em = iso_utc(row_cam[4])
 
                 cursor.execute(sql_plano, {"caminho_id": caminho_id})
                 row_plano = cursor.fetchone()
@@ -272,11 +250,11 @@ def buscar_caminho_ativo(
 
                 plano_id = str(row_plano[0])
                 regra = str(row_plano[1])
-                base_dados = _deserializar_json(row_plano[2])
-                observacoes = _deserializar_json(row_plano[3])
+                base_dados = deserializar_json(row_plano[2])
+                observacoes = deserializar_json(row_plano[3])
                 if not isinstance(observacoes, list):
                     observacoes = []
-                gerado_em = _formatar_iso_utc(row_plano[4])
+                gerado_em = iso_utc(row_plano[4])
 
                 # Identifica ja_demonstrados a partir da base_json
                 ja_demonstrados: list[str] = []
@@ -303,7 +281,7 @@ def buscar_caminho_ativo(
                             "obrigatorio": row_cp[9] == "S",
                             "exercicio_id": str(row_cp[10]) if row_cp[10] is not None else None,
                             "status": str(row_cp[11]),
-                            "atualizado_em": _formatar_iso_utc(row_cp[12]),
+                            "atualizado_em": iso_utc(row_cp[12]),
                         }
                     )
 
@@ -376,7 +354,7 @@ def atualizar_status_checkpoint(checkpoint_id: str, novo_status: str) -> dict[st
     import oracledb
 
     agora = datetime.now(UTC)
-    agora_iso = _formatar_iso_utc(agora)
+    agora_iso = iso_utc(agora)
 
     sql_update = """
     UPDATE checkpoint

@@ -156,35 +156,25 @@ class ClienteLLM:
             raise ErroLLM("configuracao ausente: chave OPENROUTER_API_KEY nao informada.")
 
         total_tentativas = 0
+        pular_retry_padrao = False
         with httpx.Client(timeout=self.timeout, transport=self.transport) as cliente_http:
-            # 1. Tentativa inicial no modelo padrao
-            total_tentativas += 1
-            sucesso, status_code, dados, uso = self._executar_requisicao(
-                cliente_http,
-                self.modelo,
-                mensagens,
-                schema,
-                nome_schema,
-                total_tentativas,
-                validar,
-            )
-            if sucesso and dados is not None:
-                return RespostaLLM(
-                    dados=dados,
-                    modelo=self.modelo,
-                    tentativas=total_tentativas,
-                    uso=uso,
-                )
+            # Sequencia declarativa de tentativas:
+            # 1. modelo padrao (tentativa inicial)
+            # 2. modelo padrao (retry condicional: pula se erro de auth/quota 401/402/403)
+            # 3. modelo fallback
+            plano_tentativas = [
+                (self.modelo, False),
+                (self.modelo, True),
+                (self.modelo_fallback, False),
+            ]
+            for modelo_atual, eh_retry in plano_tentativas:
+                if eh_retry and pular_retry_padrao:
+                    continue
 
-            # Se for 401, 402 ou 403, nao faz retry no mesmo modelo: vai direto ao fallback
-            deve_tentar_novamente_padrao = status_code not in (401, 402, 403)
-
-            if deve_tentar_novamente_padrao:
-                # 2. Retry no modelo padrao
                 total_tentativas += 1
                 sucesso, status_code, dados, uso = self._executar_requisicao(
                     cliente_http,
-                    self.modelo,
+                    modelo_atual,
                     mensagens,
                     schema,
                     nome_schema,
@@ -194,29 +184,14 @@ class ClienteLLM:
                 if sucesso and dados is not None:
                     return RespostaLLM(
                         dados=dados,
-                        modelo=self.modelo,
+                        modelo=modelo_atual,
                         tentativas=total_tentativas,
                         uso=uso,
                     )
 
-            # 3. Fallback (1 tentativa)
-            total_tentativas += 1
-            sucesso, status_code, dados, uso = self._executar_requisicao(
-                cliente_http,
-                self.modelo_fallback,
-                mensagens,
-                schema,
-                nome_schema,
-                total_tentativas,
-                validar,
-            )
-            if sucesso and dados is not None:
-                return RespostaLLM(
-                    dados=dados,
-                    modelo=self.modelo_fallback,
-                    tentativas=total_tentativas,
-                    uso=uso,
-                )
+                # Regra 401/402/403: auth ou saldo insuficiente vai direto ao fallback
+                if not eh_retry and modelo_atual == self.modelo and status_code in (401, 402, 403):
+                    pular_retry_padrao = True
 
         raise ErroLLM(
             f"Falha ao obter resposta estruturada da LLM apos {total_tentativas} tentativas."

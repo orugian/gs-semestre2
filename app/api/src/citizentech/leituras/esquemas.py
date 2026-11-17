@@ -37,7 +37,7 @@ def _validar_identificador(
     return valor
 
 
-def _parsear_data_iso(data_str: Any) -> str:
+def parsear_data_iso(data_str: Any) -> str:
     if data_str is None or data_str == "":
         return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -62,6 +62,8 @@ def _parsear_data_iso(data_str: Any) -> str:
     except (ValueError, OverflowError) as err:
         raise ErroValidacaoLeitura("Data fora da faixa UTC suportada.") from err
     return dt_utc.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 
 
 def validar_e_processar_payload(dados: dict[str, Any]) -> dict[str, Any]:
@@ -204,7 +206,7 @@ def validar_e_processar_payload(dados: dict[str, Any]) -> dict[str, Any]:
         and dados["medido_em"] is not None
         and dados["medido_em"] != ""
     )
-    medido_em = _parsear_data_iso(dados.get("medido_em"))
+    medido_em = parsear_data_iso(dados.get("medido_em"))
     criado_em = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Alerta coerente com os limiares (atencao ou critico)

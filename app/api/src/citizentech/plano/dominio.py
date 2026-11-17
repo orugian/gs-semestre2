@@ -158,8 +158,8 @@ def gerar_plano(
             )
             ordem_atual += 1
 
-    # Checkpoint opcional de laboratorio para analista_monitoramento_iot
-    if destino.get("destino_id") == "analista_monitoramento_iot":
+    # Checkpoint opcional de laboratorio guiado por dados
+    if bool(destino.get("tem_laboratorio")):
         checkpoints.append(
             {
                 "ordem": ordem_atual,

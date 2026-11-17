@@ -12,12 +12,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
 
 import yaml
+
+from _comum import conectar_oracle
 
 CATALOGO = Path(__file__).resolve().parents[1] / "catalogo"
 
@@ -124,13 +125,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.confirmar:
         print("Nada gravado (use --confirmar).")
         return 0
-    import oracledb
-
-    with oracledb.connect(
-        user=os.environ["ORACLE_USER"],
-        password=os.environ["ORACLE_PASSWORD"],
-        dsn=os.environ["ORACLE_DSN"],
-    ) as conexao:
+    with conectar_oracle() as conexao:
         with conexao.cursor() as cursor:
             for tabela in ORDEM_APAGAR:
                 cursor.execute(f"DELETE FROM {tabela}")  # nomes fixos do próprio script

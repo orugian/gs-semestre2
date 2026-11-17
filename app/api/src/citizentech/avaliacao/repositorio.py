@@ -7,7 +7,6 @@ import os
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError
 
 from citizentech.avaliacao.catalogo import (
@@ -15,21 +14,11 @@ from citizentech.avaliacao.catalogo import (
     obter_requisitos_avaliados_destino,
 )
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
+from citizentech.banco.util import iso_utc
 from citizentech.curriculo.repositorio import obter_cliente_mongo
+from citizentech.erros import Conflito, NaoEncontrado, ServicoIndisponivel
 
 logger = logging.getLogger("citizentech.avaliacao")
-
-
-def _formatar_iso_utc(dt: Any) -> str | None:
-    if dt is None:
-        return None
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
 
 
 def contar_tentativas_24h(usuario_id: str, exercicio_id: str) -> int:
@@ -113,12 +102,8 @@ def salvar_resposta_aberta_mongo(
         colecao = _obter_colecao_mongo("respostas_abertas")
         colecao.insert_one(doc)
     except (PyMongoError, Exception) as err:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Falha ao gravar resposta aberta no banco de dados.",
-            },
+        raise ServicoIndisponivel(
+            "Falha ao gravar resposta aberta no banco de dados."
         ) from err
 
 
@@ -181,22 +166,10 @@ def registrar_discordo_oracle(
                 cursor.execute(sql_consulta, {"id": tentativa_id})
                 linha = cursor.fetchone()
                 if not linha or str(linha[1]) != usuario_id:
-                    raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND,
-                        detail={
-                            "erro": "Nao encontrado",
-                            "detalhes": "Tentativa nao encontrada ou nao pertence ao usuario.",
-                        },
-                    )
+                    raise NaoEncontrado("Tentativa nao encontrada ou nao pertence ao usuario.")
 
                 if linha[2] is not None:
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail={
-                            "erro": "Conflito",
-                            "detalhes": "Contestacao ja registrada para esta tentativa.",
-                        },
-                    )
+                    raise Conflito("Contestacao ja registrada para esta tentativa.")
 
                 agora = datetime.now(UTC)
                 cursor.execute(
@@ -210,14 +183,8 @@ def registrar_discordo_oracle(
                 )
                 if cursor.rowcount == 0:
                     # Outra requisicao registrou a contestacao entre o SELECT e o UPDATE
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail={
-                            "erro": "Conflito",
-                            "detalhes": "Esta tentativa ja possui contestacao registrada.",
-                        },
-                    )
-                return _formatar_iso_utc(agora) or "", motivo_redigido
+                    raise Conflito("Esta tentativa ja possui contestacao registrada.")
+                return iso_utc(agora) or "", motivo_redigido
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
 
@@ -262,8 +229,8 @@ def listar_tentativas_usuario(
         nota_llm_val = float(r[8]) if r[8] is not None else None
         nota_fin_val = float(r[9]) if r[9] is not None else None
         res_val = str(r[10])
-        disc_em = _formatar_iso_utc(r[11])
-        criad_em = _formatar_iso_utc(r[12]) or ""
+        disc_em = iso_utc(r[11])
+        criad_em = iso_utc(r[12]) or ""
 
         itens.append(
             {

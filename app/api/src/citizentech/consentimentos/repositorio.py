@@ -4,22 +4,8 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import HTTPException
-
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
-
-
-def _formatar_iso_utc(dt: Any) -> str | None:
-    """Garante formatacao UTC ISO-8601 com 'Z'."""
-    if dt is None:
-        return None
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
+from citizentech.banco.util import iso_utc
 
 
 def criar_consentimento(
@@ -57,7 +43,7 @@ def criar_consentimento(
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err
 
@@ -65,7 +51,7 @@ def criar_consentimento(
         "id": consentimento_id,
         "finalidade": finalidade,
         "versao_termo": versao_termo,
-        "concedido_em": _formatar_iso_utc(concedido_em),
+        "concedido_em": iso_utc(concedido_em),
         "revogado_em": None,
     }
 
@@ -93,15 +79,15 @@ def listar_consentimentos(usuario_id: str) -> list[dict[str, Any]]:
                             "id": linha[0],
                             "finalidade": linha[1],
                             "versao_termo": linha[2],
-                            "concedido_em": _formatar_iso_utc(linha[3]),
-                            "revogado_em": _formatar_iso_utc(linha[4]),
+                            "concedido_em": iso_utc(linha[3]),
+                            "revogado_em": iso_utc(linha[4]),
                         }
                     )
                 return itens
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err
 
@@ -152,7 +138,7 @@ def revogar_consentimento(usuario_id: str, consentimento_id: str) -> bool:
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err
 
@@ -178,12 +164,12 @@ def buscar_consentimento_global(consentimento_id: str) -> dict[str, Any] | None:
                     "usuario_id": linha[1],
                     "finalidade": linha[2],
                     "versao_termo": linha[3],
-                    "concedido_em": _formatar_iso_utc(linha[4]),
-                    "revogado_em": _formatar_iso_utc(linha[5]),
+                    "concedido_em": iso_utc(linha[4]),
+                    "revogado_em": iso_utc(linha[5]),
                 }
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err

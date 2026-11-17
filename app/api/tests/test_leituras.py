@@ -713,7 +713,7 @@ def test_indicadores_com_valores_extremos_calcula_media_estavel_sem_overflow(mon
 
 
 def test_funcao_publica_calcular_indicadores():
-    from citizentech.leituras.rotas import calcular_indicadores
+    from citizentech.leituras.servico import calcular_indicadores
 
     # Lista vazia
     vazio = calcular_indicadores([])

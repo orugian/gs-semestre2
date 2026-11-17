@@ -340,6 +340,7 @@ def test_laboratorio_apenas_em_analista_monitoramento_iot():
         "destino_id": "analista_monitoramento_iot",
         "nome": "Analista de Monitoramento IoT",
         "versao": "1.0",
+        "tem_laboratorio": True,
         "requisitos": [
             {
                 "id_local": "sensores",
@@ -378,7 +379,7 @@ def test_laboratorio_apenas_em_analista_monitoramento_iot():
     assert tipos_iot[-1] == "exercicio"
 
     # Outro destino nao pode ter laboratorio
-    destino_proc = dict(destino_iot, destino_id="analista_processos")
+    destino_proc = dict(destino_iot, destino_id="analista_processos", tem_laboratorio=False)
     plano_proc = gerar_plano(destino_proc, itens_iot)
     tipos_proc = [cp["tipo"] for cp in plano_proc["checkpoints"]]
     assert "laboratorio" not in tipos_proc

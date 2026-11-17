@@ -15,30 +15,19 @@ import argparse
 import json
 import os
 import sys
-import urllib.error
-import urllib.request
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+
+from _comum import requisitar as _requisitar
 
 LIMIARES = Path(__file__).resolve().parents[1] / "config" / "limiares.json"
 
 
 def requisitar(base: str, metodo: str, caminho: str, corpo=None, chave: str | None = None):
-    dados = json.dumps(corpo).encode("utf-8") if corpo is not None else None
-    cab = {"Content-Type": "application/json"} if dados is not None else {}
-    if chave:
-        cab["X-Device-Key"] = chave
-    req = urllib.request.Request(base + caminho, data=dados, headers=cab, method=metodo)
-    try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return r.status, json.loads(r.read().decode("utf-8") or "null")
-    except urllib.error.HTTPError as e:
-        texto = e.read().decode("utf-8")
-        try:
-            return e.code, json.loads(texto)
-        except json.JSONDecodeError:
-            return e.code, texto
+    """(status, corpo JSON) de uma chamada à API de leituras."""
+    status, resposta, _ = _requisitar(base, metodo, caminho, corpo, chave=chave)
+    return status, resposta
 
 
 def main(argv: list[str] | None = None) -> int:
