@@ -2,46 +2,15 @@
 
 from __future__ import annotations
 
-import json
-import os
-from pathlib import Path
 from typing import Any
 
-import yaml
-
-_PADRAO_CATALOGO = Path(__file__).resolve().parents[4] / "catalogo"
-
-
-def _obter_diretorio_catalogo() -> Path:
-    caminho_env = os.environ.get("CITIZENTECH_CATALOGO")
-    return Path(caminho_env) if caminho_env else _PADRAO_CATALOGO
+from citizentech.catalogo import carregar_destino_aprovado
 
 
 def carregar_dados_destino(destino_id: str) -> dict[str, Any] | None:
     """Carrega dados brutos do destino aprovado validando escopo_mvp e revisao humana."""
-    catalogo_dir = _obter_diretorio_catalogo()
-    arquivo_escopo = catalogo_dir / "escopo_mvp.json"
-    if not arquivo_escopo.is_file():
-        return None
-
-    conteudo_escopo = json.loads(arquivo_escopo.read_text(encoding="utf-8"))
-    destinos_escopo = conteudo_escopo.get("destinos", [])
-    if destino_id not in destinos_escopo:
-        return None
-
-    destinos_dir = catalogo_dir / "destinos"
-    arquivo_yaml = destinos_dir / f"{destino_id}.yaml"
-    if not arquivo_yaml.is_file():
-        arquivo_yaml = destinos_dir / f"{destino_id}.yml"
-        if not arquivo_yaml.is_file():
-            return None
-
-    dados = yaml.safe_load(arquivo_yaml.read_text(encoding="utf-8"))
-    if not isinstance(dados, dict):
-        return None
-
-    revisao = dados.get("revisao_humana") or {}
-    if revisao.get("status") != "aprovado":
+    dados = carregar_destino_aprovado(destino_id)
+    if not dados:
         return None
 
     exercicio = dados.get("exercicio")
@@ -58,7 +27,6 @@ def carregar_dados_destino(destino_id: str) -> dict[str, Any] | None:
     # Extrai politica com defaults seguros lidos do YAML
     pesos = politica_raw.get("pesos") or {}
     politica_tentativas = politica_raw.get("politica_tentativas") or {}
-    fallback_llm = politica_raw.get("fallback_llm") or {}
 
     politica = {
         "pesos": {
@@ -68,9 +36,6 @@ def carregar_dados_destino(destino_id: str) -> dict[str, Any] | None:
         "minimo_objetiva": float(politica_raw.get("minimo_objetiva", 0.5)),
         "minimo_llm": float(politica_raw.get("minimo_llm", 0.5)),
         "max_tentativas_24h": int(politica_tentativas.get("max_tentativas_24h", 3)),
-        "fallback_llm": {
-            "comportamento": str(fallback_llm.get("comportamento", "parcial")),
-        },
     }
 
     return {

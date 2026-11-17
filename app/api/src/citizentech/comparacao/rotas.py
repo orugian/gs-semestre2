@@ -13,20 +13,11 @@ from citizentech.auth.dependencias import exigir_csrf, obter_usuario_logado
 from citizentech.comparacao.esquemas import ComparacaoResposta, CriarComparacaoRequisicao
 from citizentech.comparacao.repositorio import buscar_comparacao, salvar_comparacao
 from citizentech.comparacao.servico import executar_comparacao
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 
 logger = logging.getLogger("citizentech.comparacao")
 
 router = APIRouter(prefix="/me", tags=["comparacao"])
-
-
-def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
-    """Verifica se o usuário possui consentimento ativo (não revogado) para a finalidade."""
-    consentimentos = listar_consentimentos(usuario_id)
-    return any(
-        c.get("finalidade") == finalidade and c.get("revogado_em") is None
-        for c in consentimentos
-    )
 
 
 @router.post(
@@ -37,19 +28,10 @@ def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
 )
 def criar_comparacao(
     payload: CriarComparacaoRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("perfil"))],
 ) -> dict[str, Any]:
     """Cria uma nova comparação de até 3 destinos (sem score único)."""
     usuario_id = usuario["id"]
-
-    if not _verificar_consentimento_ativo(usuario_id, "perfil"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'perfil' ausente ou revogado.",
-            },
-        )
 
     try:
         resultado_dominio, uf_efetiva = executar_comparacao(

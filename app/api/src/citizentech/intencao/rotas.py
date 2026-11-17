@@ -8,7 +8,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from citizentech.auth.dependencias import exigir_csrf, obter_usuario_logado
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 from citizentech.curriculo.redacao import redigir_pii
 from citizentech.intencao.esquemas import IntencaoRequisicao, IntencaoResposta
 from citizentech.intencao.repositorio import buscar_intencao, salvar_intencao
@@ -16,15 +16,6 @@ from citizentech.intencao.repositorio import buscar_intencao, salvar_intencao
 logger = logging.getLogger("citizentech.intencao")
 
 router = APIRouter(prefix="/me", tags=["intencao"])
-
-
-def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
-    """Verifica se o usuário possui consentimento ativo (não revogado) para a finalidade."""
-    consentimentos = listar_consentimentos(usuario_id)
-    return any(
-        c.get("finalidade") == finalidade and c.get("revogado_em") is None
-        for c in consentimentos
-    )
 
 
 @router.put(
@@ -35,19 +26,10 @@ def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
 )
 def registrar_intencao(
     payload: IntencaoRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("perfil"))],
 ) -> dict[str, Any]:
     """Registra ou atualiza a intenção de transição profissional do usuário."""
     usuario_id = usuario["id"]
-
-    if not _verificar_consentimento_ativo(usuario_id, "perfil"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'perfil' ausente ou revogado.",
-            },
-        )
 
     # Redige cada motivo antes de gravar (minimização de PII)
     motivos_redigidos: list[str] = []
@@ -64,7 +46,7 @@ def registrar_intencao(
         uf=payload.uf,
     )
 
-    logger.debug("Intencao atualizada para usuario_id=%s uf=%s", usuario_id, payload.uf)
+    logger.debug("Intenção salva com sucesso para usuario_id=%s", usuario_id)
     return resultado
 
 
@@ -76,11 +58,11 @@ def registrar_intencao(
 def obter_intencao(
     usuario: Annotated[dict, Depends(obter_usuario_logado)],
 ) -> dict[str, Any]:
-    """Recupera a intenção de transição profissional registrada pelo usuário."""
+    """Recupera a intenção de transição profissional registrada para o usuário."""
     usuario_id = usuario["id"]
+    resultado = buscar_intencao(usuario_id)
 
-    intencao = buscar_intencao(usuario_id)
-    if intencao is None:
+    if not resultado:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -89,4 +71,4 @@ def obter_intencao(
             },
         )
 
-    return intencao
+    return resultado

@@ -28,6 +28,7 @@ from citizentech.competencias.repositorio import (
     salvar_candidatas_extracao,
 )
 from citizentech.curriculo.servico import CurriculoNaoLiberado, texto_liberado_para_llm
+from citizentech.erros import NaoEncontrado
 from citizentech.llm.cliente import ClienteLLM, ErroLLM, obter_cliente_llm
 
 logger = logging.getLogger("citizentech.competencias")
@@ -68,19 +69,18 @@ def extrair_competencias(
     # 2. Obtem texto liberado para LLM (D22)
     try:
         texto_redigido = texto_liberado_para_llm(usuario_id, payload.curriculo_id)
+    except NaoEncontrado as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "erro": "Nao encontrado",
+                "detalhes": exc.detalhes,
+            },
+        ) from exc
     except CurriculoNaoLiberado as exc:
-        detalhes = str(exc.detalhes)
-        if "nao encontrado ou nao pertence" in detalhes.lower():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={
-                    "erro": "Nao encontrado",
-                    "detalhes": "Curriculo nao encontrado ou nao pertence ao usuario.",
-                },
-            ) from exc
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail={"erro": "Acesso negado", "detalhes": detalhes},
+            detail={"erro": "Acesso negado", "detalhes": exc.detalhes},
         ) from exc
 
     # 3. Carrega catalogo fechado homologado

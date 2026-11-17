@@ -5,25 +5,13 @@ from datetime import UTC, datetime
 from typing import Any
 
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
+from citizentech.banco.util import iso_utc
 
 logger = logging.getLogger("citizentech.laboratorio.repositorio")
 
 
 class ConflitoCodigoSessao(Exception):
     """Excecao para colisao de codigo unico de sessao."""
-
-
-def _formatar_iso_utc(dt: Any) -> str | None:
-    """Garante formatacao UTC ISO-8601 com 'Z'."""
-    if dt is None:
-        return None
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
 
 
 def _garantir_datetime_utc(dt: Any) -> datetime:
@@ -101,8 +89,8 @@ def criar_sessao_oracle(
         "usuario_id": usuario_id,
         "codigo": codigo,
         "status": "ativa",
-        "criado_em": _formatar_iso_utc(criado_em),
-        "expira_em": _formatar_iso_utc(expira_em),
+        "criado_em": iso_utc(criado_em),
+        "expira_em": iso_utc(expira_em),
         "criado_em_dt": criado_em,
         "expira_em_dt": expira_em,
         "relato_redigido": None,
@@ -138,8 +126,8 @@ def buscar_sessao_ativa_usuario(usuario_id: str) -> dict[str, Any] | None:
                     "usuario_id": linha[1],
                     "codigo": linha[2],
                     "status": linha[3],
-                    "criado_em": _formatar_iso_utc(linha[4]),
-                    "expira_em": _formatar_iso_utc(linha[5]),
+                    "criado_em": iso_utc(linha[4]),
+                    "expira_em": iso_utc(linha[5]),
                     "criado_em_dt": _garantir_datetime_utc(linha[4]),
                     "expira_em_dt": _garantir_datetime_utc(linha[5]),
                     "relato_redigido": linha[6],
@@ -177,8 +165,8 @@ def buscar_sessao_por_id_e_usuario(sessao_id: str, usuario_id: str) -> dict[str,
                     "usuario_id": linha[1],
                     "codigo": linha[2],
                     "status": linha[3],
-                    "criado_em": _formatar_iso_utc(linha[4]),
-                    "expira_em": _formatar_iso_utc(linha[5]),
+                    "criado_em": iso_utc(linha[4]),
+                    "expira_em": iso_utc(linha[5]),
                     "criado_em_dt": _garantir_datetime_utc(linha[4]),
                     "expira_em_dt": _garantir_datetime_utc(linha[5]),
                     "relato_redigido": linha[6],

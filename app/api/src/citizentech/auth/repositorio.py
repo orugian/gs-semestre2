@@ -4,20 +4,9 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import HTTPException, status
-
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
-
-
-def _formatar_iso_utc(dt: Any) -> str:
-    """Garante formatacao UTC ISO-8601 com 'Z'."""
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
+from citizentech.banco.util import iso_utc
+from citizentech.erros import Conflito
 
 
 def criar_usuario(email: str, senha_hash: str) -> dict[str, Any]:
@@ -54,33 +43,21 @@ def criar_usuario(email: str, senha_hash: str) -> dict[str, Any]:
                 )
     except oracledb.IntegrityError as err:
         if "ORA-00001" in str(err) or getattr(err, "code", None) == 1:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "erro": "Conflito",
-                    "detalhes": "E-mail ja cadastrado.",
-                },
-            ) from err
+            raise Conflito("E-mail ja cadastrado.") from err
         raise ErroBancoIndisponivel() from err
     except oracledb.DatabaseError as err:
         if "ORA-00001" in str(err) or getattr(err, "code", None) == 1:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail={
-                    "erro": "Conflito",
-                    "detalhes": "E-mail ja cadastrado.",
-                },
-            ) from err
+            raise Conflito("E-mail ja cadastrado.") from err
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, HTTPException):
+        if isinstance(err, Conflito):
             raise
         raise ErroBancoIndisponivel() from err
 
     return {
         "id": usuario_id,
         "email": email,
-        "criado_em": _formatar_iso_utc(criado_em),
+        "criado_em": iso_utc(criado_em),
     }
 
 
@@ -106,12 +83,12 @@ def buscar_por_email(email: str) -> dict[str, Any] | None:
                     "senha_hash": linha[2],
                     "sessao_versao": int(linha[3]),
                     "persona_demo": str(linha[4]).strip(),
-                    "criado_em": _formatar_iso_utc(linha[5]),
+                    "criado_em": iso_utc(linha[5]),
                 }
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err
 
@@ -138,12 +115,12 @@ def buscar_por_id(usuario_id: str) -> dict[str, Any] | None:
                     "senha_hash": linha[2],
                     "sessao_versao": int(linha[3]),
                     "persona_demo": str(linha[4]).strip(),
-                    "criado_em": _formatar_iso_utc(linha[5]),
+                    "criado_em": iso_utc(linha[5]),
                 }
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err
 
@@ -164,6 +141,6 @@ def incrementar_sessao_versao(usuario_id: str) -> None:
     except oracledb.Error as err:
         raise ErroBancoIndisponivel() from err
     except Exception as err:
-        if isinstance(err, (HTTPException, ErroBancoIndisponivel)):
+        if isinstance(err, ErroBancoIndisponivel):
             raise
         raise ErroBancoIndisponivel() from err

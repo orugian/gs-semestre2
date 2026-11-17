@@ -5,8 +5,9 @@ import threading
 from typing import Any, Protocol
 
 import pymongo
-from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError
+
+from citizentech.erros import ServicoIndisponivel
 
 CAMPOS_PERMITIDOS = {
     "_id",
@@ -37,12 +38,8 @@ def obter_cliente_mongo() -> pymongo.MongoClient:
         uri = os.environ.get("MONGODB_URI")
         db_nome = os.environ.get("MONGODB_DB")
         if not (uri and db_nome):
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "erro": "Servico indisponivel",
-                    "detalhes": "Configuracao do banco de dados MongoDB ausente.",
-                },
+            raise ServicoIndisponivel(
+                "Configuracao do banco de dados MongoDB ausente."
             )
 
         try:
@@ -58,12 +55,8 @@ def obter_cliente_mongo() -> pymongo.MongoClient:
         except (PyMongoError, Exception) as err:
             # Apos falha de conexao, o proximo uso tenta de novo (nao cachear cliente quebrado)
             _cliente_mongo = None
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "erro": "Servico indisponivel",
-                    "detalhes": "Falha na comunicacao com o banco de dados.",
-                },
+            raise ServicoIndisponivel(
+                "Falha na comunicacao com o banco de dados."
             ) from err
 
 
@@ -115,12 +108,8 @@ class RepositorioCurriculosMongo:
         try:
             colecao.insert_one(doc_filtrado)
         except (PyMongoError, Exception) as err:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "erro": "Servico indisponivel",
-                    "detalhes": "Falha ao gravar no banco de dados.",
-                },
+            raise ServicoIndisponivel(
+                "Falha ao gravar no banco de dados."
             ) from err
 
         resposta = dict(doc_filtrado)
@@ -138,12 +127,8 @@ class RepositorioCurriculosMongo:
         try:
             doc = colecao.find_one(filtro)
         except (PyMongoError, Exception) as err:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "erro": "Servico indisponivel",
-                    "detalhes": "Falha ao consultar banco de dados.",
-                },
+            raise ServicoIndisponivel(
+                "Falha ao consultar banco de dados."
             ) from err
 
         if not doc:
@@ -191,12 +176,8 @@ class RepositorioCurriculosMongo:
                 return_document=pymongo.ReturnDocument.AFTER,
             )
         except (PyMongoError, Exception) as err:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail={
-                    "erro": "Servico indisponivel",
-                    "detalhes": "Falha ao atualizar no banco de dados.",
-                },
+            raise ServicoIndisponivel(
+                "Falha ao atualizar no banco de dados."
             ) from err
 
         if not doc_atualizado:

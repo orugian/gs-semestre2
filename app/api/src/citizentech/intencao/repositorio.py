@@ -7,16 +7,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
-
-
-def _formatar_iso_utc(dt: Any) -> str:
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
+from citizentech.banco.util import deserializar_json, iso_utc
 
 
 def salvar_intencao(
@@ -81,21 +72,8 @@ def salvar_intencao(
         "horas_semana": horas_semana,
         "orcamento_mensal_brl": orcamento_mensal_brl,
         "uf": uf,
-        "atualizado_em": _formatar_iso_utc(agora),
+        "atualizado_em": iso_utc(agora),
     }
-
-
-def _deserializar_json(valor: Any) -> Any:
-    """Converte valor do banco (objeto nativo, LOB ou str) em objeto Python."""
-    if isinstance(valor, (dict, list)):
-        return valor
-    if hasattr(valor, "read"):
-        valor = valor.read()
-    if isinstance(valor, (bytes, bytearray)):
-        valor = valor.decode("utf-8")
-    if isinstance(valor, str):
-        return json.loads(valor)
-    return valor
 
 
 def buscar_intencao(usuario_id: str) -> dict[str, Any] | None:
@@ -116,12 +94,12 @@ def buscar_intencao(usuario_id: str) -> dict[str, Any] | None:
                 if not row:
                     return None
 
-                atividades = _deserializar_json(row[0])
-                motivos = _deserializar_json(row[1])
+                atividades = deserializar_json(row[0])
+                motivos = deserializar_json(row[1])
                 horas_semana = int(row[2])
                 orcamento = float(row[3]) if row[3] is not None else None
                 uf = str(row[4]).strip()
-                atualizado_em = _formatar_iso_utc(row[5])
+                atualizado_em = iso_utc(row[5])
 
                 return {
                     "atividades_desejadas": atividades,

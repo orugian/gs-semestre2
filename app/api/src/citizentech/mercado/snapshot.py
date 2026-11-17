@@ -8,7 +8,15 @@ import os
 from pathlib import Path
 from typing import Any
 
-from fastapi import HTTPException
+from citizentech.catalogo import carregar_escopo_mvp
+from citizentech.erros import ServicoIndisponivel
+
+__all__ = [
+    "REGIAO_POR_DIGITO",
+    "UF_PARA_IBGE",
+    "carregar_escopo_mvp",
+    "carregar_snapshot_mercado",
+]
 
 # Mapeamento oficial de UFs para códigos IBGE de 2 dígitos
 UF_PARA_IBGE: dict[str, str] = {
@@ -41,7 +49,7 @@ UF_PARA_IBGE: dict[str, str] = {
     "TO": "17",
 }
 
-# Nomes das macrorregiões brasileiras pelo primeiro dígito do código IBGE
+# Região geográfica pelo primeiro dígito do código IBGE
 REGIAO_POR_DIGITO: dict[str, str] = {
     "1": "Norte",
     "2": "Nordeste",
@@ -50,71 +58,31 @@ REGIAO_POR_DIGITO: dict[str, str] = {
     "5": "Centro-Oeste",
 }
 
-_PADRAO_ESCOPO = Path(__file__).resolve().parents[4] / "catalogo" / "escopo_mvp.json"
-
 _cache_snapshot: dict[str, Any] | None = None
 _cache_info: tuple[str, float, int] | None = None
-
-
-def carregar_escopo_mvp() -> dict[str, Any]:
-    """Carrega o catálogo de escopo MVP (R29) resolvido relativo ao pacote."""
-    caminho = Path(os.environ.get("CITIZENTECH_ESCOPO_MVP") or _PADRAO_ESCOPO)
-    if not caminho.exists():
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Catalogo de escopo MVP nao encontrado.",
-            },
-        )
-    try:
-        with open(caminho, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as exc:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Falha ao carregar arquivo de escopo MVP.",
-            },
-        ) from exc
 
 
 def carregar_snapshot_mercado() -> dict[str, Any]:
     """Carrega snapshot e manifesto validando integridade SHA-256 e schema_version."""
     caminho_var = os.environ.get("CITIZENTECH_MERCADO_SNAPSHOT")
     if not caminho_var:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Variavel de ambiente de snapshot de mercado ausente.",
-            },
-        )
+        raise ServicoIndisponivel("Variavel de ambiente de snapshot de mercado ausente.")
 
     p_dir = Path(caminho_var)
     p_man = p_dir / "manifesto.json"
     p_snap = p_dir / "snapshot_mercado.json"
 
     if not p_man.exists() or not p_snap.exists():
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Arquivos de manifesto ou snapshot de mercado nao encontrados.",
-            },
+        raise ServicoIndisponivel(
+            "Arquivos de manifesto ou snapshot de mercado nao encontrados."
         )
 
     try:
         stat_snap = p_snap.stat()
         info_atual = (str(p_snap), stat_snap.st_mtime, stat_snap.st_size)
     except Exception as exc:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Falha ao inspecionar atributos do snapshot de mercado.",
-            },
+        raise ServicoIndisponivel(
+            "Falha ao inspecionar atributos do snapshot de mercado."
         ) from exc
 
     global _cache_snapshot, _cache_info
@@ -125,63 +93,35 @@ def carregar_snapshot_mercado() -> dict[str, Any]:
         conteudo_man = p_man.read_text(encoding="utf-8")
         man = json.loads(conteudo_man)
     except Exception as exc:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Manifesto de mercado malformado ou ilegivel.",
-            },
+        raise ServicoIndisponivel(
+            "Manifesto de mercado malformado ou ilegivel."
         ) from exc
 
     if not isinstance(man, dict) or man.get("schema_version") != "1.0":
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Versao de esquema do snapshot de mercado incompativel.",
-            },
+        raise ServicoIndisponivel(
+            "Versao de esquema do snapshot de mercado incompativel."
         )
 
     sha_esperado = man.get("sha256")
     if not sha_esperado:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Hash SHA-256 ausente no manifesto de mercado.",
-            },
-        )
+        raise ServicoIndisponivel("Hash SHA-256 ausente no manifesto de mercado.")
 
     try:
         bytes_snap = p_snap.read_bytes()
     except Exception as exc:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Falha ao ler dados brutos do snapshot de mercado.",
-            },
+        raise ServicoIndisponivel(
+            "Falha ao ler dados brutos do snapshot de mercado."
         ) from exc
 
     sha_calculado = hashlib.sha256(bytes_snap).hexdigest()
     if sha_calculado.lower() != str(sha_esperado).lower():
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Integridade do snapshot de mercado violada.",
-            },
-        )
+        raise ServicoIndisponivel("Integridade do snapshot de mercado violada.")
 
     try:
         snapshot = json.loads(bytes_snap.decode("utf-8"))
     except Exception as exc:
-        raise HTTPException(
-            status_code=503,
-            detail={
-                "erro": "Servico indisponivel",
-                "detalhes": "Conteudo JSON do snapshot de mercado corrompido.",
-            },
+        raise ServicoIndisponivel(
+            "Conteudo JSON do snapshot de mercado corrompido."
         ) from exc
 
     _cache_snapshot = snapshot

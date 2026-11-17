@@ -8,6 +8,8 @@ Decisões D07, R29, T07:
 
 from typing import Any
 
+from citizentech.catalogo import normalizar_requisito
+
 ESTADOS_VALIDOS_COMPETENCIA = frozenset({"declarada", "rejeitada", "nao_possuo"})
 RESULTADOS_VALIDOS_EXERCICIO = frozenset({"demonstrada", "insuficiente", "parcial"})
 
@@ -77,14 +79,11 @@ def classificar_requisitos(
     itens_classificados: list[dict[str, Any]] = []
 
     for req in requisitos:
-        id_local = req.get("id_local")
-        esco_id = req.get("esco_id", "")
-        titulo = req.get("titulo") or req.get("titulo_oficial", "")
-        obrigatorio = (
-            req.get("obrigatorio")
-            if "obrigatorio" in req
-            else req.get("obrigatorio_proposto", False)
-        )
+        req_norm = normalizar_requisito(req)
+        id_local = req_norm["id_local"]
+        esco_id = req_norm["esco_id"]
+        titulo = req_norm["titulo"]
+        obrigatorio = req_norm["obrigatorio"]
 
         comps = comps_por_esco.get(esco_id, [])
         exs = exs_por_esco.get(esco_id, [])

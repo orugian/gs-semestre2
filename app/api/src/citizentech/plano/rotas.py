@@ -5,10 +5,10 @@ from __future__ import annotations
 import logging
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 
 from citizentech.auth.dependencias import exigir_csrf, obter_usuario_logado
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 from citizentech.plano.esquemas import (
     AtualizarCheckpointRequisicao,
     CaminhoRequisicao,
@@ -26,15 +26,6 @@ logger = logging.getLogger("citizentech.plano")
 router = APIRouter(prefix="/me", tags=["plano"])
 
 
-def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
-    """Verifica se o usuario possui consentimento ativo para a finalidade."""
-    consentimentos = listar_consentimentos(usuario_id)
-    return any(
-        c.get("finalidade") == finalidade and c.get("revogado_em") is None
-        for c in consentimentos
-    )
-
-
 @router.post(
     "/caminho",
     response_model=CaminhoResposta,
@@ -43,19 +34,10 @@ def _verificar_consentimento_ativo(usuario_id: str, finalidade: str) -> bool:
 )
 def escolher_caminho(
     payload: CaminhoRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[dict, Depends(exigir_consentimento("perfil"))],
 ) -> Any:
     """Escolhe 1 destino e gera o plano inicial com checkpoints determinísticos."""
     usuario_id = usuario["id"]
-
-    if not _verificar_consentimento_ativo(usuario_id, "perfil"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento para a finalidade 'perfil' ausente ou revogado.",
-            },
-        )
 
     return gerar_e_salvar_caminho(
         usuario_id=usuario_id,

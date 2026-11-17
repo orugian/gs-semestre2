@@ -9,15 +9,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+from citizentech.banco.util import SAO_PAULO
 from citizentech.mercado.esquemas import AmostraAdzuna, ItemAmostraAdzuna
 
 _INDISPONIVEL = "Snapshot Adzuna não coletado nesta versão (D05a)."
 _INVALIDO = "Snapshot Adzuna indisponível: falha na verificação de integridade."
-# America/Sao_Paulo sem horário de verão desde 2019; evita depender de tzdata no Windows.
-_SAO_PAULO = timezone(timedelta(hours=-3))
 
 
 def _carregar_resumo() -> tuple[dict | None, str]:
@@ -40,7 +39,7 @@ def _carregar_resumo() -> tuple[dict | None, str]:
 
 def _data_local(iso_utc: str) -> str:
     instante = datetime.strptime(iso_utc, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
-    return instante.astimezone(_SAO_PAULO).strftime("%d/%m/%Y")
+    return instante.astimezone(SAO_PAULO).strftime("%d/%m/%Y")
 
 
 def montar_amostra_adzuna(destino: str) -> AmostraAdzuna:

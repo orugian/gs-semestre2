@@ -19,7 +19,8 @@ import tempfile
 import unicodedata
 from pathlib import Path
 
-EDGE = Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
+from _comum import localizar_edge
+
 MODELO = """<!doctype html><html><head><meta charset="utf-8">
 <style>body{{margin:0;padding:24px;background:#fff;font-family:Segoe UI,Arial}}</style>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
@@ -61,7 +62,7 @@ def main(argv: list[str] | None = None) -> int:
             png = saida / f"{n:02d}_{slug(titulo)}.png"
             r = subprocess.run(
                 [
-                    str(EDGE),
+                    str(localizar_edge()),
                     "--headless=new",
                     "--disable-gpu",
                     "--hide-scrollbars",

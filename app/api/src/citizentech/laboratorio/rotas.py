@@ -5,7 +5,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from citizentech.auth.dependencias import exigir_csrf, obter_usuario_logado
-from citizentech.consentimentos.repositorio import listar_consentimentos
+from citizentech.consentimentos.dependencias import exigir_consentimento
 from citizentech.laboratorio.esquemas import (
     CriarSessaoResposta,
     RegistrarRelatoRequisicao,
@@ -25,22 +25,6 @@ from citizentech.laboratorio.servico import (
 router = APIRouter(prefix="/me/laboratorio", tags=["laboratorio"])
 
 
-def _verificar_consentimento_laboratorio_nuvem(usuario_id: str) -> None:
-    consentimentos = listar_consentimentos(usuario_id)
-    tem_consentimento = any(
-        c.get("finalidade") == "laboratorio_nuvem" and c.get("revogado_em") is None
-        for c in consentimentos
-    )
-    if not tem_consentimento:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "erro": "Consentimento necessario",
-                "detalhes": "Consentimento 'laboratorio_nuvem' ausente ou revogado para o usuario.",
-            },
-        )
-
-
 @router.post(
     "/sessoes",
     response_model=CriarSessaoResposta,
@@ -48,9 +32,18 @@ def _verificar_consentimento_laboratorio_nuvem(usuario_id: str) -> None:
     dependencies=[Depends(exigir_csrf)],
 )
 def criar_sessao(
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[
+        dict,
+        Depends(
+            exigir_consentimento(
+                "laboratorio_nuvem",
+                mensagem_detalhe=(
+                    "Consentimento 'laboratorio_nuvem' ausente ou revogado para o usuario."
+                ),
+            )
+        ),
+    ],
 ) -> Any:
-    _verificar_consentimento_laboratorio_nuvem(usuario["id"])
     return abrir_nova_sessao(usuario["id"])
 
 
@@ -104,9 +97,18 @@ def obter_sessao_por_id(
 def registrar_relato(
     sessao_id: str,
     payload: RegistrarRelatoRequisicao,
-    usuario: Annotated[dict, Depends(obter_usuario_logado)],
+    usuario: Annotated[
+        dict,
+        Depends(
+            exigir_consentimento(
+                "laboratorio_nuvem",
+                mensagem_detalhe=(
+                    "Consentimento 'laboratorio_nuvem' ausente ou revogado para o usuario."
+                ),
+            )
+        ),
+    ],
 ) -> Any:
-    _verificar_consentimento_laboratorio_nuvem(usuario["id"])
     return registrar_relato_sessao(
         sessao_id=sessao_id,
         usuario_id=usuario["id"],

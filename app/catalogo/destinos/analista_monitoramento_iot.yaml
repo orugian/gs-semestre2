@@ -1,6 +1,7 @@
 schema_version: "1.0"
 versao: "0.1.0-rascunho"
 destino_id: "analista_monitoramento_iot"
+tem_laboratorio: true
 nome: "Analista de Monitoramento/IoT Industrial"
 cbo6:
   - "212415"

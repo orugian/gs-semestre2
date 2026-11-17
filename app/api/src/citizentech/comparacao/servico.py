@@ -6,9 +6,9 @@ import logging
 from typing import Any
 
 from citizentech.avaliacao.repositorio import resultados_exercicio_para_comparacao
+from citizentech.catalogo import carregar_destinos_aprovados
 from citizentech.comparacao.dominio import comparar_destinos
 from citizentech.competencias.repositorio import competencias_para_comparacao
-from citizentech.destinos.catalogo import carregar_destinos_aprovados_brutos
 from citizentech.intencao.repositorio import buscar_intencao
 from citizentech.mercado.snapshot import UF_PARA_IBGE, carregar_snapshot_mercado
 
@@ -121,7 +121,7 @@ def executar_comparacao(
 ) -> tuple[dict[str, Any], str | None]:
     """Prepara entradas, chama comparar_destinos e retorna (resultado_dominio, uf_efetiva)."""
     # 1. Carrega destinos aprovados do catálogo
-    destinos_brutos = carregar_destinos_aprovados_brutos()
+    destinos_brutos = carregar_destinos_aprovados()
     mapa_destinos = {d.get("destino_id"): d for d in destinos_brutos}
 
     destinos_entrada: list[dict[str, Any]] = []

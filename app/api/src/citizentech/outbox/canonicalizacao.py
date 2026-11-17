@@ -3,7 +3,7 @@
 import math
 from typing import Any
 
-from citizentech.leituras.esquemas import _parsear_data_iso
+from citizentech.leituras.esquemas import parsear_data_iso
 
 
 def normalizar_para_comparacao(dados: dict[str, Any]) -> dict[str, Any]:
@@ -71,8 +71,8 @@ def comparar_payloads_identicos(existente: dict[str, Any], novo: dict[str, Any])
         medido_novo = novo.get("medido_em")
         medido_existente = existente.get("medido_em")
         try:
-            iso_novo = _parsear_data_iso(medido_novo)
-            iso_existente = _parsear_data_iso(medido_existente)
+            iso_novo = parsear_data_iso(medido_novo)
+            iso_existente = parsear_data_iso(medido_existente)
             if iso_novo != iso_existente:
                 return False
         except Exception:

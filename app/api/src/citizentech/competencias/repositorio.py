@@ -9,23 +9,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from citizentech.banco.conexao import ErroBancoIndisponivel, obter_conexao
+from citizentech.banco.util import iso_utc
 from citizentech.curriculo.redacao import redigir_pii
 from citizentech.curriculo.repositorio import obter_cliente_mongo
 
 logger = logging.getLogger("citizentech.competencias")
-
-
-def _formatar_iso_utc(dt: Any) -> str | None:
-    """Garante formatacao UTC ISO-8601 com sufixo 'Z'."""
-    if dt is None:
-        return None
-    if isinstance(dt, datetime):
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=UTC)
-        else:
-            dt = dt.astimezone(UTC)
-        return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    return str(dt)
 
 
 def contar_extracoes_24h(usuario_id: str) -> int:
@@ -158,8 +146,8 @@ def salvar_candidatas_extracao(
                             "revisao": "pendente",
                             "curriculo_id": curriculo_id,
                             "extracao_id": extracao_id,
-                            "criado_em": _formatar_iso_utc(agora),
-                            "atualizado_em": _formatar_iso_utc(agora),
+                            "criado_em": iso_utc(agora),
+                            "atualizado_em": iso_utc(agora),
                         }
                     )
             conexao.commit()
@@ -202,8 +190,8 @@ def listar_competencias_usuario(
                             "revisao": row[5],
                             "curriculo_id": row[6],
                             "extracao_id": row[7],
-                            "criado_em": _formatar_iso_utc(row[8]),
-                            "atualizado_em": _formatar_iso_utc(row[9]),
+                            "criado_em": iso_utc(row[8]),
+                            "atualizado_em": iso_utc(row[9]),
                         }
                     )
     except oracledb.Error as err:
@@ -300,8 +288,8 @@ def atualizar_competencia(
                     "revisao": row[5],
                     "curriculo_id": row[6],
                     "extracao_id": row[7],
-                    "criado_em": _formatar_iso_utc(row[8]),
-                    "atualizado_em": _formatar_iso_utc(row[9]),
+                    "criado_em": iso_utc(row[8]),
+                    "atualizado_em": iso_utc(row[9]),
                 }
             conexao.commit()
             return resultado

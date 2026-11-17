@@ -12,63 +12,11 @@ Saída 0 se todos os resultados baterem com o esperado; 1 caso contrário.
 from __future__ import annotations
 
 import argparse
-import json
 import secrets
 import sys
-import urllib.error
-import urllib.request
 from datetime import UTC, datetime
 
-
-class Sessao:
-    """Guarda os cookies da sessão como cabeçalho explícito (a API emite cookies Secure)."""
-
-    def __init__(self) -> None:
-        self.cookies: dict[str, str] = {}
-
-    def cabecalho(self) -> str:
-        return "; ".join(f"{k}={v}" for k, v in self.cookies.items())
-
-
-def requisitar(
-    base: str,
-    metodo: str,
-    caminho: str,
-    corpo=None,
-    sessao: Sessao | None = None,
-    csrf: bool = False,
-    cabecalhos: dict | None = None,
-):
-    dados = json.dumps(corpo).encode("utf-8") if corpo is not None else None
-    h = {"Content-Type": "application/json"} if dados is not None else {}
-    if sessao and sessao.cookies:
-        h["Cookie"] = sessao.cabecalho()
-    if csrf and sessao and "csrf_token" in sessao.cookies:
-        h["X-CSRF-Token"] = sessao.cookies["csrf_token"]
-    h.update(cabecalhos or {})
-    req = urllib.request.Request(base + caminho, data=dados, headers=h, method=metodo)
-    try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            status, texto, set_cookies = (
-                r.status,
-                r.read().decode("utf-8"),
-                r.headers.get_all("Set-Cookie") or [],
-            )
-    except urllib.error.HTTPError as e:
-        status, texto, set_cookies = (
-            e.code,
-            e.read().decode("utf-8"),
-            e.headers.get_all("Set-Cookie") or [],
-        )
-    if sessao is not None:
-        for linha in set_cookies:
-            nome, _, resto = linha.partition("=")
-            sessao.cookies[nome.strip()] = resto.split(";", 1)[0]
-    try:
-        corpo_resp = json.loads(texto) if texto else None
-    except json.JSONDecodeError:
-        corpo_resp = texto
-    return status, corpo_resp, set_cookies
+from _comum import Sessao, requisitar
 
 
 def main(argv: list[str] | None = None) -> int:
