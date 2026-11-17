@@ -1,8 +1,9 @@
+import {MOTIVOS_REQUISITO} from '../dominio/rotulos';
+
 export const TEXTOS_JORNADA = {
   titulo: 'Minha transição',
   personaDemo: 'Persona de demonstração',
   sair: 'Sair',
-  sessaoExpirada: 'Sua sessão foi encerrada. Entre novamente para continuar.',
 
   etapas: {
     consentimentos: 'Consentimentos',
@@ -50,7 +51,6 @@ export const TEXTOS_JORNADA = {
     },
     ativoDesde: (data: string) => `Ativo desde ${data}`,
     naoConcedido: 'Não concedido',
-    revogadoEm: (data: string) => `Revogado em ${data}`,
     conceder: 'Conceder',
     revogar: 'Revogar',
     avancarCurriculo: 'Continuar para a intenção',
@@ -77,7 +77,6 @@ export const TEXTOS_JORNADA = {
       'Revise o texto abaixo. A ocultação automática de contatos e identificadores é parcial: apague o que ainda identificar você antes de confirmar.',
     confirmarEnvio: 'Confirmar e liberar para sugestões',
     sugerirCompetencias: 'Sugerir competências',
-    sugerindo: 'Gerando sugestões...',
     limiteSugestoesAtingido: 'Limite de 5 sugestões em 24 horas atingido.',
     servicoIndisponivel:
       'O serviço de sugestões está indisponível agora; seu texto continua salvo e você pode tentar mais tarde.',
@@ -105,10 +104,6 @@ export const TEXTOS_JORNADA = {
       editarTrecho: 'Editar trecho',
       salvar: 'Salvar confirmação',
       cancelar: 'Cancelar',
-    },
-    explicacoes: {
-      rejeitar: 'A sugestão não corresponde ao texto do currículo.',
-      naoPossuo: 'Você afirma que não possui esta competência.',
     },
     descartadasNota: (qtd: number) =>
       qtd === 1
@@ -208,12 +203,7 @@ export const TEXTOS_JORNADA = {
       titulo: 'Lista de requisitos por estado',
       obrigatorio: 'obrigatório',
       avisoConflito: 'informações conflitantes; revise suas competências',
-      motivos: {
-        sem_informacao_suficiente: 'sem informação suficiente',
-        ausencia_informada_pelo_usuario: 'você informou que não possui',
-        exercicio_abaixo_do_minimo: 'exercício abaixo do mínimo',
-        avaliacao_parcial_llm_indisponivel: 'avaliação parcial (IA indisponível)',
-      },
+      motivos: MOTIVOS_REQUISITO,
     },
     mercado: {
       titulo: 'Mercado formal observado',
@@ -242,7 +232,6 @@ export const TEXTOS_JORNADA = {
 
   plano: {
     titulo: 'Plano de desenvolvimento',
-    subtitulo: 'Plano com checkpoints para orientar seus passos de preparação.',
     vazioTitulo: 'Nenhum plano ativo',
     vazioDescricao:
       'Escolha um destino na comparação para gerar seu plano inicial com checkpoints.',
@@ -310,7 +299,6 @@ export const TEXTOS_JORNADA = {
     respostaIncorreta: 'Incorreta',
     trechoCitacao: 'Trecho da resposta:',
     notaExercicio: (nota: number) => `Nota do exercício: ${nota}`,
-    notaObjetivaRotulo: (nota: number) => `Nota objetiva: ${nota}`,
     notaLlmRotulo: (nota: number) => `Nota aberta: ${nota}`,
     conceito: {
       demonstrada: 'Demonstrada (básico)',
@@ -383,13 +371,6 @@ export const TEXTOS_JORNADA = {
       critico: 'Crítico',
     },
     indicadoresTitulo: 'Indicadores de telemetria',
-    indicadorItem: {
-      contagem: 'Total de leituras',
-      alertas: 'Alertas',
-      media: 'Média',
-      minimo: 'Mínimo',
-      maximo: 'Máximo',
-    },
     relatoTitulo: 'Relato de observação',
     rotuloRelato: 'Relato de observação da bancada',
     placeholderRelato:
@@ -402,8 +383,6 @@ export const TEXTOS_JORNADA = {
       pendente: 'será enviado com a próxima leitura',
       enviado: 'Enviado',
     },
-    sessaoEncerradaOuExpirada:
-      'A sessão está encerrada ou expirada. Abra uma nova sessão para continuar.',
   },
 };
 

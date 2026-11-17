@@ -7,7 +7,7 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
 import {listarTentativas} from '../api/avaliacao';
-import {ErroApi} from '../api/cliente';
+import {ErroApi, mensagemDeErro} from '../api/cliente';
 import {
   atualizarStatusCheckpoint,
   CheckpointPlano,
@@ -16,8 +16,10 @@ import {
   StatusCheckpoint,
 } from '../api/plano';
 import {TEXTOS_JORNADA} from './textos';
+import {traduzirMotivo} from '../dominio/rotulos';
 
 export interface TelaPlanoProps {
+  plano?: RespostaCaminho | null;
   planoInicial?: RespostaCaminho | null;
   onPlanoAtualizado?: (caminho: RespostaCaminho) => void;
   onIrParaComparacao?: () => void;
@@ -25,73 +27,59 @@ export interface TelaPlanoProps {
   onIrParaLaboratorio?: () => void;
 }
 
-function traduzirMotivo(motivo: string | null | undefined): string | null {
-  if (!motivo) return null;
-  const dicionario: Record<string, string> =
-    TEXTOS_JORNADA.comparacao.requisitos.motivos;
-  return dicionario[motivo] || motivo;
-}
-
 export function TelaPlano({
+  plano: planoProp,
   planoInicial,
   onPlanoAtualizado,
   onIrParaComparacao,
   onFazerExercicio,
   onIrParaLaboratorio,
 }: TelaPlanoProps) {
-  const [caminho, setCaminho] = useState<RespostaCaminho | null>(
-    planoInicial || null
-  );
-  const [carregando, setCarregando] = useState(!planoInicial);
+  const planoRecebido = planoProp !== undefined ? planoProp : planoInicial;
+  const isControlado = planoRecebido !== undefined;
+
+  const [planoLocal, setPlanoLocal] = useState<RespostaCaminho | null>(null);
+  const [carregandoLocal, setCarregandoLocal] = useState(!isControlado);
   const [erro, setErro] = useState<string | null>(null);
   const [atualizandoCpId, setAtualizandoCpId] = useState<string | null>(null);
   const [ultimaTentativa, setUltimaTentativa] = useState<string | null>(null);
 
+  const caminho = isControlado ? planoRecebido : planoLocal;
+  const carregando = isControlado ? false : carregandoLocal;
+
   useEffect(() => {
     let cancelado = false;
 
-    if (!planoInicial) {
-      setCarregando(true);
+    if (!isControlado) {
+      setCarregandoLocal(true);
       setErro(null);
 
       obterPlano()
         .then((resp) => {
           if (!cancelado) {
-            setCaminho(resp);
+            setPlanoLocal(resp);
           }
         })
         .catch((err: unknown) => {
           if (!cancelado) {
             if (err instanceof ErroApi && err.status === 404) {
-              setCaminho(null);
-            } else if (err instanceof ErroApi) {
-              setErro(err.detalhes || err.erro);
-            } else if (err instanceof Error) {
-              setErro(err.message);
+              setPlanoLocal(null);
             } else {
-              setErro('Não foi possível carregar o plano.');
+              setErro(mensagemDeErro(err, 'Não foi possível carregar o plano.'));
             }
           }
         })
         .finally(() => {
           if (!cancelado) {
-            setCarregando(false);
+            setCarregandoLocal(false);
           }
         });
-    } else {
-      setCaminho(planoInicial);
-      setCarregando(false);
     }
 
     return () => {
       cancelado = true;
     };
-  }, [planoInicial, onPlanoAtualizado]);
-
-  // Notifica o pai após o commit do React, nunca dentro do atualizador de estado.
-  useEffect(() => {
-    if (caminho) onPlanoAtualizado?.(caminho);
-  }, [caminho, onPlanoAtualizado]);
+  }, [isControlado]);
 
   // Carrega histórico para exibir última tentativa do exercício diagnóstico
   useEffect(() => {
@@ -129,28 +117,24 @@ export function TelaPlano({
     try {
       const cpAtualizado = await atualizarStatusCheckpoint(cp.id, novoStatus);
 
-      setCaminho((anterior) => {
-        if (!anterior) return null;
-        const novosCheckpoints = anterior.plano.checkpoints.map((item) =>
+      if (caminho && caminho.plano) {
+        const novosCheckpoints = caminho.plano.checkpoints.map((item) =>
           item.id === cp.id ? cpAtualizado : item
         );
         const atualizado: RespostaCaminho = {
-          ...anterior,
+          ...caminho,
           plano: {
-            ...anterior.plano,
+            ...caminho.plano,
             checkpoints: novosCheckpoints,
           },
         };
-        return atualizado;
-      });
-    } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Erro ao atualizar checkpoint.');
+        onPlanoAtualizado?.(atualizado);
+        if (!isControlado) {
+          setPlanoLocal(atualizado);
+        }
       }
+    } catch (err: unknown) {
+      setErro(mensagemDeErro(err, 'Erro ao atualizar checkpoint.'));
     } finally {
       setAtualizandoCpId(null);
     }

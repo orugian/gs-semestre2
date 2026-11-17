@@ -5,7 +5,8 @@ import {InternationalizationProvider} from '@astryxdesign/core/i18n';
 import ptBR from '@astryxdesign/core/locales/pt-BR.generated.js';
 import {Theme} from '@astryxdesign/core/theme';
 import {neutralTheme} from '@astryxdesign/theme-neutral/built';
-import {formatarUrlNavegacao, lerEstadoUrl} from './mercado/formatacao';
+import {formatarUrlNavegacao, lerEstadoUrl} from './mercado/navegacao';
+import {DESTINO_PADRAO, UF_PADRAO} from './dominio/listas';
 import {TelaMercado} from './mercado/TelaMercado';
 import {PainelTecnico} from './mercado/PainelTecnico';
 import {AreaJornada} from './jornada/AreaJornada';
@@ -16,7 +17,7 @@ export default function App() {
     if (typeof window !== 'undefined') {
       return lerEstadoUrl(window.location.search, window.location.hash);
     }
-    return {aba: 'mercado' as const, destino: 'analista_dados_bi', uf: 'SP'};
+    return {aba: 'mercado' as const, destino: DESTINO_PADRAO, uf: UF_PADRAO};
   });
 
   const [aba, setAba] = useState<string>(inicial.aba);

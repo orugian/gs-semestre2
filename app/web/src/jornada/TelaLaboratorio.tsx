@@ -7,7 +7,7 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
 import {TextArea} from '@astryxdesign/core/TextArea';
-import {ErroApi} from '../api/cliente';
+import {ErroApi, mensagemDeErro} from '../api/cliente';
 import {
   criarSessaoLaboratorio,
   DetalheSessaoLaboratorio,
@@ -17,6 +17,8 @@ import {
   SessaoLaboratorio,
 } from '../api/laboratorio';
 import {formatarDataHora, TEXTOS_JORNADA} from './textos';
+import {BloqueioConsentimento} from './BloqueioConsentimento';
+import {traduzirEstadoNuvem} from '../dominio/rotulos';
 
 export interface TelaLaboratorioProps {
   onIrParaConsentimentos?: () => void;
@@ -64,15 +66,13 @@ export function TelaLaboratorio({
       })
       .catch((err: unknown) => {
         if (!cancelado) {
-          if (err instanceof ErroApi) {
-            if (err.status === 403) {
-              setErro403(true);
-            } else if (err.status === 404) {
-              // Sem sessão ativa no momento - normal
-              setSessao(null);
-            } else {
-              setErro(err.detalhes || err.erro);
-            }
+          if (err instanceof ErroApi && err.status === 403) {
+            setErro403(true);
+          } else if (err instanceof ErroApi && err.status === 404) {
+            // Sem sessão ativa no momento - normal
+            setSessao(null);
+          } else {
+            setErro(mensagemDeErro(err, 'Erro ao carregar o laboratório.'));
           }
         }
       })
@@ -127,16 +127,10 @@ export function TelaLaboratorio({
         // Usa objeto criado inicial
       }
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        if (err.status === 403) {
-          setErro403(true);
-        } else {
-          setErro(err.detalhes || err.erro);
-        }
-      } else if (err instanceof Error) {
-        setErro(err.message);
+      if (err instanceof ErroApi && err.status === 403) {
+        setErro403(true);
       } else {
-        setErro('Erro ao abrir sessão de laboratório.');
+        setErro(mensagemDeErro(err, 'Erro ao abrir sessão de laboratório.'));
       }
     } finally {
       setAbrindoSessao(false);
@@ -156,13 +150,7 @@ export function TelaLaboratorio({
         setRelatoRegistrado(detalhes.relato);
       }
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Erro ao atualizar leituras.');
-      }
+      setErro(mensagemDeErro(err, 'Erro ao atualizar leituras.'));
     } finally {
       setAtualizandoLeituras(false);
     }
@@ -194,20 +182,14 @@ export function TelaLaboratorio({
       setRelatoRegistrado(resp);
       setTextoRelato('');
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        if (err.status === 409) {
-          setErro(
-            'Sessão encerrada/expirada ou relato já enviado anteriormente.'
-          );
-        } else if (err.status === 403) {
-          setErro403(true);
-        } else {
-          setErro(err.detalhes || err.erro);
-        }
-      } else if (err instanceof Error) {
-        setErro(err.message);
+      if (err instanceof ErroApi && err.status === 409) {
+        setErro(
+          'Sessão encerrada/expirada ou relato já enviado anteriormente.'
+        );
+      } else if (err instanceof ErroApi && err.status === 403) {
+        setErro403(true);
       } else {
-        setErro('Erro ao enviar relato.');
+        setErro(mensagemDeErro(err, 'Erro ao enviar relato.'));
       }
     } finally {
       setEnviandoRelato(false);
@@ -224,23 +206,12 @@ export function TelaLaboratorio({
 
   if (erro403) {
     return (
-      <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
-        <Banner
-          status="warning"
-          title="Autorização necessária"
-          description={TEXTOS_JORNADA.laboratorio.bloqueioConsentimento}
-        />
-        {onIrParaConsentimentos && (
-          <div className="flex justify-start">
-            <Button
-              type="button"
-              variant="primary"
-              label={TEXTOS_JORNADA.laboratorio.irParaConsentimentos}
-              onClick={onIrParaConsentimentos}
-            />
-          </div>
-        )}
-      </div>
+      <BloqueioConsentimento
+        className="flex flex-col gap-6 w-full max-w-5xl mx-auto"
+        descricao={TEXTOS_JORNADA.laboratorio.bloqueioConsentimento}
+        onIrParaConsentimentos={onIrParaConsentimentos}
+        rotuloBotao={TEXTOS_JORNADA.laboratorio.irParaConsentimentos}
+      />
     );
   }
 
@@ -484,7 +455,7 @@ export function TelaLaboratorio({
                             />
                           </td>
                           <td className="p-3">
-                            <Text type="supporting">{({pendente_nuvem: 'aguardando envio', sincronizado: 'enviado à nuvem', erro_permanente: 'não enviado'} as Record<string, string>)[leitura.estado] ?? leitura.estado}</Text>
+                            <Text type="supporting">{traduzirEstadoNuvem(leitura.estado)}</Text>
                           </td>
                         </tr>
                       );

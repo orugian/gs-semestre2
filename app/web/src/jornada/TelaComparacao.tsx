@@ -6,7 +6,7 @@ import {Dialog} from '@astryxdesign/core/Dialog';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
-import {ErroApi} from '../api/cliente';
+import {mensagemDeErro} from '../api/cliente';
 import {
   criarComparacao,
   DestinoResumo,
@@ -14,20 +14,18 @@ import {
   RespostaComparacao,
 } from '../api/comparacao';
 import {obterIntencao} from '../api/intencao';
-import {UFS_BRASIL} from '../api/mercado';
+import {UFS_BRASIL} from '../dominio/listas';
 import {criarCaminho, RespostaCaminho} from '../api/plano';
 import {CartaoDestino} from './CartaoDestino';
 import {TEXTOS_JORNADA} from './textos';
 
 export interface TelaComparacaoProps {
-  onNovaComparacao?: () => void;
   planoAtivo?: RespostaCaminho | null;
   onDestinoEscolhido?: (caminho: RespostaCaminho) => void;
   onIrParaPlano?: () => void;
 }
 
 export function TelaComparacao({
-  onNovaComparacao,
   planoAtivo,
   onDestinoEscolhido,
   onIrParaPlano,
@@ -66,13 +64,7 @@ export function TelaComparacao({
       })
       .catch((err: unknown) => {
         if (!cancelado) {
-          if (err instanceof ErroApi) {
-            setErro(err.detalhes || err.erro);
-          } else if (err instanceof Error) {
-            setErro(err.message);
-          } else {
-            setErro('Não foi possível carregar os destinos.');
-          }
+          setErro(mensagemDeErro(err, 'Não foi possível carregar os destinos.'));
         }
       })
       .finally(() => {
@@ -116,13 +108,7 @@ export function TelaComparacao({
       });
       setResultado(resp);
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro || 'Erro ao comparar destinos.');
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Erro inesperado ao comparar destinos.');
-      }
+      setErro(mensagemDeErro(err, 'Erro inesperado ao comparar destinos.'));
     } finally {
       setComparando(false);
     }
@@ -148,13 +134,7 @@ export function TelaComparacao({
       onDestinoEscolhido?.(resp);
       onIrParaPlano?.();
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Erro ao escolher destino.');
-      }
+      setErro(mensagemDeErro(err, 'Erro ao escolher destino.'));
     } finally {
       setEscolhendoDestinoId(null);
       setDestinoParaConfirmar(null);
@@ -165,7 +145,6 @@ export function TelaComparacao({
     setResultado(null);
     setAvisoSelecao(null);
     setErro(null);
-    onNovaComparacao?.();
   };
 
   if (carregandoInicial) {

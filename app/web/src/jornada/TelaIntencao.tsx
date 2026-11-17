@@ -5,10 +5,11 @@ import {Card} from '@astryxdesign/core/Card';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
-import {ErroApi} from '../api/cliente';
+import {ErroApi, mensagemDeErro} from '../api/cliente';
 import {IntencaoResposta, obterIntencao, salvarIntencao} from '../api/intencao';
-import {UFS_BRASIL} from '../api/mercado';
+import {UFS_BRASIL} from '../dominio/listas';
 import {formatarDataHora, TEXTOS_JORNADA} from './textos';
+import {BloqueioConsentimento} from './BloqueioConsentimento';
 
 export interface TelaIntencaoProps {
   onAvancar?: () => void;
@@ -226,17 +227,11 @@ export function TelaIntencao({
         TEXTOS_JORNADA.intencao.salvoEm(formatarDataHora(resp.atualizado_em))
       );
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        if (err.status === 403) {
-          setErroConsentimento(true);
-          setErro(err.detalhes || TEXTOS_JORNADA.intencao.bloqueioPerfil);
-        } else {
-          setErro(err.detalhes || err.erro || 'Erro ao salvar intenção.');
-        }
-      } else if (err instanceof Error) {
-        setErro(err.message);
+      if (err instanceof ErroApi && err.status === 403) {
+        setErroConsentimento(true);
+        setErro(err.detalhes || TEXTOS_JORNADA.intencao.bloqueioPerfil);
       } else {
-        setErro('Erro inesperado ao salvar intenção.');
+        setErro(mensagemDeErro(err, 'Erro ao salvar intenção.'));
       }
     } finally {
       setSalvando(false);
@@ -271,22 +266,24 @@ export function TelaIntencao({
       )}
 
       {erro && (
-        <div role="alert" aria-live="polite" className="flex flex-col gap-3">
-          <Banner
-            status={erroConsentimento ? 'warning' : 'error'}
-            title={erroConsentimento ? 'Autorização necessária' : 'Atenção'}
-            description={erro}
+        erroConsentimento ? (
+          <BloqueioConsentimento
+            role="alert"
+            aria-live="polite"
+            className="flex flex-col gap-3"
+            descricao={erro}
+            onIrParaConsentimentos={onIrParaConsentimentos}
+            rotuloBotao={TEXTOS_JORNADA.intencao.irParaConsentimentos}
           />
-          {erroConsentimento && onIrParaConsentimentos && (
-            <div className="flex justify-start">
-              <Button
-                label={TEXTOS_JORNADA.intencao.irParaConsentimentos}
-                variant="primary"
-                onClick={onIrParaConsentimentos}
-              />
-            </div>
-          )}
-        </div>
+        ) : (
+          <div role="alert" aria-live="polite" className="flex flex-col gap-3">
+            <Banner
+              status="error"
+              title="Atenção"
+              description={erro}
+            />
+          </div>
+        )
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">

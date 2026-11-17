@@ -121,7 +121,3 @@ export async function criarComparacao(
 ): Promise<RespostaComparacao> {
   return requisitar<RespostaComparacao>('POST', '/me/comparacoes', entrada);
 }
-
-export async function obterComparacao(id: string): Promise<RespostaComparacao> {
-  return requisitar<RespostaComparacao>('GET', `/me/comparacoes/${id}`);
-}

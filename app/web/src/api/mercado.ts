@@ -1,6 +1,7 @@
 /**
  * Cliente HTTP e contratos de tipo para o módulo de mercado e painel técnico R06.
  */
+import { requisitar, ErroApi } from './cliente';
 
 export interface ReferenciaTemporal {
   inicio: string;
@@ -163,97 +164,46 @@ export interface RespostaModelos {
   avisos: string[];
 }
 
-export class ApiError extends Error {
-  status: number;
-  detalhes?: string;
-
-  constructor(status: number, message: string, detalhes?: string) {
-    super(message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.detalhes = detalhes;
+async function requisitarMercado<T>(caminho: string, contexto: string): Promise<T> {
+  try {
+    return await requisitar<T>('GET', caminho);
+  } catch (err) {
+    if (err instanceof ErroApi) {
+      if (err.status === 503) {
+        throw new ErroApi(
+          503,
+          'Dados de mercado indisponíveis no momento',
+          'Dados de mercado indisponíveis no momento'
+        );
+      }
+      if (!err.detalhes) {
+        throw new ErroApi(
+          err.status,
+          err.erro,
+          `Erro ${err.status} ao consultar ${contexto}`
+        );
+      }
+    }
+    throw err;
   }
-}
-
-export const DESTINOS_MVP = [
-  {
-    value: 'analista_dados_bi',
-    label: 'Analista de Dados/BI',
-  },
-  {
-    value: 'analista_monitoramento_iot',
-    label: 'Analista de Monitoramento/IoT Industrial',
-  },
-  {
-    value: 'analista_processos',
-    label: 'Analista de Processos/Melhoria Contínua',
-  },
-] as const;
-
-export const UFS_BRASIL = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
-  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
-] as const;
-
-export function obterApiBase(): string {
-  return import.meta.env.VITE_API_URL ?? '/api';
 }
 
 export async function buscarMercado(
   destino: string,
   uf: string
 ): Promise<RespostaMercado> {
-  const base = obterApiBase();
-  const url = `${base}/mercado/${destino}?uf=${uf}`;
-  const resposta = await fetch(url);
-
-  if (!resposta.ok) {
-    if (resposta.status === 503) {
-      throw new ApiError(503, 'Dados de mercado indisponíveis no momento');
-    }
-    let detalhes: string | undefined;
-    try {
-      const corpo = (await resposta.json()) as { erro?: string; detalhes?: string };
-      detalhes = corpo.detalhes ?? corpo.erro;
-    } catch {
-      // Ignora erro de JSON
-    }
-    throw new ApiError(
-      resposta.status,
-      detalhes ?? `Erro ${resposta.status} ao consultar mercado`,
-      detalhes
-    );
-  }
-
-  return (await resposta.json()) as RespostaMercado;
+  return requisitarMercado<RespostaMercado>(
+    `/mercado/${destino}?uf=${uf}`,
+    'mercado'
+  );
 }
 
 export async function buscarModelos(
   destino: string,
   uf: string
 ): Promise<RespostaModelos> {
-  const base = obterApiBase();
-  const url = `${base}/mercado/${destino}/modelos?uf=${uf}`;
-  const resposta = await fetch(url);
-
-  if (!resposta.ok) {
-    if (resposta.status === 503) {
-      throw new ApiError(503, 'Dados de mercado indisponíveis no momento');
-    }
-    let detalhes: string | undefined;
-    try {
-      const corpo = (await resposta.json()) as { erro?: string; detalhes?: string };
-      detalhes = corpo.detalhes ?? corpo.erro;
-    } catch {
-      // Ignora erro de JSON
-    }
-    throw new ApiError(
-      resposta.status,
-      detalhes ?? `Erro ${resposta.status} ao consultar modelos`,
-      detalhes
-    );
-  }
-
-  return (await resposta.json()) as RespostaModelos;
+  return requisitarMercado<RespostaModelos>(
+    `/mercado/${destino}/modelos?uf=${uf}`,
+    'modelos'
+  );
 }

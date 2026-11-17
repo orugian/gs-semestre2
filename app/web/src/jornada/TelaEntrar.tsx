@@ -5,16 +5,15 @@ import {Card} from '@astryxdesign/core/Card';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {TextInput} from '@astryxdesign/core/TextInput';
-import {ErroApi} from '../api/cliente';
+import {mensagemDeErro} from '../api/cliente';
 import {entrar, obterMe, registrar, Usuario} from '../api/conta';
 import {TEXTOS_JORNADA} from './textos';
 
 export interface TelaEntrarProps {
   onLoginSucesso: (usuario: Usuario) => void;
-  avisoSessao?: string | null;
 }
 
-export function TelaEntrar({onLoginSucesso, avisoSessao}: TelaEntrarProps) {
+export function TelaEntrar({onLoginSucesso}: TelaEntrarProps) {
   const [modo, setModo] = useState<'entrar' | 'criar'>('entrar');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -45,13 +44,7 @@ export function TelaEntrar({onLoginSucesso, avisoSessao}: TelaEntrarProps) {
       const usuario = await obterMe();
       onLoginSucesso(usuario);
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setMensagemErro(err.detalhes || err.erro || TEXTOS_JORNADA.auth.erroGenericoLogin);
-      } else if (err instanceof Error) {
-        setMensagemErro(err.message);
-      } else {
-        setMensagemErro(TEXTOS_JORNADA.auth.erroGenericoLogin);
-      }
+      setMensagemErro(mensagemDeErro(err, TEXTOS_JORNADA.auth.erroGenericoLogin));
     } finally {
       setCarregando(false);
     }
@@ -78,14 +71,6 @@ export function TelaEntrar({onLoginSucesso, avisoSessao}: TelaEntrarProps) {
                 : 'Cadastre-se para iniciar o mapeamento de competências com privacidade.'}
             </Text>
           </header>
-
-          {avisoSessao && (
-            <Banner
-              status="warning"
-              title="Aviso de sessão"
-              description={avisoSessao}
-            />
-          )}
 
           {mensagemErro && (
             <div role="alert" aria-live="polite">

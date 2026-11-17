@@ -6,7 +6,7 @@ import {Card} from '@astryxdesign/core/Card';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
-import {ErroApi} from '../api/cliente';
+import {mensagemDeErro} from '../api/cliente';
 import {
   concederConsentimento,
   Consentimento,
@@ -18,7 +18,6 @@ import {formatarDataHora, TEXTOS_JORNADA} from './textos';
 
 export interface TelaConsentimentosProps {
   onAvancar?: () => void;
-  onConsentimentoMudou?: () => void;
 }
 
 interface ItemFinalidade {
@@ -50,7 +49,6 @@ const FINALIDADES: ItemFinalidade[] = [
 
 export function TelaConsentimentos({
   onAvancar,
-  onConsentimentoMudou,
 }: TelaConsentimentosProps) {
   const [consentimentos, setConsentimentos] = useState<Consentimento[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -64,13 +62,7 @@ export function TelaConsentimentos({
       const resp = await listarConsentimentos();
       setConsentimentos(resp.itens || []);
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Não foi possível carregar as autorizações.');
-      }
+      setErro(mensagemDeErro(err, 'Não foi possível carregar as autorizações.'));
     } finally {
       setCarregando(false);
     }
@@ -95,13 +87,8 @@ export function TelaConsentimentos({
       setErro(null);
       await concederConsentimento(finalidade);
       await carregarConsentimentos();
-      onConsentimentoMudou?.();
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      }
+      setErro(mensagemDeErro(err, 'Erro ao conceder autorização.'));
     } finally {
       setProcessandoChave(null);
     }
@@ -113,13 +100,8 @@ export function TelaConsentimentos({
       setErro(null);
       await revogarConsentimento(consentimentoId);
       await carregarConsentimentos();
-      onConsentimentoMudou?.();
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      }
+      setErro(mensagemDeErro(err, 'Erro ao revogar autorização.'));
     } finally {
       setProcessandoChave(null);
     }
