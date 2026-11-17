@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-11-17T02:53:47Z",
+  "gerado_em": "2026-11-17T06:50:21Z",
   "itens": [
     {
       "destino": "01_AICSS/firmware/README.md",
       "origem": "app/iot/firmware/README.md",
-      "sha256": "ed25a5bbc6e11a491103a70b56803140aec2b39286e88879b4ceedc81a2efd9a",
+      "sha256": "5f3220cc6be483bd7147ccef645d0f6d1534a0e8b3abacfef4fcf46f3e51d41d",
       "paginas": null,
-      "estado": "inalterado"
+      "estado": "atualizado"
     },
     {
       "destino": "01_AICSS/firmware/diagram.json",
@@ -293,7 +293,7 @@
       "origem": "app/ml/src/citizentech_ml/estatistica/analise_portatil.py",
       "sha256": "e0ed44e80decea62a53595c4c0da15fad97ff682a9a9e122f3c598cc99591ac2",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
       "destino": "08_Estatistica/base_municipal.csv",

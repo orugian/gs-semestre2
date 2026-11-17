@@ -1,0 +1,56 @@
+[
+  {
+    "cenario": "normal",
+    "simulado": true,
+    "temperatura_ajustada": 25,
+    "distancia_ajustada": 25,
+    "tempo_captura_simulacao": "00:17.249",
+    "risco_api": "normal",
+    "ciclo_id": "c-640c7ca4-1",
+    "eventos": [
+      "esp32-lab-01-c-640c7ca4-1-temperatura_c",
+      "esp32-lab-01-c-640c7ca4-1-distancia_cm"
+    ],
+    "capturas": [
+      "normal_wokwi.png",
+      "normal_servidor.png"
+    ],
+    "gpio_vcd": "normal.vcd"
+  },
+  {
+    "cenario": "atencao",
+    "simulado": true,
+    "temperatura_ajustada": 38,
+    "distancia_ajustada": 12,
+    "tempo_captura_simulacao": "00:16.633",
+    "risco_api": "atencao",
+    "ciclo_id": "c-5ad285c6-1",
+    "eventos": [
+      "esp32-lab-01-c-5ad285c6-1-temperatura_c",
+      "esp32-lab-01-c-5ad285c6-1-distancia_cm"
+    ],
+    "capturas": [
+      "atencao_wokwi.png",
+      "atencao_servidor.png"
+    ],
+    "gpio_vcd": "atencao.vcd"
+  },
+  {
+    "cenario": "critico",
+    "simulado": true,
+    "temperatura_ajustada": 48,
+    "distancia_ajustada": 5,
+    "tempo_captura_simulacao": "00:17.367",
+    "risco_api": "critico",
+    "ciclo_id": "c-0ea95234-1",
+    "eventos": [
+      "esp32-lab-01-c-0ea95234-1-temperatura_c",
+      "esp32-lab-01-c-0ea95234-1-distancia_cm"
+    ],
+    "capturas": [
+      "critico_wokwi.png",
+      "critico_servidor.png"
+    ],
+    "gpio_vcd": "critico.vcd"
+  }
+]

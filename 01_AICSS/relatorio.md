@@ -125,19 +125,25 @@ esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e
 
 **Outras entradas tratadas pela API** (evidência de CTP, `04_CTP_Python/`): leitura sem `valor` → 400; `-127` enviado por engano → 400; reenvio do mesmo `evento_id` → 200 sem duplicar; mesmo `evento_id` com valor diferente → 409; sem `X-Device-Key` → 401.
 
-### 5.2 Compilação ESP32 verificada; simulação Wokwi pendente
+### 5.2 Compilação e execução efetiva no Wokwi
 
-**Compilação executada em 16/11/2026.** Arduino CLI 1.6.0, core ESP32 3.0.7, OneWire 2.3.8 e DallasTemperature 4.0.6; placa `esp32:esp32:esp32`, 2 jobs. O `sketch.ino` completo compilou com **1.046.369 bytes de programa (79%)** e **47.188 bytes de variáveis globais (14%)**, exit 0. A compilação inicial revelou incompatibilidade de ponteiro const com `HTTPClient::POST`; a correção preserva os bytes e o reenvio idempotente, usando o buffer JSON mutável já existente. Warnings externos da OneWire foram mantidos. Toolchain portátil fora do repositório, sem instalação global; somente o exemplo sem credenciais reais foi compilado. Evidência: `evidencias/20261116_compilacao_esp32.txt`; reprodução em `firmware/README.md` §2.1.
+**Compilação executada.** Arduino CLI1.6.0, core ESP32 3.0.7, OneWire2.3.8/DallasTemperature4.0.6, 2 jobs. Build de16/11: programa1.046.369bytes/79%, RAM47.188/14%, exit0; incompatibilidade de ponteiro em HTTPClient::POST corrigida sem alterar regras. Build da demo17/11 com URL temporária: programa1.046.385bytes/79%, mesma RAM, exit0. Warnings externos OneWire mantidos. Toolchain portátil, sem chave real. [Compilação](<evidencias/20261116_compilacao_esp32.txt>).
 
-**Limite da evidência:** compilar para ESP32 não comprova a execução dos sensores/atuadores nem o caminho Wi-Fi/HTTP. Não há WOKWI_CLI_TOKEN configurado nem novas capturas do simulador nesta sessão.
+**Execução em17/11, 03h33–03h35 (UTC−3):** binário local carregado no Wokwi web, sem token/conta pessoal. Os sensores virtuais foram realmente lidos por OneWire e TRIG/ECHO; não foram substituídos por constantes no firmware. API Python CTP isolada, base vazia e túnel HTTPS anônimo temporário: **6 POSTs201, 6 registros no CSV**, dois por cenário. [Aceite e limites](<evidencias/20261117_wokwi_aceite.md>), [CSV original](<evidencias/20261117_wokwi_leituras.csv>), [GET real do servidor](<evidencias/20261117_wokwi_critico_servidor.png>).
 
-[HUMANO — executar e anexar] A execução do `sketch.ino` no simulador Wokwi **ainda não foi feita**. Por isso, nenhuma imagem do LED ou do buzzer reagindo é apresentada neste relatório. Para cada um dos três cenários (ajustando os controles do DS18B20 e do HC-SR04 para 25/25, 38/12 e 48/5), a evidência prevista é:
+| Cenário | Ajuste °C/cm | Medido °C/cm | Classificação API | Atuadores medidos no VCD |
+|---|---|---|---|---|
+| Normal | 25/25 | 25,00/25,11 | normal/normal | LED0, buzzer0 |
+| Atenção | 38/12 | 38,00/12,07 | atencao/atencao | LED1, buzzer0 |
+| Crítico | 48/5 | 48,00/4,96 | critico/critico | LED1, PWM **1.000Hz** |
 
-- captura do circuito no Wokwi com o LED e o buzzer no estado esperado: `evidencias/wokwi_normal.png`, `wokwi_atencao.png`, `wokwi_critico.png`;
-- trecho do Serial Monitor com a linha `[Ciclo …] Temp: … [ALERTA] | Dist: … [ALERTA]` e o `POST … -> status 201`;
-- saída de `GET /leituras` com as leituras recebidas do `esp32-lab-01`.
+![Normal: LED apagado, duas leituras201 no Serial](evidencias/20261117_wokwi_normal_wokwi.png)
+![Atenção: LED aceso, buzzer inativo, duas leituras201](evidencias/20261117_wokwi_atencao_wokwi.png)
+![Crítico: LED aceso, indicador do buzzer e duas leituras201](evidencias/20261117_wokwi_critico_wokwi.png)
 
-Passo a passo em `firmware/README.md` §3 e §4 (extensão Wokwi no VS Code, com a API em `http://host.wokwi.internal:8000/leituras`).
+Analisador lógico passivo registrou GPIO2/15/4/18; [VCD e frequência verificados](<evidencias/20261117_wokwi_gpio.json>) confirmam a atuação, além da imagem. PWM do crítico teve200 subidas nos últimos200ms. Áudio acústico não foi medido. Os PNG originais em alta resolução e os três VCD acompanham o aceite.
+
+**RED não omitido:** ngrok falhou no handshake TLS (status−1, nenhum POST na API); `cpuFrequency=max` também falhou. Cloudflare HTTPS com CPU padrão aprovou os mesmos critérios, mudando só a URL da demo. Não foi provada a causa exata do encerramento TLS no servidor ngrok. Túneis e API foram encerrados. A chave era fictícia e o lote ficou `pendente_nuvem`: este ensaio **não comprova Wokwi→AWS**.
 
 <div class="quebra-pagina"></div>
 
@@ -146,19 +152,19 @@ Passo a passo em `firmware/README.md` §3 e §4 (extensão Wokwi no VS Code, com
 | Parte | Situação |
 |---|---|
 | Lógica de classificação, atuadores e JSON (`logica.h`) | **Implementada e executada** no computador (g++), mesma fonte do firmware |
-| Firmware completo (`sketch.ino`: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer) | **Implementado e compilado para ESP32**, não executado (Wokwi pendente, §5.2); não há placa física |
+| Firmware completo (`sketch.ino`: leitura dos sensores, Wi-Fi, HTTP, LED, buzzer) | **Compilado e executado no Wokwi**,3cenários até o CSV (§5.2); placa física sem sensores não foi usada |
 | Sensores e atuadores | **Simulados** no Wokwi (`wokwi-ds18b20`, `wokwi-hc-sr04`, LED, buzzer); sem bancada física |
 | Servidor Python que exibe e grava em CSV | **Implementado e executado** (API FastAPI de CTP e servidor modelo da disciplina) |
 | Envio à nuvem | **Implementado e executado** pela outbox da API até a AWS Lambda (ver `06_Cloud/README.md`) |
 
 **Limitações identificadas.**
 
-1. Sem a execução no Wokwi, a reação real do LED e do buzzer e o caminho Wi-Fi → HTTP do ESP32 não estão comprovados; o que está comprovado é a decisão que o firmware toma e o JSON que ele monta.
+1. Wokwi comprovou sensores/atuadores e Wi-Fi→HTTPS→API→CSV em simulação. A bancada física, o áudio acústico e o envio deste lote à AWS **não** foram verificados.
 2. **Falha de um só sensor não gera alerta local.** Com o DS18B20 desconectado e a distância normal (caso 8), o LED fica apagado; a falha aparece só no Serial Monitor. O padrão de LED piscando existe apenas quando os dois sensores falham.
 3. Leituras com `ERRO` não são enviadas, então o servidor não fica sabendo de um sensor com defeito.
 4. O ESP32 não guarda leituras quando o Wi-Fi cai: faz uma única nova tentativa (falha de rede, 429 ou 5xx) e descarta. A fila que não perde dados (outbox) fica no servidor, entre a API e a nuvem.
 5. O dispositivo não envia horário (não há relógio sincronizado por NTP); o `medido_em` é o horário de recebimento na API.
-6. No Wokwi, o envio é HTTP sem TLS e a `DEVICE_KEY` fica compilada no firmware (`segredos.h`, fora do Git). Aceitável para a demonstração local, não para produção.
+6. A demo web usou HTTPS e chave de exemplo compilada em configuração temporária. O overload atual do HTTPClient **não valida a CA**; transporte cifrado observado não certifica segurança de produção. Não enviar segredos/dados pessoais pelo gateway público; uso com chave real exige o projeto privado/rotação de D24 e validação TLS adequada.
 7. Numa placa física, o ECHO do HC-SR04 sai em 5 V e precisa de divisor resistivo antes do GPIO de 3,3 V do ESP32.
 
 ## 7. Código desenvolvido

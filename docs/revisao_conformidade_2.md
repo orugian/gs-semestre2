@@ -1,6 +1,6 @@
 # Revisão de conformidade nº 2 — adjudicação do orquestrador
 
-**Data:** 16/11/2026, noite. Prazo: 19/11/2026 às 23h55. **Não é aprovação final da entrega.**
+**Revisão independente:**16/11/2026, noite. **Atualização do aceite Wokwi e pacote:**17/11/2026, madrugada. Prazo:19/11/2026 às23h55. **Não é aprovação final da entrega.**
 
 Revisão independente por nova chamada `agy --mode plan --print-timeout 20m`, sem participação na autoria; exit **0 às 22h51**. Contrato e relatório bruto preservados fora do Git em [contrato](<../../.kaiser/contratos/REV-conformidade-2.md>) e [relatório](<../../.kaiser/reports/REV-conformidade-2.md>). O bruto é autorrelato não confiável: as decisões abaixo foram confrontadas com os arquivos e execuções do orquestrador. Não foram reexecutadas análises/modelos nem aberto o holdout.
 
@@ -8,7 +8,7 @@ Revisão independente por nova chamada `agy --mode plan --print-timeout 20m`, se
 
 | Disciplina | Verificado nesta sessão / evidência disponível | Falta para fechar |
 |---|---|---|
-| AICSS | Compilação ESP32 executada; lógica host e servidor têm evidências distintas; identificação no PDF de 9 páginas. [Compilação](<../01_AICSS/evidencias/20261116_compilacao_esp32.txt>) | Executar Wokwi com dois sensores/atuadores; capturar os três cenários, Serial e caminho JSON → servidor → CSV. Não confundir compilação ou harness host com simulação. O usuário solicitou que o agente faça a execução e os prints; placa física sem sensores não substitui essa tarefa. |
+| AICSS | **Atualização17/11:** agente executou Wokwi,3cenários/6HTTP201/6linhas CSV; LED0/1/1, PWM1.000Hz só no crítico comprovado por VCD; [prints/Serial/CSV](<../01_AICSS/evidencias/20261117_wokwi_aceite.md>). Relatório/PDF atualizado no pacote | Bancada física e Wokwi→AWS não foram medidos, mas não são apresentados como feitos. Demonstração com chave real exige o projeto privado/rotação de D24; este ensaio usou só chave fictícia e API isolada. |
 | Cyber | Relatório corrigido, controles implementados/propostos separados; RED/GREEN E2E e axe registrados; PDF de 12 páginas, com os três RMs. [Aceite web](<../02_Cybersecurity/evidencias/20261116_s15_e2e_aceite.md>) | Vídeo de até 5 min e link real. Detalhamento do operador/transferência internacional na tela de consentimentos permanece pendência explícita, não tela inexistente. |
 | Data Science | DDL/consultas e evidências Oracle local + Mongo já disponíveis; PDF identificado de 7 páginas | Modelo lógico e relacional exportados da ferramenta de modelagem pelo integrante, conforme D25; Mermaid não comprova execução no Data Modeler. Oracle FIAP continua fora do escopo por decisão anterior, sem alegar execução nele. |
 | CTP | Código FastAPI isolado, requisitos e evidências JSON/CSV/indicadores existentes; PDF de 8 páginas identificado | Conferência/submissão humana. Templates Flask do professor permanecem intactos, explicitamente separados da solução. |
@@ -25,7 +25,7 @@ Revisão independente por nova chamada `agy --mode plan --print-timeout 20m`, se
 | RC2-01 | **Aceito, bloqueador humano** | AIC exige vídeo para pontuar; link ausente. Não fabricar gravação ou conteúdo da live. |
 | RC2-02 | **Aceito, pendência humana** | Vídeo RNA obrigatório; vídeos ML/Cyber/Cloud também pendentes. Os limites e critérios são os dos respectivos enunciados, sem calcular nota garantida. |
 | RC2-03 | **Aceito, requisito de modelagem pendente** | Data Modeler não foi executado pelo agente; solicitar exportações ao grupo. |
-| RC2-04 | **Aceito, evidência técnica pendente** | Wokwi ainda não comprovado. A solicitação humana posterior atribuiu a execução e os prints ao agente; acesso/automação em investigação, sem declarar pronto. |
+| RC2-04 | **Aceito, fechado com execução17/11** | Wokwi3cenários até o CSV, prints reais e GPIO/VCD verificados. Ngrok e CPUmax falharam e foram registrados; túnel Cloudflare/CPU padrão passou sem alterar regras. Túneis/API encerrados; sem teste físico, sem envio desse lote à AWS. |
 | RC2-05 | **Aceito, formato de evidência Cloud** | TXT de execução/SQL não substitui as imagens exigidas. Não renderizar saída histórica como se fosse captura do console AWS. |
 | RC2-06 | **Aceito e corrigido** | Restavam referências a laboratório/consentimentos “em desenvolvimento” no §6 de Cyber e §9 de Cloud. Atualizadas para o que está integrado; Cyber regenerado novamente com limite de 15 páginas. A pendência real do texto de operador/transferência internacional foi preservada. |
 | RC2-07 | **Sem mudança AWS** | O typo `RATE_KIMIT_POR_MINUTO` no console está documentado; ausência da variável correta usa padrão 30, mesmo valor. Sugestão de renomear não foi tratada como autorização para alterar AWS. |
@@ -40,7 +40,7 @@ Revisão independente por nova chamada `agy --mode plan --print-timeout 20m`, se
 - **Regressão web:** **61 passed**, até 6 workers, typecheck/build OK; bundle principal ~918,48 kB, aviso de tamanho permanece.
 - **Ferramentas:** `uv run pytest -q` em tools → **43 passed**, incluindo 9 testes host de firmware.
 - **Firmware:** CLI/core/bibliotecas isolados, compilação real com 2 jobs → exit0, programa 1.046.369 bytes (79%), RAM global47.188 bytes (14%). Warnings externos OneWire mantidos; não foi simulado por esse comando.
-- **PDFs:** parser PyPDF executado nesta sessão: AICSS9, Cyber12, Data Science7, CTP8, ML12, Estatística21 páginas; três RMs presentes em todos, Cyber≤15. Não foi uma revisão visual completa de paginação.
+- **PDFs finais:** parser PyPDF executado após Wokwi: **AICSS10, Cyber12, Data Science7, CTP8, ML12, Estatística21** páginas; três RMs em todos, Cyber≤15. Três imagens Wokwi incorporadas em2200×1400 (páginas7/7/8), medidas25,11/12,07/4,96 presentes no texto. Não foi revisão visual completa da paginação.
 - **Notebooks:** conferida ausência de outputs de erro armazenados e identificação em fontes/cópias. Comparação com HEAD confirmou que apenas a primeira célula Markdown mudou; código, outputs e metadados restantes idênticos. **Não reexecutados**.
 - **Empacotamento:** gerar e `--verificar --dados ../.dados` → **OK**; repetir após qualquer alteração adicional de fonte/entrega.
 - **Nuvem:** health HTTP200/status=ok/banco=ok após reinício humano. Isso não comprova novamente os cenários Cloud nem sentimento.
@@ -49,4 +49,4 @@ Revisão independente por nova chamada `agy --mode plan --print-timeout 20m`, se
 
 Não promover modelos, retunar com 2025, abrir holdout 2026, mexer em S5-auth/S5-red ou apagar dados. Push somente para gs-semestre2, com gitleaks e checagem do exit code.
 
-Próximos gates: executar Wokwi e fechar AICSS com evidência real → obter imagens Cloud/Data Modeler e links de vídeo → atualizar os documentos afetados e PDFs → repetir empacotador/verificação → conferência humana e Portal. O estado operacional acompanha o trabalho em [estado](<estado.md>); este parecer não constitui entrega concluída.
+Gate Wokwi fechado em17/11 (evidência real de simulação, sem confundir com hardware físico). Próximos gates: obter imagens Cloud/Data Modeler e links de vídeo → atualizar os documentos afetados e PDFs → repetir empacotador/verificação → conferência humana e Portal. O estado operacional acompanha o trabalho em [estado](<estado.md>); este parecer não constitui entrega concluída.

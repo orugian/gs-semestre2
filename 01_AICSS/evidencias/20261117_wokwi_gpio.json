@@ -1,0 +1,35 @@
+[
+  {
+    "cenario": "normal",
+    "simulado": true,
+    "led_gpio2": "0",
+    "buzzer_gpio15_ultimo": "0",
+    "subidas_pwm_ultimos_200ms": 0,
+    "frequencia_pwm_mediana_hz": 0,
+    "duracao_capturada_s": 17.833428,
+    "transicoes_ds18b20": 17137,
+    "transicoes_echo": 5
+  },
+  {
+    "cenario": "atencao",
+    "simulado": true,
+    "led_gpio2": "1",
+    "buzzer_gpio15_ultimo": "0",
+    "subidas_pwm_ultimos_200ms": 0,
+    "frequencia_pwm_mediana_hz": 0,
+    "duracao_capturada_s": 17.150623,
+    "transicoes_ds18b20": 17137,
+    "transicoes_echo": 5
+  },
+  {
+    "cenario": "critico",
+    "simulado": true,
+    "led_gpio2": "1",
+    "buzzer_gpio15_ultimo": "0",
+    "subidas_pwm_ultimos_200ms": 200,
+    "frequencia_pwm_mediana_hz": 1000,
+    "duracao_capturada_s": 17.984056,
+    "transicoes_ds18b20": 17133,
+    "transicoes_echo": 5
+  }
+]

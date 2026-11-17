@@ -1,0 +1,37 @@
+{
+  "origem": "GET /leituras — le o CSV real da API isolada",
+  "cenario": "normal",
+  "simulado": true,
+  "leituras": [
+    {
+      "evento_id": "esp32-lab-01-c-640c7ca4-1-temperatura_c",
+      "dispositivo_id": "esp32-lab-01",
+      "sessao_laboratorio_id": "",
+      "ciclo_id": "c-640c7ca4-1",
+      "tipo_dispositivo": "esp32",
+      "metrica": "temperatura_c",
+      "unidade": "C",
+      "valor": 25,
+      "risco": "normal",
+      "alerta": false,
+      "estado": "pendente_nuvem",
+      "medido_em": "2026-11-17T06:33:59Z",
+      "criado_em": "2026-11-17T06:33:59Z"
+    },
+    {
+      "evento_id": "esp32-lab-01-c-640c7ca4-1-distancia_cm",
+      "dispositivo_id": "esp32-lab-01",
+      "sessao_laboratorio_id": "",
+      "ciclo_id": "c-640c7ca4-1",
+      "tipo_dispositivo": "esp32",
+      "metrica": "distancia_cm",
+      "unidade": "cm",
+      "valor": 25.11,
+      "risco": "normal",
+      "alerta": false,
+      "estado": "pendente_nuvem",
+      "medido_em": "2026-11-17T06:34:07Z",
+      "criado_em": "2026-11-17T06:34:07Z"
+    }
+  ]
+}

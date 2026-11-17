@@ -1,0 +1,110 @@
+{
+  "gerado_em": "2026-11-17T06:50:17.001Z",
+  "natureza": "simulacao Wokwi efetivamente executada; nao bancada fisica",
+  "cenarios": 3,
+  "http201": 6,
+  "linhas_csv": 6,
+  "firmware_demo_merged_sha256": "a8adb226c4b956e8b06f89d92e49f254e7352282e2a5a03037202317cca946a0",
+  "programa_bytes": 1046385,
+  "ram_global_bytes": 47188,
+  "fontes_iguais_ao_repositorio": {
+    "app/iot/firmware/sketch.ino": "046428ac958ef88f85a921e9b3318f21edd0ef2ff6782f495451a7486dbe4cb3",
+    "app/iot/firmware/logica.h": "919d2f76dbffe603fc881eedbd4935cb53528d847e9e9f2a67bf835b707fa3f5",
+    "app/iot/firmware/limiares.h": "b9a852b39c2e881bd5c4070ba6d160c4dcb3e263827645e8f4e39d0184d08a40",
+    "app/iot/firmware/segredos.exemplo.h": "2bd2ab6b2c54544edbcb11c317a817e0428d11d5f940fd1b8c66a49b0860b226"
+  },
+  "artefatos": {
+    "20261117_wokwi_aceite.md": {
+      "sha256": "68e4952714b6eb68f719dd6e17c099c53226300aa0ab4cbc2a0ed8f8f1f1e28d",
+      "bytes": 6438
+    },
+    "20261117_wokwi_atencao.vcd": {
+      "sha256": "1db8246c6d5a35dafa7001a67839a3243e7f337c3a9325504ec8b215d06df22e",
+      "bytes": 257470
+    },
+    "20261117_wokwi_atencao_api.json": {
+      "sha256": "67b44ffd04866773c1b733339369d699d3fa3e49bd31b6ee5235bb2c589563a1",
+      "bytes": 1053
+    },
+    "20261117_wokwi_atencao_diagram.json": {
+      "sha256": "3b8858e0a07b67c223b04a59f5dbe60e47488a574a91d718cb8141412be158da",
+      "bytes": 3023
+    },
+    "20261117_wokwi_atencao_serial.txt": {
+      "sha256": "6bd7c0e377b93b8e1d27078ed9cc429896559098de6d0474c11976f6c06def6c",
+      "bytes": 621
+    },
+    "20261117_wokwi_atencao_servidor.png": {
+      "sha256": "3a2c1fb9b9148247b2c5c3a8052f4d594143c794e5e703b3c27ec8665fe3678e",
+      "bytes": 47206
+    },
+    "20261117_wokwi_atencao_wokwi.png": {
+      "sha256": "2d422f51d521a1a70ce2f139f7e640cc0425aac1de5e9dced35d7941804e9416",
+      "bytes": 243976
+    },
+    "20261117_wokwi_critico.vcd": {
+      "sha256": "21ae29e07f7b09ee9f3c7d47e30b6cce5e2418f921377348ffcb6b64115ce081",
+      "bytes": 687078
+    },
+    "20261117_wokwi_critico_api.json": {
+      "sha256": "c49dbad73439ea29f0938365213bcf93c1a343be87759314fe68bee9b9b358a7",
+      "bytes": 1052
+    },
+    "20261117_wokwi_critico_diagram.json": {
+      "sha256": "c555db2f7948e97492d0e4d9976accf3ec9d77e5a9d34a83e51bc7a50569d768",
+      "bytes": 3022
+    },
+    "20261117_wokwi_critico_serial.txt": {
+      "sha256": "4a9684a1028fa422baa95ad0fd7638ee3f2eb75eaf5334bf63f50ea26c86c687",
+      "bytes": 620
+    },
+    "20261117_wokwi_critico_servidor.png": {
+      "sha256": "2e625dd27e50e9c66bc99c5e21c060024495df49daa1f509df020e7116bc9be2",
+      "bytes": 64170
+    },
+    "20261117_wokwi_critico_wokwi.png": {
+      "sha256": "b741a8e86df42f94133ea0e41545ef16c53291f90c43dbc6f15fef4f4ff10316",
+      "bytes": 248793
+    },
+    "20261117_wokwi_gpio.json": {
+      "sha256": "9c095a1826fae55ffa5d4898208948d79b9b24bd971c29fa950a49c0510841c1",
+      "bytes": 847
+    },
+    "20261117_wokwi_historico_api.json": {
+      "sha256": "7d0fa1c9ea55a7e76e337fa76e0498502b7a006c2dc9ced9ca7ed1033dd115b5",
+      "bytes": 2860
+    },
+    "20261117_wokwi_leituras.csv": {
+      "sha256": "0260a0ab7d5bbebac2690a58f4063761e4e519e16a1c22e246310dacca1d7915",
+      "bytes": 1125
+    },
+    "20261117_wokwi_normal.vcd": {
+      "sha256": "ddb6383e152daf45ad9df1141fd85b5fea03912ee8a979dfffbe24bb5c113c6e",
+      "bytes": 257455
+    },
+    "20261117_wokwi_normal_api.json": {
+      "sha256": "b4a9d64b960abf4b767e0e60f8ef0b01ab5f460c8868892760f12630eee6e71e",
+      "bytes": 1052
+    },
+    "20261117_wokwi_normal_diagram.json": {
+      "sha256": "8e2342134350bb9c599571ce592bf2711e7a2bc9e83c44f77375dc2643ee27d9",
+      "bytes": 3022
+    },
+    "20261117_wokwi_normal_serial.txt": {
+      "sha256": "3edf1e51cd1bfa3964a4074284623aee4339bd3c79bb6ed1afaa0ca81d2120a3",
+      "bytes": 613
+    },
+    "20261117_wokwi_normal_servidor.png": {
+      "sha256": "559b1096873a67bda910cf0ea7846511557dbc9822d29afd5b16b40259cbb686",
+      "bytes": 30221
+    },
+    "20261117_wokwi_normal_wokwi.png": {
+      "sha256": "0b0ce77e3cd0efd635003d534e16469233ebb13ea6f2392a0ae3f828408b92ef",
+      "bytes": 240488
+    },
+    "20261117_wokwi_resumo.json": {
+      "sha256": "7d59fb37f9b3b99cbaf53bf68c1282e80be4a148661490c8fb36560d1604b7b8",
+      "bytes": 1359
+    }
+  }
+}

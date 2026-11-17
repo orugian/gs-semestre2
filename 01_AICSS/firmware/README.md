@@ -66,25 +66,24 @@ if ($LASTEXITCODE -ne 0) { throw 'Compilacao ESP32 falhou' }
 
 Resultado: **1.046.369 bytes de programa (79%)**, **47.188 bytes de variáveis globais (14%)**, exit 0. A primeira compilação expôs incompatibilidade real com a assinatura mutável de `HTTPClient::POST`; corrigida usando os buffers JSON mutáveis que o sketch já possui, sem remover qualificadores por `const_cast`. Também corrigido o formato de impressão de `boot_seed`. Permanecem warnings da biblioteca externa OneWire 2.3.8; não foram silenciados. Evidência em `01_AICSS/evidencias/20261116_compilacao_esp32.txt`.
 
-**Compilar não é simular:** LED, buzzer, sensores e Wi-Fi/HTTP no Wokwi continuam não verificados sem capturas/Serial Monitor da execução.
+**Compilar não é simular.** Em17/11 a etapa seguinte foi realmente executada:3cenários Wokwi,6HTTP201,6linhas CSV e GPIO0/1/1 no LED, PWM1.000Hz só no crítico. [Aceite com imagens/Serial/VCD](<https://github.com/orugian/gs-semestre2/blob/main/01_AICSS/evidencias/20261117_wokwi_aceite.md>). Bancada física e Wokwi→AWS não foram verificados.
 
 ## 3. Execução no Simulador Wokwi
 
-### Opção A: Extensão Wokwi no VS Code (Recomendado)
+### Opção A: Extensão Wokwi no VS Code (alternativa não exercitada nesta sessão)
 1. Instale a extensão oficial do Wokwi no VS Code.
-2. Inicie a API localmente na porta 8000 (`uv run uvicorn citizentech.main:app --port 8000`).
+2. Para ensaio sem contas/nuvem, configure dados e chave exclusivos de demonstração e inicie `uv run uvicorn citizentech.leituras.isolado:app --port 8000` no componente API. Nunca exponha o app com contas reais em túnel de teste.
 3. Abra a pasta `app/iot/firmware` no VS Code.
 4. Pressione `F1` e selecione **Wokwi: Start Simulator** (ou abra `diagram.json`).
 5. A URL da API configurada como `http://host.wokwi.internal:8000/leituras` permite comunicação direta entre o simulador e o host.
 
-### Opção B: Wokwi Web (Simulador no Navegador)
-1. Quando rodando no navegador, o simulador Wokwi não possui rota local direta para `localhost`.
-2. Inicie um túnel HTTPS temporário via ngrok durante a demonstração (D24):
-   ```powershell
-   ngrok http 8000
-   ```
-3. Atualize o `API_URL` em `segredos.h` com a URL pública gerada (ex.: `https://xxxx.ngrok-free.app/leituras`).
-4. Finalizada a demonstração, encerre o processo do ngrok para revogar o acesso externo.
+### Opção B: Wokwi Web — rota efetivamente executada em17/11
+1. Use somente API CTP isolada com dados sintéticos/chave **de exemplo**. O gateway público não acessa localhost e monitora tráfego; não lhe envie dados pessoais ou credenciais reais. Uso com chave real continua sujeito ao projeto privado/rotação de D24.
+2. Abra túnel HTTPS **temporário**, apenas para essa API, com timer de até15min. Ngrok chegou a responder200 ao host mas falhou TLS no ESP emulado; Cloudflare Quick Tunnel anônimo, cliente portátil2026.11.0, funcionou. Não alterar CPU/limiares para esconder a falha.
+3. Configure API_URL como a URL HTTPS efêmera seguida de `/leituras`, em header temporário fora do Git; compile a cópia com2jobs (§2.1). O build aceito usou1.046.385bytes/79%, RAM47.188/14%. Não publique o header nem inclua `teste_logica.cpp`.
+4. Abra o [template oficial de firmware customizado](https://wokwi.com/projects/305457271083631168), carregue o diagrama do grupo e, no editor, F1 → **Upload Firmware and Start Simulation…**; selecione o `.merged.bin` compilado. O comando legado **Load HEX** ficou sem efeito nesta verificação. Não é preciso token de CI para esse caminho. A edição foi local/efêmera, sem salvar ou publicar um projeto.
+5. Ajuste os sensores pelos controles ou por atributos iniciais do diagrama (§4); confira Serial,6HTTP201 e6registros no CSV. Analisador lógico adicional passivo em GPIO2/15/4/18 permitiu baixar VCD ao parar cada simulação e confirmar LED e PWM1.000Hz. Isso não substitui teste físico nem gravação acústica.
+6. Feche o simulador, túnel **e API de ensaio** ao terminar. O lote desta execução ficou `pendente_nuvem`; não foi enviado à Lambda/RDS. No overload HTTPS usado pelo protótipo não há validação da CA, portanto não trate a demo como segurança de produção.
 
 ---
 

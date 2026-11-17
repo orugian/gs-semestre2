@@ -1,0 +1,210 @@
+{
+  "version": 1,
+  "author": "CitizenTech GS 2026.2",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-ds18b20",
+      "id": "temp1",
+      "top": -140,
+      "left": -120,
+      "attrs": {
+        "temperature": "48"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_pullup",
+      "top": -70,
+      "left": -70,
+      "rotate": 90,
+      "attrs": {
+        "value": "4700"
+      }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "dist1",
+      "top": -140,
+      "left": 100,
+      "attrs": {
+        "distance": "5"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -60,
+      "left": 260,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_led",
+      "top": 40,
+      "left": 240,
+      "rotate": 90,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": -80,
+      "left": 360,
+      "attrs": {
+        "volume": "0.1"
+      }
+    },
+    {
+      "type": "wokwi-logic-analyzer",
+      "id": "logico",
+      "top": 200,
+      "left": -80,
+      "attrs": {
+        "bufferSize": "500000",
+        "filename": "citizentech_critico",
+        "channelNames": "LED_GPIO2,BUZZER_GPIO15,DS18B20_GPIO4,ECHO_GPIO18,D4,D5,D6,D7"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "temp1:VCC",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "temp1:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "temp1:DQ",
+      "esp:4",
+      "blue",
+      []
+    ],
+    [
+      "r_pullup:1",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "r_pullup:2",
+      "esp:4",
+      "blue",
+      []
+    ],
+    [
+      "dist1:VCC",
+      "esp:5V",
+      "red",
+      []
+    ],
+    [
+      "dist1:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "dist1:TRIG",
+      "esp:5",
+      "orange",
+      []
+    ],
+    [
+      "dist1:ECHO",
+      "esp:18",
+      "yellow",
+      []
+    ],
+    [
+      "esp:2",
+      "r_led:1",
+      "orange",
+      []
+    ],
+    [
+      "r_led:2",
+      "led1:A",
+      "orange",
+      []
+    ],
+    [
+      "led1:C",
+      "esp:GND.2",
+      "black",
+      []
+    ],
+    [
+      "esp:15",
+      "bz1:2",
+      "blue",
+      []
+    ],
+    [
+      "bz1:1",
+      "esp:GND.2",
+      "black",
+      []
+    ],
+    [
+      "esp:2",
+      "logico:D0",
+      "green",
+      []
+    ],
+    [
+      "esp:15",
+      "logico:D1",
+      "purple",
+      []
+    ],
+    [
+      "esp:4",
+      "logico:D2",
+      "blue",
+      []
+    ],
+    [
+      "esp:18",
+      "logico:D3",
+      "yellow",
+      []
+    ],
+    [
+      "logico:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}
