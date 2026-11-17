@@ -1,8 +1,31 @@
 # Estado do desenvolvimento — CitizenTech
 
-> Primeiro arquivo da próxima sessão. Snapshot documental de **16/11/2026 ~17h05 (UTC−3)**, não monitoramento ao vivo. Prazo **19/11/2026 às 23h55** (~3,3 dias). Histórico detalhado: `git show 18e7a14:docs/estado.md` (até 16/11 16h), `git show 27a06a4:docs/estado.md`, `git show d2ddec4:docs/estado.md`; trilha de agentes em `../.kaiser/{contratos,reports}/`.
+> Primeiro arquivo da próxima sessão. Snapshot documental de **16/11/2026 ~21h30 (UTC−3)**, não monitoramento ao vivo. Prazo **19/11/2026 às 23h55** (~3,1 dias). Histórico detalhado: `git show 18e7a14:docs/estado.md` (até 16/11 16h), `git show 27a06a4:docs/estado.md`, `git show d2ddec4:docs/estado.md`; trilha de agentes em `../.kaiser/{contratos,reports}/`.
 
-## 0. Sessão de 16/11 noite (camada mais recente; prevalece sobre §1–§4 onde conflitar)
+## 0. Sessão de 16/11, 16h–21h30 (camada mais recente; prevalece sobre §1–§4 onde conflitar)
+
+**Integrado em `main` e enviado a `gs-semestre2`** (gitleaks limpo em cada intervalo; handoff em `docs/handoff_citizentech_20261116_fim.md`):
+- **Fatias de produto:** S15b (login, consentimentos, currículo, competências), S11b (`PUT/GET /me/intencao`, `GET /destinos`, `POST/GET /me/comparacoes`, DDL 003), S15c (telas de intenção e comparação), S13 (exercício diagnóstico 50/50 com LLM, RED reproduzido, revisão independente RV01–RV08 corrigida com testes, 9 mutações mortas, DDL 004), S12 (plano por regras determinísticas sobre o catálogo, opção 1 do usuário; DDL 005), S14 (sessões de laboratório `LAB-XXXXXX` por 4 h, leituras da sessão, relato ≤280 redigido pela outbox; DDL 006), S15d (telas de plano, exercício e laboratório). Correção da outbox: omite `sessao_laboratorio_id`/`ciclo_id` vazios (a Lambda recusava `""` com 400).
+- **Testes em `main` (rodados pelo orquestrador):** `app/api` 397 passed · `app/web` 61 passed · `app/tools` 43 passed · `test_firmware.py` 9 passed · `app/cloud` 115 (sessão anterior, nada mudou).
+- **Persona demo** `marina.demo@citizentech.exemplo` (credenciais só em `../.dados/demo/persona_demo.json`, `persona_demo='S'`), criada por `app/tools/criar_persona_demo.py` pela API do app: 4 candidatas, exercício IoT final 0,88 (demonstrada), sessão `LAB-ESEAT6` com 4 leituras.
+- **Entregas escritas:** `06_Cloud/README.md` (inclui os arquivos da raiz e `codigo/`); Cyber `relatorio.pdf` 12 págs. (redação de nome declarada como parcial: só linha `Nome:` ou nome sozinho nas 3 primeiras linhas, conferido no código); CTP `documento.pdf` 8 págs. (execução pela cópia com `pip`, testada num venv limpo: POST 201); Data Science `relatorio.pdf` 7 págs. com DDL 001–007 aplicado no esquema do app, catálogo carregado e consultas C1–C9 (Oracle) e M1–M7 (Atlas) executadas em `03_DataScience/evidencias/20261116_consultas_*.txt`; **AICSS `relatorio.pdf` 8 págs.**; UML `docs/uml/`; roteiros de vídeo de Cyber, Cloud, AIC, **ML e RNA**.
+- **AICSS sem Wokwi:** `app/tools/demo_firmware_aicss.py` compila `app/tools/aicss/demo_cenarios.cpp` com a mesma `logica.h`/`limiares.h` do firmware e envia o JSON que o `sketch.ino` montaria → `01_AICSS/evidencias/20261116_logica_firmware_host.txt` (10 casos, 16 leituras, risco da API = firmware, 0 falhas) e `20261116_compat_servidor_modelo.txt` (servidor modelo do professor aceita o JSON, 201 ×6). O relatório declara que LED/buzzer e Wi-Fi/HTTP do ESP32 **não** foram vistos (§5.2 com `[HUMANO]`). Limitação achada: falha de um só sensor não gera alerta local.
+- **Empacotador** (`empacotar_entregas.py`, tipo `concatenacao`, `itens_codigo()`): cópias em `01_AICSS/firmware/`, `03_DataScience/{oracle.sql,mongodb.js}`, `04_CTP_Python/{codigo/,requirements.txt}`, `06_Cloud/{codigo/,lambda_function.py,simulador_dispositivo.py,tabela_ocorrencias.sql}`; `--verificar --dados ../.dados` OK às 19h25. Os arquivos Flask do professor na raiz de `04_CTP_Python/` ficaram intactos (o documento de CTP diz que não fazem parte da solução).
+
+**Estado no fim da sessão (~21h30):** nenhum processo de pé (API de teste da porta 8000 encerrada; `agy` da S15-e2e saiu com 0 às 19h31; o `agy` PID 30832 de outra frente também não está mais rodando). Worktrees: `../GS-wt/S15-e2e` (não commitado, ver abaixo), `../GS-wt/S5-auth` e `../GS-wt/S5-red` (outra frente, não limpar).
+
+**S15-e2e aguardando aceite** (`fatia/S15-e2e` em `f4cdebf`; arquivos não commitados `app/web/e2e/*`, `playwright.config.ts`, `package.json`, `pnpm-lock.yaml`; relatório `../.kaiser/reports/S15-e2e.md`). O agente relata Playwright e typecheck verdes e o teste da persona em `skip` (sem `E2E_PERSONA_*`). Defeitos achados, não corrigidos: axe critical `aria-valid-attr-value` nas 7 telas de "Minha transição" (`aria-controls="painel-jornada"` sem `id` correspondente, `App.tsx:69`); diálogo "Discordo" sem nome acessível (`TelaExercicio.tsx`); `setState` durante render (`TelaPlano.tsx`); telas Competências e Laboratório fora do axe. **Nada disso foi verificado pelo orquestrador.**
+
+**Inconsistências conhecidas ainda não corrigidas:** `02_Cybersecurity/relatorio.md` linha 17 (diz que intenção/comparação/telas estão "em desenvolvimento") e linha 21 (Comprehend descrito como funcionando; na AWS ele dá AccessDenied); `00_projeto/README.md` linhas 26–28 desatualizadas.
+
+**Pendências humanas novas:** nomes e RMs; Wokwi (extensão do VS Code ou `WOKWI_CLI_TOKEN`); prints CloudWatch 1–2 e imagens do simulador/RDS; Data Modeler; vídeos; decidir sobre os arquivos Flask do professor em `04_CTP_Python/`; apagar os 3 prints originais com e-mail em `06_Cloud/evidencias/` (excluídos do Git). Os únicos prints encontrados no repositório são os de 16h36, já tarjados e versionados.
+
+**Gastos:** OpenRouter US$ 0,01848 de 7; Adzuna 7/12.
+
+**Próximo passo exato:** seguir `docs/handoff_citizentech_20261116_fim.md` §3: aceitar S15-e2e e corrigir a11y (com RED) → corrigir Cyber/README do projeto → compilar firmware com `arduino-cli` e Wokwi → revisão de conformidade nº 2 → nomes/RMs + PDFs → empacotador final → estado + push.
+
+### 0.1 Camada anterior (16/11 ~17h05)
+
 
 **Integrado em `main` e enviado a `gs-semestre2` (`2a0049e`, gitleaks limpo no intervalo):**
 - **S15b telas web** (`47a9d4c`): aba "Minha transição" com Entrar/Criar conta, Consentimentos, Currículo (colar/enviar → texto redigido editável → confirmar → só então "Sugerir competências") e Competências (confirmar/rejeitar/não possuo). Correções do orquestrador: editar depois de confirmar esconde "Sugerir" até reconfirmar (RED reproduzido: `expected <button> to be null`), textos sem prometer ocultação total, Astryx em pt-BR (`InternationalizationProvider`). `pnpm run test` 40 passed, build ok. **Smoke real no Edge** (playwright-core em `../.kaiser/tmp/smoke/smoke_s15b.mjs`, cookies Secure em localhost funcionam): registrar 201 → login 200 → 2 consentimentos 201 → experiências 201 sem e-mail/telefone → confirmar 200 → extrair 503 (API sem chave LLM; mensagem correta) → logout 204. **Tela de competências não vista no navegador** (precisa da LLM real).
@@ -11,7 +34,7 @@
 - **02_Cybersecurity/relatorio.md + .pdf (11 páginas)** com demonstração executada `app/tools/demo_protecoes.py` → `evidencias/20261116_demo_protecoes.txt` (16 verificações, 0 falhas; Argon2id m=65536,t=3,p=4 conferido no Oracle; PII fictícia 0 vezes no log).
 - **04_CTP_Python/documento.md + .pdf (8 páginas)** com `app/tools/demo_leituras_ctp.py` → `evidencias/20261116_demo_ctp.txt` e `20261116_historico_leituras.csv` (3 cenários normal/atenção/crítico, 200 reenvio, 409, 400, 401; indicadores temp média 37,0 e dist 14,0); 108 testes de leituras/outbox passaram.
 
-**Em andamento (processos destacados, ver `../.kaiser/tmp/lancar_<fatia>.log`):**
+**Em andamento às 17h05 (já resolvido; ver §0):**
 - **S13-avaliacao** (agy PID 11120, 17h00, worktree `../GS-wt/S13-avaliacao`, contrato `../.kaiser/contratos/S13-avaliacao.md`, DDL reservado `004_avaliacao.sql`; integra `resultados_exercicio_para_comparacao` em `comparacao/servico.py`). Fatia de risco: no aceite, **reproduzir RED** em worktree temporário e **revisão independente** `agy --mode plan`.
 - **S15c-comparacao** (agy PID 29064, 17h02, worktree `../GS-wt/S15c-comparacao`): telas de Intenção e Comparação; etapas passam a 5. Aceite: testes + smoke Edge com `smoke_s15b.mjs` estendido.
 - API de teste do orquestrador ainda de pé na porta 8000 (código de `main` antes da S11b; wrapper PID 26924). Reiniciar com `subir_api_teste.ps1` para smokes novos.
