@@ -2,7 +2,7 @@
 
 <!-- impeccable:design-schema 1 -->
 
-> Escopo: `app/web` (React 19 + Astryx 0.7.14 + Tailwind só para layout, D16a). O `DESIGN.md` da raiz continua valendo só para `docs/panorama_projeto.html`.
+> Escopo: `app/web` (React 19 + Astryx 0.7.14 + Tailwind só para layout, D16a). A direção do panorama offline está em `docs/panorama/DESIGN.md` e vale só para `docs/panorama_projeto.html`.
 > Fonte: design system **NOUS** (`DESIGN-SYSTEMS/NOUS/DESIGN.md`, extraído do Nous Portal), adotado por pedido do usuário em 17/11/2026.
 
 ## Mundo

@@ -35,17 +35,54 @@ REQUISITOS_ESTATISTICA = [
     "openpyxl",
 ]
 CONTEUDO_REQUISITOS_ESTATISTICA = "\n".join(REQUISITOS_ESTATISTICA) + "\n"
+# Versões do app/ml/uv.lock; os notebooks importam o pacote citizentech_ml de app/ml.
+CONTEUDO_REQUISITOS_NOTEBOOKS = (
+    "# Notebooks ML/RNA CitizenTech. Caminho recomendado (versões travadas no uv.lock):\n"
+    "#   cd app/ml; uv sync; uv run jupyter nbconvert --execute notebooks/<notebook>.ipynb\n"
+    "# Alternativa com pip, a partir da raiz do repositório (Python 3.11):\n"
+    "#   pip install -r <esta pasta>/requirements.txt\n"
+    "# Requer CITIZENTECH_DADOS com os parquets do Novo Caged (ver app/ml/README.md).\n"
+    "--extra-index-url https://download.pytorch.org/whl/cpu\n"
+    "numpy==2.4.6\npandas==3.1.1\nmatplotlib==3.11.2\nscikit-learn==1.9.1\nscipy==1.17.1\n"
+    "statsmodels==0.15.0\npyarrow==26.0.1\npymongo==4.20.0\npy7zr==1.1.4\ntorch==2.15.0\n"
+    "ipykernel\n"
+    "./app/ml  # pacote citizentech_ml\n"
+)
 SHA256_BASE_MUNICIPAL = "5dbc73acfb01012a7aa0fa45ef457a7226639a8b48bda85b0389972f99a9a7ee"
 
 
 @dataclass(frozen=True)
 class ItemEntrega:
-    tipo: str  # "copia", "copia_dados", "pdf", "texto_gerado"
+    tipo: str  # "copia", "copia_dados", "pdf", "texto_gerado", "concatenacao"
     origem: str
     destino: str
     sha256_esperado: str | None = None
     max_paginas: int | None = None
     conteudo: str | None = None
+    titulo: str | None = None
+
+
+# Relatórios entregues em PDF: (origem .md, destino .pdf, título, limite de páginas do enunciado).
+RELATORIOS_PDF = [
+    ("01_AICSS/relatorio.md", "01_AICSS/relatorio.pdf",
+     "CitizenTech - AI Computer Systems and Sensors", None),
+    ("02_Cybersecurity/relatorio.md", "02_Cybersecurity/relatorio.pdf",
+     "CitizenTech - Cybersecurity", 15),
+    ("03_DataScience/relatorio.md", "03_DataScience/relatorio.pdf",
+     "CitizenTech - Cognitive Data Science", None),
+    ("04_CTP_Python/documento.md", "04_CTP_Python/documento.pdf",
+     "CitizenTech - Computational Thinking with Python", None),
+    ("05_ML/slides.md", "05_ML/slides.pdf", "CitizenTech - Machine Learning", None),
+    ("08_Estatistica/relatorio.md", "08_Estatistica/relatorio.pdf",
+     "CitizenTech - Estatística", None),
+]
+
+
+def itens_relatorios_pdf() -> list[ItemEntrega]:
+    return [
+        ItemEntrega(tipo="pdf", origem=o, destino=d, titulo=t, max_paginas=m)
+        for o, d, t, m in RELATORIOS_PDF
+    ]
 
 
 def itens_padrao(sha_csv: str = SHA256_BASE_MUNICIPAL) -> list[ItemEntrega]:
@@ -71,22 +108,22 @@ def itens_padrao(sha_csv: str = SHA256_BASE_MUNICIPAL) -> list[ItemEntrega]:
             origem="app/ml/notebooks/rna_mercado.ipynb",
             destino="07_RedesNeurais/notebook.ipynb",
         ),
-        ItemEntrega(
-            tipo="pdf",
-            origem="08_Estatistica/relatorio.md",
-            destino="08_Estatistica/relatorio.pdf",
-        ),
-        ItemEntrega(
-            tipo="pdf",
-            origem="05_ML/slides.md",
-            destino="05_ML/slides.pdf",
-        ),
+        *itens_relatorios_pdf(),
         ItemEntrega(
             tipo="texto_gerado",
             origem="(declarado)",
             destino="08_Estatistica/requirements.txt",
             conteudo=CONTEUDO_REQUISITOS_ESTATISTICA,
         ),
+        *[
+            ItemEntrega(
+                tipo="texto_gerado",
+                origem="(declarado: app/ml/uv.lock)",
+                destino=destino,
+                conteudo=CONTEUDO_REQUISITOS_NOTEBOOKS,
+            )
+            for destino in ("05_ML/requirements.txt", "07_RedesNeurais/requirements.txt")
+        ],
     ]
 
 
@@ -471,7 +508,7 @@ def empacotar(
             else:
                 estado = "atualizado" if pdf_existia else "criado"
                 texto_md = orig.read_text(encoding="utf-8")
-                html_conteudo = converter_md_para_html(texto_md, titulo=orig.stem)
+                html_conteudo = converter_md_para_html(texto_md, titulo=item.titulo or orig.stem)
                 dest_html.write_text(html_conteudo, encoding="utf-8")
                 try:
                     gerar_pdf(dest_html, dest_pdf)

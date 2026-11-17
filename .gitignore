@@ -2,13 +2,15 @@ __pycache__/
 *.pyc
 historico.csv
 leituras.csv
-08_Estatistica/figuras/
 
 # segredos (CLAUDE.md 15.3)
 .env
 .env.*
 !.env.example
 app/iot/firmware/segredos.h
+
+# prints originais com dados pessoais: copia em CITIZENTECH_DADOS/cloud/privado; no git so as versoes tarjadas AAAAMMDD_*
+06_Cloud/evidencias/[a-z]*.png
 
 # cache e build regeneravel (CLAUDE.md 15.3)
 .venv/
@@ -38,6 +40,7 @@ playwright-report/
 
 # trilha de orquestracao e temporarios (nunca dentro do repositorio)
 .kaiser/
+.impeccable/
 *.log
 
 # editor e sistema

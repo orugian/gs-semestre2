@@ -373,6 +373,47 @@ def test_pdf_max_paginas_excedido_retorna_1(tmp_path: Path, capsys):
     assert manifesto["itens"][0]["paginas"] == 3
 
 
+def test_todos_os_relatorios_pdf_das_disciplinas_sao_cobertos():
+    """Todo relatório entregue em PDF tem item no empacotador; senão --verificar não o vê."""
+    pdfs = {i.destino: i for i in itens_padrao() if i.tipo == "pdf"}
+    esperados = {
+        "01_AICSS/relatorio.pdf",
+        "02_Cybersecurity/relatorio.pdf",
+        "03_DataScience/relatorio.pdf",
+        "04_CTP_Python/documento.pdf",
+        "05_ML/slides.pdf",
+        "08_Estatistica/relatorio.pdf",
+    }
+    assert esperados <= set(pdfs)
+    assert pdfs["02_Cybersecurity/relatorio.pdf"].max_paginas == 15
+    assert all(item.titulo for item in pdfs.values())
+
+
+def test_requirements_de_ml_e_rna_instalam_o_que_os_notebooks_importam():
+    """Os notebooks importam torch e citizentech_ml; o requirements gerado precisa refletir isso."""
+    gerados = {i.destino: i for i in itens_padrao() if i.tipo == "texto_gerado"}
+    for destino in ("05_ML/requirements.txt", "07_RedesNeurais/requirements.txt"):
+        conteudo = gerados[destino].conteudo or ""
+        assert "tensorflow" not in conteudo
+        assert "torch==" in conteudo
+        assert "citizentech_ml" in conteudo
+
+
+def test_pdf_usa_titulo_do_item(tmp_path: Path):
+    raiz = tmp_path / "repo"
+    (raiz / "05_ML").mkdir(parents=True)
+    (raiz / "05_ML/slides.md").write_text("# Slide\n", encoding="utf-8")
+    item = ItemEntrega(
+        tipo="pdf",
+        origem="05_ML/slides.md",
+        destino="05_ML/slides.pdf",
+        titulo="CitizenTech - Slides",
+    )
+    assert empacotar(raiz=raiz, itens=[item]) == 0
+    html = (raiz / "05_ML/slides.html").read_text(encoding="utf-8")
+    assert "<title>CitizenTech - Slides</title>" in html
+
+
 def test_dados_ausente_sem_env_retorna_2(tmp_path: Path, monkeypatch, capsys):
     raiz = tmp_path / "repo"
     raiz.mkdir(parents=True, exist_ok=True)

@@ -26,7 +26,7 @@ S15 foi integrada e aceita; o agente também concluiu os três cenários do Wokw
 | Critérios acadêmicos e decisões | [Plano](<plano_desenvolvimento.md>) e enunciado da disciplina em trabalho; [conformidade nº2](<revisao_conformidade_2.md>) |
 | S15, a11y, persona, testes e limitações | [Aceite S15](<../02_Cybersecurity/evidencias/20261116_s15_e2e_aceite.md>) |
 | Firmware/Wokwi, prints, Serial, VCD, CSV e hashes | [Aceite Wokwi](<../01_AICSS/evidencias/20261117_wokwi_aceite.md>), [manifesto](<../01_AICSS/evidencias/20261117_wokwi_manifesto.json>), [relatório](<../01_AICSS/relatorio.md>) |
-| Capturas AWS que faltam, passos exatos e limites reais | [Guia de capturas Learner Lab](<guia_capturas_learner_lab.md>) e [inventário Cloud §8–§9](<../06_Cloud/README.md>) |
+| Capturas AWS que faltam, passos exatos e limites reais | [Guia de capturas Learner Lab](<historico/guia_capturas_learner_lab.md>) e [inventário Cloud §8–§9](<../06_Cloud/README.md>) |
 | Data Modeler | [Data Science §2](<../03_DataScience/relatorio.md#L24-L31>), [SQL consolidado](<../03_DataScience/oracle.sql>) |
 | Roteiros e locais dos links de vídeo | [AIC](<../09_AIC/video.md>), [ML](<../05_ML/video.md>), [Cyber](<../02_Cybersecurity/video.md>), [Cloud](<../06_Cloud/video.md>), [RNA](<../07_RedesNeurais/video.md>) |
 | Gerar/conferir entregas | [Empacotador](<../app/tools/empacotar_entregas.py>), [conversor PDF](<../app/tools/md_para_pdf.py>), [manifesto do pacote](<entregas_manifesto.json>) |
@@ -48,7 +48,7 @@ Não tratar “pendente” em **evidência histórica datada** como estado atual
 
 ### P03 — imagens Cloud, sem ambiguidade
 
-Seguir o [guia exato de capturas](<guia_capturas_learner_lab.md>):
+Seguir o [guia exato de capturas](<historico/guia_capturas_learner_lab.md>):
 - **Dentro da AWS:** CloudWatch `/aws/lambda/CP-2`, região us-east-1: **CW-C** crítico (CLASSIFICACAO+ALERTA CIDADAO+GRAVADO NO RDS), **CW-D** WARNING de LEITURA DESCARTADA e **CW-K** WARNING de CHAVE INVALIDA. Agente envia testes e fornece a janela/IDs; não capturar logs antigos como novos.
 - **Fora do console AWS:** **SIM**, terminal real do simulador com201; **DB**, SELECT+resultado RDS correlacionados aos eventos. Agente prepara e tenta capturas; humano ajuda só se não for possível. A página de infraestrutura RDS não mostra as linhas do banco.
 - Variáveis Lambda e CloudWatch geral já têm imagem. Reaproveitar se válidas/legíveis; não exigir nova exposição de segredos. Captura de console autenticado permanece humana, Data Modeler não.
@@ -81,7 +81,7 @@ Docker: Oracle, Mongo e PostgreSQL de teste saudáveis, compartilhados, mantidos
 ```text
 Retome CitizenTech na raiz info-gs-diciplinas, a partir do HEAD publicado (base funcional f96b13e, seguida pelo encerramento documental).
 Leia CLAUDE.md, docs/estado.md §0 e docs/handoff_citizentech_20261116_fim.md. Siga a fila P01–P08; não repita S15 nem o aceite Wokwi.
-Execute Data Modeler pelo agente, conforme determinação17/11 (D25/CLAUDE§12); não o delegue ao usuário. O usuário já reativou o Learner Lab: confirme health na retomada, execute a rodada autorizada e oriente os prints exatos de docs/guia_capturas_learner_lab.md. Priorize também QA final e incorporação de vídeos/links reais; peça só os insumos/habilitações realmente ausentes.
+Execute Data Modeler pelo agente, conforme determinação17/11 (D25/CLAUDE§12); não o delegue ao usuário. O usuário já reativou o Learner Lab: confirme health na retomada, execute a rodada autorizada e oriente os prints exatos de docs/historico/guia_capturas_learner_lab.md. Priorize também QA final e incorporação de vídeos/links reais; peça só os insumos/habilitações realmente ausentes.
 Não reabra fatias integradas, retune 2025, promova modelos, abra holdout2026, toque S5 da outra frente ou apague dados. Não libere a outbox antiga. Não apresente Wokwi→CSV como Wokwi→AWS.
 Siga D14 para implementação e preserve segredos em memória. Reconfirme autorizações aplicáveis antes de gasto pago ou alteração AWS. Commit/push somente com autorização válida, gitleaks staged/intervalo e para gs-semestre2, nunca origin.
 Após mudanças, atualize documentos/PDFs, rode empacotador --verificar e a regressão pertinente, registre o que não conseguiu verificar e deixe novo estado/handoff.

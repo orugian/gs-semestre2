@@ -13,7 +13,7 @@
 
 ## 0. Fechamento funcional aceito; pendente o fechamento acadêmico (registro de 17/11 08h51)
 
-**Nova orientação do usuário em17/11, após o encerramento:** **Data Modeler é tarefa do AGENTE**, não do grupo; D25/CLAUDE§12 e handoff foram atualizados. O usuário informou **Learner Lab reativado para a próxima sessão**; isso ainda não foi confirmado por novo health. Próximo agente: iniciar validação Cloud e execução agêntica do Modeler, sem pedir ao usuário que faça a modelagem. [Capturas exatas que faltam](<guia_capturas_learner_lab.md>).
+**Nova orientação do usuário em17/11, após o encerramento:** **Data Modeler é tarefa do AGENTE**, não do grupo; D25/CLAUDE§12 e handoff foram atualizados. O usuário informou **Learner Lab reativado para a próxima sessão**; isso ainda não foi confirmado por novo health. Próximo agente: iniciar validação Cloud e execução agêntica do Modeler, sem pedir ao usuário que faça a modelagem. [Capturas exatas que faltam](<historico/guia_capturas_learner_lab.md>).
 
 **Verificação desta atualização documental:** guia de capturas confrontado com enunciado/logs/schema do projeto; PDF Data Science regenerado, **7p**, três RMs conferidos; empacotador **--verificar OK**. Data Modeler continua pendente de execução e nenhuma nova chamada AWS foi feita agora.
 
