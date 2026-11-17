@@ -18,8 +18,10 @@ import {
   registrarDiscordo,
   TentativaExercicio,
 } from '../api/avaliacao';
-import {ErroApi} from '../api/cliente';
+import {ErroApi, mensagemDeErro} from '../api/cliente';
 import {formatarDataHora, TEXTOS_JORNADA} from './textos';
+import {BloqueioConsentimento} from './BloqueioConsentimento';
+import {varianteBadgeResultado} from '../dominio/rotulos';
 
 export interface TelaExercicioProps {
   destinoId: string;
@@ -76,18 +78,12 @@ export function TelaExercicio({
       })
       .catch((err: unknown) => {
         if (!cancelado) {
-          if (err instanceof ErroApi) {
-            if (err.status === 403) {
-              setErro403(true);
-            } else if (err.status === 429) {
-              setErro429(true);
-            } else {
-              setErro(err.detalhes || err.erro);
-            }
-          } else if (err instanceof Error) {
-            setErro(err.message);
+          if (err instanceof ErroApi && err.status === 403) {
+            setErro403(true);
+          } else if (err instanceof ErroApi && err.status === 429) {
+            setErro429(true);
           } else {
-            setErro('Erro ao carregar o exercício.');
+            setErro(mensagemDeErro(err, 'Erro ao carregar o exercício.'));
           }
         }
       })
@@ -139,18 +135,12 @@ export function TelaExercicio({
         .then((hist) => setHistorico(hist))
         .catch(() => {});
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        if (err.status === 403) {
-          setErro403(true);
-        } else if (err.status === 429) {
-          setErro429(true);
-        } else {
-          setErro(err.detalhes || err.erro);
-        }
-      } else if (err instanceof Error) {
-        setErro(err.message);
+      if (err instanceof ErroApi && err.status === 403) {
+        setErro403(true);
+      } else if (err instanceof ErroApi && err.status === 429) {
+        setErro429(true);
       } else {
-        setErro('Erro ao enviar a tentativa.');
+        setErro(mensagemDeErro(err, 'Erro ao enviar a tentativa.'));
       }
     } finally {
       setEnviando(false);
@@ -178,16 +168,10 @@ export function TelaExercicio({
       setDialogDiscordoAberto(false);
       setMotivoDiscordo('');
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        if (err.status === 409) {
-          setErroDiscordo(TEXTOS_JORNADA.exercicio.contestacao.jaRegistrada);
-        } else {
-          setErroDiscordo(err.detalhes || err.erro);
-        }
-      } else if (err instanceof Error) {
-        setErroDiscordo(err.message);
+      if (err instanceof ErroApi && err.status === 409) {
+        setErroDiscordo(TEXTOS_JORNADA.exercicio.contestacao.jaRegistrada);
       } else {
-        setErroDiscordo('Erro ao registrar contestação.');
+        setErroDiscordo(mensagemDeErro(err, 'Erro ao registrar contestação.'));
       }
     } finally {
       setEnviandoDiscordo(false);
@@ -204,23 +188,12 @@ export function TelaExercicio({
 
   if (erro403) {
     return (
-      <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
-        <Banner
-          status="warning"
-          title="Autorização necessária"
-          description={TEXTOS_JORNADA.exercicio.bloqueioConsentimentoLlm}
-        />
-        {onIrParaConsentimentos && (
-          <div className="flex justify-start">
-            <Button
-              type="button"
-              variant="primary"
-              label={TEXTOS_JORNADA.exercicio.irParaConsentimentos}
-              onClick={onIrParaConsentimentos}
-            />
-          </div>
-        )}
-      </div>
+      <BloqueioConsentimento
+        className="flex flex-col gap-6 w-full max-w-5xl mx-auto"
+        descricao={TEXTOS_JORNADA.exercicio.bloqueioConsentimentoLlm}
+        onIrParaConsentimentos={onIrParaConsentimentos}
+        rotuloBotao={TEXTOS_JORNADA.exercicio.irParaConsentimentos}
+      />
     );
   }
 
@@ -474,13 +447,7 @@ export function TelaExercicio({
 
                 <div className="flex items-center gap-3">
                   <Badge
-                    variant={
-                      tentativaAtual.resultado === 'demonstrada'
-                        ? 'green'
-                        : tentativaAtual.resultado === 'parcial'
-                        ? 'blue'
-                        : 'neutral'
-                    }
+                    variant={varianteBadgeResultado(tentativaAtual.resultado)}
                     label={
                       TEXTOS_JORNADA.exercicio.conceito[
                         tentativaAtual.resultado
@@ -656,13 +623,7 @@ export function TelaExercicio({
                       label={formatarDataHora(item.criado_em)}
                     />
                     <Badge
-                      variant={
-                        item.resultado === 'demonstrada'
-                          ? 'green'
-                          : item.resultado === 'parcial'
-                          ? 'blue'
-                          : 'neutral'
-                      }
+                      variant={varianteBadgeResultado(item.resultado)}
                       label={
                         TEXTOS_JORNADA.exercicio.conceito[item.resultado] ||
                         item.resultado

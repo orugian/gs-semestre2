@@ -9,18 +9,12 @@ import {
   RequisitoComparacaoItem,
 } from '../api/comparacao';
 import {TEXTOS_JORNADA} from './textos';
+import {traduzirMotivo} from '../dominio/rotulos';
 
 export interface CartaoDestinoProps {
   destino: DestinoComparado;
   onEscolherDestino?: (destinoId: string) => void;
   isEscolhendo?: boolean;
-}
-
-function traduzirMotivo(motivo: string | null | undefined): string | null {
-  if (!motivo) return null;
-  const dicionario: Record<string, string> =
-    TEXTOS_JORNADA.comparacao.requisitos.motivos;
-  return dicionario[motivo] || motivo;
 }
 
 function traduzirMotivoMercado(motivo: string | null | undefined): string {

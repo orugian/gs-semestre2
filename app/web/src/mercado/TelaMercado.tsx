@@ -8,12 +8,16 @@ import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
 
 import {
-  ApiError,
   buscarMercado,
-  DESTINOS_MVP,
   RespostaMercado,
-  UFS_BRASIL,
 } from '../api/mercado';
+import {
+  DESTINOS_MVP,
+  UFS_BRASIL,
+  DESTINO_PADRAO,
+  UF_PADRAO,
+} from '../dominio/listas';
+import { mensagemDeErro } from '../api/cliente';
 import {
   formatarNomeModelo,
   formatarNumero,
@@ -35,30 +39,19 @@ export function TelaMercado({
   uf: ufProp,
   onUfChange,
 }: TelaMercadoProps) {
-  const [destinoLocal, setDestinoLocal] = useState('analista_dados_bi');
-  const [ufLocal, setUfLocal] = useState('SP');
-
-  const destinoAtivo = destinoProp ?? destinoLocal;
-  const ufAtiva = ufProp ?? ufLocal;
+  const destinoAtivo = destinoProp ?? DESTINO_PADRAO;
+  const ufAtiva = ufProp ?? UF_PADRAO;
 
   const handleDestinoChange = useCallback(
     (novoDestino: string) => {
-      if (onDestinoChange) {
-        onDestinoChange(novoDestino);
-      } else {
-        setDestinoLocal(novoDestino);
-      }
+      onDestinoChange?.(novoDestino);
     },
     [onDestinoChange]
   );
 
   const handleUfChange = useCallback(
     (novaUf: string) => {
-      if (onUfChange) {
-        onUfChange(novaUf);
-      } else {
-        setUfLocal(novaUf);
-      }
+      onUfChange?.(novaUf);
     },
     [onUfChange]
   );
@@ -82,13 +75,12 @@ export function TelaMercado({
       })
       .catch((err: unknown) => {
         if (!cancelado) {
-          if (err instanceof ApiError) {
-            setErro(err.message);
-          } else if (err instanceof Error) {
-            setErro(err.message);
-          } else {
-            setErro('Erro desconhecido ao carregar dados de mercado');
-          }
+          setErro(
+            mensagemDeErro(
+              err,
+              'Erro desconhecido ao carregar dados de mercado'
+            )
+          );
           setCarregando(false);
         }
       });

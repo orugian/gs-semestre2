@@ -35,10 +35,6 @@ export async function enviarArquivoCurriculo(arquivo: File): Promise<Curriculo> 
   return requisitar<Curriculo>('POST', '/me/curriculo', formData);
 }
 
-export async function obterCurriculo(id: string): Promise<Curriculo> {
-  return requisitar<Curriculo>('GET', `/me/curriculo/${id}`);
-}
-
 export async function confirmarEnvioCurriculo(
   curriculoId: string,
   textoRevisado: string | null

@@ -48,12 +48,15 @@ export async function requisitar<T>(
     }
   }
 
-  const resposta = await fetch(url, {
-    method: metodoUpper,
-    credentials: 'same-origin',
-    headers,
-    body,
-  });
+  const resposta =
+    metodoUpper === 'GET' && Object.keys(headers).length === 0
+      ? await fetch(url)
+      : await fetch(url, {
+          method: metodoUpper,
+          credentials: 'same-origin',
+          headers,
+          body,
+        });
 
   if (!resposta.ok) {
     let erro = resposta.statusText || `Erro ${resposta.status}`;
@@ -82,4 +85,14 @@ export async function requisitar<T>(
   }
 
   return (await resposta.json()) as T;
+}
+
+export function mensagemDeErro(err: unknown, fallback: string): string {
+  if (err instanceof ErroApi) {
+    return err.detalhes || err.erro || fallback;
+  }
+  if (err instanceof Error) {
+    return err.message || fallback;
+  }
+  return fallback;
 }

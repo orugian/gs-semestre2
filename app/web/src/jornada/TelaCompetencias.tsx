@@ -8,7 +8,7 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Text} from '@astryxdesign/core/Text';
 import {TextArea} from '@astryxdesign/core/TextArea';
-import {ErroApi} from '../api/cliente';
+import {mensagemDeErro} from '../api/cliente';
 import {
   atualizarCompetencia,
   Competencia,
@@ -16,6 +16,7 @@ import {
   RespostaExtracao,
 } from '../api/competencias';
 import {TEXTOS_JORNADA} from './textos';
+import {traduzirRevisao} from '../dominio/rotulos';
 
 export interface TelaCompetenciasProps {
   extracaoInicial?: RespostaExtracao | null;
@@ -38,13 +39,7 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
       const resp = await listarCompetencias();
       setCompetencias(resp.itens || []);
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      } else {
-        setErro('Não foi possível carregar as competências.');
-      }
+      setErro(mensagemDeErro(err, 'Não foi possível carregar as competências.'));
     } finally {
       setCarregando(false);
     }
@@ -75,11 +70,7 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
       setIdEditandoTrecho(null);
       setTrechoEditado('');
     } catch (err: unknown) {
-      if (err instanceof ErroApi) {
-        setErro(err.detalhes || err.erro);
-      } else if (err instanceof Error) {
-        setErro(err.message);
-      }
+      setErro(mensagemDeErro(err, 'Não foi possível atualizar o trecho.'));
     } finally {
       setProcessandoId(null);
     }
@@ -138,7 +129,7 @@ export function TelaCompetencias({extracaoInicial}: TelaCompetenciasProps) {
                             ? 'neutral'
                             : 'error'
                         }
-                        label={{pendente: 'pendente', confirmada: 'confirmada', rejeitada: 'rejeitada', nao_possuo: 'não possuo'}[comp.revisao] ?? comp.revisao}
+                        label={traduzirRevisao(comp.revisao)}
                       />
                     </div>
                   </div>

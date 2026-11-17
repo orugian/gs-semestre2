@@ -2,7 +2,7 @@ import {cleanup, fireEvent, render, screen} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
 
 import App from '../src/App';
-import {formatarUrlNavegacao, lerEstadoUrl} from '../src/mercado/formatacao';
+import {formatarUrlNavegacao, lerEstadoUrl} from '../src/mercado/navegacao';
 
 describe('App e Deep-linking', () => {
   beforeEach(() => {

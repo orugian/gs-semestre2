@@ -5,7 +5,6 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Spinner} from '@astryxdesign/core/Spinner';
 import {Step, Stepper} from '@astryxdesign/core/Stepper';
 import {Text} from '@astryxdesign/core/Text';
-import {ErroApi} from '../api/cliente';
 import {RespostaExtracao} from '../api/competencias';
 import {obterMe, sair, Usuario} from '../api/conta';
 import {obterPlano, RespostaCaminho} from '../api/plano';
@@ -23,7 +22,6 @@ import {TEXTOS_JORNADA} from './textos';
 export function AreaJornada() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [carregandoUsuario, setCarregandoUsuario] = useState(true);
-  const [avisoSessao, setAvisoSessao] = useState<string | null>(null);
 
   const [etapaAtiva, setEtapaAtiva] = useState(0);
   const [extracao, setExtracao] = useState<RespostaExtracao | null>(null);
@@ -39,7 +37,6 @@ export function AreaJornada() {
       .then((dados) => {
         if (!cancelado) {
           setUsuario(dados);
-          setAvisoSessao(null);
 
           // Carrega o plano ativo se houver (404 = sem plano)
           obterPlano()
@@ -55,13 +52,10 @@ export function AreaJornada() {
             });
         }
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (!cancelado) {
           setUsuario(null);
           setPlanoAtivo(null);
-          if (err instanceof ErroApi && err.status === 401) {
-            // Sessão ainda não iniciada - comportamento normal
-          }
         }
       })
       .finally(() => {
@@ -89,7 +83,6 @@ export function AreaJornada() {
       // Ignora erro no logout
     } finally {
       setUsuario(null);
-      setAvisoSessao(null);
       setEtapaAtiva(0);
       setExtracao(null);
       setPlanoAtivo(null);
@@ -98,7 +91,6 @@ export function AreaJornada() {
 
   const handleLoginSucesso = (usr: Usuario) => {
     setUsuario(usr);
-    setAvisoSessao(null);
     setEtapaAtiva(0);
     obterPlano()
       .then((resp) => {
@@ -122,7 +114,6 @@ export function AreaJornada() {
     return (
       <TelaEntrar
         onLoginSucesso={handleLoginSucesso}
-        avisoSessao={avisoSessao}
       />
     );
   }
@@ -212,7 +203,7 @@ export function AreaJornada() {
 
         {etapaAtiva === 5 && (
           <TelaPlano
-            planoInicial={planoAtivo}
+            plano={planoAtivo}
             onPlanoAtualizado={setPlanoAtivo}
             onIrParaComparacao={() => setEtapaAtiva(4)}
             onFazerExercicio={() => setEtapaAtiva(6)}

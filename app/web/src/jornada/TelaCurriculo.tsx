@@ -8,7 +8,7 @@ import {Spinner} from '@astryxdesign/core/Spinner';
 import {Tab, TabList} from '@astryxdesign/core/TabList';
 import {Text} from '@astryxdesign/core/Text';
 import {TextArea} from '@astryxdesign/core/TextArea';
-import {ErroApi} from '../api/cliente';
+import {ErroApi, mensagemDeErro} from '../api/cliente';
 import {extrairCompetencias, RespostaExtracao} from '../api/competencias';
 import {listarConsentimentos} from '../api/conta';
 import {
@@ -19,6 +19,7 @@ import {
   Redacoes,
 } from '../api/curriculo';
 import {formatarDataHora, TEXTOS_JORNADA} from './textos';
+import {BloqueioConsentimento} from './BloqueioConsentimento';
 
 export interface TelaCurriculoProps {
   onSugerirSucesso?: (extracao: RespostaExtracao) => void;
@@ -169,40 +170,32 @@ export function TelaCurriculo({
     if (err instanceof ErroApi) {
       if (err.status === 403) {
         setErro(TEXTOS_JORNADA.curriculo.consentimentoLlmNecessario);
-      } else if (err.status === 429) {
-        setErro(TEXTOS_JORNADA.curriculo.limiteSugestoesAtingido);
-      } else if (err.status === 503) {
-        setErro(TEXTOS_JORNADA.curriculo.servicoIndisponivel);
-      } else if (err.status === 400) {
-        setErro(err.detalhes || TEXTOS_JORNADA.curriculo.arquivoGrande);
-      } else {
-        setErro(err.detalhes || err.erro);
+        return;
       }
-    } else if (err instanceof Error) {
-      setErro(err.message);
-    } else {
-      setErro('Ocorreu um erro inesperado.');
+      if (err.status === 429) {
+        setErro(TEXTOS_JORNADA.curriculo.limiteSugestoesAtingido);
+        return;
+      }
+      if (err.status === 503) {
+        setErro(TEXTOS_JORNADA.curriculo.servicoIndisponivel);
+        return;
+      }
+      if (err.status === 400) {
+        setErro(err.detalhes || TEXTOS_JORNADA.curriculo.arquivoGrande);
+        return;
+      }
     }
+    setErro(mensagemDeErro(err, 'Ocorreu um erro inesperado.'));
   };
 
   if (temConsentimentoPerfil === false) {
     return (
-      <div className="flex flex-col gap-4 w-full max-w-3xl mx-auto">
-        <Banner
-          status="warning"
-          title="Autorização necessária"
-          description={TEXTOS_JORNADA.curriculo.bloqueioConsentimentoPerfil}
-        />
-        {onIrParaConsentimentos && (
-          <div className="flex justify-start">
-            <Button
-              label={TEXTOS_JORNADA.curriculo.irParaConsentimentos}
-              variant="primary"
-              onClick={onIrParaConsentimentos}
-            />
-          </div>
-        )}
-      </div>
+      <BloqueioConsentimento
+        className="flex flex-col gap-4 w-full max-w-3xl mx-auto"
+        descricao={TEXTOS_JORNADA.curriculo.bloqueioConsentimentoPerfil}
+        onIrParaConsentimentos={onIrParaConsentimentos}
+        rotuloBotao={TEXTOS_JORNADA.curriculo.irParaConsentimentos}
+      />
     );
   }
 
