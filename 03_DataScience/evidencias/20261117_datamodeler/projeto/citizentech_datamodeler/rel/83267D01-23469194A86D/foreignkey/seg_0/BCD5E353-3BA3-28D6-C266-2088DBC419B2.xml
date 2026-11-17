@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="BCD5E353-3BA3-28D6-C266-2088DBC419B2" containerWithKeyObject="70C80A77-5400-5DCD-D718-D16455791563" localFKIndex="3E715788-2106-F851-1CFE-2B54FD039706" name="fk_dest_ocup_cbo">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>4E59EB82-CB63-AAF2-F1E0-2C2B4D8E838E</importedID>
+<referredTableLongName>ocupacao_cbo</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>16757162-4AE2-FCDE-79EA-3C34A7EA8642</referredTableID>
+<keyObject>2B794E5B-0B56-5BBE-5102-404846555742</keyObject>
+<referredKeyID>2B794E5B-0B56-5BBE-5102-404846555742</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>cbo6</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

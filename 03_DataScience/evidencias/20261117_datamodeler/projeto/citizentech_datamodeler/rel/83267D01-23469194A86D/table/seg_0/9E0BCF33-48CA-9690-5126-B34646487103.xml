@@ -1,0 +1,78 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="9E0BCF33-48CA-9690-5126-B34646487103" name="competencia_esco">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>BC2C005F-04F1-6FBB-B62F-3CBD8678B16F</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="esco_id" id="F7A30B2F-E371-9858-4C39-507DC3265280">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>FCDC788D-B0A5-6404-04DC-449068408DC8</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="titulo" id="B8D2A3CA-222F-53CB-A74F-A0C26C653B73">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>823FD74D-6CC1-254D-5118-C455FBF14485</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>2D022B75-089F-B7ED-A95B-AEFDC93CBC9D</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="tipo" id="83472845-B413-4008-B1DB-105DE4A89062">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>528CF9F8-5A03-27D1-399C-D67618BF3404</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>85C6B1E8-58DB-5BC0-9D47-67B14D615770</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="uri" id="2CB762BC-AC1D-B199-F975-BE20C1F0AD59">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>E4BB1347-A822-B290-810B-EB5EF72799CD</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>CFFAD5C0-04A1-F6C9-7D6C-96022F220170</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="6CC15AA8-0423-02C9-4181-322DD59183CE" name="pk_competencia_esco">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>C14D928E-8988-ECB7-DAC9-B38E803ED629</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F7A30B2F-E371-9858-4C39-507DC3265280"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

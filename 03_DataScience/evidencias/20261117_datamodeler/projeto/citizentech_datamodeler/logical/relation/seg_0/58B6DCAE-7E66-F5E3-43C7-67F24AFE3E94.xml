@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_intencao_usuario" directorySegmentName="seg_0" id="58B6DCAE-7E66-F5E3-43C7-67F24AFE3E94">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>3A1F53BB-DAF1-2023-9DF4-A6FBBCE9C543</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>C5180EE3-BD20-27FF-7187-8C24773BBA44</sourcePk>
+<dominantRole>1CF0DE75-18DB-C24A-24E7-4D94D43B85DA</dominantRole>
+<identifying>true</identifying>
+<optionalSource>false</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>1CF0DE75-18DB-C24A-24E7-4D94D43B85DA</sourceEntity>
+<targetCardinalityString>1</targetCardinalityString>
+<targetEntity>8AE390E9-44E0-7010-D2D9-827D4521C27E</targetEntity>
+<transferable>true</transferable>
+<deleteRule>CASCADE</deleteRule>
+</Relation>

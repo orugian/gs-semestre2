@@ -1,0 +1,130 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="DD61C62B-E914-9A35-C1B5-EF51D66877C8" name="destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>3CB57C1E-6BCB-FF96-1F51-49504DA8CFEA</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id" id="49E06FB5-9DDC-CFAF-E419-162AB658E501">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>5CEB4A69-0534-2D8B-61B1-C56DECE183E0</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="nome" id="755DA5B4-7285-F9BA-BD46-8D860BDF40E7">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>3A831EE2-AB87-11E8-F071-6FE1C8FC3FFC</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>04B0B41C-707F-7CCF-D3CE-D2BAB8A5FE76</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="versao" id="5E8754DA-7479-D5FF-50E3-142705CF5E65">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>AEBDE1FF-E423-EACF-4A00-214BA129C4C7</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>4E74CC35-E7DD-26B5-4C37-5D25BA4019A3</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="status revisao" id="5AE578EC-F7E1-077B-A31D-26125C212073">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>E6C87173-3CB2-0092-D979-8459B9F4B57B</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>356FF8DE-90FA-B362-30CF-0885C05E7F9F</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="revisado em" id="AD1E7D44-EABC-530D-FEC3-2E591148C605">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>AF6CC0AC-979B-AA84-318F-02D721F9A964</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<domain>0320878A-A49D-A949-4954-05BD656FCFAF</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="no escopo mvp" id="05AEB4FD-FB83-8A6C-49AD-1C505B99A9F8">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>A07DD5D8-7220-3645-0789-34DEF9FC9CFC</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<domain>33FC85D4-A06F-A534-347F-1AA155ECD78A</domain>
+<defaultValue>&apos;N&apos;</defaultValue>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="descricao" id="F48E0AD1-EFB2-EB48-EECA-4F3FC82B0770">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>71D141F0-47DB-142F-A99A-41B5D8515651</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>326347BB-BEC7-8711-ABF4-10A6C60BB695</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="4BD793E2-0FDE-0DDF-0E25-9DB8FFADB54E" name="pk destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>F1195B2C-138C-4A6F-C5BB-99CF59AE7C53</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>49E06FB5-9DDC-CFAF-E419-162AB658E501</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

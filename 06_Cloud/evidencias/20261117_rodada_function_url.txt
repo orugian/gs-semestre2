@@ -1,0 +1,34 @@
+# Rodada nova contra a Function URL real (AWS Learner Lab, us-east-1) — 17/11/2026
+Executada pelo orquestrador. URL e endpoint são entregáveis do enunciado; chave do dispositivo e senha
+do banco foram carregadas só em memória (app/.env e .dados/cloud) e não aparecem nas imagens nem aqui.
+Nenhum recurso AWS foi criado ou alterado. Nenhum gasto pago (Lambda/RDS do Lab; Comprehend sem permissão).
+
+## Health
+2026-11-17T13:03:31Z  GET /health -> HTTP 200 {"status": "ok", "banco": "ok", "ia_provedor": "comprehend"}
+
+## Simulador (print: 20261117_simulador_function_url.png) — 13:09:57Z a 13:10:09Z (UTC)
+Normal, sem chave:   25,0 °C -> 201 id=12 normal | 25,0 cm -> 201 id=13 normal
+Evolução, com chave: 30 -> id=14 normal | 34 -> id=15 normal | 38 -> id=16 atencao | 42 -> id=17 atencao |
+                     46 -> id=18 critico alerta=True | 50 -> id=19 critico alerta=True
+(sentimento=None em todas: Comprehend AccessDenied na LabRole, limitação já documentada)
+
+## Testes negativos (print: 20261117_negativos_e_rds_ocorrencias.png)
+Enviados duas vezes, pois a primeira janela de console rolou antes da captura:
+~13:11Z (1ª execução, saída não capturada) e 13:12:42Z–13:12:43Z (2ª, capturada).
+NEG-1 leitura sem "metrica" -> HTTP 400
+NEG-2 X-Device-Key propositalmente inválida (valor de teste, não a chave real) -> HTTP 401
+Nenhuma dessas chamadas gerou linha no banco (ids seguem em 19).
+
+## Consulta ao RDS (mesmo print) — psql 16 (container local) -> RDS cp1-cloud, banco citizentech,
+## usuário app_ingest (INSERT/SELECT), sslmode=verify-full com o bundle global da AWS
+SELECT id, evento_id, dispositivo_id, metrica, valor, nivel_risco, alerta, autenticado, analise_status, criado_em
+FROM public.ocorrencias WHERE dispositivo_id = 'lab-iot-bancada-01' ORDER BY id DESC LIMIT 20;
+-> 17 linhas: ids 12–19 desta rodada (criado_em 2026-11-17 13:10:17–13:10:25 UTC) e ids 2–9 e 11
+   da rodada de 16/11 (18:38 UTC). O id 10 é de outro dispositivo (esp32-ponte-sul-01).
+
+## CloudWatch
+Prints de console fornecidos pelo usuário em 17/11 (09h56–09h58 locais), tarjados (e-mail do cabeçalho):
+20261116_cloudwatch_critico.png, 20261116_cloudwatch_descarte.png, 20261116_cloudwatch_chave_invalida.png.
+Eles mostram a rodada de 16/11 (18:38:21–18:38:26Z: id=8 crítico 46 °C com ALERTA CIDADAO;
+LEITURA DESCARTADA campo metrica; CHAVE INVALIDA), correlacionados com 20261116_e2e_function_url.txt.
+Os logs desta rodada de 17/11 (janela 13:09:50Z–13:13:00Z) NÃO foram capturados em imagem nesta sessão.

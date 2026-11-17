@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_plano_caminho" directorySegmentName="seg_0" id="420A2CC3-5757-873D-40CB-5E6411F5979D">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>979F84D0-1AF9-A289-530A-BCD6E1B914D0</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>69D9EE18-AA11-5A73-5789-F89BCD657588</sourcePk>
+<dominantRole>AA34216F-6037-D788-1D36-6FD313707713</dominantRole>
+<identifying>false</identifying>
+<optionalSource>false</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>AA34216F-6037-D788-1D36-6FD313707713</sourceEntity>
+<targetCardinalityString>1</targetCardinalityString>
+<targetEntity>E17C8D2D-DDBC-86D5-9F3E-2683DEDF6E2C</targetEntity>
+<transferable>true</transferable>
+<deleteRule>CASCADE</deleteRule>
+</Relation>

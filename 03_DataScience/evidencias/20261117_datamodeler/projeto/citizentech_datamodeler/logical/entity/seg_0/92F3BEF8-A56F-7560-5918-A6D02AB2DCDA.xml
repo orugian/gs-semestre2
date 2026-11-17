@@ -1,0 +1,115 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="92F3BEF8-A56F-7560-5918-A6D02AB2DCDA" name="comparacao destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>37A95933-9277-BD81-5058-3800AC81EAE4</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="comparacao id" id="783AF636-FCA9-469A-8A02-6CD383EE685C">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>8BBF65B5-1BEC-C11C-407B-B03E3A879BD1</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<referedAttribute>C109CC65-976D-CFDC-0BB6-12951F645916</referedAttribute>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>12A2A723-75D4-10C5-3765-68DFFA6D2526</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="ordem" id="509C0D60-B1D5-87ED-A552-CFCA96249FAF">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>F2DCE7B0-DBB1-CF3C-68FA-060F18FCBD6E</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>A9E620C8-9D00-4930-2051-AD2691AB66A3</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="destino id" id="7298AE0B-DF64-800E-0E8F-62B3F5F28F71">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>42E8B3C4-6E68-A892-3B91-9E531FBBEF9C</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="situacao obrigatorios" id="AEA15A47-16BD-4C29-B733-E7F688CDD2EC">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>6C1A1BAF-025A-89FB-AB75-20F686F7D465</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>4E74CC35-E7DD-26B5-4C37-5D25BA4019A3</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="resultado json" id="92A8C4FD-3F0B-F03A-A763-020F856FD677">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>ADB67CCD-7054-C199-FB67-7452AD96E2CF</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<use>0</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<domain>751D9004-E909-3742-00B9-322D763216B7</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="0B801349-1D6D-7E52-87C5-9724FFB1628E" name="pk comparacao destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>E3804D07-FE46-ACD9-A475-41F7AE270AC9</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>783AF636-FCA9-469A-8A02-6CD383EE685C</attributeRef>
+<attributeRef>509C0D60-B1D5-87ED-A552-CFCA96249FAF</attributeRef>
+</usedAttributes>
+</identifier>
+<identifier id="1CE1276C-64B3-2447-61D1-EF10AD300C1E" name="uq comparacao destino id">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>AB120B4E-350A-F199-3FA1-12136388CD83</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<usedAttributes>
+<attributeRef>783AF636-FCA9-469A-8A02-6CD383EE685C</attributeRef>
+<attributeRef>7298AE0B-DF64-800E-0E8F-62B3F5F28F71</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

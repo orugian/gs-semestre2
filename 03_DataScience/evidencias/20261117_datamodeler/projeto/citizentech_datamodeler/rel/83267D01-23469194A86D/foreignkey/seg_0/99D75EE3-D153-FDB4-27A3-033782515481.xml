@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="99D75EE3-D153-FDB4-27A3-033782515481" containerWithKeyObject="41F0070A-FD35-91D9-28B9-04546C83361D" localFKIndex="D7654AEA-5F62-78F0-86CE-26F2D9B43643" name="fk_req_esco">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>A57608DF-0F5B-F986-C680-83BFE9893B1A</importedID>
+<referredTableLongName>competencia_esco</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>9E0BCF33-48CA-9690-5126-B34646487103</referredTableID>
+<keyObject>6CC15AA8-0423-02C9-4181-322DD59183CE</keyObject>
+<referredKeyID>6CC15AA8-0423-02C9-4181-322DD59183CE</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>esco_id</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

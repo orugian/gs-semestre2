@@ -1,0 +1,104 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev20c class="oracle.dbtools.crest.model.design.storage.oracle.v20c.TableProxyOraclev20c" name="sessao_laboratorio" directorySegmentName="seg_0" id="8F9D1C9C-0A36-5BAE-57D8-459B520C1FE5">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="relato_status" id="0F0ECB1E-2356-3BFE-DF5F-B56239B35202">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<defaultValue>&apos;nenhum&apos;</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="status" id="2B792321-0AD1-AF3C-885D-69E848B6A912">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="relato_evento_id" id="533F8596-DCF8-6C11-44AF-EAD99A6D636B">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="criado_em" id="57A0849A-03E1-8E44-8C86-CE3654AAD604">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="relato_redigido" id="588A521B-32FA-E356-8C09-72F209FF98FC">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="expira_em" id="5F2370BF-B8F6-9F76-2859-9809186957EC">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="id" id="9F5BC6AA-5A41-D869-6521-9C22BC251935">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="codigo" id="BE88B198-8685-5367-CA50-E415FA643531">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="usuario_id" id="EFA0178E-EB9A-0A98-9C7A-11BD40B5160F">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="ix_sessao_lab_usr_status" id="686F9175-60F4-3223-8D81-22CA179D1F04">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<logging></logging>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="fk_sessao_laboratorio_usuario" id="E05CB7E0-9516-F6AD-77CC-47DBDBEF83ED">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="pk_sessao_laboratorio" id="18ABF98E-2A2D-A314-7EF5-36AC1EA0D94A">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.storage.oracle.TableCheckConstraintOracle">
+<TableCheckConstraint name="ck_sessao_lab_relato_status" id="8DF8DAA3-7FC9-E055-A111-8552AACA010D">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<nameChanged>true</nameChanged>
+</TableCheckConstraint>
+<TableCheckConstraint name="ck_sessao_lab_status" id="D7A9C809-3FE9-C50E-B057-5B3BD578E7CC">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<nameChanged>true</nameChanged>
+</TableCheckConstraint>
+</tableCheckConstraints>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="uq_sessao_laboratorio_codigo" id="2E1C38E5-EEF0-C0B0-74E8-C930E1E54232">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev20c>

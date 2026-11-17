@@ -35,7 +35,7 @@ GET /leituras              histórico paginado, filtro por sessão
 GET /leituras/indicadores  contagem, alertas, média, máximo e mínimo por métrica
 ```
 
-**Origem dos dados.** As leituras vêm do dispositivo da bancada. Nas evidências deste documento, o dispositivo é **simulado por requisições HTTP** com o JSON exato do firmware (o enunciado aceita). O firmware do ESP32 está em `app/iot/firmware/` e envia o mesmo contrato; ele **ainda não foi executado no Wokwi** contra esta API.
+**Origem dos dados.** As leituras vêm do dispositivo da bancada. Nas evidências deste documento, o dispositivo é **simulado por requisições HTTP** com o JSON exato do firmware (o enunciado aceita). O firmware do ESP32 está em `app/iot/firmware/` e envia o mesmo contrato. **Em 17/11/2026 ele foi executado no simulador Wokwi contra esta API em modo isolado:** três cenários (normal, atenção, crítico), 6 POSTs com HTTP 201 e 6 linhas no CSV, com sensores virtuais (DS18B20 e HC-SR04 simulados, não bancada física). Ver o [aceite Wokwi](<../01_AICSS/evidencias/20261117_wokwi_aceite.md>). Esse ensaio parou no CSV: as leituras ficaram `pendente_nuvem` e **não** foram enviadas à Lambda/AWS.
 
 **Modo isolado (para a correção desta disciplina).** A API completa do produto também tem contas, currículo e bancos Oracle e MongoDB. Para CTP existe o aplicativo `citizentech.leituras.isolado`, que sobe **só as rotas de leituras**, sem Oracle, sem MongoDB e sem nuvem. É esse modo que as evidências usam.
 
@@ -195,7 +195,7 @@ Conferência manual: (25 + 38 + 48) / 3 = 37,0 °C e (25 + 12 + 5) / 3 = 14,0 cm
 
 ## 7. Limitações
 
-- O dispositivo das evidências é **simulado por HTTP**; o firmware do ESP32 ainda não foi executado no Wokwi contra esta API.
+- As evidências das seções 5 e 6 usam o dispositivo **simulado por HTTP**. O firmware rodou no Wokwi contra esta API (17/11, 6 leituras até o CSV), mas com sensores simulados; bancada física e envio Wokwi→nuvem não foram verificados.
 - O CSV é adequado para um laboratório com poucos dispositivos; a leitura do histórico percorre o arquivo inteiro a cada `GET`. Para volume maior, um banco de dados.
 - O limite de requisições por dispositivo fica em memória do processo: com várias instâncias da API, cada uma conta separado.
 - A chave do dispositivo é única para a bancada de demonstração (não há uma chave por dispositivo).

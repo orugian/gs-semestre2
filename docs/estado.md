@@ -1,8 +1,17 @@
 # Estado do desenvolvimento — CitizenTech
 
-> **Encerramento verificado em 17/11/2026, 08h51 (UTC−3).** Prazo: **19/11/2026 às23h55**; nessa checagem faltavam 2d15h03. Não é monitoramento ao vivo. Este estado e o [handoff com fila priorizada](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
+> **Checkpoint de 17/11/2026, ~10h45 (UTC−3).** Prazo: **19/11/2026 às 23h55** (faltavam ~2d13h). Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
 
-## 0. Fechamento funcional aceito; pendente o fechamento acadêmico
+## 00. Sessão de 17/11 manhã — Cloud e Data Modeler concluídos
+
+- **Lab:** `GET /health` 200 `banco=ok` às 13:03:31Z (verificado). Rodada nova 13:09:57–13:12:43Z: simulador normal (ids 12–13) e evolução 30→50 °C (ids 14–19, 46/50 crítico `alerta=True`); sem `metrica` → 400; chave inválida → 401. SELECT no RDS (app_ingest, verify-full) → 17 linhas de `lab-iot-bancada-01`. Nenhum recurso AWS alterado. [Registro](<../06_Cloud/evidencias/20261117_rodada_function_url.txt>).
+- **Prints Cloud — as 4 categorias cobertas:** SIM `20261117_simulador_function_url.png` e DB `20261117_negativos_e_rds_ocorrencias.png` capturados pelo agente (janela do console via PrintWindow, sem segredo visível); CW-C/CW-D/CW-K fornecidos pelo usuário às 09h56–09h58, **são da rodada de 16/11 (18:38Z)**, renomeados `20261116_cloudwatch_{critico,descarte,chave_invalida}.png`, e-mail tarjado; originais copiados (SHA igual) para `.dados/cloud/privado` e excluídos do Git via `.git/info/exclude`. **Logs CloudWatch da rodada de 17/11 não têm imagem** (opcional).
+- **Data Modeler executado pelo agente (D25/CLAUDE §12):** SQL Developer Data Modeler 24.3.1.351.0831 oficial (zip SHA-256 conferido com a página da Oracle), portátil em `../.kaiser/toolchains/datamodeler` (~0,9 GB, sem PATH/serviço, perfil isolado `userdir`). Automação da GUI por pyautogui + PrintWindow. Import do `oracle.sql`: 32 instruções, 23 importadas, **0 falhas**, 9 não reconhecidas (= os 9 SELECT C1–C9). Relacional **16 tabelas/15 FKs** (nomes idênticos ao DDL); lógico por *Engineer to Logical Model*: **16 entidades/15 relações**. Site usado: Oracle 21c (o 24.3 não lista 19c). Projeto `.dmd`, PDF/PNG/SVG de ambos os diagramas, log e 3 telas em [`03_DataScience/evidencias/20261117_datamodeler/`](<../03_DataScience/evidencias/20261117_datamodeler/>). Relatório DS §2/§6 atualizado; PDF **9p**, RMs ok.
+- **QA:** folhas de contato de todos os PDFs inspecionadas (AICSS10, Cyber12, DS9, CTP8, ML12, Est21; nenhuma página vazia). CTP §2/§7 dizia "Wokwi ainda não executado" — corrigido com o aceite Wokwi (sem dizer Wokwi→AWS); PDF CTP 8p. Teclado/foco: [QA](<../02_Cybersecurity/evidencias/20261117_qa_teclado_foco.md>) — fluxo por teclado ok; **achado não corrigido:** foco pouco visível nos seletores de Mercado e nos campos de login (WCAG 2.4.7), exige decisão para reabrir CSS.
+- **Regressão:** tools **43 passed**; cloud **115 passed** ×4 com `PG_TESTE_*` em memória (sem elas, 33 skips/3 erros de ambiente); 1 falha intermitente observada 2× em `test_simulador.py` (ConnectionAbortedError WinError 10053 no servidor HTTP local do teste), não reproduzida em 10 rodadas seguintes — *flaky* de ambiente, não alterado. Empacotador `--verificar` **OK**. API/ML/web não rerodados (sem mudança de código).
+- **Vídeos/links:** nenhum recebido; os 5 `video.md` seguem com `[HUMANO — preencher]`.
+
+## 0. Fechamento funcional aceito; pendente o fechamento acadêmico (registro de 17/11 08h51)
 
 **Nova orientação do usuário em17/11, após o encerramento:** **Data Modeler é tarefa do AGENTE**, não do grupo; D25/CLAUDE§12 e handoff foram atualizados. O usuário informou **Learner Lab reativado para a próxima sessão**; isso ainda não foi confirmado por novo health. Próximo agente: iniciar validação Cloud e execução agêntica do Modeler, sem pedir ao usuário que faça a modelagem. [Capturas exatas que faltam](<guia_capturas_learner_lab.md>).
 
@@ -65,19 +74,19 @@ Holdout2026 **fechado**, status_promocao=nao_decidida, nenhum modelo promovido; 
 
 Fila, responsáveis e critérios detalhados no [handoff P01–P08](<handoff_citizentech_20261116_fim.md>). As tarefas abaixo **não estão concluídas**.
 
-1. **Cloud:** Lab reativado conforme informado pelo usuário17/11, health novo pendente. Faltam prints de simulador/SQL (agente prepara e tenta capturar) e logs CloudWatch de descarte/chave inválida/alerta crítico (console humano), além do vídeo≤5min. [Guia exato](<guia_capturas_learner_lab.md>). Não alterar recursos por sugestão de revisor; typo RATE_KIMIT e default30 já documentados.
-2. **Data Modeler — AGENTE:** gerar modelos lógico/relacional reais e exportações por determinação do usuário17/11. Diagnosticar ferramenta/automação; pedir apenas habilitação se necessária, não transferir a modelagem ao grupo. Execução ainda pendente. Oracle FIAP continua fora do escopo; não chamar Mermaid de Data Modeler.
+1. **Cloud:** imagens das 4 categorias **concluídas em 17/11** (ver §00). Falta só o vídeo ≤5 min (humano). Não alterar recursos; typo RATE_KIMIT e default 30 já documentados.
+2. **Data Modeler:** **concluído pelo agente em 17/11** (ver §00). Oracle FIAP continua fora do escopo.
 3. **Vídeos/URLs:** AIC≤7min com rosto/sem música/YouTube não listado e nomes/RMs (obrigatório para pontuar); ML/Cyber/Cloud≤5min; RNA obrigatório. Ideias efetivas da live e relato de gestão também humanos.
 4. Identidades confirmadas e aplicadas: Guilherme Orugian RM572882; Lucas Henrique RM571901; Rodrigo Bettio RM573725. Placeholders em URLs de vídeos permanecem até receber links reais.
 5. Conferência e **Portal**: Estatística PDF+PY+CSV separados, sem ZIP; Cyber≤15p. Nenhuma submissão realizada. Texto de operador/transferência internacional em consentimentos, backup/restauração não verificados, proteção de sensor único, buffer offline do ESP e TLS/CA de produção permanecem limitações; não implementar correções fora do escopo sem decisão.
 
 ### 4.1 Verificações que o próximo agente ainda deve conduzir
 
-- [ ] Inventariar arquivos humanos novos e confrontar os requisitos atuais; snapshots históricos não são uma fila confiável de pendências.
-- [ ] Revalidar health do Lab que o usuário informou já ter reativado; não pedir reinício por padrão nem tratar essa declaração como teste executado.
-- [ ] Executar Data Modeler pelo agente (D25 atualizado), gerar projeto/modelos/exports reais e incorporar ao relatório/PDF após aceite.
-- [ ] Revisar visualmente PDFs e testar os links reais quando fornecidos; parser de páginas/RMs/imagens não substitui inspeção visual completa.
-- [ ] Fazer QA manual pertinente de teclado/foco/acessibilidade, sem alegar certificação WCAG por axe. Se não houver ferramenta para o teste, registrar e pedir apoio humano específico.
+- [x] Inventariar arquivos humanos novos (17/11: 3 prints CloudWatch; nenhum vídeo/link).
+- [x] Revalidar health do Lab (200 às 13:03Z).
+- [x] Executar Data Modeler pelo agente e incorporar ao relatório/PDF.
+- [x] Revisar visualmente PDFs por folha de contato (resolução baixa; legibilidade fina de tabelas não conferida página a página). [ ] Testar links reais quando fornecidos.
+- [x] QA de teclado/foco parcial (4 telas). [ ] Decidir se corrige o foco fraco (Mercado/login) — reabre CSS de fatia integrada.
 - [ ] Conferir procedência/atualidade das execuções anteriores de notebooks; não reexecutar em massa nem abrir holdout2026 para satisfazer um checklist. Se for indispensável reexecução científica, submeter antes o escopo seguro e o conflito de gates ao usuário.
 - [ ] Após incorporar materiais, regenerar cópias/PDFs, executar empacotador --verificar, regressão pertinente e gitleaks; publicar apenas mudanças intencionais.
 

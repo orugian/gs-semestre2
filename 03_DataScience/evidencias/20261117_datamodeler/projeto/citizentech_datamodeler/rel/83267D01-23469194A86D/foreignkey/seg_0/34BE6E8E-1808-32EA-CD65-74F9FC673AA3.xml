@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="34BE6E8E-1808-32EA-CD65-74F9FC673AA3" containerWithKeyObject="8F9D1C9C-0A36-5BAE-57D8-459B520C1FE5" localFKIndex="E05CB7E0-9516-F6AD-77CC-47DBDBEF83ED" name="fk_sessao_laboratorio_usuario">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>62915E74-FFE2-2B2D-A57D-9F3852649BD7</importedID>
+<referredTableLongName>usuario</referredTableLongName>
+<deleteRule>CASCADE</deleteRule>
+<referredTableID>768EDC11-3DF2-EB56-EFFE-87775DFCD6B4</referredTableID>
+<keyObject>6F931A8E-D67D-FC89-AD5F-EF2D918AD9B4</keyObject>
+<referredKeyID>6F931A8E-D67D-FC89-AD5F-EF2D918AD9B4</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>id</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

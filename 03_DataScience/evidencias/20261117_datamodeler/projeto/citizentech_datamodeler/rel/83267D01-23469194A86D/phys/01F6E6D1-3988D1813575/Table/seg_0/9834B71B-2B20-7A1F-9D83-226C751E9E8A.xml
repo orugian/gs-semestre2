@@ -1,0 +1,126 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev20c class="oracle.dbtools.crest.model.design.storage.oracle.v20c.TableProxyOraclev20c" name="checkpoint" directorySegmentName="seg_0" id="9834B71B-2B20-7A1F-9D83-226C751E9E8A">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="criterio_conclusao" id="1424ACAD-D99D-5B1A-5990-D95A9F2C204E">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="obrigatorio" id="441EF392-F932-9F80-8BB8-2CC48437329A">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="atualizado_em" id="942211E8-43B6-288C-03BA-60AC69973112">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="exercicio_id" id="9FDA825B-4D4B-3D31-0654-39FA61A1A94C">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="plano_id" id="B8AEAB0D-B82D-8F35-DD57-1B68B8168F50">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="titulo" id="BD1EFC3C-4687-F6A4-EBD3-A0C2CB0B749D">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="estado_origem" id="BE1D157C-10F8-3DEB-0AA6-399C17395CCC">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="status" id="C20F43F2-D295-E8E4-6AED-98DDFD55E4BA">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="descricao" id="CCBC3732-A553-6F8E-9A97-CBA10AC02529">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="id" id="D1421634-6031-1280-4804-FC060E87BD5B">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ordem" id="E3220B05-1BFF-AE33-3C26-E441F144B175">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="requisito_id_local" id="E82B8F89-DD68-B98C-009D-BBC242FFB841">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="tipo" id="E85DA227-ED71-654F-4C72-84DCD599C511">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="motivo_origem" id="FB22C6A8-2250-71BE-CCA4-E2753CE79111">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="fk_checkpoint_plano" id="D1805BCF-C6C2-5F38-B5F6-C293203FDBC8">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="pk_checkpoint" id="54142F15-723E-715B-5B4C-FBCDF8CC60E4">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</PrimaryKey>
+</primaryKeys>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.storage.oracle.TableCheckConstraintOracle">
+<TableCheckConstraint name="ck_checkpoint_status" id="077D6694-FD94-B5D9-2A58-37DC46903619">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<nameChanged>true</nameChanged>
+</TableCheckConstraint>
+<TableCheckConstraint name="ck_checkpoint_obrigatorio" id="1E88CE41-A68C-E68D-32FA-CC6F98B62EB5">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<nameChanged>true</nameChanged>
+</TableCheckConstraint>
+<TableCheckConstraint name="ck_checkpoint_tipo" id="5465E49D-1C5D-B5D0-AEE6-3CCB7367BE5C">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<nameChanged>true</nameChanged>
+</TableCheckConstraint>
+</tableCheckConstraints>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="uq_checkpoint_plano_ordem" id="FF7851EC-57FC-8BCE-5338-8570E9EBCEF5">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexSort>SORTED</indexSort>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev20c>

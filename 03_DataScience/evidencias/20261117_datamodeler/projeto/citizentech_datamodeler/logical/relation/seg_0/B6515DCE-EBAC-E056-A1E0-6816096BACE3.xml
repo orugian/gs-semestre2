@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_checkpoint_plano" directorySegmentName="seg_0" id="B6515DCE-EBAC-E056-A1E0-6816096BACE3">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>E62216D6-FE68-EAEA-8A20-CB1D102996FF</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>71AE2F64-2AC1-BFF2-9B0E-A01B605B9D9B</sourcePk>
+<identifying>false</identifying>
+<optionalSource>false</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>E17C8D2D-DDBC-86D5-9F3E-2683DEDF6E2C</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>EBC94F4E-88D2-8793-DEC7-699E30669DC3</targetEntity>
+<transferable>true</transferable>
+<deleteRule>CASCADE</deleteRule>
+</Relation>

@@ -1,0 +1,136 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="41F0070A-FD35-91D9-28B9-04546C83361D" name="requisito_destino">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>D7D7CAE2-BB25-F6C2-5F77-34BD44E37302</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="destino_id" id="77E0327B-1940-A84C-3DAC-2758CE241705">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>64138556-895E-9431-A714-418FE296C55C</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="16D86596-1CE2-AA4A-50F1-DA3AEC8B914A" referredColumn="5CEB4A69-0534-2D8B-61B1-C56DECE183E0"/>
+</associations>
+</Column>
+<Column name="id_local" id="9D340226-FCAA-F776-439F-1CA106893DD4">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>CCF32BE7-6E1D-5F46-2D04-07BCC6B64300</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>DB738BBD-A0B4-163B-08C0-19D9CB9E2686</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="esco_id" id="D75CCD54-5144-E83F-B58C-E40C594B0289">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>2DE054BE-CC88-CC89-0E8D-DE7DB93DD7FC</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="99D75EE3-D153-FDB4-27A3-033782515481" referredColumn="F7A30B2F-E371-9858-4C39-507DC3265280"/>
+</associations>
+</Column>
+<Column name="obrigatorio" id="6483D52E-1BD9-8679-59C3-D47DBBAA745C">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>F921755D-E3FA-F256-23AE-452E8529CFC2</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<domain>33FC85D4-A06F-A534-347F-1AA155ECD78A</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ordem" id="6B660586-A371-DFAF-5676-4B550B16F168">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>77A62CA6-19B4-4408-B7A2-0F1B1E748B88</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>59BD694A-5E3C-F649-A7C4-D913D8C63C99</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="6E05311F-4C0D-F8D1-08B1-BBEC5D7F3DBE" name="pk_requisito_destino">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>CD95004B-80A1-739F-B672-6734A71B3E7C</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="77E0327B-1940-A84C-3DAC-2758CE241705"/>
+<colUsage columnID="9D340226-FCAA-F776-439F-1CA106893DD4"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="8B5519BF-D282-336E-639A-C4FCA711E59C" name="ix_requisito_esco">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>67A8556E-ADD8-178B-880A-620665111D1B</importedID>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D75CCD54-5144-E83F-B58C-E40C594B0289"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="AD62A9AE-1D90-F0F0-D7EA-6F079F339651" name="fk_req_destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="77E0327B-1940-A84C-3DAC-2758CE241705"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D7654AEA-5F62-78F0-86CE-26F2D9B43643" name="fk_req_esco">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D75CCD54-5144-E83F-B58C-E40C594B0289"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="ck_req_obrigatorio" directorySegmentName="seg_0" id="C89434A8-ECC0-8B35-BD38-B09434116FE1">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>C8617C49-20DE-71F6-43EA-9B86AEE7B8F8</importedID>
+<rule><![CDATA[obrigatorio IN ('S', 'N')]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>

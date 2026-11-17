@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="BA683E8B-FD27-7C6C-CA0A-0828B350C958" containerWithKeyObject="50D59022-57E1-6DB3-B3A2-CD9129497204" localFKIndex="F802B123-620B-E1D5-53B7-418719B9D402" name="fk_caminho_comparacao">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>26D9B157-048C-3501-2111-D76C89E38D82</importedID>
+<referredTableLongName>comparacao</referredTableLongName>
+<deleteRule>SET NULL</deleteRule>
+<referredTableID>B40D6C3E-D374-F512-8286-8ABB61766EE6</referredTableID>
+<keyObject>5A6DBF2A-5806-E43A-C5B9-E1DC0F91FA62</keyObject>
+<referredKeyID>5A6DBF2A-5806-E43A-C5B9-E1DC0F91FA62</referredKeyID>
+<mandatory>false</mandatory>
+<refColNames>id</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

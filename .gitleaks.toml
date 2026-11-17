@@ -1,0 +1,12 @@
+# Configuracao do gitleaks do projeto: regras padrao + uma excecao estreita.
+# Excecao (17/11/2026): o projeto nativo do Oracle SQL Developer Data Modeler guarda
+# identificadores internos de objetos no formato GUID (ex.: key="83267D01-...") que a regra
+# generic-api-key confunde com chaves. Vale SO para essa pasta E SO para valores com formato GUID.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "GUIDs internos do projeto Data Modeler (nao sao segredos)"
+condition = "AND"
+paths = ['''^03_DataScience/evidencias/20261117_datamodeler/projeto/''']
+regexes = ['''^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$''']

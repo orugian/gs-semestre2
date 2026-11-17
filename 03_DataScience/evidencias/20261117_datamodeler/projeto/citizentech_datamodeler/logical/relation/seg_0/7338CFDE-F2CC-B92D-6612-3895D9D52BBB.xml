@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_dest_ocup_destino" directorySegmentName="seg_0" id="7338CFDE-F2CC-B92D-6612-3895D9D52BBB">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>7BFE5297-C3C8-640D-82C9-BC72F2F6C3D6</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>4BD793E2-0FDE-0DDF-0E25-9DB8FFADB54E</sourcePk>
+<identifying>true</identifying>
+<optionalSource>false</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>DD61C62B-E914-9A35-C1B5-EF51D66877C8</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>85E0AA3C-13D2-6155-D1C5-27F888FAEA28</targetEntity>
+<transferable>true</transferable>
+<deleteRule>CASCADE</deleteRule>
+</Relation>

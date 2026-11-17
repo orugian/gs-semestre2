@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>relatorio</title>
+<title>CitizenTech - Cognitive Data Science</title>
 <style>
 @page { size: A4; margin: 20mm 18mm; }
 body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
@@ -69,12 +69,17 @@ img { max-width: 100%; }
 </table>
 <h2>2. Modelagem relacional (Oracle)</h2>
 <p><strong>Arquivos:</strong> <code>app/db/ddl/001_usuario_consentimento.sql</code> a <code>007_catalogo.sql</code> (cópia consolidada em <code>03_DataScience/oracle.sql</code>). São <strong>16 tabelas</strong> com chaves primárias, estrangeiras (com <code>ON DELETE CASCADE</code> a partir de <code>usuario</code>, exceto em <code>consentimento</code>, ver §5), <code>CHECK</code> de domínio (estados, finalidades, faixas numéricas), <code>UNIQUE</code> e índices de acesso.</p>
-<p><strong>Diagrama entidade-relacionamento:</strong> <code>docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png</code> (gerado do mesmo DDL). <strong>DER do Oracle Data Modeler:</strong> [AGENTE — execução pendente: importar o DDL no Modeler real, gerar modelos lógico/relacional, salvar projeto nativo e exportar imagens. Responsabilidade transferida pelo usuário em17/11/2026; não confundir Mermaid com essa execução].</p>
-<p>Principais decisões de modelagem:
-- <strong>Dialeto 19c:</strong> sem <code>BOOLEAN</code> (flags em <code>CHAR(1)</code> com <code>CHECK IN ('S','N')</code>), sem <code>IF NOT EXISTS</code>, sem tipo <code>JSON</code> nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em <code>CLOB</code>/<code>VARCHAR2</code> com <code>CHECK (coluna IS JSON)</code>, consultáveis com <code>JSON_VALUE</code>.
-- <strong>Rastreabilidade:</strong> cada comparação guarda o resultado completo por destino, na ordem escolhida (<code>comparacao_destino.ordem</code>); o plano guarda a base de estados usada (<code>plano.base_json</code>); a tentativa guarda a versão do exercício e o hash da resposta.
-- <strong>Minimização:</strong> o texto do currículo e as respostas abertas <strong>não</strong> ficam no Oracle (só no MongoDB, já redigidos); o Oracle guarda o hash.
-- <strong>Catálogo disjunto:</strong> <code>destino_ocupacao</code> tem <code>UNIQUE (cbo6)</code>, garantindo que uma ocupação CBO pertença a um só destino (a mesma população não é contada duas vezes no mercado).</p>
+<p><strong>Oracle SQL Developer Data Modeler (executado em 17/11/2026):</strong> o DDL consolidado foi importado no Data Modeler <strong>24.3.1.351.0831</strong> (pacote oficial da Oracle, SHA-256 conferido). O log de importação registra <strong>32 instruções: 23 importadas, 0 falhas e 9 não reconhecidas</strong> — as 9 são as consultas <code>SELECT</code> C1–C9 que o arquivo consolidado também contém, não DDL. Resultado: <strong>modelo relacional com 16 tabelas e 15 chaves estrangeiras</strong>, igual ao DDL (nomes conferidos um a um, 15 <code>REFERENCES</code> no script), e <strong>modelo lógico com 16 entidades e 15 relações</strong>, gerado pela engenharia reversa do próprio Modeler (<em>Engineer to Logical Model</em>). O Modeler 24.3 não lista "19c" entre os <em>sites</em> de importação; foi usado <strong>Oracle Database 21c</strong>, que aceita o mesmo dialeto (o DDL não usa nada posterior ao 19c). O layout é o automático da ferramenta, sem retoque manual. Arquivos em <code>evidencias/20261117_datamodeler/</code>: projeto nativo (<code>projeto/citizentech_datamodeler.dmd</code> + pasta), diagramas <code>datamodeler_relacional.{pdf,png,svg}</code> e <code>datamodeler_logico.{pdf,png,svg}</code>, log <code>import_ddl_log.txt</code> e telas da ferramenta.</p>
+<p><img alt="Modelo relacional exportado pelo Oracle SQL Developer Data Modeler" src="evidencias/20261117_datamodeler/datamodeler_relacional.png" /></p>
+<p><img alt="Modelo lógico gerado pelo Data Modeler a partir do relacional" src="evidencias/20261117_datamodeler/datamodeler_logico.png" /></p>
+<p>Há também um diagrama de apoio em <code>docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png</code>, gerado em Mermaid a partir do mesmo DDL; ele <strong>não</strong> é o artefato do Data Modeler.</p>
+<p>Principais decisões de modelagem:</p>
+<ul>
+<li><strong>Dialeto 19c:</strong> sem <code>BOOLEAN</code> (flags em <code>CHAR(1)</code> com <code>CHECK IN ('S','N')</code>), sem <code>IF NOT EXISTS</code>, sem tipo <code>JSON</code> nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em <code>CLOB</code>/<code>VARCHAR2</code> com <code>CHECK (coluna IS JSON)</code>, consultáveis com <code>JSON_VALUE</code>.</li>
+<li><strong>Rastreabilidade:</strong> cada comparação guarda o resultado completo por destino, na ordem escolhida (<code>comparacao_destino.ordem</code>); o plano guarda a base de estados usada (<code>plano.base_json</code>); a tentativa guarda a versão do exercício e o hash da resposta.</li>
+<li><strong>Minimização:</strong> o texto do currículo e as respostas abertas <strong>não</strong> ficam no Oracle (só no MongoDB, já redigidos); o Oracle guarda o hash.</li>
+<li><strong>Catálogo disjunto:</strong> <code>destino_ocupacao</code> tem <code>UNIQUE (cbo6)</code>, garantindo que uma ocupação CBO pertença a um só destino (a mesma população não é contada duas vezes no mercado).</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -311,7 +316,7 @@ ex_analista_monitoramento_iot_01 | 2026-11-16 21:57:29.996023 | 0.75          | 
 <li>Os dados de usuário são de <strong>uma persona de demonstração</strong> fictícia; as contagens descrevem o ambiente de demonstração, não um uso real.</li>
 <li>O MongoDB ainda não tem índices além de <code>_id</code> nem TTL para os textos redigidos (proposto: TTL e índice por <code>usuario_id</code>).</li>
 <li>A exclusão de conta não remove automaticamente os documentos do MongoDB (proposto).</li>
-<li>Modelos lógico/relacional e exportações do Data Modeler ainda pendentes de execução pelo <strong>agente</strong>, por decisão do usuário em17/11; nenhum artefato real dessa ferramenta é alegado como concluído.</li>
+<li>No Data Modeler, o modelo lógico é <strong>engenharia reversa</strong> do relacional (o projeto partiu do DDL, não de um modelo conceitual desenhado antes); nomes de entidades e atributos seguem os da tabela. O <em>site</em> usado na importação foi o 21c, porque o 24.3 não oferece 19c. O projeto não foi conectado a um banco (importação por arquivo).</li>
 </ul>
 </body>
 </html>

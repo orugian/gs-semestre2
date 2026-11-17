@@ -147,16 +147,14 @@ uv run pytest -q                                                     # 115 teste
 
 ## 8. Evidências (`evidencias/`)
 
-**Próxima sessão:** usuário informou Lab reativado em17/11; novo health ainda não executado. Seguir o [guia exato de capturas pendentes](<../docs/guia_capturas_learner_lab.md>): três casos CloudWatch no console; simulador e consulta SQL em telas próprias, preparadas pelo agente. Não pedir recaptura de imagens já válidas sem motivo.
-
-Execução de 16/11/2026, 15h37–15h38 (UTC−3), contra a Function URL real.
+Duas rodadas reais contra a Function URL: **16/11/2026, 15h37–15h38 (UTC−3)**, ids 2–11; e **17/11/2026, 13:09:57–13:12:43 UTC** (health 200, ids 12–19 e dois testes negativos; [registro](<evidencias/20261117_rodada_function_url.txt>)). As quatro categorias exigidas têm imagem.
 
 | # exigido | Evidência | Arquivo | Situação |
 |---|---|---|---|
 | 1 | Variáveis de ambiente cadastradas na Lambda (valores secretos tarjados) | `20261116_lambda_variaveis_ambiente.png` | ok |
-| 2 | Simulador enviando as leituras e a resposta da API | `20261116_e2e_function_url.txt` (saída do terminal) | texto ok; **print do terminal pendente** [HUMANO] |
-| 3 | CloudWatch com payload chegando, classificação e gravação | `20261116_cloudwatch_3.png` | ok; prints do descarte/chave inválida e do alerta crítico **a refazer** [HUMANO] |
-| 4 | Consulta no banco com as ocorrências gravadas | `20261116_consulta_rds.txt` (psql, TLS verify-full) | texto ok; **print pendente** [HUMANO] |
+| 2 | Simulador enviando as leituras e a resposta da API (normal e evolução até crítico) | `20261117_simulador_function_url.png` (terminal real, 17/11); texto de 16/11 em `20261116_e2e_function_url.txt` | ok |
+| 3 | CloudWatch com payload chegando, classificação e gravação | `20261116_cloudwatch_3.png` (ingestão); `20261116_cloudwatch_critico.png` (id=8, 46 °C: CLASSIFICACAO crítico + WARNING ALERTA CIDADAO + GRAVADO NO RDS); `20261116_cloudwatch_descarte.png` (WARNING LEITURA DESCARTADA, campo `metrica`); `20261116_cloudwatch_chave_invalida.png` (WARNING CHAVE INVALIDA) | ok — prints de console do usuário em 17/11, e-mail tarjado; mostram os logs da rodada de 16/11 (18:38 UTC) |
+| 4 | Consulta no banco com as ocorrências gravadas | `20261117_negativos_e_rds_ocorrencias.png` (400/401 + psql no RDS, TLS verify-full, usuário `app_ingest`: 17 linhas, ids 2–19 de `lab-iot-bancada-01`); texto de 16/11 em `20261116_consulta_rds.txt` | ok |
 | extra | Function URL da Lambda `CP-2` no console | `20261116_function_url.png` | ok (usuário do console tarjado) |
 | extra | RDS `cp1-cloud`: endpoint, porta 5432, *publicly accessible* = Yes, security group `default` | `20261116_rds_conectividade.png` | ok (usuário tarjado) |
 | extra | Regras do security group: entrada CIDR `0.0.0.0/0` (exceção acadêmica, §9) | `20261116_rds_security_group.png` | ok (usuário tarjado) |
@@ -167,7 +165,8 @@ O que as evidências mostram (valores copiados das saídas):
 - **Cenário de risco** com chave: 6 leituras de 30 a 50 °C → 30 e 34 `normal`, 38 e 42 `atencao`, 46 e 50 `critico` com `alerta=True` (ids 4–9).
 - Payload do simulador oficial do professor (`nivel_rio_cm` = 268,9) → 201 com `nivel_risco=desconhecido` (id 10).
 - Leitura sem `metrica`/`valor` → 400; chave inválida → 401; `evento_id` repetido igual → 200 `duplicata: true`; repetido diferente → 409.
-- No RDS: 10 linhas (ids 2–11), 2 críticas (ids 8 e 9, 46 e 50 °C); resumo `lab-iot-bancada-01`: 9 leituras, média 33,56, pico 50, 2 críticas, 2 não autenticadas.
+- No RDS (16/11): 10 linhas (ids 2–11), 2 críticas (ids 8 e 9, 46 e 50 °C); resumo `lab-iot-bancada-01`: 9 leituras, média 33,56, pico 50, 2 críticas, 2 não autenticadas.
+- **Rodada de 17/11:** `GET /health` → 200 `banco=ok`; normal 25,0 °C/25,0 cm → ids 12–13 `normal`; evolução 30→50 °C → ids 14–19 (38/42 `atencao`, 46/50 `critico` com `alerta=True`); sem `metrica` → 400; chave inválida → 401 (nenhum dos dois gerou linha). O SELECT no RDS devolveu 17 linhas para `lab-iot-bancada-01` (ids 2–9, 11 e 12–19). **Os logs CloudWatch desta rodada não foram capturados em imagem**; os prints CloudWatch são da rodada de 16/11, correlacionada pelos ids e horários do texto de 16/11.
 
 ## 9. Limitações declaradas
 

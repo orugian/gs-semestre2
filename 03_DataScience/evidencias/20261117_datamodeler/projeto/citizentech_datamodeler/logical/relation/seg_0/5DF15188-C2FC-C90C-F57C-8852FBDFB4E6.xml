@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_caminho_comparacao" directorySegmentName="seg_0" id="5DF15188-C2FC-C90C-F57C-8852FBDFB4E6">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>BA683E8B-FD27-7C6C-CA0A-0828B350C958</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>30F1AF55-020E-CCDB-C684-8CE07717D49B</sourcePk>
+<identifying>false</identifying>
+<optionalSource>true</optionalSource>
+<optionalTarget>true</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>D718773D-3975-538B-71D0-E09F54D85783</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>AA34216F-6037-D788-1D36-6FD313707713</targetEntity>
+<transferable>true</transferable>
+<deleteRule>SET NULL</deleteRule>
+</Relation>

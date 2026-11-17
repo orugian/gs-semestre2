@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Relation class="oracle.dbtools.crest.model.design.logical.Relation" name="fk_sessao_laboratorio_usuario" directorySegmentName="seg_0" id="A673521B-6A1A-E1EC-D710-093BA1180233">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:20:14 UTC</createdTime>
+<generatorID>34BE6E8E-1808-32EA-CD65-74F9FC673AA3</generatorID>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<engineerTo>
+<item key="83267D01-19CF-8423-25BB-23469194A86D" value="true"/>
+</engineerTo>
+<sourcePk>C5180EE3-BD20-27FF-7187-8C24773BBA44</sourcePk>
+<identifying>false</identifying>
+<optionalSource>false</optionalSource>
+<optionalTarget>false</optionalTarget>
+<sourceCardinality>1</sourceCardinality>
+<sourceEntity>1CF0DE75-18DB-C24A-24E7-4D94D43B85DA</sourceEntity>
+<targetCardinalityString>*</targetCardinalityString>
+<targetEntity>C561A2F5-36CB-2164-B4B6-7863CF2B4A17</targetEntity>
+<transferable>true</transferable>
+<deleteRule>CASCADE</deleteRule>
+</Relation>

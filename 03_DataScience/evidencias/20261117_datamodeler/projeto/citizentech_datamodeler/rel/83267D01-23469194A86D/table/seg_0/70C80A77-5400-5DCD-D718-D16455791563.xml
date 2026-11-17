@@ -1,0 +1,91 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="70C80A77-5400-5DCD-D718-D16455791563" name="destino_ocupacao">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>CC335A1A-9D26-9EDD-66F2-7CB6ABD117E8</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="destino_id" id="72F36A58-9156-CBD5-580A-96FD684D50CF">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>542D188F-CAC8-D26C-4AB2-BBB30E72551C</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="7BFE5297-C3C8-640D-82C9-BC72F2F6C3D6" referredColumn="5CEB4A69-0534-2D8B-61B1-C56DECE183E0"/>
+</associations>
+</Column>
+<Column name="cbo6" id="B1B9F8E1-5E21-E01C-D632-A668429EB075">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>E3336620-C967-0D1B-D7E6-40FDCB383149</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<domain>6CD57F0E-6916-9D04-8D2D-68B52384BD11</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="BCD5E353-3BA3-28D6-C266-2088DBC419B2" referredColumn="40AC4723-53C1-E7F3-66CC-B1693A7013E2"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="20B120A3-0517-7704-B4E1-EE1CFA5F76BF" name="pk_destino_ocupacao">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>BB0C8213-D7A8-6099-9CC6-65676196AA85</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="72F36A58-9156-CBD5-580A-96FD684D50CF"/>
+<colUsage columnID="B1B9F8E1-5E21-E01C-D632-A668429EB075"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="ED346831-AC67-4DC5-1257-95CE9D2A8820" name="uq_dest_ocup_cbo">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>C8A5B911-4BC3-2875-0CCA-F8D71D3B1F11</importedID>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="B1B9F8E1-5E21-E01C-D632-A668429EB075"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="3E715788-2106-F851-1CFE-2B54FD039706" name="fk_dest_ocup_cbo">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="B1B9F8E1-5E21-E01C-D632-A668429EB075"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="4FD2145C-E8E1-4C49-8AC2-2F6406EDAB71" name="fk_dest_ocup_destino">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="72F36A58-9156-CBD5-580A-96FD684D50CF"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

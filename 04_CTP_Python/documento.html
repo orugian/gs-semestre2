@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>documento</title>
+<title>CitizenTech - Computational Thinking with Python</title>
 <style>
 @page { size: A4; margin: 20mm 18mm; }
 body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
@@ -51,7 +51,7 @@ API REST FastAPI (Python 3.11)  ── módulo citizentech.leituras
 GET /leituras              histórico paginado, filtro por sessão
 GET /leituras/indicadores  contagem, alertas, média, máximo e mínimo por métrica
 </code></pre>
-<p><strong>Origem dos dados.</strong> As leituras vêm do dispositivo da bancada. Nas evidências deste documento, o dispositivo é <strong>simulado por requisições HTTP</strong> com o JSON exato do firmware (o enunciado aceita). O firmware do ESP32 está em <code>app/iot/firmware/</code> e envia o mesmo contrato; ele <strong>ainda não foi executado no Wokwi</strong> contra esta API.</p>
+<p><strong>Origem dos dados.</strong> As leituras vêm do dispositivo da bancada. Nas evidências deste documento, o dispositivo é <strong>simulado por requisições HTTP</strong> com o JSON exato do firmware (o enunciado aceita). O firmware do ESP32 está em <code>app/iot/firmware/</code> e envia o mesmo contrato. <strong>Em 17/11/2026 ele foi executado no simulador Wokwi contra esta API em modo isolado:</strong> três cenários (normal, atenção, crítico), 6 POSTs com HTTP 201 e 6 linhas no CSV, com sensores virtuais (DS18B20 e HC-SR04 simulados, não bancada física). Ver o <a href="../01_AICSS/evidencias/20261117_wokwi_aceite.md">aceite Wokwi</a>. Esse ensaio parou no CSV: as leituras ficaram <code>pendente_nuvem</code> e <strong>não</strong> foram enviadas à Lambda/AWS.</p>
 <p><strong>Modo isolado (para a correção desta disciplina).</strong> A API completa do produto também tem contas, currículo e bancos Oracle e MongoDB. Para CTP existe o aplicativo <code>citizentech.leituras.isolado</code>, que sobe <strong>só as rotas de leituras</strong>, sem Oracle, sem MongoDB e sem nuvem. É esse modo que as evidências usam.</p>
 <h2>3. Contrato JSON</h2>
 <p><strong>Requisição <code>POST /leituras</code></strong> (cabeçalho obrigatório <code>X-Device-Key</code>):</p>
@@ -357,7 +357,7 @@ ebb423a6-…,esp32-bancada-01,demo-ctp-bba8a9e3,,esp32,distancia_cm,cm,5.0,criti
 <p>Conferência manual: (25 + 38 + 48) / 3 = 37,0 °C e (25 + 12 + 5) / 3 = 14,0 cm; os alertas são as leituras de atenção e crítico (2 por métrica). Também é possível filtrar uma métrica: <code>?metrica=temperatura_c</code> devolveu o mesmo bloco de temperatura.</p>
 <h2>7. Limitações</h2>
 <ul>
-<li>O dispositivo das evidências é <strong>simulado por HTTP</strong>; o firmware do ESP32 ainda não foi executado no Wokwi contra esta API.</li>
+<li>As evidências das seções 5 e 6 usam o dispositivo <strong>simulado por HTTP</strong>. O firmware rodou no Wokwi contra esta API (17/11, 6 leituras até o CSV), mas com sensores simulados; bancada física e envio Wokwi→nuvem não foram verificados.</li>
 <li>O CSV é adequado para um laboratório com poucos dispositivos; a leitura do histórico percorre o arquivo inteiro a cada <code>GET</code>. Para volume maior, um banco de dados.</li>
 <li>O limite de requisições por dispositivo fica em memória do processo: com várias instâncias da API, cada uma conta separado.</li>
 <li>A chave do dispositivo é única para a bancada de demonstração (não há uma chave por dispositivo).</li>

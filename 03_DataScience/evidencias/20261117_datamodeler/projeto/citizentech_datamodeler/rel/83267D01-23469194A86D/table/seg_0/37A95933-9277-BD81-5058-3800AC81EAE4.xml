@@ -1,0 +1,141 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="37A95933-9277-BD81-5058-3800AC81EAE4" name="comparacao_destino">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>C1F175C6-2581-7145-E045-B564ED346912</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="comparacao_id" id="195CF59D-2BF6-FB15-1472-2D0A9C500953">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>06CA38FB-2C2A-0031-BFC1-197AEF51BFD8</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>12A2A723-75D4-10C5-3765-68DFFA6D2526</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="4A896313-5940-0947-48A5-783EC08B5294" referredColumn="FED63BCC-9091-882B-BA4A-3BD77F0698C8"/>
+</associations>
+</Column>
+<Column name="ordem" id="F2DCE7B0-DBB1-CF3C-68FA-060F18FCBD6E">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>6B65678F-6C5F-7255-7D62-65AC895FB6BF</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>A9E620C8-9D00-4930-2051-AD2691AB66A3</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="destino_id" id="42E8B3C4-6E68-A892-3B91-9E531FBBEF9C">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>07D4A2FF-8BB9-3DD4-44DA-B9A34FCB4510</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>27357918-E867-6367-B7C0-F8FEB32C1BD6</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="situacao_obrigatorios" id="6C1A1BAF-025A-89FB-AB75-20F686F7D465">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>3DDF4EBF-6028-E7B0-CBC4-D9C75498C925</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>4E74CC35-E7DD-26B5-4C37-5D25BA4019A3</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="resultado_json" id="ADB67CCD-7054-C199-FB67-7452AD96E2CF">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>78AB43D0-5FB0-F86D-55BC-44363A8E9702</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<domain>751D9004-E909-3742-00B9-322D763216B7</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="E3804D07-FE46-ACD9-A475-41F7AE270AC9" name="pk_comparacao_destino">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>BAC96390-3C10-DAFC-9B99-3EA0E70B466F</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="195CF59D-2BF6-FB15-1472-2D0A9C500953"/>
+<colUsage columnID="F2DCE7B0-DBB1-CF3C-68FA-060F18FCBD6E"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="AB120B4E-350A-F199-3FA1-12136388CD83" name="uq_comparacao_destino_id">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>CAB69A74-FE06-B25D-0520-035F8C9CAE62</importedID>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="195CF59D-2BF6-FB15-1472-2D0A9C500953"/>
+<colUsage columnID="42E8B3C4-6E68-A892-3B91-9E531FBBEF9C"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B9C62461-CCD6-3C4C-B5A6-DC1097E23432" name="fk_comparacao_destino_comp">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="195CF59D-2BF6-FB15-1472-2D0A9C500953"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="ck_comp_destino_ordem" directorySegmentName="seg_0" id="FA046385-2E94-522C-C9D4-05280ED70B1F">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>0F965700-87BE-F3EB-F82E-1CCF94E4DD24</importedID>
+<rule><![CDATA[ordem BETWEEN 1 AND 3]]></rule>
+</tableCheckConstraint>
+<tableCheckConstraint name="ck_comp_destino_situacao" directorySegmentName="seg_0" id="DC1F1395-292C-68AD-8232-22915DA11A7B">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>A8AC6B67-D342-347B-7E8A-EBBC896AFD0A</importedID>
+<rule><![CDATA[situacao_obrigatorios IN ('todos_demonstrados', 'ha_obrigatorios_nao_demonstrados')]]></rule>
+</tableCheckConstraint>
+<tableCheckConstraint name="ck_comp_destino_resultado_json" directorySegmentName="seg_0" id="BDA0A0F5-0694-D208-F6E7-961032EC0DD4">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>7BDC31DE-34A7-8015-4BCE-0D46C1D39F09</importedID>
+<rule><![CDATA[resultado_json IS JSON]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>

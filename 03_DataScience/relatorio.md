@@ -25,9 +25,16 @@ A CitizenTech ajuda profissionais graduados e experientes em transição de carr
 
 **Arquivos:** `app/db/ddl/001_usuario_consentimento.sql` a `007_catalogo.sql` (cópia consolidada em `03_DataScience/oracle.sql`). São **16 tabelas** com chaves primárias, estrangeiras (com `ON DELETE CASCADE` a partir de `usuario`, exceto em `consentimento`, ver §5), `CHECK` de domínio (estados, finalidades, faixas numéricas), `UNIQUE` e índices de acesso.
 
-**Diagrama entidade-relacionamento:** `docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png` (gerado do mesmo DDL). **DER do Oracle Data Modeler:** [AGENTE — execução pendente: importar o DDL no Modeler real, gerar modelos lógico/relacional, salvar projeto nativo e exportar imagens. Responsabilidade transferida pelo usuário em17/11/2026; não confundir Mermaid com essa execução].
+**Oracle SQL Developer Data Modeler (executado em 17/11/2026):** o DDL consolidado foi importado no Data Modeler **24.3.1.351.0831** (pacote oficial da Oracle, SHA-256 conferido). O log de importação registra **32 instruções: 23 importadas, 0 falhas e 9 não reconhecidas** — as 9 são as consultas `SELECT` C1–C9 que o arquivo consolidado também contém, não DDL. Resultado: **modelo relacional com 16 tabelas e 15 chaves estrangeiras**, igual ao DDL (nomes conferidos um a um, 15 `REFERENCES` no script), e **modelo lógico com 16 entidades e 15 relações**, gerado pela engenharia reversa do próprio Modeler (*Engineer to Logical Model*). O Modeler 24.3 não lista "19c" entre os *sites* de importação; foi usado **Oracle Database 21c**, que aceita o mesmo dialeto (o DDL não usa nada posterior ao 19c). O layout é o automático da ferramenta, sem retoque manual. Arquivos em `evidencias/20261117_datamodeler/`: projeto nativo (`projeto/citizentech_datamodeler.dmd` + pasta), diagramas `datamodeler_relacional.{pdf,png,svg}` e `datamodeler_logico.{pdf,png,svg}`, log `import_ddl_log.txt` e telas da ferramenta.
+
+![Modelo relacional exportado pelo Oracle SQL Developer Data Modeler](evidencias/20261117_datamodeler/datamodeler_relacional.png)
+
+![Modelo lógico gerado pelo Data Modeler a partir do relacional](evidencias/20261117_datamodeler/datamodeler_logico.png)
+
+Há também um diagrama de apoio em `docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png`, gerado em Mermaid a partir do mesmo DDL; ele **não** é o artefato do Data Modeler.
 
 Principais decisões de modelagem:
+
 - **Dialeto 19c:** sem `BOOLEAN` (flags em `CHAR(1)` com `CHECK IN ('S','N')`), sem `IF NOT EXISTS`, sem tipo `JSON` nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em `CLOB`/`VARCHAR2` com `CHECK (coluna IS JSON)`, consultáveis com `JSON_VALUE`.
 - **Rastreabilidade:** cada comparação guarda o resultado completo por destino, na ordem escolhida (`comparacao_destino.ordem`); o plano guarda a base de estados usada (`plano.base_json`); a tentativa guarda a versão do exercício e o hash da resposta.
 - **Minimização:** o texto do currículo e as respostas abertas **não** ficam no Oracle (só no MongoDB, já redigidos); o Oracle guarda o hash.
@@ -109,4 +116,4 @@ Os números de mercado em C7 são **admissões formais observadas** no Novo Cage
 - Os dados de usuário são de **uma persona de demonstração** fictícia; as contagens descrevem o ambiente de demonstração, não um uso real.
 - O MongoDB ainda não tem índices além de `_id` nem TTL para os textos redigidos (proposto: TTL e índice por `usuario_id`).
 - A exclusão de conta não remove automaticamente os documentos do MongoDB (proposto).
-- Modelos lógico/relacional e exportações do Data Modeler ainda pendentes de execução pelo **agente**, por decisão do usuário em17/11; nenhum artefato real dessa ferramenta é alegado como concluído.
+- No Data Modeler, o modelo lógico é **engenharia reversa** do relacional (o projeto partiu do DDL, não de um modelo conceitual desenhado antes); nomes de entidades e atributos seguem os da tabela. O *site* usado na importação foi o 21c, porque o 24.3 não oferece 19c. O projeto não foi conectado a um banco (importação por arquivo).

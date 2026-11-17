@@ -1,5 +1,7 @@
 # Capturas que ainda faltam — Learner Lab / Cloud
 
+> **Situação em 17/11/2026, 10h30 (UTC−3): as cinco capturas abaixo foram obtidas.** CW-C/CW-D/CW-K: prints do usuário (rodada de 16/11, e-mail tarjado, originais em `.dados/cloud/privado`). SIM e DB: capturados pelo agente na rodada nova de 17/11 (13:09–13:13 UTC). Ver [README Cloud §8](<../06_Cloud/README.md>) e [registro da rodada](<../06_Cloud/evidencias/20261117_rodada_function_url.txt>). **Opcional:** print CloudWatch da rodada de 17/11 (janela 13:09:50Z–13:13:00Z, ids 12–19). O restante deste guia fica como referência histórica.
+
 **Atualizado em17/11/2026.** O usuário informou que o Learner Lab foi reativado. Isso é informação do usuário, **não** um novo teste de health; o agente deve confirmar `GET /health` antes da rodada. Este guia não registra capturas já realizadas nem autoriza mudar recursos/permissões.
 
 Requisito literal: [Cloud, entregáveis](<../06_Cloud/ENUNCIADO.md#L76-L88>) e [inventário atual](<../06_Cloud/README.md#L148-L177>). O professor pede quatro **categorias** de imagem; uma categoria pode precisar de mais de uma captura para ficar legível.

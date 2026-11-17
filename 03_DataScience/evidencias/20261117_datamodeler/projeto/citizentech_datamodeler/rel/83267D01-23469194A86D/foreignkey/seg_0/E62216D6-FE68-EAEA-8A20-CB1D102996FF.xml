@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="E62216D6-FE68-EAEA-8A20-CB1D102996FF" containerWithKeyObject="9834B71B-2B20-7A1F-9D83-226C751E9E8A" localFKIndex="D1805BCF-C6C2-5F38-B5F6-C293203FDBC8" name="fk_checkpoint_plano">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>B6A061D3-4866-15A8-1EBB-97431F34B966</importedID>
+<referredTableLongName>plano</referredTableLongName>
+<deleteRule>CASCADE</deleteRule>
+<referredTableID>7F08D799-A143-BE3A-7923-4CBA1AE94617</referredTableID>
+<keyObject>55FAE221-56FA-80C6-A027-5102443F24A5</keyObject>
+<referredKeyID>55FAE221-56FA-80C6-A027-5102443F24A5</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>id</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<LogicalDesign class="oracle.dbtools.crest.model.design.logical.LogicalDesign" name="Logical" id="51AE07EA-8CB8-EA8E-4D60-1E5ED6CBD180" mainViewID="4B355F59-180B-D0FA-CBCA-DE4E9592B0AB">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:14:57 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<shouldBeOpen>false</shouldBeOpen>
+</LogicalDesign>

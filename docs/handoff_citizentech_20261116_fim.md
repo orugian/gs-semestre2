@@ -4,6 +4,14 @@
 
 **Atualização expressa do usuário em17/11, após o encerramento:** **Data Modeler será executado pelo agente, não pelo usuário** (D25/CLAUDE§12 atualizados). O usuário também informou que **reativou o Learner Lab para a próxima sessão**; health ainda não revalidado pelo agente. Essas instruções substituem a atribuição humana anterior somente para Data Modeler.
 
+## 0. Atualização de 17/11, ~10h45 — o que mudou na fila
+
+- **P03 Cloud — imagens concluídas.** Health 200; rodada nova 13:09–13:13Z (ids 12–19, 400, 401); prints SIM e DB capturados pelo agente; CW-C/D/K do usuário (rodada de 16/11) tarjados e incorporados. Pendente só o **vídeo Cloud** (humano). Opcional: print CloudWatch da janela 13:09:50Z–13:13:00Z.
+- **P04 Data Modeler — concluído pelo agente.** Ver [estado §00](<estado.md>) e [`03_DataScience/evidencias/20261117_datamodeler/`](<../03_DataScience/evidencias/20261117_datamodeler/>).
+- **P05 QA — parcial.** PDFs inspecionados por folha de contato; CTP corrigido (Wokwi já executado → CSV). Teclado em 4 telas; achado de foco fraco em Mercado/login **aguarda decisão** (corrigir reabre CSS integrado).
+- **P02 vídeos/links — nada recebido.** Próximo passo depende do grupo: gravar/publicar e enviar as 5 URLs (AIC obrigatório; RNA obrigatório).
+- P06–P08 inalterados.
+
 ## 1. Ponto de parada
 
 **Base funcional publicada: `f96b13e` em `main` e `gs-semestre2/main`.** Working tree limpa e zero commits pendentes nesse remoto antes desta atualização documental. O upstream mostrado por `git status` ainda é `origin/main`; seu atraso é esperado. **Não resetar/rebasear para origin**, nem enviar para esse remoto por engano. O commit que contém esta versão do handoff é somente de encerramento/documentação.

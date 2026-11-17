@@ -1,0 +1,160 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="BE11BBAF-5B98-2BB5-67F1-B16014811D13" name="intencao">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>F6355515-777E-34FC-D074-ED5E0A9C4E70</importedID>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="usuario_id" id="6CDE9A7C-F5D9-83C9-1C76-5AD509021457">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>F10D98DF-0D20-A450-3B5A-4BD131364FBE</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>12A2A723-75D4-10C5-3765-68DFFA6D2526</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="3A1F53BB-DAF1-2023-9DF4-A6FBBCE9C543" referredColumn="7E1B0D68-9BBF-AAB8-F208-B24C46EF63E2"/>
+</associations>
+</Column>
+<Column name="atividades_json" id="BFF432C8-F3DE-3939-BB7E-3020410D4C57">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>105A5622-221D-B63B-04AC-F33647E64E52</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>F1D60964-AE9D-FA9C-78AC-E04FDB08E6DD</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="motivos_json" id="E8E2C21E-36D4-CD20-FAC0-EE06BB4823C3">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>F967EEF4-E5CE-6686-4C96-8B3C83DC20EC</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<domain>F1D60964-AE9D-FA9C-78AC-E04FDB08E6DD</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="horas_semana" id="5B245C8F-82A8-4A62-A24A-DD55C4163D24">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>35A7D4E9-EC43-3826-A05B-350C9E1192EA</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>86CFD9E3-9019-01D7-3418-932C5B916362</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="orcamento_mensal_brl" id="1C6F38BC-3DEF-F96E-609E-3434E105774B">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>7E1D97F9-BCE0-1B39-3B5E-843503520D11</importedID>
+<nullsAllowed>true</nullsAllowed>
+<use>0</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<domain>974EC77E-7FAE-15CF-FEFE-CF4A9A5CD2FB</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="uf" id="29A40A4B-C997-07FA-3EC9-446526D24BA6">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>E9141983-57EF-F886-C55B-648478FF9CC2</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT025</logicalDatatype>
+<domain>6B8F0B7F-2416-68B8-F812-E5AFF8C2E58E</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="atualizado_em" id="FE531EEC-8E85-3C45-60FC-4E7982DA2E84">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>65D6E0E2-3989-D28E-0909-A90A5151AD17</importedID>
+<use>0</use>
+<logicalDatatype>LOGDT046</logicalDatatype>
+<domain>0320878A-A49D-A949-4954-05BD656FCFAF</domain>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="360DC826-062E-7725-E973-FC0DD7C82C26" name="pk_intencao">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>90EE5D82-4466-0010-92AA-0E4EFAFF61FA</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6CDE9A7C-F5D9-83C9-1C76-5AD509021457"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="EED95456-0B04-DE84-638D-9DC82327CEAB" name="fk_intencao_usuario">
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:43 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6CDE9A7C-F5D9-83C9-1C76-5AD509021457"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="ck_intencao_atividades_json" directorySegmentName="seg_0" id="0D05ED7F-3576-E65D-DF8B-D012D910BA2F">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>4B554C00-640C-E252-0478-C512483E1BE8</importedID>
+<rule><![CDATA[atividades_json IS JSON]]></rule>
+</tableCheckConstraint>
+<tableCheckConstraint name="ck_intencao_motivos_json" directorySegmentName="seg_0" id="FD278E4E-6F01-FBF5-53D4-F5893E7F6567">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>57939C61-C272-3C26-96EE-310AB0DC2D93</importedID>
+<rule><![CDATA[motivos_json IS JSON]]></rule>
+</tableCheckConstraint>
+<tableCheckConstraint name="ck_intencao_horas_semana" directorySegmentName="seg_0" id="A23C6456-DF9C-56C2-6736-508F54577AB6">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>888EE9E4-341A-53AB-0550-5C8855E5C847</importedID>
+<rule><![CDATA[horas_semana BETWEEN 1 AND 80]]></rule>
+</tableCheckConstraint>
+<tableCheckConstraint name="ck_intencao_orcamento" directorySegmentName="seg_0" id="A47FFFFA-30D1-9066-C168-E420C74FCAF3">
+<sourceDDLFile>citizentech_oracle_19c.sql</sourceDDLFile>
+<createdBy>orugi</createdBy>
+<createdTime>2026-11-17 13:19:42 UTC</createdTime>
+<ownerDesignName>citizentech_datamodeler</ownerDesignName>
+<importedID>A8BC2E5C-9C41-18D0-4671-5C4984A20273</importedID>
+<rule><![CDATA[orcamento_mensal_brl >= 0]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>
