@@ -6,7 +6,7 @@
 
 S15-e2e: commit `c965692`, merge --no-ff `e7c533a`, push para gs-semestre2 com gitleaks exit0. Worktree e branch removidos; S5 preservada. REDs reproduzidos pessoalmente, fixes pequenos, main Playwright3+persona1 em API app separada, Vitest61, typecheck/build; 11 telas+modal sem violações axe. Consulte [evidência completa](<../02_Cybersecurity/evidencias/20261116_s15_e2e_aceite.md>) em vez de repetir as execuções sem motivo.
 
-## 2. Checkpoint documental pronto para commit/push
+## 2. Checkpoint documental publicado em f10ffd2 (17/11 00h08)
 
 - Cyber atualizado para jornada integrada e Comprehend AccessDenied; referências residuais a laboratório/consentimentos corrigidas após revisão2. PDF12 páginas.
 - Nomes/RMs confirmados pelo usuário e inseridos nos documentos/notebooks; fonte do programa estatístico recebeu identificação somente na docstring. Cópias regeneradas, nunca editadas à mão.
@@ -16,7 +16,7 @@ S15-e2e: commit `c965692`, merge --no-ff `e7c533a`, push para gs-semestre2 com g
 - Revisão independente nº2 terminou exit0 às22h51. [Adjudicação](<revisao_conformidade_2.md>) registra correções, rejeita generalizações do revisor e mantém pendências humanas reais. Bruto em ../.kaiser/reports/REV-conformidade-2.md.
 - Lambda voltou a HTTP200/status=ok/banco=ok após reinício humano do Learner Lab; [evidência](<../06_Cloud/evidencias/20261116_health_retomada.txt>). Não foi alterada a AWS.
 
-Antes de commitar este checkpoint: ler status, gitleaks staged e conferir LASTEXITCODE; push só gs-semestre2, com gitleaks do intervalo. Não incluir os três prints originais Cloud ignorados. Conferir se o checkpoint já está no histórico para não duplicar commit.
+Checkpoint **f10ffd2 já commitado e enviado** a gs-semestre2, gitleaks staged/intervalo exit0. Não duplicar esse commit. Para novos resultados: status, gitleaks staged e conferir LASTEXITCODE; push só gs-semestre2 com gitleaks do intervalo. Não incluir os três prints originais Cloud ignorados. Em17/11 00h09: restavam2d23h45, disco17,4GB.
 
 ## 3. Trabalho novo solicitado pelo usuário: Wokwi pelo agente
 
@@ -29,7 +29,8 @@ Token Wokwi ainda não presente em app/.env. Foi indicado o painel https://wokwi
 - Monaco é lazy; aguardar modelos antes de interagir. Diagram.json recebe diagrama versionado via modelo ativo JSON. Circuito efetivamente renderizou; partes são SVG id=temp1/dist1/led1/bz1.
 - F1 precisa manter `>` na busca (`>Load HEX`), senão vira busca de arquivo e nenhuma ação aparece.
 - Ações oficiais encontradas: `simulateHex` / “Load HEX File and Start Simulation...” e `uploadFirmware` / “Upload Firmware and Start Simulation…”. Não usar `flash`, que atua em hardware físico.
-- **Último teste pwsh-156:** clique no comando foi possível, mas não veio evento filechooser em15s. Não está comprovada a execução da simulação. Próximo diagnóstico: capturar screenshot/DOM **após o clique e em erro** para ver se há diálogo intermediário ou uso de File System Access API; testar upload oficial correspondente. Não confundir a captura do circuito parado com evidência de atuadores.
+- **Último teste pwsh-161: upload e boot REAIS funcionaram, sem token.** Não usar o comando legado Load HEX (ficava sem efeito); usar `>Upload Firmware` e opção **“Upload Firmware and Start Simulation…”**. Driver remove showOpenFilePicker na inicialização para fallback HTML; filechooser foi detectado, merged.bin carregado, botão Stop visível e Serial mostrou boot ESP32. O browser fechou ao fim da sondagem. Captura tmp/wokwi/simulacao-piloto.png é só aos0,266s do boot, **não** prova sensores/atuadores/HTTP. Próximo: API isolada+túnel autorizado, configuração de demo do endpoint, recompilação e três cenários. A execução web agora não depende do token.
+- Ajustar a visualização por controle real de zoom/fit do Wokwi: na captura piloto o buzzer ficou fora da borda direita. Deixar visível o circuito completo, Serial e o código real carregado; não alterar desenho para fingir estados. O editor do template ainda mostra instruções, enquanto o binário executado é o compilado localmente; substituir apenas o texto do editor pela fonte real para facilitar conferência (sem recompilar no site). O Serial é texto legível via body.innerText, então dá para aguardar regex de ciclos em vez de sleeps.
 - Diagnósticos em `../.kaiser/tmp/wokwi/`; template.png/circuito-editor.png são só editor/circuito parado, **não entregáveis de funcionamento**.
 
 **Rede:** usuário autorizou proceder com túnel HTTPS temporário (até15min) para API isolada só de leituras/dados sintéticos, sem Oracle/contas/LLM/AWS, fechando ao fim. **Ainda não aberto**. Ngrok3.39.1 no caminho Winget do estado §0, fora do PATH. Lançador preparado `../.kaiser/ferramentas/api_wokwi_isolada.ps1` (ainda não iniciado): uvicorn do modo CTP isolado, porta8000, chave EXEMPLO pública do firmware, dados novos em KAISER/tmp/wokwi/dados. Não expor a API do app real.
