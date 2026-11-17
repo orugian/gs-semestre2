@@ -109,7 +109,6 @@ export function TelaComparacao({
     setComparando(true);
     setErro(null);
     setAvisoSelecao(null);
-
     try {
       const resp = await criarComparacao({
         destinos: destinosSelecionados,
@@ -127,13 +126,6 @@ export function TelaComparacao({
     } finally {
       setComparando(false);
     }
-  };
-
-  const handleReset = () => {
-    setResultado(null);
-    setAvisoSelecao(null);
-    setErro(null);
-    onNovaComparacao?.();
   };
 
   const handleSolicitarEscolha = (destinoId: string) => {
@@ -169,6 +161,13 @@ export function TelaComparacao({
     }
   };
 
+  const handleLimparComparacao = () => {
+    setResultado(null);
+    setAvisoSelecao(null);
+    setErro(null);
+    onNovaComparacao?.();
+  };
+
   if (carregandoInicial) {
     return (
       <div className="flex items-center justify-center p-12" aria-live="polite">
@@ -179,19 +178,26 @@ export function TelaComparacao({
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <Heading level={2}>{TEXTOS_JORNADA.comparacao.titulo}</Heading>
-          {resultado && (
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+            {TEXTOS_JORNADA.comparacao.titulo}
+          </Heading>
+          <Text type="supporting" className="text-sm text-[#616191]">
+            {TEXTOS_JORNADA.comparacao.descricao}
+          </Text>
+        </div>
+
+        {resultado && (
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="secondary"
               label={TEXTOS_JORNADA.comparacao.novaComparacao}
-              onClick={handleReset}
+              onClick={handleLimparComparacao}
             />
-          )}
-        </div>
-        <Text type="supporting">{TEXTOS_JORNADA.comparacao.descricao}</Text>
+          </div>
+        )}
       </header>
 
       {erro && (
@@ -211,8 +217,10 @@ export function TelaComparacao({
         <Card width="100%">
           <div className="flex flex-col gap-6 p-5">
             <header className="flex flex-col gap-1">
-              <Heading level={3}>{TEXTOS_JORNADA.comparacao.selecao.titulo}</Heading>
-              <Text type="supporting">
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                {TEXTOS_JORNADA.comparacao.selecao.titulo}
+              </Heading>
+              <Text type="supporting" className="text-xs text-[#616191]">
                 {TEXTOS_JORNADA.comparacao.selecao.descricao}
               </Text>
             </header>
@@ -224,7 +232,7 @@ export function TelaComparacao({
                 return (
                   <div
                     key={dest.destino_id}
-                    className="flex items-start gap-3 p-3 border rounded select-none"
+                    className="flex items-start gap-3 p-3 border border-[#616191]/20 rounded select-none bg-[#FFFFFF]"
                   >
                     <input
                       id={`cb-${dest.destino_id}`}
@@ -238,9 +246,9 @@ export function TelaComparacao({
                       htmlFor={`cb-${dest.destino_id}`}
                       className="flex flex-col gap-1 flex-1 cursor-pointer"
                     >
-                      <span className="font-semibold text-sm">{dest.nome}</span>
+                      <span className="font-semibold text-sm text-[#000091]">{dest.nome}</span>
                       {dest.descricao && (
-                        <Text type="supporting">{dest.descricao}</Text>
+                        <Text type="supporting" className="text-xs text-[#616191]">{dest.descricao}</Text>
                       )}
                     </label>
                   </div>
@@ -250,7 +258,7 @@ export function TelaComparacao({
 
             {/* Seletor de UF */}
             <div className="flex flex-col gap-1 max-w-xs">
-              <label htmlFor="seletor-uf-comparacao" className="text-sm font-medium">
+              <label htmlFor="seletor-uf-comparacao" className="text-sm font-medium text-[#000091]">
                 {TEXTOS_JORNADA.comparacao.selecao.ufRotulo}
               </label>
               <select
@@ -258,7 +266,7 @@ export function TelaComparacao({
                 value={uf}
                 onChange={(e) => setUf(e.target.value)}
                 disabled={comparando}
-                className="border rounded p-2 text-sm bg-transparent outline-none focus:ring-2 w-full"
+                className="border border-[#616191]/30 rounded p-2 text-sm bg-[#FFFFFF] outline-none w-full"
               >
                 <option value="">Brasil (sem filtro estadual)</option>
                 {UFS_BRASIL.map((sigla) => (
@@ -270,7 +278,7 @@ export function TelaComparacao({
             </div>
 
             {/* Botão Comparar */}
-            <div className="flex justify-end pt-3 border-t">
+            <div className="flex justify-end pt-3 border-t border-[#616191]/20">
               <Button
                 type="button"
                 variant="primary"
@@ -301,8 +309,10 @@ export function TelaComparacao({
           {/* Legenda dos 4 Estados de Evidência */}
           <Card width="100%">
             <div className="flex flex-col gap-3 p-4">
-              <Heading level={4}>{TEXTOS_JORNADA.comparacao.legenda.titulo}</Heading>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <Heading level={4} className="!font-['Barlow_Condensed'] font-semibold text-base text-[#000091]">
+                {TEXTOS_JORNADA.comparacao.legenda.titulo}
+              </Heading>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#000091]">
                 <p>{TEXTOS_JORNADA.comparacao.legenda.demonstrada}</p>
                 <p>{TEXTOS_JORNADA.comparacao.legenda.declarada}</p>
                 <p>{TEXTOS_JORNADA.comparacao.legenda.desconhecida}</p>
@@ -343,13 +353,13 @@ export function TelaComparacao({
         width={480}
       >
         <div className="flex flex-col gap-4 p-5">
-          <Heading level={3}>
+          <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
             {TEXTOS_JORNADA.comparacao.dialogSubstituir.titulo}
           </Heading>
           <Text type="body">
             {TEXTOS_JORNADA.comparacao.dialogSubstituir.descricao}
           </Text>
-          <div className="flex justify-end gap-3 pt-3 border-t">
+          <div className="flex justify-end gap-3 pt-3 border-t border-[#616191]/20">
             <Button
               type="button"
               variant="secondary"

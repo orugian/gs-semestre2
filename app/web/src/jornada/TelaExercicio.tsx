@@ -251,7 +251,7 @@ export function TelaExercicio({
       {/* Cabeçalho */}
       <header className="flex flex-col gap-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <Heading level={2}>{TEXTOS_JORNADA.exercicio.titulo}</Heading>
+          <Heading level={2} type="display-1">{TEXTOS_JORNADA.exercicio.titulo}</Heading>
           <div className="flex items-center gap-2">
             <Badge
               variant="neutral"

@@ -252,7 +252,7 @@ export function TelaLaboratorio({
       {/* Cabeçalho */}
       <header className="flex flex-col gap-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <Heading level={2}>{TEXTOS_JORNADA.laboratorio.titulo}</Heading>
+          <Heading level={2} type="display-1">{TEXTOS_JORNADA.laboratorio.titulo}</Heading>
           {onVoltarParaPlano && (
             <Button
               type="button"
@@ -314,7 +314,7 @@ export function TelaLaboratorio({
                     {TEXTOS_JORNADA.laboratorio.codigoSessao}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl font-mono font-bold tracking-widest">
+                    <span className="text-3xl font-mono font-bold tracking-widest text-[var(--ct-azul)]">
                       {sessao.codigo}
                     </span>
                     <Button

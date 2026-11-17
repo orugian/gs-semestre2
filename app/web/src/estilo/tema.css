@@ -1,0 +1,131 @@
+/* Tokens NOUS e customizações de tema Astryx (D16a) */
+:root {
+  --ct-azul: #0000F2;
+  --ct-marinho: #000091;
+  --ct-papel: #F2F2F2;
+  --ct-branco: #FFFFFF;
+  --ct-tinta: #F5F5F5;
+  --ct-linha: #616191;
+
+  accent-color: #0000F2;
+  caret-color: #000091;
+  scrollbar-width: thin;
+  scrollbar-color: #616191 #F2F2F2;
+}
+
+::selection {
+  background-color: #0000F2;
+  color: #F2F2F2;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F2F2F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #616191;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #000091;
+}
+
+/* Escopo do tema Astryx com os tokens NOUS */
+:root,
+[data-astryx-theme="neutral"],
+dialog,
+.astryx-dialog {
+  --color-accent: #0000F2;
+  --color-accent-muted: #616191;
+  --color-background-body: #F2F2F2;
+  --color-background-surface: #FFFFFF;
+  --color-background-card: #FFFFFF;
+  --color-background-popover: #FFFFFF;
+  --color-background-muted: #F2F2F2;
+  --color-text-primary: #000091;
+  --color-text-secondary: #616191;
+  --color-text-accent: #0000F2;
+  --color-border: #616191;
+  --color-border-emphasized: #000091;
+
+  --radius-none: 0px;
+  --radius-inner: 3px;
+  --radius-element: 3px;
+  --radius-container: 4px;
+
+  --shadow-low: inset 0 0 0 1px rgba(0, 0, 242, 0.20);
+  --shadow-med: inset 0 0 0 1px rgba(0, 0, 242, 0.20);
+  --shadow-high: inset 0 0 0 1px rgba(0, 0, 242, 0.20);
+
+  --focus-outline-color: #000091;
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 2px;
+
+  --font-family-body: 'Barlow Semi Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-heading: 'Barlow Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-code: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* Regras de foco visível (WCAG 2.4.7) */
+:where(button, input, select, textarea, [role="button"], [role="combobox"], [role="tab"], [tabindex="0"]):focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="combobox"]:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 2px solid #000091 !important;
+  outline-offset: 2px !important;
+}
+
+/* Foco sobre superfície azul (cabeçalho) */
+header :where(button, input, select, textarea, [role="button"], [role="combobox"], [role="tab"], [tabindex="0"]):focus-visible,
+header button:focus-visible,
+header [role="tab"]:focus-visible,
+.superficie-azul :focus-visible {
+  outline: 2px solid #F2F2F2 !important;
+  outline-offset: 2px !important;
+}
+
+/* Cartões com anel interno de 1px e raios NOUS */
+[data-astryx-theme="neutral"] [class*="card"],
+[data-astryx-theme="neutral"] .astryx-card {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 242, 0.20) !important;
+  border-radius: 4px !important;
+}
+
+/* Tipografia tabular para tabelas e números */
+table, .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Contraste garantido para elementos dentro de diálogos modais (WCAG 2.1 AA >= 4.5:1) */
+dialog,
+.astryx-dialog {
+  color: #000091;
+}
+
+dialog label,
+.astryx-dialog label,
+dialog .astryx-field-label,
+.astryx-dialog .astryx-field-label {
+  color: #000091 !important;
+}
+
+dialog [data-type="supporting"],
+.astryx-dialog [data-type="supporting"],
+dialog .astryx-text-area-counter,
+.astryx-dialog .astryx-text-area-counter {
+  color: #000091 !important;
+}
+
+/* Microinterações suaves (desligadas com prefers-reduced-motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .transicao-etapa {
+    transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}

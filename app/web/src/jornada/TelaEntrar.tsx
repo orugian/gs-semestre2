@@ -67,12 +67,12 @@ export function TelaEntrar({onLoginSucesso, avisoSessao}: TelaEntrarProps) {
       <Card width="100%" maxWidth={480}>
         <div className="flex flex-col gap-5 p-6">
           <header className="flex flex-col gap-1">
-            <Heading level={2}>
+            <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl tracking-tight text-[#000091]">
               {modo === 'entrar'
                 ? TEXTOS_JORNADA.auth.entrar
                 : TEXTOS_JORNADA.auth.criarConta}
             </Heading>
-            <Text type="supporting">
+            <Text type="supporting" className="text-sm text-[#616191]">
               {modo === 'entrar'
                 ? 'Acesse sua área da jornada para gerenciar currículo e competências.'
                 : 'Cadastre-se para iniciar o mapeamento de competências com privacidade.'}

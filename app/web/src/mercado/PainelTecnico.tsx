@@ -135,32 +135,38 @@ export function PainelTecnico({
   return (
     <section id="painel-tecnico" className="flex flex-col gap-6 w-full max-w-full min-w-0">
       <div className="flex flex-col gap-1">
-        <Heading level={2}>Painel técnico de modelos preditivos (R06)</Heading>
-        <Text type="supporting">
+        <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl sm:text-3xl tracking-tight text-[#000091]">
+          Painel técnico de modelos preditivos (R06)
+        </Heading>
+        <Text type="supporting" className="text-sm text-[#616191]">
           Comparação sistemática de modelos preditivos validados no Novo Caged. Nenhum modelo é promovido automaticamente.
         </Text>
       </div>
 
-      {/* Seletores */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Selector
-          label="Destino profissional"
-          options={opcoesDestino}
-          value={destinoAtivo}
-          onChange={(val) => {
-            if (val) handleDestinoChange(val);
-          }}
-          data-testid="seletor-destino-tecnico"
-        />
-        <Selector
-          label="Unidade Federativa (UF)"
-          options={opcoesUf}
-          value={ufAtiva}
-          onChange={(val) => {
-            if (val) handleUfChange(val);
-          }}
-          data-testid="seletor-uf-tecnico"
-        />
+      {/* Barra de Seletores lado a lado */}
+      <div className="flex flex-col sm:flex-row gap-4 p-4 rounded bg-[#FFFFFF] border border-[#616191]/20 shadow-[inset_0_0_0_1px_rgba(0,0,242,0.1)]">
+        <div className="flex-1 min-w-0">
+          <Selector
+            label="Destino profissional"
+            options={opcoesDestino}
+            value={destinoAtivo}
+            onChange={(val) => {
+              if (val) handleDestinoChange(val);
+            }}
+            data-testid="seletor-destino-tecnico"
+          />
+        </div>
+        <div className="flex-1 sm:max-w-xs min-w-0">
+          <Selector
+            label="Unidade Federativa (UF)"
+            options={opcoesUf}
+            value={ufAtiva}
+            onChange={(val) => {
+              if (val) handleUfChange(val);
+            }}
+            data-testid="seletor-uf-tecnico"
+          />
+        </div>
       </div>
 
       {/* Estado de carregamento */}
@@ -189,7 +195,9 @@ export function PainelTecnico({
           {/* Critério de Promoção e Status */}
           <Card padding={4}>
             <div className="flex flex-col gap-2">
-              <Heading level={3}>Critério de promoção</Heading>
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                Critério de promoção
+              </Heading>
               <MetadataList orientation="vertical" columns="multi">
                 <MetadataListItem label="Critério">
                   {dados.criterio_promocao.criterio}
@@ -206,22 +214,25 @@ export function PainelTecnico({
 
           {/* Avisos Técnicos da API */}
           {dados.avisos && dados.avisos.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {dados.avisos.map((aviso, idx) => (
-                <Banner
-                  key={`aviso-tecnico-${idx}`}
-                  status="info"
-                  title="Aviso de integridade e metodologia"
-                  description={aviso}
-                />
-              ))}
-            </div>
+            <Banner
+              status="info"
+              title="Avisos de integridade e metodologia"
+              collapsible={false}
+            >
+              <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm text-[#000091]/90">
+                {dados.avisos.map((aviso, idx) => (
+                  <li key={`aviso-tecnico-${idx}`}>{aviso}</li>
+                ))}
+              </ul>
+            </Banner>
           )}
 
           {/* Tabela Comparativa dos 6 Modelos */}
           <Card padding={4}>
             <div className="flex flex-col gap-4">
-              <Heading level={3}>Comparativo de modelos preditivos</Heading>
+              <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+                Comparativo de modelos preditivos
+              </Heading>
               <div
                 className="w-full overflow-x-auto"
                 tabIndex={0}
@@ -229,7 +240,7 @@ export function PainelTecnico({
                 aria-label="Tabela comparativa dos 6 modelos preditivos"
               >
                 <Table aria-label="Tabela comparativa dos 6 modelos preditivos">
-                  <caption className="text-left text-sm font-semibold py-2">
+                  <caption className="text-left text-sm font-semibold py-2 text-[#000091]">
                     Tabela comparativa dos 6 modelos preditivos na validação global e série selecionada
                   </caption>
                   <TableHeader>
@@ -250,7 +261,7 @@ export function PainelTecnico({
                       <TableRow key={m.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">
+                            <span className="font-medium text-[#000091]">
                               {formatarNomeModelo(m.id)}
                             </span>
                             {m.exibido_ao_usuario && (
@@ -258,30 +269,46 @@ export function PainelTecnico({
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{formatarTipoModelo(m.tipo)}</TableCell>
+                        <TableCell>
+                          <span className="font-['IBM_Plex_Mono'] text-xs">
+                            {formatarTipoModelo(m.tipo)}
+                          </span>
+                        </TableCell>
                         <TableCell>{m.promovido ? 'Sim' : 'Não'}</TableCell>
                         <TableCell>
-                          {formatarNumero(m.metricas_validacao_global.mae, 2)}
+                          <span className="font-['IBM_Plex_Mono']" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {formatarNumero(m.metricas_validacao_global.mae, 2)}
+                          </span>
                         </TableCell>
                         <TableCell>
-                          {formatarNumero(m.metricas_validacao_global.rmse, 2)}
+                          <span className="font-['IBM_Plex_Mono']" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {formatarNumero(m.metricas_validacao_global.rmse, 2)}
+                          </span>
                         </TableCell>
                         <TableCell>
-                          {formatarPercentual(m.metricas_validacao_global.wape, 1)}
+                          <span className="font-['IBM_Plex_Mono']" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {formatarPercentual(m.metricas_validacao_global.wape, 1)}
+                          </span>
                         </TableCell>
                         <TableCell>
-                          {formatarNumero(m.metricas_validacao_global.mase, 2)}
+                          <span className="font-['IBM_Plex_Mono']" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {formatarNumero(m.metricas_validacao_global.mase, 2)}
+                          </span>
                         </TableCell>
                         <TableCell>
-                          {m.metricas_serie?.mae !== undefined && m.metricas_serie?.mae !== null
-                            ? formatarNumero(m.metricas_serie.mae, 2)
-                            : '—'}
+                          <span className="font-['IBM_Plex_Mono']" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {m.metricas_serie?.mae !== undefined && m.metricas_serie?.mae !== null
+                              ? formatarNumero(m.metricas_serie.mae, 2)
+                              : '—'}
+                          </span>
                         </TableCell>
                         <TableCell>
-                          {formatarMediaDesvio(
-                            m.metricas_cv_treino.mae_medio,
-                            m.metricas_cv_treino.mae_desvio
-                          )}
+                          <span className="font-['IBM_Plex_Mono'] text-xs" style={{fontVariantNumeric: 'tabular-nums'}}>
+                            {formatarMediaDesvio(
+                              m.metricas_cv_treino.mae_medio,
+                              m.metricas_cv_treino.mae_desvio
+                            )}
+                          </span>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -293,7 +320,9 @@ export function PainelTecnico({
 
           {/* Model Cards dos 6 Modelos */}
           <div className="flex flex-col gap-4">
-            <Heading level={3}>Model cards detalhados</Heading>
+            <Heading level={3} className="!font-['Barlow_Condensed'] font-semibold text-xl text-[#000091]">
+              Model cards detalhados
+            </Heading>
             {dados.modelos.map((m) => (
               <Card key={`card-${m.id}`} padding={4}>
                 <Collapsible
@@ -303,16 +332,24 @@ export function PainelTecnico({
                   <div className="mt-3">
                     <MetadataList orientation="vertical" columns="multi">
                       <MetadataListItem label="ID do artefato">
-                        {formatarIdArtefato(m.model_card._id)}
+                        <span className="font-['IBM_Plex_Mono'] text-xs">
+                          {formatarIdArtefato(m.model_card._id)}
+                        </span>
                       </MetadataListItem>
                       <MetadataListItem label="Versão do artefato">
-                        {m.model_card.versao_artefato}
+                        <span className="font-['IBM_Plex_Mono'] text-xs">
+                          {m.model_card.versao_artefato}
+                        </span>
                       </MetadataListItem>
                       <MetadataListItem label="Tipo">
-                        {formatarTipoModelo(m.model_card.tipo)}
+                        <span className="font-['IBM_Plex_Mono'] text-xs">
+                          {formatarTipoModelo(m.model_card.tipo)}
+                        </span>
                       </MetadataListItem>
                       <MetadataListItem label="Data de treino (UTC)">
-                        {m.model_card.data_treino_utc}
+                        <span className="font-['IBM_Plex_Mono'] text-xs">
+                          {m.model_card.data_treino_utc}
+                        </span>
                       </MetadataListItem>
                       <MetadataListItem label="Período de treino">
                         {formatarPeriodo(
@@ -327,7 +364,9 @@ export function PainelTecnico({
                         )}
                       </MetadataListItem>
                       <MetadataListItem label="Seed">
-                        {m.model_card.seed}
+                        <span className="font-['IBM_Plex_Mono'] text-xs">
+                          {m.model_card.seed}
+                        </span>
                       </MetadataListItem>
                       <MetadataListItem label="População">
                         {m.model_card.populacao}
@@ -344,7 +383,7 @@ export function PainelTecnico({
                           : 'Nenhum limite reportado'}
                       </MetadataListItem>
                       <MetadataListItem label="Hiperparâmetros">
-                        <pre className="max-h-48 overflow-auto rounded border p-2 text-xs font-mono whitespace-pre-wrap break-all">
+                        <pre className="max-h-48 overflow-auto rounded border border-[#616191]/20 p-2 text-xs font-mono whitespace-pre-wrap break-all bg-[#F2F2F2] text-[#000091]">
                           {JSON.stringify(m.model_card.hiperparametros, null, 2)}
                         </pre>
                       </MetadataListItem>

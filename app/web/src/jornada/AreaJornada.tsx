@@ -129,15 +129,17 @@ export function AreaJornada() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
-      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border rounded">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded bg-[#FFFFFF] shadow-[inset_0_0_0_1px_rgba(0,0,242,0.15)]">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3 flex-wrap">
-            <Heading level={2}>{TEXTOS_JORNADA.titulo}</Heading>
+            <Heading level={2} className="!font-['Barlow_Condensed'] font-semibold text-2xl tracking-tight text-[#000091]">
+              {TEXTOS_JORNADA.titulo}
+            </Heading>
             {usuario.persona_demo === 'S' && (
               <Badge variant="purple" label={TEXTOS_JORNADA.personaDemo} />
             )}
           </div>
-          <Text type="supporting">{usuario.email}</Text>
+          <Text type="supporting" className="text-xs text-[#616191]">{usuario.email}</Text>
         </div>
 
         <div className="flex items-center gap-2">
@@ -149,7 +151,7 @@ export function AreaJornada() {
         </div>
       </header>
 
-      <nav aria-label="Etapas da jornada">
+      <nav aria-label="Etapas da jornada" className="w-full overflow-x-auto py-1">
         <Stepper activeStep={etapaAtiva} onStepClick={setEtapaAtiva}>
           <Step step={0} label={TEXTOS_JORNADA.etapas.consentimentos} />
           <Step step={1} label={TEXTOS_JORNADA.etapas.intencao} />
@@ -166,8 +168,9 @@ export function AreaJornada() {
 
       <div
         ref={tituloEtapaRef}
+        key={etapaAtiva}
         tabIndex={-1}
-        className="outline-none flex flex-col gap-4"
+        className="outline-none flex flex-col gap-4 transicao-etapa"
       >
         {etapaAtiva === 0 && (
           <TelaConsentimentos
