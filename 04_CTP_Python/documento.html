@@ -160,7 +160,15 @@ GET /leituras/indicadores  contagem, alertas, média, máximo e mínimo por mét
 </tr>
 <tr>
 <td><code>leituras/rotas.py</code></td>
-<td>endpoints <code>POST /leituras</code>, <code>GET /leituras</code>, <code>GET /leituras/indicadores</code>; leitura do corpo com limite de 8 KB; cálculo dos indicadores</td>
+<td>endpoints <code>POST /leituras</code>, <code>GET /leituras</code>, <code>GET /leituras/indicadores</code>; leitura do corpo com limite de 8 KB</td>
+</tr>
+<tr>
+<td><code>leituras/servico.py</code></td>
+<td>cálculo dos indicadores e histórico da sessão com o estado de envio de cada leitura</td>
+</tr>
+<tr>
+<td><code>leituras/ganchos.py</code></td>
+<td>ponto de extensão do relato do laboratório (vazio no modo isolado)</td>
 </tr>
 <tr>
 <td><code>leituras/esquemas.py</code></td>

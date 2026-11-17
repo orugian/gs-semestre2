@@ -1,5 +1,18 @@
-pandas
-numpy
-matplotlib
-scikit-learn
-tensorflow
+# Notebooks ML/RNA CitizenTech. Caminho recomendado (versões travadas no uv.lock):
+#   cd app/ml; uv sync; uv run jupyter nbconvert --execute notebooks/<notebook>.ipynb
+# Alternativa com pip, a partir da raiz do repositório (Python 3.11):
+#   pip install -r <esta pasta>/requirements.txt
+# Requer CITIZENTECH_DADOS com os parquets do Novo Caged (ver app/ml/README.md).
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy==2.4.6
+pandas==3.1.1
+matplotlib==3.11.2
+scikit-learn==1.9.1
+scipy==1.17.1
+statsmodels==0.15.0
+pyarrow==26.0.1
+pymongo==4.20.0
+py7zr==1.1.4
+torch==2.15.0
+ipykernel
+./app/ml  # pacote citizentech_ml

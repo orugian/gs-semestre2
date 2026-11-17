@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from citizentech.erros import ConflitoEvento
 from citizentech.leituras.esquemas import validar_e_processar_payload
+from citizentech.leituras.ganchos import gancho_relato
 from citizentech.leituras.limitador import obter_limitador
 from citizentech.leituras.repositorio import salvar_leitura_duravel
 from citizentech.leituras.seguranca import verificar_chave_dispositivo
@@ -91,15 +92,13 @@ async def criar_leitura(
             },
         )
 
-    # 4.1. Gancho de sessao de laboratorio: se sessao_laboratorio_id preenchido e existir
-    # sessao ativa nao expirada com relato pendente, anexa relato redigido
+    # 4.1. Sessao de laboratorio com relato pendente: anexa o relato redigido (so na app completa)
     sessao_cod = registro.get("sessao_laboratorio_id")
+    gancho = gancho_relato()
     relato_para_anexar: str | None = None
-    if sessao_cod:
+    if sessao_cod and gancho:
         try:
-            from citizentech.laboratorio.repositorio import buscar_relato_pendente_sessao_ativa
-
-            relato_para_anexar = buscar_relato_pendente_sessao_ativa(sessao_cod)
+            relato_para_anexar = gancho.buscar_pendente(sessao_cod)
             if relato_para_anexar:
                 registro["relato_redigido"] = relato_para_anexar
         except Exception as exc:
@@ -119,11 +118,9 @@ async def criar_leitura(
 
     # 5.1. Se leitura foi gravada como nova (criado) e havia relato anexado,
     # marca relato como enviado no banco de dados
-    if resultado == "criado" and relato_para_anexar and sessao_cod:
+    if resultado == "criado" and relato_para_anexar and sessao_cod and gancho:
         try:
-            from citizentech.laboratorio.repositorio import marcar_relato_enviado
-
-            marcar_relato_enviado(sessao_cod, reg_final["evento_id"])
+            gancho.marcar_enviado(sessao_cod, reg_final["evento_id"])
         except Exception as exc:
             logger.warning("Falha ao marcar relato como enviado: %s", type(exc).__name__)
 

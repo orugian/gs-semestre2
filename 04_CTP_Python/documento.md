@@ -93,7 +93,9 @@ GET /leituras/indicadores  contagem, alertas, média, máximo e mínimo por mét
 | Arquivo | Responsabilidade |
 |---|---|
 | `leituras/isolado.py` | aplicativo FastAPI do modo isolado |
-| `leituras/rotas.py` | endpoints `POST /leituras`, `GET /leituras`, `GET /leituras/indicadores`; leitura do corpo com limite de 8 KB; cálculo dos indicadores |
+| `leituras/rotas.py` | endpoints `POST /leituras`, `GET /leituras`, `GET /leituras/indicadores`; leitura do corpo com limite de 8 KB |
+| `leituras/servico.py` | cálculo dos indicadores e histórico da sessão com o estado de envio de cada leitura |
+| `leituras/ganchos.py` | ponto de extensão do relato do laboratório (vazio no modo isolado) |
 | `leituras/esquemas.py` | `validar_e_processar_payload`: validação campo a campo e normalização |
 | `limiares.py` | `carregar_limiares` e `classificar_risco` (regras da tabela acima) |
 | `leituras/repositorio.py` | gravação durável no CSV (trava de arquivo, escrita atômica por linha e `fsync` antes de confirmar) e leitura do histórico |

@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-11-17T13:27:54Z",
+  "gerado_em": "2026-11-17T18:41:19Z",
   "itens": [
     {
       "destino": "01_AICSS/firmware/README.md",
@@ -58,6 +58,20 @@
       "estado": "inalterado"
     },
     {
+      "destino": "01_AICSS/relatorio.pdf",
+      "origem": "01_AICSS/relatorio.md",
+      "sha256": "62c9b782762ca0fa59a41e1a26f5ba1935740c85fc5cccf206ccb1785aa18bab",
+      "paginas": 10,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "02_Cybersecurity/relatorio.pdf",
+      "origem": "02_Cybersecurity/relatorio.md",
+      "sha256": "61d981cd728d4c78d6556a57190989c2b8bdf2af6fa0ab485247de08543d9f6e",
+      "paginas": 12,
+      "estado": "inalterado"
+    },
+    {
       "destino": "03_DataScience/mongodb.js",
       "origem": "app/db/mongo/evidencias_mongo.js",
       "sha256": "240ecec254b9b06f9383e90c1edb5ab9a70781400c7e3cbcab52163a3e859267",
@@ -72,6 +86,13 @@
       "estado": "inalterado"
     },
     {
+      "destino": "03_DataScience/relatorio.pdf",
+      "origem": "03_DataScience/relatorio.md",
+      "sha256": "a0a6e420e1c6a89d20d3835109c3597c918aa23162cc80bbadd82640db87e85c",
+      "paginas": 9,
+      "estado": "inalterado"
+    },
+    {
       "destino": "04_CTP_Python/codigo/citizentech/__init__.py",
       "origem": "app/api/src/citizentech/__init__.py",
       "sha256": "3cd01c6df7ff65793e8e0a056e2b47a22f414d9ea2794b5a880b287fc1413370",
@@ -81,7 +102,7 @@
     {
       "destino": "04_CTP_Python/codigo/citizentech/erros.py",
       "origem": "app/api/src/citizentech/erros.py",
-      "sha256": "944aff790fa1927cbc3204ecb5d4dff96ce1c663f1d44cb7532f13eca480448d",
+      "sha256": "c0eebde4bfaf8c8a679c8fb5f71b8ff0ce28bc3d6267cc2e3d1ab0b3b97abddd",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -95,7 +116,14 @@
     {
       "destino": "04_CTP_Python/codigo/citizentech/leituras/esquemas.py",
       "origem": "app/api/src/citizentech/leituras/esquemas.py",
-      "sha256": "e35455c63559dc878803401d917c4d28a679a6ee17752da890a786cf618b0bb4",
+      "sha256": "224789f7cafc87e31c3176f6f1a3fcd86d58c9ec4c62e303ded35ffb2ed6213b",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/ganchos.py",
+      "origem": "app/api/src/citizentech/leituras/ganchos.py",
+      "sha256": "b011924479ab8177ffe6ec7b1f1fca5dc983ea267cb3fd593b18ca92d331856a",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -123,7 +151,7 @@
     {
       "destino": "04_CTP_Python/codigo/citizentech/leituras/rotas.py",
       "origem": "app/api/src/citizentech/leituras/rotas.py",
-      "sha256": "09b556b0b8934610007aa40b1730d086558d3cac930185045e31c58105fbed0b",
+      "sha256": "3f2f0760921fbc6091c14986b190c3740c9fd6d04507516366af15ba378fb934",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -131,6 +159,13 @@
       "destino": "04_CTP_Python/codigo/citizentech/leituras/seguranca.py",
       "origem": "app/api/src/citizentech/leituras/seguranca.py",
       "sha256": "65835aca49c8a40614937c6c12c8254872ad229187e5b72e5cf9ad2455aa58ec",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "04_CTP_Python/codigo/citizentech/leituras/servico.py",
+      "origem": "app/api/src/citizentech/leituras/servico.py",
+      "sha256": "47d830ed1859692b0ff7070deb7632d455fe6b846fb70b75be94841607965788",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -144,7 +179,7 @@
     {
       "destino": "04_CTP_Python/codigo/citizentech/outbox/__init__.py",
       "origem": "app/api/src/citizentech/outbox/__init__.py",
-      "sha256": "5350d016d59eb6b6a5295818ab2d6c99c088b4c220a62cb4c0d36080dbb57627",
+      "sha256": "04e9dc668b6a4752e5dccf47d05dc2741deeaa71f8837fc99f59165a6c01d041",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -158,7 +193,7 @@
     {
       "destino": "04_CTP_Python/codigo/citizentech/outbox/canonicalizacao.py",
       "origem": "app/api/src/citizentech/outbox/canonicalizacao.py",
-      "sha256": "e12ef4d5d1a2fa953f4e955835234ea2b97c8147a6e2aaacb14a3b25b4d7eca9",
+      "sha256": "ef16a073b5f420a5d20cde2fb871dfb7db4d0f105b2e886ee0a2bae08065954b",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -184,6 +219,13 @@
       "estado": "inalterado"
     },
     {
+      "destino": "04_CTP_Python/documento.pdf",
+      "origem": "04_CTP_Python/documento.md",
+      "sha256": "c38c3bc2a2a386e3bf04681b026592eba3c56ce4def0de155527ee8af1cf12f1",
+      "paginas": 8,
+      "estado": "atualizado"
+    },
+    {
       "destino": "04_CTP_Python/requirements.txt",
       "origem": "(declarado: dependências do modo isolado)",
       "sha256": "b4e1a105bae22f05f802d7fc5a78e69f14fd409873d7cec106531e199d077132",
@@ -194,6 +236,13 @@
       "destino": "05_ML/notebook.ipynb",
       "origem": "app/ml/notebooks/ml_mercado.ipynb",
       "sha256": "81ddb4b3b3059f973534723088d0ae9f7401ca32d20394abfe249407bf195b19",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "05_ML/requirements.txt",
+      "origem": "(declarado: app/ml/uv.lock)",
+      "sha256": "d0b5260d226fb120ce0294618b2916632771f4a8012fc43846b2810fa2e8ca6a",
       "paginas": null,
       "estado": "inalterado"
     },
@@ -285,6 +334,13 @@
       "destino": "07_RedesNeurais/notebook.ipynb",
       "origem": "app/ml/notebooks/rna_mercado.ipynb",
       "sha256": "688d7556198913212c22c3fcdab6c430d492b626f7b86fb1f8d67ac00980d47f",
+      "paginas": null,
+      "estado": "inalterado"
+    },
+    {
+      "destino": "07_RedesNeurais/requirements.txt",
+      "origem": "(declarado: app/ml/uv.lock)",
+      "sha256": "d0b5260d226fb120ce0294618b2916632771f4a8012fc43846b2810fa2e8ca6a",
       "paginas": null,
       "estado": "inalterado"
     },

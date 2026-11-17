@@ -399,6 +399,24 @@ def test_requirements_de_ml_e_rna_instalam_o_que_os_notebooks_importam():
         assert "citizentech_ml" in conteudo
 
 
+def test_copia_ctp_e_autocontida():
+    """Todo `citizentech.*` importado pela cópia de CTP precisa estar na própria cópia."""
+    import re
+
+    from empacotar_entregas import ARQUIVOS_CTP
+
+    src = Path(__file__).resolve().parents[2] / "api" / "src" / "citizentech"
+    copiados = {nome.removesuffix(".py").removesuffix("/__init__").replace("/", ".")
+                for nome in ARQUIVOS_CTP}
+    faltando = set()
+    for nome in ARQUIVOS_CTP:
+        texto = (src / nome).read_text(encoding="utf-8")
+        for modulo in re.findall(r"^\s*(?:from|import) citizentech\.([\w.]+)", texto, re.M):
+            if modulo not in copiados:
+                faltando.add(f"{nome} -> citizentech.{modulo}")
+    assert not faltando, sorted(faltando)
+
+
 def test_pdf_usa_titulo_do_item(tmp_path: Path):
     raiz = tmp_path / "repo"
     (raiz / "05_ML").mkdir(parents=True)

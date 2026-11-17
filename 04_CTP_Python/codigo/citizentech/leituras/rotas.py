@@ -1,6 +1,7 @@
 """Rotas de telemetria CTP."""
 
 import json
+import logging
 import math
 from typing import Any
 
@@ -9,14 +10,17 @@ from fastapi.responses import JSONResponse
 
 from citizentech.erros import ConflitoEvento
 from citizentech.leituras.esquemas import validar_e_processar_payload
+from citizentech.leituras.ganchos import gancho_relato
 from citizentech.leituras.limitador import obter_limitador
-from citizentech.leituras.repositorio import (
-    ler_todas_leituras,
-    salvar_leitura_duravel,
-)
+from citizentech.leituras.repositorio import salvar_leitura_duravel
 from citizentech.leituras.seguranca import verificar_chave_dispositivo
+from citizentech.leituras.servico import (
+    calcular_indicadores,
+    listar_leituras_com_estado,
+)
 from citizentech.limiares import carregar_limiares
-from citizentech.outbox.banco import obter_mapa_estados
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -88,19 +92,17 @@ async def criar_leitura(
             },
         )
 
-    # 4.1. Gancho de sessao de laboratorio: se sessao_laboratorio_id preenchido e existir
-    # sessao ativa nao expirada com relato pendente, anexa relato redigido
+    # 4.1. Sessao de laboratorio com relato pendente: anexa o relato redigido (so na app completa)
     sessao_cod = registro.get("sessao_laboratorio_id")
+    gancho = gancho_relato()
     relato_para_anexar: str | None = None
-    if sessao_cod:
+    if sessao_cod and gancho:
         try:
-            from citizentech.laboratorio.repositorio import buscar_relato_pendente_sessao_ativa
-
-            relato_para_anexar = buscar_relato_pendente_sessao_ativa(sessao_cod)
+            relato_para_anexar = gancho.buscar_pendente(sessao_cod)
             if relato_para_anexar:
                 registro["relato_redigido"] = relato_para_anexar
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Falha ao buscar relato pendente para sessao: %s", type(exc).__name__)
 
     # 5. Persistencia duravel em CSV e Outbox SQLite
     try:
@@ -116,13 +118,11 @@ async def criar_leitura(
 
     # 5.1. Se leitura foi gravada como nova (criado) e havia relato anexado,
     # marca relato como enviado no banco de dados
-    if resultado == "criado" and relato_para_anexar and sessao_cod:
+    if resultado == "criado" and relato_para_anexar and sessao_cod and gancho:
         try:
-            from citizentech.laboratorio.repositorio import marcar_relato_enviado
-
-            marcar_relato_enviado(sessao_cod, reg_final["evento_id"])
-        except Exception:
-            pass
+            gancho.marcar_enviado(sessao_cod, reg_final["evento_id"])
+        except Exception as exc:
+            logger.warning("Falha ao marcar relato como enviado: %s", type(exc).__name__)
 
     codigo_status = (
         status.HTTP_201_CREATED if resultado == "criado" else status.HTTP_200_OK
@@ -163,15 +163,7 @@ def listar_leituras(
             },
         )
 
-    todos = ler_todas_leituras()
-    mapa_estados = obter_mapa_estados()
-    if mapa_estados:
-        for r in todos:
-            if r["evento_id"] in mapa_estados:
-                r["estado"] = mapa_estados[r["evento_id"]]
-
-    if sessao is not None and sessao != "":
-        todos = [r for r in todos if r["sessao_laboratorio_id"] == sessao]
+    todos = listar_leituras_com_estado(sessao=sessao)
 
     total = len(todos)
     inicio = (page - 1) * page_size
@@ -186,59 +178,6 @@ def listar_leituras(
         "page_size": page_size,
         "total_paginas": total_paginas,
     }
-
-
-def calcular_indicadores(leituras: list[dict[str, Any]]) -> dict[str, Any]:
-    """Calcula indicadores estatisticos sobre uma lista de leituras."""
-    contagem = len(leituras)
-    if contagem == 0:
-        return {
-            "contagem": 0,
-            "total_alertas": 0,
-            "media": None,
-            "maximo": None,
-            "minimo": None,
-        }
-    valores = [r["valor"] for r in leituras]
-    total_alertas = sum(1 for r in leituras if r.get("alerta") is True)
-
-    # Media estavel (evita overflow de soma intermediaria com valores extremos)
-    media = 0.0
-    for i, v in enumerate(valores, start=1):
-        media += (v - media) / i
-
-    val_max = max(valores)
-    val_min = min(valores)
-
-    if not math.isfinite(media) or not math.isfinite(val_max) or not math.isfinite(val_min):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={
-                "erro": "Erro no calculo de indicadores",
-                "detalhes": "Overflow numerico no calculo de estatisticas dos valores.",
-            },
-        )
-
-    try:
-        media_arredondada = round(media, 2)
-        max_arredondado = round(val_max, 2)
-        min_arredondado = round(val_min, 2)
-    except OverflowError:
-        media_arredondada = media
-        max_arredondado = val_max
-        min_arredondado = val_min
-
-    return {
-        "contagem": contagem,
-        "total_alertas": total_alertas,
-        "media": media_arredondada,
-        "maximo": max_arredondado,
-        "minimo": min_arredondado,
-    }
-
-
-def _calcular_estatisticas(leituras: list[dict[str, Any]]) -> dict[str, Any]:
-    return calcular_indicadores(leituras)
 
 
 @router.get("/leituras/indicadores")
@@ -263,13 +202,11 @@ def obter_indicadores(
                 },
             )
 
-    todos = ler_todas_leituras()
-    if sessao is not None and sessao != "":
-        todos = [r for r in todos if r["sessao_laboratorio_id"] == sessao]
+    todos = listar_leituras_com_estado(sessao=sessao)
 
     if metrica is not None and metrica != "":
         filtradas = [r for r in todos if r["metrica"] == metrica]
-        stats = _calcular_estatisticas(filtradas)
+        stats = calcular_indicadores(filtradas)
         return {
             "sessao": sessao,
             "metrica": metrica,
@@ -279,7 +216,7 @@ def obter_indicadores(
     resultado_metricas: dict[str, Any] = {}
     for m in sorted(catalogo.keys()):
         filtradas = [r for r in todos if r["metrica"] == m]
-        resultado_metricas[m] = _calcular_estatisticas(filtradas)
+        resultado_metricas[m] = calcular_indicadores(filtradas)
 
     return {
         "sessao": sessao,

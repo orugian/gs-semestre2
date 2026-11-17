@@ -14,6 +14,11 @@ Diagnóstico completo (IDs H/N/S/X): relatório somente leitura de 17/11. Cada c
   - `.env.example` com caminhos absolutos da máquina e variáveis mortas (`APP_ENV`, `CITIZENTECH_TMP`, `ADZUNA_MAX_CHAMADAS`, `ORACLE_FIAP_*`); 14 variáveis lidas pelo código sem documentação.
 - **Documentos fora de uso saem da superfície** — `docs/historico/` e `docs/panorama/`; `.gitignore` cobre originais com PII e estado da ferramenta de design.
 
+- **Interface no design system NOUS** (S16, `48be785`) — tokens só em `app/web/src/estilo/tema.css`; matriz de pixels three.js isolada em `src/visual/`; foco visível em todos os controles.
+- **API e tools desembaraçados** (S17, `fde8f6e`) — catálogo lido num módulo só (`citizentech/catalogo.py`), utilidades de banco, consentimento como dependência única, erros de domínio fora da camada de dados, serviço de leituras, retentativas da LLM em laço, laboratório por dado (`tem_laboratorio`), `tools/_comum.py`, conftest aplicando 001–007 com as regras de `aplicar_ddl.py`, contrato de hash com a Lambda.
+- **Cópia de CTP autocontida** — `leituras/rotas.py` deixa de importar `laboratorio` (tarde, dentro de `try`): a app completa registra o gancho do relato em `main.py` (`leituras/ganchos.py`); o modo isolado não registra nada. Teste `test_copia_ctp_e_autocontida` impede regressão.
+  - A cópia entregue em `04_CTP_Python/codigo` registrava `ModuleNotFoundError` a cada leitura com sessão (verificado rodando-a isolada).
+
 ## Em execução / próximo
 
 - **Web: cliente HTTP único + domínio compartilhado + componentes menores** (C1, C2, C10 parte web, C11 web, C12) — depois do redesign visual S16, para não haver dois agentes nos mesmos arquivos.

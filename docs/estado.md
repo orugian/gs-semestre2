@@ -2,6 +2,14 @@
 
 > **Checkpoint de 17/11/2026, ~10h45 (UTC−3).** Prazo: **19/11/2026 às 23h55** (faltavam ~2d13h). Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
 
+## 000. Em andamento (17/11 ~11h50) — redesign NOUS e reorganização
+
+Pedido do usuário: redesign da UI com o DS NOUS + matriz de pixels three.js, foco visível (aprovado) e reorganização/higiene do repositório (untangle em web/tools/cloud-testes/api; `app/ml` congelado). Vídeos ficam para o fim.
+- Commitado: `3782ebf` direção visual [app/web/DESIGN.md](<../app/web/DESIGN.md>); `2282afb` README de replicação na raiz, `app/tools/ambiente_teste.ps1` e `testar_tudo.ps1` (rodado: api 397, cloud 115, tools 46, web 61 + typecheck + build, tudo 0), empacotador cobrindo os 6 PDFs, requirements ML/RNA do uv.lock; `cc8fa50` [registro de decisões](<decisoes_untangle.md>).
+- **agy S16-ui-nous** (worktree `GS-wt/S16-ui-nous`, escopo `app/web`), desde 11:19, timeout 60 min.
+- **agy S17-untangle-api** (worktree `GS-wt/S17-untangle-api`, escopo `app/api` + `app/tools` + testes de paridade em `app/cloud/tests`), desde 11:35, com bancos de teste.
+- Depois: aceite dos dois, untangle do web (C1/C2/C10/C11/C12) sobre o resultado da S16, PDFs/empacotador, commit/push.
+
 ## 00. Sessão de 17/11 manhã — Cloud e Data Modeler concluídos
 
 - **Lab:** `GET /health` 200 `banco=ok` às 13:03:31Z (verificado). Rodada nova 13:09:57–13:12:43Z: simulador normal (ids 12–13) e evolução 30→50 °C (ids 14–19, 46/50 crítico `alerta=True`); sem `metrica` → 400; chave inválida → 401. SELECT no RDS (app_ingest, verify-full) → 17 linhas de `lab-iot-bancada-01`. Nenhum recurso AWS alterado. [Registro](<../06_Cloud/evidencias/20261117_rodada_function_url.txt>).

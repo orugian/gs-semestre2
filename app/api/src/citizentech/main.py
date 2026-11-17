@@ -16,7 +16,12 @@ from citizentech.curriculo.rotas import router as curriculo_router
 from citizentech.destinos.rotas import router as destinos_router
 from citizentech.erros import registrar_manipuladores_de_erro
 from citizentech.intencao.rotas import router as intencao_router
+from citizentech.laboratorio.repositorio import (
+    buscar_relato_pendente_sessao_ativa,
+    marcar_relato_enviado,
+)
 from citizentech.laboratorio.rotas import router as laboratorio_router
+from citizentech.leituras.ganchos import GanchoRelato, registrar_gancho_relato
 from citizentech.leituras.rotas import router as leituras_router
 from citizentech.limiares import carregar_limiares
 from citizentech.mercado.rotas import router as mercado_router
@@ -58,6 +63,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 def criar_app() -> FastAPI:
     aplicacao = FastAPI(title="CitizenTech API", version="0.1.0", lifespan=lifespan)
     registrar_manipuladores_de_erro(aplicacao)
+    registrar_gancho_relato(
+        GanchoRelato(
+            buscar_pendente=buscar_relato_pendente_sessao_ativa,
+            marcar_enviado=marcar_relato_enviado,
+        )
+    )
     aplicacao.include_router(leituras_router)
     aplicacao.include_router(auth_router)
     aplicacao.include_router(consentimentos_router)
