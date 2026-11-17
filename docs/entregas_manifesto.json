@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-11-17T06:50:21Z",
+  "gerado_em": "2026-11-17T12:45:12Z",
   "itens": [
     {
       "destino": "01_AICSS/firmware/README.md",
       "origem": "app/iot/firmware/README.md",
       "sha256": "5f3220cc6be483bd7147ccef645d0f6d1534a0e8b3abacfef4fcf46f3e51d41d",
       "paginas": null,
-      "estado": "atualizado"
+      "estado": "inalterado"
     },
     {
       "destino": "01_AICSS/firmware/diagram.json",

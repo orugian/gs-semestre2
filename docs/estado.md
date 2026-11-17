@@ -4,6 +4,10 @@
 
 ## 0. Fechamento funcional aceito; pendente o fechamento acadêmico
 
+**Nova orientação do usuário em17/11, após o encerramento:** **Data Modeler é tarefa do AGENTE**, não do grupo; D25/CLAUDE§12 e handoff foram atualizados. O usuário informou **Learner Lab reativado para a próxima sessão**; isso ainda não foi confirmado por novo health. Próximo agente: iniciar validação Cloud e execução agêntica do Modeler, sem pedir ao usuário que faça a modelagem. [Capturas exatas que faltam](<guia_capturas_learner_lab.md>).
+
+**Verificação desta atualização documental:** guia de capturas confrontado com enunciado/logs/schema do projeto; PDF Data Science regenerado, **7p**, três RMs conferidos; empacotador **--verificar OK**. Data Modeler continua pendente de execução e nenhuma nova chamada AWS foi feita agora.
+
 **Wokwi efetivamente executado pelo agente:**3cenários,6HTTP201,6linhas CSV, LED0/1/1 e PWM**1.000Hz** só no crítico. [Aceite com prints/Serial/VCD/limites](<../01_AICSS/evidencias/20261117_wokwi_aceite.md>), [CSV original](<../01_AICSS/evidencias/20261117_wokwi_leituras.csv>), [manifesto/hashes](<../01_AICSS/evidencias/20261117_wokwi_manifesto.json>). **Sensores/atuadores simulados**, não bancada física. A placa ESP sem sensores do usuário permaneceu intacta, sem reflash.
 
 - Ajustes25°C/25cm,38°C/12cm,48°C/5cm; medições reais da simulação **25,00/25,11**, **38,00/12,07**, **48,00/4,96**. Valores não injetados no firmware: OneWire/DallasTemperature e TRIG/ECHO/pulseIn realmente executados.
@@ -18,7 +22,7 @@
 
 **Publicação funcional confirmada:** `f96b13e` em main e gs-semestre2/main, working tree limpa e zero commits não enviados antes deste encerramento documental. Histórico: S15 `e7c533a`, docs/revisão2 `f10ffd2`, boot Wokwi `409e975`. O upstream origin/main continua antigo: não resetar/rebasear nem publicar nesse remoto por confusão. Gitleaks staged/intervalo antes de cada commit/push; somente gs-semestre2.
 
-**Próximo passo exato:** seguir P01–P08 do [handoff](<handoff_citizentech_20261116_fim.md>). Agente faz inventário e QA final enquanto o grupo produz Cloud/Data Modeler/vídeos/live em paralelo; incorpora apenas arquivos realmente fornecidos, copia originais privados antes de tarjar e repete PDFs/empacotador. Não é necessário esperar parado pelos humanos, nem repetir S15/Wokwi. Não substituir captura AWS por saída histórica/local e não declarar entrega acadêmica concluída antes do Portal.
+**Próximo passo exato:** seguir P01–P08 do [handoff](<handoff_citizentech_20261116_fim.md>). Agente faz inventário, **Data Modeler** e QA final; conduz testes Cloud e orienta as capturas autenticadas, enquanto o grupo prepara vídeos/live em paralelo. Incorpora apenas arquivos realmente obtidos, copia originais privados antes de tarjar e repete PDFs/empacotador. Não é necessário esperar parado pelos humanos, nem repetir S15/Wokwi. Não substituir captura AWS por saída histórica/local e não declarar entrega acadêmica concluída antes do Portal.
 
 ## 1. Evidências já aceitas nesta retomada
 
@@ -61,8 +65,8 @@ Holdout2026 **fechado**, status_promocao=nao_decidida, nenhum modelo promovido; 
 
 Fila, responsáveis e critérios detalhados no [handoff P01–P08](<handoff_citizentech_20261116_fim.md>). As tarefas abaixo **não estão concluídas**.
 
-1. **Cloud:** capturas do simulador e consulta RDS; refazer CloudWatch de descarte/chave inválida/alerta; vídeo≤5min. Não alterar AWS por sugestão de revisor; typo RATE_KIMIT documentado e default30. Health verificado não garante Lab continuamente disponível.
-2. **Data Modeler:** modelos lógico/relacional e exportações pelo grupo. Oracle FIAP fora do escopo por decisão anterior; não alegar execução nele nem chamar Mermaid de Data Modeler.
+1. **Cloud:** Lab reativado conforme informado pelo usuário17/11, health novo pendente. Faltam prints de simulador/SQL (agente prepara e tenta capturar) e logs CloudWatch de descarte/chave inválida/alerta crítico (console humano), além do vídeo≤5min. [Guia exato](<guia_capturas_learner_lab.md>). Não alterar recursos por sugestão de revisor; typo RATE_KIMIT e default30 já documentados.
+2. **Data Modeler — AGENTE:** gerar modelos lógico/relacional reais e exportações por determinação do usuário17/11. Diagnosticar ferramenta/automação; pedir apenas habilitação se necessária, não transferir a modelagem ao grupo. Execução ainda pendente. Oracle FIAP continua fora do escopo; não chamar Mermaid de Data Modeler.
 3. **Vídeos/URLs:** AIC≤7min com rosto/sem música/YouTube não listado e nomes/RMs (obrigatório para pontuar); ML/Cyber/Cloud≤5min; RNA obrigatório. Ideias efetivas da live e relato de gestão também humanos.
 4. Identidades confirmadas e aplicadas: Guilherme Orugian RM572882; Lucas Henrique RM571901; Rodrigo Bettio RM573725. Placeholders em URLs de vídeos permanecem até receber links reais.
 5. Conferência e **Portal**: Estatística PDF+PY+CSV separados, sem ZIP; Cyber≤15p. Nenhuma submissão realizada. Texto de operador/transferência internacional em consentimentos, backup/restauração não verificados, proteção de sensor único, buffer offline do ESP e TLS/CA de produção permanecem limitações; não implementar correções fora do escopo sem decisão.
@@ -70,7 +74,8 @@ Fila, responsáveis e critérios detalhados no [handoff P01–P08](<handoff_citi
 ### 4.1 Verificações que o próximo agente ainda deve conduzir
 
 - [ ] Inventariar arquivos humanos novos e confrontar os requisitos atuais; snapshots históricos não são uma fila confiável de pendências.
-- [ ] Revalidar health AWS quando o Lab for reaberto; não considerar o health antigo prova de serviço disponível agora.
+- [ ] Revalidar health do Lab que o usuário informou já ter reativado; não pedir reinício por padrão nem tratar essa declaração como teste executado.
+- [ ] Executar Data Modeler pelo agente (D25 atualizado), gerar projeto/modelos/exports reais e incorporar ao relatório/PDF após aceite.
 - [ ] Revisar visualmente PDFs e testar os links reais quando fornecidos; parser de páginas/RMs/imagens não substitui inspeção visual completa.
 - [ ] Fazer QA manual pertinente de teclado/foco/acessibilidade, sem alegar certificação WCAG por axe. Se não houver ferramenta para o teste, registrar e pedir apoio humano específico.
 - [ ] Conferir procedência/atualidade das execuções anteriores de notebooks; não reexecutar em massa nem abrir holdout2026 para satisfazer um checklist. Se for indispensável reexecução científica, submeter antes o escopo seguro e o conflito de gates ao usuário.

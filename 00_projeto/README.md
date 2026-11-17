@@ -41,6 +41,6 @@ O contrato HTTP é o do plano§3 e dos [schemas da API](<../app/api/src/citizent
 
 ## Dependências humanas e segurança
 
-Decisões de 16/11: rubricas aprovadas, Atlas acessível e evidências de banco relacional **somente no Oracle local** (Oracle FIAP fora de escopo). AWS depende da disponibilidade do Learner Lab; o health precisa retornar `banco=ok` antes de nova demonstração. Continuam pendentes: Data Modeler, prints do console AWS (sob instrução do agente), ideia efetiva da live, vídeos e envio no Portal. Não inventar o conteúdo da live nem resultados de uso por participantes.
+Decisões de 16/11: rubricas aprovadas, Atlas acessível e evidências de banco relacional **somente no Oracle local** (Oracle FIAP fora de escopo). AWS depende da disponibilidade do Learner Lab; o health precisa retornar `banco=ok` antes de nova demonstração. Em17/11 o usuário determinou **Data Modeler pelo agente** e informou o **Learner Lab reativado** (novo health ainda pendente). Continuam humanos: prints do console autenticado AWS sob orientação do agente, ideia efetiva da live, vídeos e Portal. [Guia exato de capturas](<../docs/guia_capturas_learner_lab.md>). Não inventar o conteúdo da live nem resultados de uso por participantes.
 
 **Holdout fechado, nenhum modelo promovido.** Segredos não pertencem ao chat/relatórios; não apagar dados nem liberar envio da outbox antiga à nuvem. APIs pagas, recursos AWS, limpeza de dados e push exigem autorização conforme o estado e o CLAUDE. Documentos-modelo do professor são referências e não devem ser editados como implementação própria.

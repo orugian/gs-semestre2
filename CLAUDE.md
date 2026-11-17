@@ -302,7 +302,7 @@ Nunca invente saída. Nunca entre em loop de retentativas.
   | RNA | Vídeo obrigatório |
 
 - Todo artefato distingue o que foi **implementado**, **simulado** e **planejado para o futuro**.
-- Entregas [HUMANO], que nenhum agente executa: vídeos, Data Modeler, Portal, nomes/RMs, ideia da live e console da AWS (D14a, D25, plano §10).
+- Entregas [HUMANO]: vídeos, Portal, nomes/RMs, ideia da live e console autenticado da AWS (D14a, plano §10). **Exceção expressamente determinada pelo usuário em 17/11/2026:** o **Data Modeler é responsabilidade do agente**, que deve importar o DDL, gerar os modelos lógico/relacional reais e exportar os artefatos (D25). Não devolver a modelagem ao usuário por padrão; se faltar ferramenta/acesso, diagnosticar o impedimento e pedir somente a habilitação necessária. Não substituir execução do Modeler por Mermaid ou evidência inventada.
 - O laboratório IoT opcional com público amplo é um **risco aceito** (D01, R12). O relatório de AICSS precisa justificar os sensores como instrumento de avaliação prática da competência de monitoramento.
 
 ## 13. Prazo e cortes

@@ -47,7 +47,7 @@
 | D22 | LGPD/LLM (**R18, R19**) | Antes de enviar o texto à LLM, o usuário vê o **texto redigido, pode editar e confirma o envio**. Heurística adicional remove o cabeçalho (nome). OpenRouter com `provider.data_collection="deny"`. O consentimento cita o operador (OpenRouter/DeepSeek) e a transferência internacional. A redação de PII é declarada como **parcial** no relatório de Cyber. |
 | D23 | Sentimento (**R17**) | O sentimento HF do relato é **só o tom do relatório de incidente** (metadado da ocorrência). **Nunca** entra na nota de competência. Declarado no README de Cloud. |
 | D24 | Firmware (**R21**) | A chave do dispositivo é **exclusiva da demo**, rotacionável, só vale para `POST /leituras` e tem rate limit próprio. Projeto Wokwi privado. O túnel ngrok é aberto **apenas durante a demonstração**. |
-| D25 | Oracle (**R27**) | DDL no **dialeto 19c** (sem `BOOLEAN`, sem `IF [NOT] EXISTS`, sem domínios), para rodar igual no Docker 23ai e no Oracle FIAP. **Data Modeler (R11): obrigatório [HUMANO] no D4** (cerca de 30 min: importar o DDL, gerar os modelos lógico e relacional, exportar imagem/PDF). |
+| D25 | Oracle (**R27**) | DDL no **dialeto 19c** (sem `BOOLEAN`, sem `IF [NOT] EXISTS`, sem domínios), para rodar igual no Docker 23ai e no Oracle FIAP. **Data Modeler (R11): obrigatório, execução pelo AGENTE por determinação expressa do usuário em 17/11/2026** (substitui a atribuição humana original do D4). Importar o DDL no Modeler real, gerar modelos lógico/relacional, salvar o projeto nativo e exportar imagem/PDF; Mermaid não substitui a execução. |
 | D20 | Repositório | Monorepo em `info-gs-diciplinas/`: código em `app/`, entregas nas pastas `0X_*`, que referenciam o código. Limiares em **um único `app/config/limiares.json`**, consumido pela API, pela Lambda (copiado no empacotamento) e pelo firmware (header gerado). |
 
 ### 1.1 Registro de execução — 15/11/2026
@@ -194,7 +194,7 @@ Cada linha é uma fatia **RED → GREEN → REFACTOR**, testada pela interface p
 | **D1** | Qui 12 – Sex 13 | Aprovação deste plano; Docker ativo + smoke do `oracle-free` (R26); S0, S1; `.env.example`; Astryx smoke build; **pipeline md→pdf (Edge) + contador de páginas** (R10); issues | **Ingestão Caged** (S6) em streaming: baixar → filtrar CBO6 → **salvar linhas filtradas em Parquet** (R05) → apagar o bruto; abortar se o disco livre ficar abaixo de 4 GB; confirmar os códigos CBO6 dos 6 destinos; snapshot Adzuna | Parquet real em `app/data/`; códigos CBO confirmados; build web OK; PDF de teste gerado |
 | **D2** | Sáb 14 | S2, S3, S5; **rascunho por agente** do catálogo YAML dos 6 destinos (ESCO, questões, rubricas) (R29) | S7 + EDA + medição da defasagem FOR (R02) + baselines; **congelar** split e promoção (já fixados aqui) | Leituras ponta a ponta local; baselines medidos |
 | **D3** | Dom 15 | S9, S10, S11; **[HUMANO] revisão das rubricas (~2 h); sem revisão até 18h → corte automático para 3 destinos** (R29) | ML (Ridge/RF/HGB + tuning) + RNA (MLP, ≥ 2 configs); Estatística (base municipal + script) | Validação comparada; promoção decidida; teste aberto 1x |
-| **D4** | Seg 16 | S4 Lambda + deploy Learner Lab + RDS (SG por janela) + HF; firmware Wokwi DS18B20/HC-SR04/LED/buzzer | S8, S12, S13; Oracle DDL 19c + Mongo; **[HUMANO] Data Modeler (~30 min)** (R11) | 4 prints de Cloud; **[HUMANO] vídeo Cloud** (R15) |
+| **D4** | Seg 16 | S4 Lambda + deploy Learner Lab + RDS (SG por janela) + HF; firmware Wokwi DS18B20/HC-SR04/LED/buzzer | S8, S12, S13; Oracle DDL 19c + Mongo; **Data Modeler pelo agente** (R11; atribuição alterada pelo usuário em17/11) | 4 prints de Cloud; **[HUMANO] vídeo Cloud** (R15) |
 | **D5** | Ter 17 | S14 + integração outbox → Lambda real; gravar a **demonstração dos 3 cenários AICSS/CTP** como evidência | S15 frontend (impeccable + Astryx), todas as telas; **[HUMANO] vídeos ML e RNA** | Jornada completa em uma persona |
 | **D6** | Qua 18 | Revisão independente (agy plan) + correções; segurança demonstrada; Oracle FIAP (evidências); **[HUMANO] vídeos Cyber e AIC** | Relatórios .md + evidências .html → PDFs finais (9 disciplinas); UML Mermaid; notebooks finais | Checklist §17 da proposta; PDFs dentro do limite de páginas |
 | **D7** | Qui 19 | **[HUMANO]** conferência de checklist, links e formatos; entrega no Portal até 23h55; **abrir o SG do RDS para o período de correção** (D09) | Margem de correção | Entregue |
@@ -278,7 +278,7 @@ Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delega
 |---|---|---|
 | 01 AICSS | `app/iot/firmware` (Wokwi), 3 cenários, LED/buzzer, POST para a API | `relatorio.md` + `evidencias/*.html` (Serial, JSON, CSV) |
 | 02 Cyber | Auth/autorização, CSRF, rate limit 429, X-Device-Key 401 + flag `autenticado`, PII com confirmação, gitleaks, exceção RDS, isolamento de agentes | relatório .md (≤ 15 páginas no PDF) + vídeo ≤ 5 min [HUMANO] |
-| 03 Data Science | `app/db/oracle`, `app/db/mongo`, consultas | DDL 19c + **modelo lógico e relacional no Data Modeler [HUMANO, obrigatório]** + evidências da execução no Oracle FIAP + justificativa da divisão Oracle/Mongo |
+| 03 Data Science | `app/db/oracle`, `app/db/mongo`, consultas | DDL 19c + **modelo lógico e relacional reais no Data Modeler [AGENTE, obrigatório; decisão17/11]** + evidências da execução no Oracle FIAP + justificativa da divisão Oracle/Mongo |
 | 04 CTP | `POST/GET /leituras`, CSV, indicador, 3 cenários; **modo isolado** | `documento.md` + evidências .html + testes (o enunciado local não pede vídeo) |
 | 05 ML | `app/ml` (baselines, Ridge/RF/HGB, tuning, importância) | `notebook.ipynb` + slides (.md → PDF) + vídeo ≤ 5 min [HUMANO] |
 | 06 Cloud | `app/cloud` (Lambda, SQL, simulador direto) | README + 4 imagens + Function URL + endpoint + vídeo ≤ 5 min [HUMANO] |
@@ -312,13 +312,17 @@ Cada contrato segue o modelo da proposta (§14 "Contrato obrigatório por delega
 - [ ] Quem grava cada vídeo e quem entrega cada disciplina no Portal.
 - [ ] Preencher o `.env`: `OPENROUTER_API_KEY`, `ADZUNA_APP_ID/KEY`, `HF_TOKEN`, `MONGODB_URI`, `DEVICE_KEY`, credenciais do RDS.
 - [ ] Revisar as rubricas dos **3 destinos mantidos após R29** (registrar revisor/mínimos). O gate original D3 às18h expirou; os seis rascunhos foram preservados, não aprovados.
-- [ ] **Data Modeler** no D4 (obrigatório, R11); confirmar o campo de envio do vídeo de RNA.
+- [ ] Confirmar o campo de envio do vídeo de RNA. Data Modeler foi transferido ao agente por decisão17/11 (D25, §10.1).
 - [ ] `gh auth refresh -s project,read:project` (R28).
 - [x] **Tamanho do grupo:** trio, compatível com a Estatística (R09).
 - [x] Primeiro smoke Docker executado no D1 (R26). Isso não garante serviços ativos hoje: o orquestrador deve reconferir quando a fatia precisar de banco.
 - [ ] (Opcional) Comunicar ao professor de Cloud a exceção de rede do RDS.
 
 ---
+
+### 10.1 Pendência transferida ao agente pelo usuário em17/11
+
+- [ ] **Data Modeler (D25/R11):** o agente verifica ferramenta/automação disponível, importa os DDLs19c, gera modelos lógico/relacional reais, salva projeto nativo, exporta evidências e atualiza Data Science/PDF. Se faltar instalação, licença ou acesso, diagnosticar e pedir somente a habilitação necessária; não devolver a modelagem ao usuário por padrão. Não fabricar projeto/prints nem usar Mermaid como execução do Modeler.
 
 ## 11. Próximo passo
 

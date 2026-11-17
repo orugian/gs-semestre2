@@ -25,7 +25,7 @@ A CitizenTech ajuda profissionais graduados e experientes em transição de carr
 
 **Arquivos:** `app/db/ddl/001_usuario_consentimento.sql` a `007_catalogo.sql` (cópia consolidada em `03_DataScience/oracle.sql`). São **16 tabelas** com chaves primárias, estrangeiras (com `ON DELETE CASCADE` a partir de `usuario`, exceto em `consentimento`, ver §5), `CHECK` de domínio (estados, finalidades, faixas numéricas), `UNIQUE` e índices de acesso.
 
-**Diagrama entidade-relacionamento:** `docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png` (gerado do mesmo DDL). **DER do Oracle Data Modeler:** [HUMANO — importar o DDL no Data Modeler, gerar os modelos lógico e relacional e exportar a imagem para `evidencias/`].
+**Diagrama entidade-relacionamento:** `docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png` (gerado do mesmo DDL). **DER do Oracle Data Modeler:** [AGENTE — execução pendente: importar o DDL no Modeler real, gerar modelos lógico/relacional, salvar projeto nativo e exportar imagens. Responsabilidade transferida pelo usuário em17/11/2026; não confundir Mermaid com essa execução].
 
 Principais decisões de modelagem:
 - **Dialeto 19c:** sem `BOOLEAN` (flags em `CHAR(1)` com `CHECK IN ('S','N')`), sem `IF NOT EXISTS`, sem tipo `JSON` nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em `CLOB`/`VARCHAR2` com `CHECK (coluna IS JSON)`, consultáveis com `JSON_VALUE`.
@@ -109,4 +109,4 @@ Os números de mercado em C7 são **admissões formais observadas** no Novo Cage
 - Os dados de usuário são de **uma persona de demonstração** fictícia; as contagens descrevem o ambiente de demonstração, não um uso real.
 - O MongoDB ainda não tem índices além de `_id` nem TTL para os textos redigidos (proposto: TTL e índice por `usuario_id`).
 - A exclusão de conta não remove automaticamente os documentos do MongoDB (proposto).
-- DER do Data Modeler pendente [HUMANO].
+- Modelos lógico/relacional e exportações do Data Modeler ainda pendentes de execução pelo **agente**, por decisão do usuário em17/11; nenhum artefato real dessa ferramenta é alegado como concluído.

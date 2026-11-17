@@ -147,6 +147,8 @@ uv run pytest -q                                                     # 115 teste
 
 ## 8. Evidências (`evidencias/`)
 
+**Próxima sessão:** usuário informou Lab reativado em17/11; novo health ainda não executado. Seguir o [guia exato de capturas pendentes](<../docs/guia_capturas_learner_lab.md>): três casos CloudWatch no console; simulador e consulta SQL em telas próprias, preparadas pelo agente. Não pedir recaptura de imagens já válidas sem motivo.
+
 Execução de 16/11/2026, 15h37–15h38 (UTC−3), contra a Function URL real.
 
 | # exigido | Evidência | Arquivo | Situação |

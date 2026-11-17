@@ -69,7 +69,7 @@ img { max-width: 100%; }
 </table>
 <h2>2. Modelagem relacional (Oracle)</h2>
 <p><strong>Arquivos:</strong> <code>app/db/ddl/001_usuario_consentimento.sql</code> a <code>007_catalogo.sql</code> (cópia consolidada em <code>03_DataScience/oracle.sql</code>). São <strong>16 tabelas</strong> com chaves primárias, estrangeiras (com <code>ON DELETE CASCADE</code> a partir de <code>usuario</code>, exceto em <code>consentimento</code>, ver §5), <code>CHECK</code> de domínio (estados, finalidades, faixas numéricas), <code>UNIQUE</code> e índices de acesso.</p>
-<p><strong>Diagrama entidade-relacionamento:</strong> <code>docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png</code> (gerado do mesmo DDL). <strong>DER do Oracle Data Modeler:</strong> [HUMANO — importar o DDL no Data Modeler, gerar os modelos lógico e relacional e exportar a imagem para <code>evidencias/</code>].</p>
+<p><strong>Diagrama entidade-relacionamento:</strong> <code>docs/uml/img/06_6_modelo_de_dados_relacional_oracle_ddl_001007.png</code> (gerado do mesmo DDL). <strong>DER do Oracle Data Modeler:</strong> [AGENTE — execução pendente: importar o DDL no Modeler real, gerar modelos lógico/relacional, salvar projeto nativo e exportar imagens. Responsabilidade transferida pelo usuário em17/11/2026; não confundir Mermaid com essa execução].</p>
 <p>Principais decisões de modelagem:
 - <strong>Dialeto 19c:</strong> sem <code>BOOLEAN</code> (flags em <code>CHAR(1)</code> com <code>CHECK IN ('S','N')</code>), sem <code>IF NOT EXISTS</code>, sem tipo <code>JSON</code> nativo. Documentos que precisam ficar junto da linha (ex.: o resultado de cada destino numa comparação) vão em <code>CLOB</code>/<code>VARCHAR2</code> com <code>CHECK (coluna IS JSON)</code>, consultáveis com <code>JSON_VALUE</code>.
 - <strong>Rastreabilidade:</strong> cada comparação guarda o resultado completo por destino, na ordem escolhida (<code>comparacao_destino.ordem</code>); o plano guarda a base de estados usada (<code>plano.base_json</code>); a tentativa guarda a versão do exercício e o hash da resposta.
@@ -311,7 +311,7 @@ ex_analista_monitoramento_iot_01 | 2026-11-16 21:57:29.996023 | 0.75          | 
 <li>Os dados de usuário são de <strong>uma persona de demonstração</strong> fictícia; as contagens descrevem o ambiente de demonstração, não um uso real.</li>
 <li>O MongoDB ainda não tem índices além de <code>_id</code> nem TTL para os textos redigidos (proposto: TTL e índice por <code>usuario_id</code>).</li>
 <li>A exclusão de conta não remove automaticamente os documentos do MongoDB (proposto).</li>
-<li>DER do Data Modeler pendente [HUMANO].</li>
+<li>Modelos lógico/relacional e exportações do Data Modeler ainda pendentes de execução pelo <strong>agente</strong>, por decisão do usuário em17/11; nenhum artefato real dessa ferramenta é alegado como concluído.</li>
 </ul>
 </body>
 </html>
