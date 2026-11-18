@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>relatorio</title>
+<title>CitizenTech - AI Computer Systems and Sensors</title>
 <style>
 @page { size: A4; margin: 20mm 18mm; }
 body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.45;
@@ -233,7 +233,7 @@ Servidor Python · FastAPI, módulo citizentech.leituras
 esp32-lab-01-c-ec127e43-3-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,temperatura_c,C,48.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
 esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
 </code></pre>
-<p><strong>Evidência B — compatibilidade com o servidor modelo da disciplina</strong> (<code>evidencias/20261116_compat_servidor_modelo.txt</code>). Os 6 JSON dos três cenários foram enviados também ao <code>servidor/servidor.py</code> fornecido no enunciado. O servidor respondeu 201 a todos, exibiu cada leitura no terminal (<code>esp32-lab-01 temperatura_c=48.0 status=ALERTA</code>) e gravou as 6 linhas no CSV dele.</p>
+<p><strong>Evidência B — compatibilidade com o servidor modelo da disciplina</strong> (<code>evidencias/20261116_compat_servidor_modelo.txt</code>). Os 6 JSON dos três cenários foram enviados também ao servidor-modelo fornecido no enunciado (<code>servidor/servidor.py</code>, retirado da pasta de entrega em 17/11 por não ser código do grupo; disponível no histórico do Git). O servidor respondeu 201 a todos, exibiu cada leitura no terminal (<code>esp32-lab-01 temperatura_c=48.0 status=ALERTA</code>) e gravou as 6 linhas no CSV dele.</p>
 <p><strong>Testes automatizados do firmware.</strong> <code>app/tools/tests/test_firmware.py</code>: <strong>9 testes passando</strong> em 16/11. Eles cobrem a sincronia de <code>limiares.h</code> com o JSON, a compilação e execução de <code>teste_logica.cpp</code> com <code>-Werror</code>, fronteiras, falhas de sensor, conversão do eco e montagem do JSON (com e sem sessão, buffer pequeno, NaN e infinito).</p>
 <p><strong>Outras entradas tratadas pela API</strong> (evidência de CTP, <code>04_CTP_Python/</code>): leitura sem <code>valor</code> → 400; <code>-127</code> enviado por engano → 400; reenvio do mesmo <code>evento_id</code> → 200 sem duplicar; mesmo <code>evento_id</code> com valor diferente → 409; sem <code>X-Device-Key</code> → 401.</p>
 <h3>5.2 Compilação e execução efetiva no Wokwi</h3>

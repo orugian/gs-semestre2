@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-11-17T18:41:19Z",
+  "gerado_em": "2026-11-18T00:44:01Z",
   "itens": [
     {
       "destino": "01_AICSS/firmware/README.md",
@@ -60,9 +60,9 @@
     {
       "destino": "01_AICSS/relatorio.pdf",
       "origem": "01_AICSS/relatorio.md",
-      "sha256": "62c9b782762ca0fa59a41e1a26f5ba1935740c85fc5cccf206ccb1785aa18bab",
+      "sha256": "a7557b3df8d5348e19ddca01d29dcd32be03cb2fa4f615261787d24850c3dd24",
       "paginas": 10,
-      "estado": "inalterado"
+      "estado": "atualizado"
     },
     {
       "destino": "02_Cybersecurity/relatorio.pdf",
@@ -221,7 +221,7 @@
     {
       "destino": "04_CTP_Python/documento.pdf",
       "origem": "04_CTP_Python/documento.md",
-      "sha256": "c38c3bc2a2a386e3bf04681b026592eba3c56ce4def0de155527ee8af1cf12f1",
+      "sha256": "e4ee2e417099e6e80347870f4694f09c1219837f071ddd3a41ee9b877c9d833a",
       "paginas": 8,
       "estado": "atualizado"
     },
