@@ -65,4 +65,4 @@ Também executado nesta sessão em `main`: ML110passed, Cloud50passed, Tools20pa
 
 **Não verificado/não entregue por esta fatia:** tela de autenticação, smoke em navegador real, MFA/recuperação/rotaçãoJWT, coordenação distribuída de taxa, execução no OracleFIAP e demonstração humana em vídeo. Não existe alegação de segurança absoluta ou ausência de todo timingattack baseada em revisão estática.
 
-Sem leitura de`.env`, abertura do holdout, exclusão de dados ou push. A evidência inicial permanece preservada em [aceite parcial](<02_Cybersecurity/evidencias/20261115_s5_aceite_parcial.txt>).
+Sem leitura de`.env`, abertura do holdout, exclusão de dados ou push. A evidência inicial permanece preservada em [aceite parcial](<20261115_s5_aceite_parcial.txt>).

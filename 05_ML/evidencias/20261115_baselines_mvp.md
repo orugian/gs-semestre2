@@ -25,7 +25,7 @@ O arquivo original de desenvolvimento foi identificado por hash e metadados temp
 
 O recorte tem **5.589 linhas**: histórico2020=972, treino202101–202409=3.645, embargo202410–202412=243 e validação202501–202509=729. Os valores de features/lag foram preservados, não recalculados. Após elegibilidade no treino, a validação efetivamente pontuada tem495linhas.
 
-Manifesto completo: [recorte](<05_ML/evidencias/20261115_recorte_mvp.json>). Resultados completos, inclusive métricas por série e folds: [baselines](<05_ML/evidencias/20261115_baselines_mvp.json>).
+Manifesto completo: [recorte](<20261115_recorte_mvp.json>). Resultados completos, inclusive métricas por série e folds: [baselines](<20261115_baselines_mvp.json>).
 
 ## Comandos executados
 
@@ -58,7 +58,7 @@ Outro cálculo, sem importar helpers de baseline, splitter, densidade ou métric
 - Fold2: treino202101–202403; avaliação202407–202409; n165.
 - Validação externa: treino202101–202409; avaliação202501–202509; n495.
 
-**0 divergências**, tolerância relativa `1e-12`. Saída integral: [conferência](<05_ML/evidencias/20261115_conferencia_baselines.txt>).
+**0 divergências**, tolerância relativa `1e-12`. Saída integral: [conferência](<20261115_conferencia_baselines.txt>).
 
 ## Aceite e limitações
 

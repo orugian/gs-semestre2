@@ -264,7 +264,7 @@ Esse gate e as credenciais/cotas de Oracle, MongoDB e AWS devem ser resolvidos a
 
 ### 10.1 Telemetria única entre AICSS, CTP e Cloud
 
-Preservar o padrão de um POST por sensor já descrito no [contrato-base do projeto](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/00_projeto/README.md#L21-L40>). Exemplo didático, não leitura real:
+Preservar o padrão de um POST por sensor já descrito no [contrato-base do projeto](<historico/00_projeto_README.md>). Exemplo didático, não leitura real:
 
 ```json
 {
@@ -308,15 +308,15 @@ Falha na nuvem não apaga o CSV; resposta local não pode dizer “salvo no RDS�
 
 | Disciplina e fonte | Requisito que deve aparecer na entrega | Aplicação nesta proposta / evidência futura |
 |---|---|---|
-| [01 AICSS](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/01_AICSS/ENUNCIADO.md>) | ESP32, ≥2 sensores relevantes, ≥1 atuador, status por sensor, alerta local, JSON/Python/CSV, ≥3 comportamentos | Bancada da seção 8; firmware/diagrama, JSON e registros nos três cenários. **Pertinência pendente** |
-| [02 Cybersecurity](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/02_Cybersecurity/ENUNCIADO.md>) | Superfície de ataque, ≥5 riscos, controles, ≥1 proteção funcional, LGPD e engenharia social | Seção 12; demonstrar autorização e/ou rate limiting. PDF ≤15 páginas e vídeo ≤5 min |
-| [03 Data Science](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/03_DataScience/ENUNCIADO.md>) | Modelagem, tabelas relacionadas, documentos, consultas executadas e justificativa Oracle/MongoDB | Modelador indicado na disciplina, DDL/scripts e evidências de relações e consultas. Não trocar Oracle por RDS |
-| [04 CTP Python](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/04_CTP_Python/ENUNCIADO.md>) | Flask/FastAPI, POST validado, funções/condicionais/repetições/coleções, CSV, GET, indicador e 3 cenários | API de leituras e classificação, histórico e testes ponta a ponta; documentar contrato e execução |
-| [05 ML](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/05_ML/ENUNCIADO.md>) | Dataset/EDA, preprocessing sem vazamento, baseline + ≥2 algoritmos, tuning ≥1, métricas e importância | Experimento da seção 6; notebook, slides PPT/PDF e vídeo ≤5 min; previsões fora do treino |
-| [06 Cloud](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/06_Cloud/ENUNCIADO.md>) | Lambda Function URL fora de VPC, RDS PostgreSQL, rotas, logs, limiares, IA por API resiliente e simulador | Seção 11.2; execução na AWS, quatro imagens e vídeo ≤5 min. **Rede/conta/acesso pendentes** |
-| [07 RNA/DL](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/07_RedesNeurais/ENUNCIADO.md>) | Dataset pertinente, rede própria, treinamento, curvas, refinamento/configurações e avaliação inédita | MLP da seção 6; notebook, parâmetros, métricas, limitações e demonstração funcional em vídeo. Não há duração específica registrada nesse enunciado |
-| [08 Estatística](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/08_Estatistica/ENUNCIADO.md>) | Dados reais, probabilidades, testes de média específicos, regressões simples/múltipla/logística e interpretação | Seção 11.1; base CSV/XLSX, código .py/.r e relatório PDF enviados diretamente, não somente links |
-| [09 AI Challenge](<C:/Users/orugi/Documents/Projetos/FIAP/GS/info-gs-diciplinas/09_AIC/ENUNCIADO.md>) | Mesmo problema/público/contexto, execução integrada, UML, Kanban, ODS, acessibilidade e inspiração da live | Vídeo ≤7 min, YouTube não listado, rosto do narrador, sem música, nomes/RMs na abertura ou fechamento; distinguir implementado de futuro |
+| [01 AICSS](<enunciados/01_AICSS.md>) | ESP32, ≥2 sensores relevantes, ≥1 atuador, status por sensor, alerta local, JSON/Python/CSV, ≥3 comportamentos | Bancada da seção 8; firmware/diagrama, JSON e registros nos três cenários. **Pertinência pendente** |
+| [02 Cybersecurity](<enunciados/02_Cybersecurity.md>) | Superfície de ataque, ≥5 riscos, controles, ≥1 proteção funcional, LGPD e engenharia social | Seção 12; demonstrar autorização e/ou rate limiting. PDF ≤15 páginas e vídeo ≤5 min |
+| [03 Data Science](<enunciados/03_DataScience.md>) | Modelagem, tabelas relacionadas, documentos, consultas executadas e justificativa Oracle/MongoDB | Modelador indicado na disciplina, DDL/scripts e evidências de relações e consultas. Não trocar Oracle por RDS |
+| [04 CTP Python](<enunciados/04_CTP_Python.md>) | Flask/FastAPI, POST validado, funções/condicionais/repetições/coleções, CSV, GET, indicador e 3 cenários | API de leituras e classificação, histórico e testes ponta a ponta; documentar contrato e execução |
+| [05 ML](<enunciados/05_ML.md>) | Dataset/EDA, preprocessing sem vazamento, baseline + ≥2 algoritmos, tuning ≥1, métricas e importância | Experimento da seção 6; notebook, slides PPT/PDF e vídeo ≤5 min; previsões fora do treino |
+| [06 Cloud](<enunciados/06_Cloud.md>) | Lambda Function URL fora de VPC, RDS PostgreSQL, rotas, logs, limiares, IA por API resiliente e simulador | Seção 11.2; execução na AWS, quatro imagens e vídeo ≤5 min. **Rede/conta/acesso pendentes** |
+| [07 RNA/DL](<enunciados/07_RedesNeurais.md>) | Dataset pertinente, rede própria, treinamento, curvas, refinamento/configurações e avaliação inédita | MLP da seção 6; notebook, parâmetros, métricas, limitações e demonstração funcional em vídeo. Não há duração específica registrada nesse enunciado |
+| [08 Estatística](<enunciados/08_Estatistica.md>) | Dados reais, probabilidades, testes de média específicos, regressões simples/múltipla/logística e interpretação | Seção 11.1; base CSV/XLSX, código .py/.r e relatório PDF enviados diretamente, não somente links |
+| [09 AI Challenge](<enunciados/09_AIC.md>) | Mesmo problema/público/contexto, execução integrada, UML, Kanban, ODS, acessibilidade e inspiração da live | Vídeo ≤7 min, YouTube não listado, rosto do narrador, sem música, nomes/RMs na abertura ou fechamento; distinguir implementado de futuro |
 
 **Complementos de entrega:** nomes completos e RMs nas identificações/capas exigidas; validar os formatos e campos do Portal. Não presumir que um único vídeo substitua todos os vídeos por disciplina. Em Data Science, o enunciado local é resumido: confirmar detalhes de formato/modelador com o material da aula, sem inventar número mínimo de tabelas. Em RNA, confirmar campo de envio do vídeo. Para AIC, o grupo deve fornecer a ideia efetivamente extraída da live; não fabricar participação ou inspiração.
 

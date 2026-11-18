@@ -1,6 +1,6 @@
 # Aceite do caderno visual — documento, não aplicação
 
-**16/11/2026,09h42 UTC−3.** Artefato: [panorama_projeto.html](<../../docs/panorama_projeto.html>). Integração documental `c6ee6e1`; checkpoint funcional `13cb0a2`, regressão registrada em `5d311e7`, contexto reconciliado com `dd55e48`(09h15). O panorama é estático/offline e **não prova jornadaE2E, implantação ou submissão acadêmica**.
+**16/11/2026,09h42 UTC−3.** Artefato: [panorama_projeto.html](<../../docs/historico/panorama_projeto.html>). Integração documental `c6ee6e1`; checkpoint funcional `13cb0a2`, regressão registrada em `5d311e7`, contexto reconciliado com `dd55e48`(09h15). O panorama é estático/offline e **não prova jornadaE2E, implantação ou submissão acadêmica**.
 
 ## Escopo executado
 

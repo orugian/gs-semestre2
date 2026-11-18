@@ -4,6 +4,8 @@ Aplicação web que ajuda profissionais graduados e experientes a comparar camin
 
 Integrantes: Guilherme Orugian (RM572882) · Lucas Henrique (RM571901) · Rodrigo Bettio (RM573725).
 
+**Vai gravar um vídeo?** Comece por [gravacao/README.md](gravacao/README.md): um script prepara o computador e outro abre a aplicação. **Vai enviar no Portal?** Cada pasta `0X_*` tem um `LEIA-ME.md` com os arquivos exatos a anexar.
+
 ## Onde está cada coisa
 
 | Pasta | Conteúdo |
@@ -15,9 +17,11 @@ Integrantes: Guilherme Orugian (RM572882) · Lucas Henrique (RM571901) · Rodrig
 | `app/iot` | Firmware ESP32 (Wokwi), com lógica testável no computador |
 | `app/db` | DDL Oracle (dialeto 19c) e consultas de evidência; scripts MongoDB |
 | `app/catalogo`, `app/config` | Catálogo curado dos 6 destinos (YAML) e fonte única de limiares (`limiares.json`) |
+| `app/dados_publicos` | Snapshot público de mercado (Novo Caged agregado, com SHA-256) usado pelas telas Mercado e Painel técnico |
 | `app/tools` | Empacotador de entregas, gerador de PDF, demos e scripts de teste |
-| `01_AICSS` … `09_AIC` | Entregáveis por disciplina: relatórios (`.md` + PDF), evidências e cópias **geradas** do código |
-| `docs` | Plano, proposta, estado vivo, enunciados, UML; `docs/historico/` guarda o que não é mais operacional |
+| `gravacao` | Kit para gravar os vídeos: scripts de preparo, roteiros por disciplina e quadro de gestão |
+| `01_AICSS` … `09_AIC` | Entregáveis por disciplina (`LEIA-ME.md` diz o que enviar): relatórios (`.md` + PDF), evidências e cópias **geradas** do código |
+| `docs` | Plano, proposta, estado vivo, enunciados (`docs/enunciados/`), UML; `docs/historico/` guarda o que não é mais operacional |
 
 As cópias de código dentro de `0X_*` são geradas por `app/tools/empacotar_entregas.py` — edite sempre a origem em `app/` e rode o empacotador.
 
@@ -80,7 +84,6 @@ Abra **dois terminais na raiz**. No primeiro, use o schema de testes (não a per
 
 ```powershell
 . .\app\tools\ambiente_teste.ps1
-# Se necessário, aponte CITIZENTECH_MERCADO_SNAPSHOT para o snapshot local já preparado.
 cd app\api
 uv sync --frozen
 # Somente no primeiro preparo do schema de TESTE recém-criado: lista os DDL 001–007.
@@ -98,7 +101,7 @@ pnpm install --frozen-lockfile
 pnpm run dev     # http://localhost:5173; encerrar com Ctrl+C antes do Playwright
 ```
 
-A tela **Mercado** precisa de `CITIZENTECH_MERCADO_SNAPSHOT` (snapshot gerado por `app/ml`); sem ele, a API responde 503 e a interface mostra o erro.
+As telas **Mercado** e **Painel técnico** usam o snapshot público versionado em `app/dados_publicos/mercado/` (validado por SHA-256). Para usar outro snapshot gerado por `app/ml`, aponte `CITIZENTECH_MERCADO_SNAPSHOT` para a pasta dele.
 
 ## Gerar e conferir as entregas
 

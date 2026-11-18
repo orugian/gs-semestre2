@@ -128,7 +128,7 @@ $env:CITIZENTECH_LEITURAS_CSV = "$PWD\leituras.csv"
 python -m uvicorn citizentech.leituras.isolado:app --port 8001
 ```
 
-Os arquivos `app.py`, `armazenamento.py`, `processamento.py` e `testes.py` na raiz de `04_CTP_Python/` são o modelo em Flask fornecido no enunciado e **não fazem parte** da solução.
+O modelo em Flask fornecido no enunciado não faz parte da solução e foi retirado desta pasta (continua no histórico do Git).
 
 Em outro terminal, com a mesma `DEVICE_KEY` no ambiente:
 

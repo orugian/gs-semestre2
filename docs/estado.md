@@ -2,6 +2,16 @@
 
 > **Fechamento técnico em 17/11/2026, após 18h (UTC−3).** Prazo: **19/11/2026 às 23h55**. Este estado e o [handoff](<handoff_citizentech_20261116_fim.md>) prevalecem sobre checkpoints anteriores; o Git mantém o histórico.
 
+## 0000. Noite de 17/11 — limpeza das pastas de entrega e kit de gravação (pedido do usuário)
+
+Pedido: remover o que não é entrega e deixar scripts para os demais integrantes gravarem os vídeos **nos próprios computadores**. Decisões do usuário: enunciados para `docs/enunciados/`; panorama interno para `docs/historico/` (plano, estado e revisões ficam, como trilha de gestão); snapshot público de mercado versionado.
+
+- **Removidos das pastas de entrega:** modelo Flask do professor em `04_CTP_Python/` (`app.py`, `armazenamento.py`, `processamento.py` com `TODO`, `testes.py`) e `01_AICSS/servidor/servidor.py` (continuam no histórico do Git; documentos que os citavam foram ajustados). `0X_*/ENUNCIADO.md` → `docs/enunciados/0X_*.md`; `00_projeto/README.md` e o panorama → `docs/historico/`. Links absolutos `C:/Users/...` da proposta trocados por relativos; 4 links quebrados antigos em evidências corrigidos.
+- **Cada `0X_*` tem `LEIA-ME.md`** com os arquivos exatos a anexar no Portal (Estatística: três arquivos separados, sem ZIP). Os `video.md` ficaram só com o campo de link e o ponteiro para o roteiro.
+- **Kit `gravacao/`:** `preparar.ps1` (confere ferramentas; cria `app/.env` com senhas aleatórias só se não existir; sobe bancos de teste; cria schema, tabelas e catálogo; instala dependências), `subir_app.ps1 [-ComIA]` (API + site com ambiente de teste isolado), `criar_conta_demo.ps1` (persona fictícia em `%LOCALAPPDATA%\CitizenTech`, fora do repositório), `cloud_local.ps1` (emulador da Lambda + Postgres de teste), roteiros `aic/ml/rna/cyber/cloud.md` e `kanban.md` (montado das datas reais de integração no Git, e dito assim).
+- **Snapshot público** em `app/dados_publicos/mercado/20261116_r29_aceite/` (`0c4d6b5`, SHA-256 do blob igual ao manifesto; bytes protegidos por `-text`). **S20** (agy): a API usa esse snapshot quando `CITIZENTECH_MERCADO_SNAPSHOT` está ausente; caminho explícito inválido continua 503. RED reproduzido pelo orquestrador sobre `main` (`assert 503 == 200`).
+- **Fluxo Cloud local verificado:** emulador + Postgres de teste → evolução 30→50 °C com 201, crítico com `alerta=True`, sem `valor` → 400, chave errada → 401, linhas gravadas; log com `CLASSIFICACAO`/`GRAVADO NO RDS`.
+
 ## 000. Tarde de 17/11 — redesign NOUS e reorganização (pedido do usuário)
 
 Pedido: UI moderna no DS NOUS + matriz de pixels three.js, foco visível (aprovado), higiene/organização do repositório (untangle em web/tools/cloud-testes/api; `app/ml` congelado). Vídeos ficam para o fim, com tudo revisado. Decisões e motivos em [decisoes_untangle.md](<decisoes_untangle.md>).

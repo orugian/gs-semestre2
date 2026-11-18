@@ -119,7 +119,7 @@ esp32-lab-01-c-ec127e43-3-temperatura_c,esp32-lab-01,demo-aicss-5aea1b35,c-ec127
 esp32-lab-01-c-ec127e43-3-distancia_cm,esp32-lab-01,demo-aicss-5aea1b35,c-ec127e43-3,esp32,distancia_cm,cm,5.0,critico,True,pendente_nuvem,2026-11-16T22:25:19Z,2026-11-16T22:25:19Z
 ```
 
-**Evidência B — compatibilidade com o servidor modelo da disciplina** (`evidencias/20261116_compat_servidor_modelo.txt`). Os 6 JSON dos três cenários foram enviados também ao `servidor/servidor.py` fornecido no enunciado. O servidor respondeu 201 a todos, exibiu cada leitura no terminal (`esp32-lab-01 temperatura_c=48.0 status=ALERTA`) e gravou as 6 linhas no CSV dele.
+**Evidência B — compatibilidade com o servidor modelo da disciplina** (`evidencias/20261116_compat_servidor_modelo.txt`). Os 6 JSON dos três cenários foram enviados também ao servidor-modelo fornecido no enunciado (`servidor/servidor.py`, retirado da pasta de entrega em 17/11 por não ser código do grupo; disponível no histórico do Git). O servidor respondeu 201 a todos, exibiu cada leitura no terminal (`esp32-lab-01 temperatura_c=48.0 status=ALERTA`) e gravou as 6 linhas no CSV dele.
 
 **Testes automatizados do firmware.** `app/tools/tests/test_firmware.py`: **9 testes passando** em 16/11. Eles cobrem a sincronia de `limiares.h` com o JSON, a compilação e execução de `teste_logica.cpp` com `-Werror`, fronteiras, falhas de sensor, conversão do eco e montagem do JSON (com e sem sessão, buffer pequeno, NaN e infinito).
 

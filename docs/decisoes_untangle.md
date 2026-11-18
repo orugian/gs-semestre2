@@ -12,7 +12,7 @@ Diagnóstico completo (IDs H/N/S/X): relatório somente leitura de 17/11. Cada c
 - **Replicação documentada e executável** — `README.md` na raiz, `app/tools/ambiente_teste.ps1`, `app/tools/testar_tudo.ps1`, `.env.example` completo e portável.
   - Variáveis `PG_TESTE_*`, `ORACLE_TESTE_*` e o schema `CT_TESTE_*` só existiam em scripts fora do repositório.
   - `.env.example` com caminhos absolutos da máquina e variáveis mortas (`APP_ENV`, `CITIZENTECH_TMP`, `ADZUNA_MAX_CHAMADAS`, `ORACLE_FIAP_*`); 14 variáveis lidas pelo código sem documentação.
-- **Documentos fora de uso saem da superfície** — `docs/historico/` e `docs/panorama/`; `.gitignore` cobre originais com PII e estado da ferramenta de design.
+- **Documentos fora de uso saem da superfície** — `docs/historico/` (inclui o panorama interno); `.gitignore` cobre originais com PII e estado da ferramenta de design.
 
 - **Interface no design system NOUS** (S16, `48be785`) — tokens só em `app/web/src/estilo/tema.css`; matriz de pixels three.js isolada em `src/visual/`; foco visível em todos os controles.
 - **API e tools desembaraçados** (S17, `fde8f6e`) — catálogo lido num módulo só (`citizentech/catalogo.py`), utilidades de banco, consentimento como dependência única, erros de domínio fora da camada de dados, serviço de leituras, retentativas da LLM em laço, laboratório por dado (`tem_laboratorio`), `tools/_comum.py`, conftest aplicando 001–007 com as regras de `aplicar_ddl.py`, contrato de hash com a Lambda.

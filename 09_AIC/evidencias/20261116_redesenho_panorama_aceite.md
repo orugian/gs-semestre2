@@ -4,7 +4,7 @@
 
 **Decisão do orquestrador: publicar a reconstrução documental**, integrada em `53f4c50` (autoria `de18cf4`). Não é aprovação da aplicação ponta a ponta nem aceite humano do novo visual. A versão anterior foi rejeitada pelo usuário apesar de seus testes técnicos terem passado; suas provas históricas foram preservadas.
 
-Documento: [panorama](<../../docs/panorama_projeto.html>). SHA-256: `d2f6073e701f3957be8e1cebe96995fafc1bac21d9d6357450acbb27cfece01c`.
+Documento: [panorama](<../../docs/historico/panorama_projeto.html>). SHA-256: `d2f6073e701f3957be8e1cebe96995fafc1bac21d9d6357450acbb27cfece01c`.
 
 O conteúdo é um retrato de **16/11/2026 ~11h34, base funcional18e72aa**, não monitoramento ao vivo. S9 backend integrado; S10/S4 em andamento nesse checkpoint; S11 domínio integrado, rotas pendentes. Atlas e empacotamento E09 existentes; rubricas aprovadas; pacotes gerados não equivalem a envio.
 

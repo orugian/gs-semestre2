@@ -14,8 +14,8 @@ Começar pelo [README de reprodução](../README.md) e conferir `git status`, `g
 | P05 · QA | [Teste de foco](../app/web/e2e/foco_visivel.spec.ts), [teste da tabela](../app/web/e2e/painel_tabela.spec.ts) e [limites da sondagem](../02_Cybersecurity/evidencias/20261117_qa_teclado_foco.md). Não alegar certificação WCAG, teste de leitor de tela nem cobertura de toda combinação de navegador e dispositivo. |
 | P06 · Ciência | Os notebooks entregues são cópias idênticas às fontes, com saídas salvas. Para a demonstração, usar essas saídas e o [aceite de validação retrospectiva](../05_ML/evidencias/20261115_modelos_mvp_aceite.md), sem treino, retuning, promoção ou abertura de 2026. |
 | P07 · Pacote | Depois de incorporar **material novo**, gerar/conferir com os [comandos do empacotador](../README.md#gerar-e-conferir-as-entregas). Conferir Cyber ≤15 páginas. Preservar originais; entregar apenas versões revistas e tarjadas, nunca toda a pasta de trabalho indiscriminadamente. |
-| P02 · Vídeos (última etapa de produção) | Grupo grava após a revisão. [AIC](../09_AIC/video.md): ≤7 min, rosto, sem música, nomes/RMs e YouTube não listado, contribuição real da live e da gestão. [ML](../05_ML/video.md), [Cyber](../02_Cybersecurity/video.md) e [Cloud](../06_Cloud/video.md): ≤5 min cada. [RNA](../07_RedesNeurais/video.md): demonstração funcional obrigatória. Só preencher os links depois de testar duração e acesso sem login. |
-| P08 · Portal | Grupo confere os arquivos e envia. Estatística: PDF, PY e CSV **separados**. Guardar a confirmação do Portal. |
+| P02 · Vídeos (última etapa de produção) | Grupo grava com o [kit de gravação](../gravacao/README.md) (scripts de preparo para qualquer computador + roteiros AIC, ML, RNA, Cyber e Cloud). Cada `video.md` guarda só o link. Só preencher os links depois de testar duração e acesso sem login. |
+| P08 · Portal | Grupo envia seguindo o `LEIA-ME.md` de cada pasta `0X_*`. Estatística: PDF, PY e CSV **separados**. Guardar a confirmação do Portal. |
 
 ## Limites para a gravação
 
