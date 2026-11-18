@@ -12,11 +12,17 @@ from citizentech.catalogo import carregar_escopo_mvp
 from citizentech.erros import ServicoIndisponivel
 
 __all__ = [
+    "DIRETORIO_PADRAO_SNAPSHOT",
     "REGIAO_POR_DIGITO",
     "UF_PARA_IBGE",
     "carregar_escopo_mvp",
     "carregar_snapshot_mercado",
 ]
+
+# Diretório padrão do snapshot público de mercado versionado no repositório
+DIRETORIO_PADRAO_SNAPSHOT: Path = (
+    Path(__file__).resolve().parents[4] / "dados_publicos" / "mercado" / "20261116_r29_aceite"
+)
 
 # Mapeamento oficial de UFs para códigos IBGE de 2 dígitos
 UF_PARA_IBGE: dict[str, str] = {
@@ -65,10 +71,11 @@ _cache_info: tuple[str, float, int] | None = None
 def carregar_snapshot_mercado() -> dict[str, Any]:
     """Carrega snapshot e manifesto validando integridade SHA-256 e schema_version."""
     caminho_var = os.environ.get("CITIZENTECH_MERCADO_SNAPSHOT")
-    if not caminho_var:
-        raise ServicoIndisponivel("Variavel de ambiente de snapshot de mercado ausente.")
+    if caminho_var and caminho_var.strip():
+        p_dir = Path(caminho_var)
+    else:
+        p_dir = Path(DIRETORIO_PADRAO_SNAPSHOT)
 
-    p_dir = Path(caminho_var)
     p_man = p_dir / "manifesto.json"
     p_snap = p_dir / "snapshot_mercado.json"
 
