@@ -31,3 +31,6 @@ docs/material_por_cadeira/GS22026_enunciadosOG.txt -text
 
 # Evidencia bruta Wokwi: preservar bytes/CRLF para validar o manifesto SHA-256.
 01_AICSS/evidencias/20261117_wokwi_* -text
+
+# Snapshot publico de mercado: bytes preservados para conferir o SHA-256 do manifesto.
+app/dados_publicos/** -text
