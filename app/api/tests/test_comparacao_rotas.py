@@ -347,7 +347,9 @@ def test_comparacao_mercado_e_preferencias(tmp_path: Path, monkeypatch):
     cliente.put("/me/intencao", json=intencao_payload, headers=headers_csrf)
 
     # 3. Snapshot indisponível -> continua 201 com motivo "snapshot_indisponivel"
-    monkeypatch.delenv("CITIZENTECH_MERCADO_SNAPSHOT", raising=False)
+    snap_vazio = tmp_path / "snap_vazio"
+    snap_vazio.mkdir()
+    monkeypatch.setenv("CITIZENTECH_MERCADO_SNAPSHOT", str(snap_vazio))
     resp = cliente.post(
         "/me/comparacoes",
         json={"destinos": ["analista_dados_bi"]},

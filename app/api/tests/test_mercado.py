@@ -10,7 +10,18 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+import citizentech.mercado.snapshot as snapshot_mod
 from citizentech.main import app
+
+
+@pytest.fixture(autouse=True)
+def resetar_cache_snapshot():
+    """Garante isolamento do cache de snapshot entre os testes."""
+    snapshot_mod._cache_snapshot = None
+    snapshot_mod._cache_info = None
+    yield
+    snapshot_mod._cache_snapshot = None
+    snapshot_mod._cache_info = None
 
 
 def criar_snapshot_sintetico(diretorio: Path, dados_custom: dict[str, Any] | None = None) -> Path:
@@ -484,20 +495,64 @@ def test_mercado_uf_case_insensitive(
     assert dados["uf_codigo"] == "35"
 
 
-def test_mercado_variavel_ambiente_ausente_retorna_503(
-    monkeypatch: pytest.MonkeyPatch
+def test_mercado_sem_variavel_usa_snapshot_publico_versionado(
+    monkeypatch: pytest.MonkeyPatch,
 ):
-    """Sem variável de ambiente CITIZENTECH_MERCADO_SNAPSHOT retorna HTTP 503."""
+    """Sem variável de snapshot usa o snapshot público versionado (HTTP 200)."""
     monkeypatch.delenv("CITIZENTECH_MERCADO_SNAPSHOT", raising=False)
+
+    cliente = TestClient(app)
+    resposta = cliente.get("/mercado/analista_dados_bi?uf=SP")
+    assert resposta.status_code == 200
+    dados = resposta.json()
+    assert "observado" in dados and isinstance(dados["observado"], dict)
+    assert "serie" in dados["observado"]
+    assert len(dados["observado"]["serie"]) > 0
+    assert dados["destino"] == "analista_dados_bi"
+    assert dados["uf"] == "SP"
+
+    # Também com variável vazia
+    monkeypatch.setenv("CITIZENTECH_MERCADO_SNAPSHOT", "")
+    resp_vazia = cliente.get("/mercado/analista_dados_bi?uf=SP")
+    assert resp_vazia.status_code == 200
+
+
+def test_mercado_variavel_invalida_nao_cai_para_padrao(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """Variável explícita apontando para diretório inválido gera 503 e não cai para o padrão."""
+    dir_vazio = tmp_path / "vazio"
+    dir_vazio.mkdir(parents=True, exist_ok=True)
+    monkeypatch.setenv("CITIZENTECH_MERCADO_SNAPSHOT", str(dir_vazio))
 
     cliente = TestClient(app)
     resposta = cliente.get("/mercado/analista_dados_bi?uf=SP")
     assert resposta.status_code == 503
     dados = resposta.json()
     assert dados["erro"] == "Servico indisponivel"
-    assert "detalhes" in dados
-    assert "C:" not in dados["detalhes"]
-    assert "/" not in dados["detalhes"]
+
+
+def test_mercado_padrao_ausente_retorna_503_sem_vazar_caminho(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """Diretório padrão inexistente sem variável de ambiente gera 503 sem vazar caminho."""
+    monkeypatch.delenv("CITIZENTECH_MERCADO_SNAPSHOT", raising=False)
+    dir_inexistente = tmp_path / "inexistente"
+    monkeypatch.setattr(
+        snapshot_mod,
+        "DIRETORIO_PADRAO_SNAPSHOT",
+        dir_inexistente,
+        raising=False,
+    )
+
+    cliente = TestClient(app)
+    resposta = cliente.get("/mercado/analista_dados_bi?uf=SP")
+    assert resposta.status_code == 503
+    dados = resposta.json()
+    assert dados["erro"] == "Servico indisponivel"
+    assert str(dir_inexistente) not in dados.get("detalhes", "")
+    assert str(tmp_path) not in dados.get("detalhes", "")
+    assert str(tmp_path) not in resposta.text
 
 
 def test_mercado_hash_adulterado_retorna_503_sem_vazar_path(
